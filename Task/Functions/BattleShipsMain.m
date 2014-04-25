@@ -1,39 +1,42 @@
-function [taskData, Data] = BattleShipsMain(taskParam, sigma, Subject)
+function [taskData, Data] = BattleShipsMain(taskParam, sigma, condition, Subject)
 
 KbReleaseWait()
 
 % Set port to 0.
-%lptwrite(taskParam.port,0); 
+if taskParam.sendTrigger == true
+    lptwrite(taskParam.port,0);
+end
 
 %% generateOutcomes
-condition = 'main';
+%condition = 'main';
 taskData = GenerateOutcomes(taskParam, sigma, condition);
 
 %% Run trials.
-for i=1:taskParam.trials
+for i=1:taskData.trial
     
     % Trigger: start task.
-%     lptwrite(taskParam.port, taskParam.startTrigger);
-%     WaitSecs(1/taskParam.sampleRate);
-%     lptwrite(taskParam.port,0) % Port wieder auf null stellen
+    if taskParam.sendTrigger == true
+        lptwrite(taskParam.port, taskParam.startTrigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
     
-    
-    if i == 2
+    if i == 400
         
         while 1
             
             
-            txtBreak = 'Pause';       
+            txtBreak = 'Pause';
             txtPressEnter = 'Weiter mit Enter';
             txtFeedback = sprintf('In diesem Block hast du %.2f von 5 Euro gewonnen.', taskData.accPerf(i-1));
             Screen('TextSize', taskParam.window, 50);
-             
+            
             DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
             
             Screen('TextSize', taskParam.window, 30);
             DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
             DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
-
+            
             
             Screen('Flip', taskParam.window);
             
@@ -44,23 +47,27 @@ for i=1:taskParam.trials
         end
     end
     
+    % Trigger: trial onset.
+        if taskParam.sendTrigger == true
+            lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
+            WaitSecs(1/taskParam.sampleRate);
+            lptwrite(taskParam.port,0) % Set port to 0.
+        end
+    
     while 1
         
         if taskData.catchTrial(i) == 1
-        DrawHand(taskParam, taskData.distMean(i))
+            DrawHand(taskParam, taskData.distMean(i))
         end
         
-        % Start trial - subject predicts boat. 
+        % Start trial - subject predicts boat.
         DrawCircle(taskParam.window)
         DrawCross(taskParam.window)
         PredictionSpot(taskParam)
         
-        % Trigger: trial onset.
-%         lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
-%         WaitSecs(1/taskParam.sampleRate);
-%         lptwrite(taskParam.port,0) % Port wieder auf null stellen
         
-        Screen('Flip', taskParam.window); 
+        
+        Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         
@@ -81,22 +88,24 @@ for i=1:taskParam.trials
                 taskData.pred(i) = taskParam.rotAngle/taskParam.unit;
                 
                 % Trigger: prediction.
-%                 lptwrite(taskParam.taskParam.port, taskParam.predictionTrigger);
-%                 WaitSecs(1/taskParam.sampleRate);
-%                 lptwrite(taskParam.port,0) % Port wieder auf null stellen
+                if taskParam.sendTrigger == true
+                    lptwrite(taskParam.port, taskParam.predTrigger);
+                    WaitSecs(1/taskParam.sampleRate);
+                    lptwrite(taskParam.port,0) % Set port to 0.
+                end
                 
                 break
             end
         end
     end
     
-% Calculate prediction error:
-%   We have to calculate different prediction errors because the normal 
-%   prediction error is calculated from the beginning of the line       
-%   (degrees on the circle) to the end of the line (360 degrees).    
-%   However, on a circle a prediction error cannot be bigger than 180 degrees.  
-%   Therefore we also add and subtract 360 degrees to the normal prediction 
-%   error and choose the 'right' one which is bigger than zero and smaller than 180 degrees.     
+    % Calculate prediction error:
+    %   We have to calculate different prediction errors because the normal
+    %   prediction error is calculated from the beginning of the line
+    %   (degrees on the circle) to the end of the line (360 degrees).
+    %   However, on a circle a prediction error cannot be bigger than 180 degrees.
+    %   Therefore we also add and subtract 360 degrees to the normal prediction
+    %   error and choose the 'right' one which is bigger than zero and smaller than 180 degrees.
     
     taskData.predErrNorm(i) = sqrt((taskData.outcome(i) - taskData.pred(i))^2);
     taskData.predErrPlus(i) = sqrt((taskData.outcome(i) - taskData.pred(i)+360)^2);
@@ -118,10 +127,11 @@ for i=1:taskParam.trials
     DrawCircle(taskParam.window)
     
     % Trigger: baseline 1.
-%     lptwrite(taskParam.port, taskParam.baseline1Trigger);
-%     WaitSecs(1/taskParam.sampleRate);
-%     lptwrite(taskParam.port,0) % Port wieder auf null stellen
-    
+    if taskParam.sendTrigger == true
+        lptwrite(taskParam.port, taskParam.baseline1Trigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
     Screen('Flip', taskParam.window);
     WaitSecs(1);
     
@@ -132,10 +142,12 @@ for i=1:taskParam.trials
     PredictionSpot(taskParam)
     
     % Trigger: outcome.
-%     lptwrite(taskParam.port, taskParam.outcomeTrigger);
-%     WaitSecs(1/taskParam.sampleRate);
-%     lptwrite(taskParam.port,0) % Port wieder auf null stellen
-     
+    if taskParam.sendTrigger
+        lptwrite(taskParam.port, taskParam.outcomeTrigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
+    
     Screen('Flip', taskParam.window);
     WaitSecs(1);
     
@@ -144,9 +156,11 @@ for i=1:taskParam.trials
     DrawCircle(taskParam.window)
     
     % Trigger: baseline 2.
-%     lptwrite(taskParam.port, taskParam.baseline2Trigger);
-%     WaitSecs(1/taskParam.sampleRate);
-%     lptwrite(taskParam.port,0) % Port wieder auf null stellen
+    if taskParam.sendTrigger
+        lptwrite(taskParam.port, taskParam.baseline2Trigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
     
     Screen('Flip', taskParam.window)
     WaitSecs(1);
@@ -164,7 +178,7 @@ for i=1:taskParam.trials
             taskData.perf(i) = 0.1;
         end
     else
-        DrawSilverBoat(taskParam)     
+        DrawSilverBoat(taskParam)
     end
     
     % Calculate accumulated performance.
@@ -173,9 +187,11 @@ for i=1:taskParam.trials
     end
     
     % Trigger: boat.
-%     lptwrite(taskParam.port, taskParam.boatTrigger);
-%     WaitSecs(1/taskParam.sampleRate);
-%     lptwrite(taskParam.port,0) % Port wieder auf null stellen
+    if taskParam.sendTrigger
+        lptwrite(taskParam.port, taskParam.boatTrigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
     
     Screen('Flip', taskParam.window);
     WaitSecs(1);
@@ -185,10 +201,11 @@ for i=1:taskParam.trials
     DrawCross(taskParam.window)
     
     % Trigger: baseline 3.
-%     lptwrite(taskParam.port, taskParam.baseline3Trigger);
-%     WaitSecs(1/taskParam.sampleRate);
-%     lptwrite(taskParam.port,0) % Port wieder auf null stellen
-    
+    if taskParam.sendTrigger == true
+        lptwrite(taskParam.port, taskParam.baseline3Trigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0. 
+    end
     Screen('Flip', taskParam.window);
     WaitSecs(1);
     

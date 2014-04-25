@@ -24,6 +24,7 @@ end
 fID = 'ID'; ID = cell(trials, 1); % ID.
 fAge = 'age'; age = zeros(trials, 1); % Age.
 fSex = 'sex'; sex = cell(trials, 1); % Sex.
+fDate = 'date'; date = cell(trials, 1);
 fTrial = 'trial'; trial = zeros(trials, 1); % Trial.
 fOutcome = 'outcome'; outcome=nan(trials, 1); % Outcome.       
 fDistMean = 'distMean'; distMean=nan(trials, 1); % Distribution mean.      
@@ -84,9 +85,9 @@ for i = 1:trials
     
 end
 
-taskData = struct(fID, {ID}, fAge, age,fSex, {sex}, fTrial, trial, fOutcome,...
+taskData = struct(fID, {ID}, fAge, age,fSex, {sex}, fTrial, i, fOutcome,...
     outcome, fDistMean, distMean, fCp, cp, fTAC, TAC, fBoatType, boatType,...
     fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm,...
     predErrNorm, fPredErrPlus, predErrPlus, fPredErrMin, predErrMin,...
-    fHit, hit, fPerf, perf, fAccPerf, accPerf);
+    fHit, hit, fPerf, perf, fAccPerf, accPerf, fDate, {date});
 end
