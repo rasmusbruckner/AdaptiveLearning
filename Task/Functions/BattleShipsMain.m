@@ -12,7 +12,7 @@ end
 taskData = GenerateOutcomes(taskParam, sigma, condition);
 
 %% Run trials.
-for i=1:taskData.trial
+for i=1:taskParam.trials%taskData.trial
     
     % Trigger: start task.
     if taskParam.sendTrigger == true
@@ -214,8 +214,11 @@ for i=1:taskData.trial
     taskData.ID{i} = Subject.ID;
     taskData.sex{i} = Subject.sex;
     taskData.date{i} = Subject.date;
+    taskData.cBal{i} = Subject.cBal;
+    
 end
 
+sigma = repmat(sigma, length(taskData.trial),1);
 
 %% Save data.
 
@@ -236,9 +239,10 @@ fHit = 'hit';
 fPerf = 'perf';
 fAccPerf ='accPerf';
 fDate = 'date';
+fCBal = 'cBal';
 
 Data = struct(fID, {taskData.ID}, fAge, taskData.age, fSex, {taskData.sex},...
-    fSigma, sigma,  fTrial, taskData.trial, fOutcome, taskData.outcome,...
+    fCBal, {taskData.cBal}, fSigma, sigma,  fTrial, taskData.trial, fOutcome, taskData.outcome,...
     fDistMean, taskData.distMean, fCp, taskData.cp,  fTAC, taskData.TAC,...
     fBoatType, taskData.boatType, fCatchTrial, taskData.catchTrial, ...
     fPred, taskData.pred, fPredErr, taskData.predErr, fHit, taskData.hit,...

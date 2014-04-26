@@ -6,7 +6,7 @@
 clear all
 
 %% Which subjects do you want to load?
-subject = {'test1' '9999'}; % '0023' '0025' '0027'
+subject = {'test'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);
@@ -40,7 +40,7 @@ sex = [];
 ID = [];
 cBal = [];
 predErr = [];
-learnR = [];
+lR = [];
 pred = [];
 outcome = [];
 sigma = [];
@@ -49,7 +49,7 @@ date= [];
 %% Merges all data and exports them to a text file.
 
 Data = fopen('AdaptiveLearning/DataDirectory/MergedData.txt','wt');
-fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %10s\n','ID', 'sex', 'age', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'perf', 'accP', 'learnR', 'date');
+fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'perf', 'accP', 'lR', 'date');
 
 for i = 1:length(subject)
     
@@ -125,7 +125,7 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).catchTrial;
     catchTrial = [catchTrial; temp];
     
-    % Ttrials after change-point
+    % Trials after change-point
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).TAC;
     TAC = [TAC; temp];
     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).TAC;
@@ -205,7 +205,7 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).cBal;
     cBal = [cBal; temp];
     
-    % Date
+    % date
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).date;
     date = [date; temp];
     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).date;
@@ -220,18 +220,16 @@ for i = 1:length(subject)
     
 end
 
+
+
 for i = 1:length(trial)
     
-    
-    
-    
-    
     predErrNorm(i) = sqrt((outcome(i) - pred(i))^2); %
-    predErrPlus(i) = sqrt((outcome(i) - pred(i)+2*pi)^2); %
-    predErrMin(i) =  sqrt((outcome(i) - pred(i)-2*pi)^2); %
-    if predErrNorm(i) >= 0 && predErrNorm(i) <= pi
+    predErrPlus(i) = sqrt((outcome(i) - pred(i)+360)^2); %
+    predErrMin(i) =  sqrt((outcome(i) - pred(i)-360)^2); %
+    if predErrNorm(i) >= 0 && predErrNorm(i) <= 180
         predErr(i) = predErrNorm(i);
-    elseif predErrPlus(i) >= 0 && predErrPlus(i) <= pi
+    elseif predErrPlus(i) >= 0 && predErrPlus(i) <= 180
         predErr(i) = predErrPlus(i);
     else
         predErr(i) = predErrMin(i);
@@ -240,36 +238,59 @@ for i = 1:length(trial)
 end
 
 
+%%% Check learning rate!
+
 for i = 2:length(trial)
-    learnRNorm(i) = sqrt(((pred(i) - pred(i-1))/predErr(i-1))^2);
-    learnRPlus(i) = sqrt((pred(i) - pred(i-1)+2*pi)^2)/predErr(i-1);
-    learnRMin(i) = sqrt((pred(i) - pred(i-1)-2*pi)^2)/predErr(i-1);
-    
-    if learnRNorm(i) >= 0 && learnRNorm(i) <= pi
-        learnR(i) = learnRNorm(i);
-    elseif learnRPlus(i) >= 0 && learnRPlus(i) <= pi
-        learnR(i) = learnRPlus(i);
+pDiffN(i) = sqrt((pred(i) - pred(i-1))^2);
+pDiffP(i) = (sqrt(pred(i) - pred(i-1))^2)+360;
+pDiffM(i) = (sqrt(pred(i) - pred(i-1))^2)-360;
+
+
+if pDiffN(i) >= 0 && pDiffN(i) <= 180
+        pDiff(i) = pDiffN(i);
+    elseif pDiffP(i) >= 0 && pDiffP(i) <= 180
+        pDiff(i) = predErrPlus(i);
     else
-        learnR(i) = learnRMin(i);
-    end
-    
+        pDiff(i) = pDiffM(i);
 end
-    % Calculate learning rate.
-    if i >= 2
-        learnR(i) = (pred(i) - pred(i-1))/predErr(i-1);
-        learnR(i) = sqrt(learnR(i)^2);
-    end
 
 
+lR(i) = pDiff(i)/predErr(i-1);
+
+end
+
+% for i = 2:length(trial)
+%     learnRNorm(i) = sqrt(((pred(i) - pred(i-1))/predErr(i-1))^2);
+%     learnRPlus(i) = sqrt((pred(i) - pred(i-1)+2*pi)^2)/predErr(i-1);
+%     learnRMin(i) = sqrt((pred(i) - pred(i-1)-2*pi)^2)/predErr(i-1);
+%     
+%     if learnRNorm(i) >= 0 && learnRNorm(i) <= pi
+%         learnR(i) = learnRNorm(i);
+%     elseif learnRPlus(i) >= 0 && learnRPlus(i) <= pi
+%         learnR(i) = learnRPlus(i);
+%     else
+%         learnR(i) = learnRMin(i);
+%     end
+%     
+% end
+%     % Calculate learning rate.
+%     if i >= 2
+%         learnR(i) = (pred(i) - pred(i-1))/predErr(i-1);
+%         learnR(i) = sqrt(learnR(i)^2);
+%     end
+
+
+%% only valiid for Pilot1    
+% for i = 1:length(trial)
+%     
+%     fprintf(Data,'%7s %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.2f %7.2f %7.2f %12s\n', ID{i}, sex{i}, age(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErrNorm(i), predErrPlus(i), predErrMin(i), predErr(i), perf(i), accPerf(i), learnR(i), date{i}); 
+% end
+
+%Regular loop.
 for i = 1:length(trial)
     
-    fprintf(Data,'%7s %7s %7d %7s %7.1f %7d %7d %7d %7d %7d %7d %7d %7d %7d %7d %7d %7d %10s\n', ID{i}, sex{i}, age(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), perf(i), accPerf(i), date{i}); %randStimList{i,2}
+    fprintf(Data,'%7s %7s %7d %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.2f %7.2f %7.2f %12s\n', ID{i}, sex{i}, age(i), cBal{i}, sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), perf(i), accPerf(i), lR(i), date{i}); % learnR(i)
 end
-
-% for i = 1:2%length(trial)
-%     
-%     fprintf(Data,'%7s %7s %7d %7s %7.1f %7d %7d %7d %7d %7d %7.4f %7.4f %7.4f %7.4f %7.2f %7.2f %7.4f %7s\n', ID{i}, sex{i}, age(i), cBal(i), sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), perf(i), accPerf(i), learnR(i), date{i}); %randStimList{i,2}
-% end
 
 
 
@@ -279,7 +300,7 @@ fclose(Data)
 %% Basic statistics.
 
 %%% Learning rate %%%
-learnR(learnR > 1.5) = [1.5];
+lR(lR > 1.5) = [1.5];
 
 LR1A = 0;
 LR2A = 0;
@@ -298,43 +319,43 @@ for i = 1:length(trial)
     
     if TAC(i) == 1
         
-        LR1A = LR1A + learnR(i);
+        LR1A = LR1A + lR(i);
         
     elseif TAC(i) == 2
         
-        LR2A = LR2A + learnR(i);
+        LR2A = LR2A + lR(i);
         
     elseif TAC(i) == 3
         
-        LR3A = LR3A + learnR(i);
+        LR3A = LR3A + lR(i);
         
     elseif TAC(i) == 4
         
-        LR4A = LR4A + learnR(i);
+        LR4A = LR4A + lR(i);
         
     elseif TAC(i) == 5
         
-        LR5A = LR5A + learnR(i);
+        LR5A = LR5A + lR(i);
         
     elseif TAC(i) == 6
         
-        LR6A = LR6A + learnR(i);
+        LR6A = LR6A + lR(i);
         
     elseif TAC(i) == 7
         
-        LR7A = LR7A + learnR(i);
+        LR7A = LR7A + lR(i);
         
     elseif TAC(i) == 8
         
-        LR8A = LR8A + learnR(i);
+        LR8A = LR8A + lR(i);
         
     elseif TAC(i) == 9
         
-        LR9A = LR9A + learnR(i);
+        LR9A = LR9A + lR(i);
         
     elseif TAC(i) == 10
         
-        LR10A = LR10A + learnR(i);
+        LR10A = LR10A + lR(i);
     end
 end
 

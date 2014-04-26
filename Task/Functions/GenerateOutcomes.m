@@ -25,7 +25,7 @@ fID = 'ID'; ID = cell(trials, 1); % ID.
 fAge = 'age'; age = zeros(trials, 1); % Age.
 fSex = 'sex'; sex = cell(trials, 1); % Sex.
 fDate = 'date'; date = cell(trials, 1);
-fTrial = 'trial'; trial = zeros(trials, 1); % Trial.
+fTrial = 'trial'; %trial = zeros(trials, 1); % Trial.
 fOutcome = 'outcome'; outcome=nan(trials, 1); % Outcome.       
 fDistMean = 'distMean'; distMean=nan(trials, 1); % Distribution mean.      
 fCp = 'cp'; cp=zeros(trials, 1); % Change point.           
@@ -38,6 +38,7 @@ fPredErrNorm = 'predErrNorm'; predErrNorm = zeros(trials, 1);% Regular predictio
 fPredErrPlus = 'predErrPlus'; predErrPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
 fPredErrMin = 'predErrMin'; predErrMin = zeros(trials, 1); % Prediction error minus 360 degrees.
 fHit = 'hit'; hit = zeros(trials, 1);
+fCBal = 'cBal'; cBal = cell(trials, 1);
 s=taskParam.safe; % how many guaranteed trials before change-point.
 fPerf = 'perf'; perf = zeros(trials, 1); % Performance.
 fAccPerf = 'accPerf'; accPerf = zeros(trials, 1); % Accumulated performance. 
@@ -86,7 +87,7 @@ for i = 1:trials
 end
 
 taskData = struct(fID, {ID}, fAge, age,fSex, {sex}, fTrial, i, fOutcome,...
-    outcome, fDistMean, distMean, fCp, cp, fTAC, TAC, fBoatType, boatType,...
+    outcome, fDistMean, distMean, fCp, cp, fCBal, {cBal}, fTAC, TAC, fBoatType, boatType,...
     fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm,...
     predErrNorm, fPredErrPlus, predErrPlus, fPredErrMin, predErrMin,...
     fHit, hit, fPerf, perf, fAccPerf, accPerf, fDate, {date});
