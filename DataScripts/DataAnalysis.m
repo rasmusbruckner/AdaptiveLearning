@@ -5,6 +5,8 @@
 
 clear all
 
+
+plotData = false;
 %% Which subjects do you want to load?
 subject = {'test'}; % '0023' '0025' '0027'
 
@@ -231,7 +233,7 @@ for i = 1:length(trial)
         predErr(i) = predErrNorm(i);
     elseif predErrPlus(i) >= 0 && predErrPlus(i) <= 180
         predErr(i) = predErrPlus(i);
-    else
+    elseif predErrMin(i) >=0 && predErrPlus(i) <= 180
         predErr(i) = predErrMin(i);
     end
     
@@ -241,15 +243,19 @@ end
 %%% Check learning rate!
 
 for i = 2:length(trial)
+% pDiffN(i) = sqrt((pred(i) - pred(i-1))^2);
+% pDiffP(i) = (sqrt(pred(i) - pred(i-1))^2)+360;
+% pDiffM(i) = (sqrt(pred(i) - pred(i-1))^2)-360;
+
 pDiffN(i) = sqrt((pred(i) - pred(i-1))^2);
-pDiffP(i) = (sqrt(pred(i) - pred(i-1))^2)+360;
-pDiffM(i) = (sqrt(pred(i) - pred(i-1))^2)-360;
+pDiffP(i) = sqrt((pred(i) - pred(i-1)+360)^2);
+pDiffM(i) = sqrt((pred(i) - pred(i-1)-360)^2);
 
 
 if pDiffN(i) >= 0 && pDiffN(i) <= 180
         pDiff(i) = pDiffN(i);
     elseif pDiffP(i) >= 0 && pDiffP(i) <= 180
-        pDiff(i) = predErrPlus(i);
+        pDiff(i) = pDiffP(i);
     else
         pDiff(i) = pDiffM(i);
 end
@@ -258,27 +264,6 @@ end
 lR(i) = pDiff(i)/predErr(i-1);
 
 end
-
-% for i = 2:length(trial)
-%     learnRNorm(i) = sqrt(((pred(i) - pred(i-1))/predErr(i-1))^2);
-%     learnRPlus(i) = sqrt((pred(i) - pred(i-1)+2*pi)^2)/predErr(i-1);
-%     learnRMin(i) = sqrt((pred(i) - pred(i-1)-2*pi)^2)/predErr(i-1);
-%     
-%     if learnRNorm(i) >= 0 && learnRNorm(i) <= pi
-%         learnR(i) = learnRNorm(i);
-%     elseif learnRPlus(i) >= 0 && learnRPlus(i) <= pi
-%         learnR(i) = learnRPlus(i);
-%     else
-%         learnR(i) = learnRMin(i);
-%     end
-%     
-% end
-%     % Calculate learning rate.
-%     if i >= 2
-%         learnR(i) = (pred(i) - pred(i-1))/predErr(i-1);
-%         learnR(i) = sqrt(learnR(i)^2);
-%     end
-
 
 %% only valiid for Pilot1    
 % for i = 1:length(trial)
@@ -293,6 +278,8 @@ for i = 1:length(trial)
 end
 
 fclose(Data)
+
+if plotData == true
 
 %% Basic statistics.
 
@@ -513,3 +500,5 @@ plot(xOutc, yOutc, '.g', 'MarkerSize', 30)
 plot(xPredS, yPredS, '.r', 'MarkerSize', 20)
 plot(xHand, yHand, '--rs','MarkerSize', 20, 'MarkerEdgeColor', 'b')
 axis equal
+
+end
