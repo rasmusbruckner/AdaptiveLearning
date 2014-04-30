@@ -1,4 +1,4 @@
-%%% adaptiveLearning EEG Task: BattleShips %%%
+%%% Adaptive Learning EEG Task %%%
 
 % BattleShips in an adaptive learning EEG task for investigating belief
 % updating in dynamical environments with systematic (hazardRate)
