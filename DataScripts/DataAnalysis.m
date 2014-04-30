@@ -8,7 +8,7 @@ clear all
 
 plotData = false;
 %% Which subjects do you want to load?
-subject = {'test'}; % '0023' '0025' '0027'
+subject = {'test4'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);
@@ -47,6 +47,7 @@ pred = [];
 outcome = [];
 sigma = [];
 date= [];
+pDiff = [];
 
 %% Merges all data and exports them to a text file.
 
@@ -54,8 +55,6 @@ Data = fopen('AdaptiveLearning/DataDirectory/MergedData.txt','wt');
 fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'perf', 'accP', 'pDiffN', 'pDiffP', 'pDiffM', 'pDiff', 'lR', 'date');
 
 for i = 1:length(subject)
-    
-    
     
     % ID
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).ID;
@@ -242,26 +241,29 @@ end
 
 %%% Check learning rate!
 
-for i = 2:length(trial)
-% pDiffN(i) = sqrt((pred(i) - pred(i-1))^2);
-% pDiffP(i) = (sqrt(pred(i) - pred(i-1))^2)+360;
-% pDiffM(i) = (sqrt(pred(i) - pred(i-1))^2)-360;
+for i = 1:length(trial)
 
+if trial(i) >=2
 pDiffN(i) = sqrt((pred(i) - pred(i-1))^2);
 pDiffP(i) = sqrt((pred(i) - pred(i-1)+360)^2);
 pDiffM(i) = sqrt((pred(i) - pred(i-1)-360)^2);
 
 
-if pDiffN(i) >= 0 && pDiffN(i) <= 180
+if pDiffN(i) >= 0 && pDiffN(i) <= 180 && trial(i) >=2
         pDiff(i) = pDiffN(i);
-    elseif pDiffP(i) >= 0 && pDiffP(i) <= 180
+    elseif pDiffP(i) >= 0 && pDiffP(i) <= 180 && trial(i) >=2
         pDiff(i) = pDiffP(i);
-    else
+    elseif pDiffM(i) >=0 && pDiffM(i) <= 180 && trial(i) >=2
         pDiff(i) = pDiffM(i);
+    elseif trial(i) == 1
+        dDiff(i) = 0;
 end
 
-
+%if trial(i) >= 2
 lR(i) = pDiff(i)/predErr(i-1);
+%else 
+ %   lR(i) = 0;
+end
 
 end
 

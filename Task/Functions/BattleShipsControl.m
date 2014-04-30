@@ -184,14 +184,16 @@ for i=1:taskParam.contTrials
     taskDataControl.ID{i} = Subject.ID;
     taskDataControl.sex{i} = Subject.sex;
     taskDataControl.date{i} = Subject.date;
+    taskDataControl.cBal{i} = Subject.cBal;
 end
 
-
+sigma = repmat(sigma, length(taskDataControl.trial),1);
 %% Save data.
 
 fID = 'ID';
 fAge = 'age';
 fSex = 'sex';
+fCbal = 'cBal';
 fSigma = 'sigma';
 fTrial = 'trial';
 fOutcome = 'outcome';
@@ -208,7 +210,7 @@ fAccPerf ='accPerf';
 fDate = 'date';
 
 dataControl = struct(fID, {taskDataControl.ID}, fAge, taskDataControl.age, fSex, {taskDataControl.sex},...
-    fSigma, sigma,  fTrial, taskDataControl.trial, fOutcome, taskDataControl.outcome,...
+    fCbal, {taskDataControl.cBal}, fSigma, sigma,  fTrial, taskDataControl.trial, fOutcome, taskDataControl.outcome,...
     fDistMean, taskDataControl.distMean, fCp, taskDataControl.cp,  fTAC, taskDataControl.TAC,...
     fBoatType, taskDataControl.boatType, fCatchTrial, taskDataControl.catchTrial, ...
     fPred, taskDataControl.pred, fPredErr, taskDataControl.predErr, fHit, taskDataControl.hit,...
