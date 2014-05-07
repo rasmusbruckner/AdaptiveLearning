@@ -48,11 +48,11 @@ outcome = [];
 sigma = [];
 date= [];
 pDiff = [];
-
+hit = [];
 %% Merges all data and exports them to a text file.
 
 Data = fopen('AdaptiveLearning/DataDirectory/MergedData.txt','wt');
-fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'perf', 'accP', 'pDiffN', 'pDiffP', 'pDiffM', 'pDiff', 'lR', 'date');
+fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'UP', 'UPNorm', 'UPPlus', 'UPMin', 'lR', 'hit', 'perf', 'accP', 'date');
 
 for i = 1:length(subject)
     
@@ -206,6 +206,16 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).cBal;
     cBal = [cBal; temp];
     
+    % Hit
+    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).hit;
+    hit = [hit; temp];
+    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).hit;
+    hit = [hit; temp];
+    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).hit;
+    hit = [hit; temp];
+    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).hit;
+    hit = [hit; temp];
+    
     % date
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).date;
     date = [date; temp];
@@ -228,11 +238,11 @@ for i = 1:length(trial)
     predErrNorm(i) = sqrt((outcome(i) - pred(i))^2); %
     predErrPlus(i) = sqrt((outcome(i) - pred(i)+360)^2); %
     predErrMin(i) =  sqrt((outcome(i) - pred(i)-360)^2); %
-    if predErrNorm(i) >= 0 && predErrNorm(i) <= 180
+    if predErrNorm(i) <= 180 %predErrNorm(i) >= 0 && predErrNorm(i) <= 180
         predErr(i) = predErrNorm(i);
-    elseif predErrPlus(i) >= 0 && predErrPlus(i) <= 180
+    elseif predErrPlus(i) <= 180 %predErrPlus(i) >= 0 && predErrPlus(i) <= 180
         predErr(i) = predErrPlus(i);
-    elseif predErrMin(i) >=0 && predErrPlus(i) <= 180
+    elseif predErrMin(i) <= 180 %predErrMin(i) >=0 && predErrMin(i) <= 180
         predErr(i) = predErrMin(i);
     end
     
@@ -244,23 +254,23 @@ end
 for i = 1:length(trial)
 
 if trial(i) >=2
-pDiffN(i) = sqrt((pred(i) - pred(i-1))^2);
-pDiffP(i) = sqrt((pred(i) - pred(i-1)+360)^2);
-pDiffM(i) = sqrt((pred(i) - pred(i-1)-360)^2);
+UPN(i) = sqrt((pred(i) - pred(i-1))^2);
+UPP(i) = sqrt((pred(i) - pred(i-1)+360)^2);
+UPM(i) = sqrt((pred(i) - pred(i-1)-360)^2);
 
 
-if pDiffN(i) >= 0 && pDiffN(i) <= 180 && trial(i) >=2
-        pDiff(i) = pDiffN(i);
-    elseif pDiffP(i) >= 0 && pDiffP(i) <= 180 && trial(i) >=2
-        pDiff(i) = pDiffP(i);
-    elseif pDiffM(i) >=0 && pDiffM(i) <= 180 && trial(i) >=2
-        pDiff(i) = pDiffM(i);
+if UPN(i) <= 180 %pDiffN(i) >= 0 && pDiffN(i) <= 180 && trial(i) >=2
+        UP(i) = UPN(i);
+    elseif UPP(i) <= 180 % pDiffP(i) >= 0 && pDiffP(i) <= 180 && trial(i) >=2
+        UP(i) = UPP(i);
+    elseif UPM(i) <= 180 %pDiffM(i) >=0 && pDiffM(i) <= 180 && trial(i) >=2
+        UP(i) = UPM(i);
     elseif trial(i) == 1
-        dDiff(i) = 0;
+        UP(i) = 0;
 end
 
 %if trial(i) >= 2
-lR(i) = pDiff(i)/predErr(i-1);
+lR(i) = UP(i)/predErr(i-1);
 %else 
  %   lR(i) = 0;
 end
@@ -276,7 +286,7 @@ end
 %Regular loop.
 for i = 1:length(trial)
     
-    fprintf(Data,'%7s %7s %7d %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.2f %7.2f %7.f %7.f %7.f %7.f %7.2f %12s\n', ID{i}, sex{i}, age(i), cBal{i}, sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), perf(i), accPerf(i), pDiffN(i), pDiffP(i), pDiffM(i), pDiff(i), lR(i), date{i}); % learnR(i)
+    fprintf(Data,'%7s %7s %7d %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.2f %7.f %7.2f %7.2f %12s\n', ID{i}, sex{i}, age(i), cBal{i}, sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), UP(i), UPN(i), UPP(i), UPM(i), lR(i), hit(i), perf(i), accPerf(i), date{i}); % learnR(i)
 end
 
 fclose(Data)

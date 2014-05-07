@@ -18,7 +18,7 @@ runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 5; % Number of trials per (sigma-)condition.
+fTrials = 'trials'; trials = 20; % Number of trials per (sigma-)condition.
 fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
 fContTrials = 'contTrials'; contTrials = 5; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
