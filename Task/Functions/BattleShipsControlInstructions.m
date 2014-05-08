@@ -23,7 +23,7 @@ KbReleaseWait();
 
 while 1
 
-txtControl = 'Zum Abschluss kommt eine kurze Gedächtnisaufgabe. Deine Aufgabe ist es,\n\ndir die Position des Bootes zu merken und den blauen Punkt daraufhin\n\ngenau auf diese Position zu steuern.';
+txtControl = 'Zum Abschluss kommt eine Gedächtnisaufgabe. Deine Aufgabe\n\nist es, dir die Position des Bootes zu merken und den blauen Punkt\n\ndaraufhin genau auf diese Position zu steuern.';
 Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
 DrawFormattedText(taskParam.window, txtControl, 200, 300);
 DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
@@ -86,7 +86,7 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen4='... und steuere den blauen Punkt auf die Postition die du dir gemerkt hast.\n\nDücke dann LEERTASTE.';
+        txtScreen4='... und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nhast. Dücke dann LEERTASTE.';
     else
         txtScreen4='... und steuere den blauen Punkt auf die Postition die du dir gemerkt hast.\n\nDücke dann LEERTASTE.';
     end
@@ -180,7 +180,7 @@ KbReleaseWait();
 
 while 1
 Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-txtPay = 'Das war es auch schon!\n\n\nBezahlung:\n\nGoldenes Boot: Wenn du dir die letzte Position richtig gemerkt hast, bekommst\ndu 20 CENT.\n\nBronzenes Boot: Wenn du dir die letzte Postion richtig gemerkt hast, bekommst\ndu 10 CENT.\n\nSteine: Hier verdienst du leider nichts.';
+txtPay = 'Start der Gedächtnisaufgabe: Denke daran, dass du den blauen\n\nPunkt ab jetzt immer auf die letzte Position des Bootes steuerst.\n\n\nBezahlung:\n\nGoldenes Boot: Wenn du dir die letzte Position richtig gemerkt hast,\nbekommst du 20 CENT.\n\nBronzenes Boot: Wenn du dir die letzte Postion richtig gemerkt hast,\nbekommst du 10 CENT.\n\nSteine: Hier verdienst du leider nichts.';
 DrawFormattedText(taskParam.window, txtPay, 200, 300);
 
 EnterGo = 'Mit Enter geht es los';

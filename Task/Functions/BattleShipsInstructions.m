@@ -16,7 +16,7 @@ practiceData = GenerateOutcomes(taskParam, sigma, condition);
 screensize = get(0,'MonitorPositions');
 %%%%%%%%%%%%%%%%%%%%%
 
-NPractice = 10;
+NPractice = 1;
 
 if isequal(taskParam.computer, 'Macbook')
     enter = 40;
