@@ -55,9 +55,9 @@ txtPressEnter='Weiter mit Enter';
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen2='Auf rauer See möchtest du möglichst viele Schiffe versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen\n\nHinweis darauf gibt, wo sich ein Schiff aufhält.';
+        txtScreen2='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen\n\nHinweis darauf gibt, wo sich ein Schiff aufhält.';
     else
-        txtScreen2='Auf rauer See möchtest du möglichst viele Schiffe versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
+        txtScreen2='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
     end
     
     
@@ -83,14 +83,14 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen3='Dein Abschussziel gibst du mit dem roten Punkt an, den du mit der\n\nrechten und linken Pfeiltaste steuerst. Probier dies einmal aus.';
+        txtScreen3='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der\n\nrechten und linken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
     else
-        txtScreen3='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der rechten und\n\nlinken Pfeiltaste steuerst. Probier dies einmal aus.';
+        txtScreen3='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der rechten und\n\nlinken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
     end
     
     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
     DrawFormattedText(taskParam.window,txtScreen3,200,100);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    
     DrawCircle(taskParam.window)
     DrawCross(taskParam.window)
     DrawHand(taskParam, distMean)
@@ -112,21 +112,60 @@ while 1
             else
                 taskParam.rotAngle = 360*taskParam.unit;
             end
-        elseif find(keyCode)==enter
+        elseif keyCode(taskParam.space)
             break;
         end
     end
 end
 
+        DrawCircle(taskParam.window);
+        DrawCross(taskParam.window);
+        Screen('Flip', taskParam.window);
+        WaitSecs(1);
+        
+        DrawCircle(taskParam.window);
+        DrawOutcome(taskParam, 238);
+        DrawCross(taskParam.window);
+        PredictionSpot(taskParam);
+        
+        if isequal(taskParam.computer, 'Humboldt')
+            txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
+        else
+            txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';       
+        end
+        
+        Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtScreen3,200,100);
+        
+        Screen('Flip', taskParam.window);
+       
+        while 1
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode) == enter
+                break
+            end
+        end
+        end
+
+        DrawCircle(taskParam.window);
+        DrawCross(taskParam.window);
+        Screen('Flip', taskParam.window);
+        WaitSecs(1);
+
 KbReleaseWait();
+
+
+
 
 % Fourth screen.
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen4='Ein Schiff kann unterschiedliche Ladungen an Board haben.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT. ';
+        txtScreen4='Egal ob du das ein Schiff getroffen hast oder nicht, siehst du welche Ladung\n\ndas Schiff an Bord hat.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT. ';
     else
-        txtScreen4='Ein Schiff kann unterschiedliche Ladungen an Bord haben.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
+        txtScreen4='Egal ob du das ein Schiff getroffen hast oder nicht, siehst du welche Ladung\n\ndas Schiff an Bord hat.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     end
     
     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
@@ -197,9 +236,9 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen7 = 'Wie der Radar funktioniert:\n\n\nDer Radar zeigt dir die Position des Schiffs leider nur ungefähr an.\n\nDurch das Meeresrauschen kommt es oft vor, dass das Schiff nur in\n\nder Nähe der angezeigten Position ist. Manchmal ist das Schiff links\n\nund manchmal rechts davon. Diese Abweichung ist zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich das Schiff aufhält.';
+        txtScreen7 = 'Wie der Radar funktioniert:\n\n\nDer Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal ist sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
     else
-        txtScreen7 = 'Wie der Radar funktioniert:\n\n\nDer Radar zeigt dir durch den schwarzen Balken die ungefähre Position des\n\nSchiffs an. Durch den Seegang kommt es oft vor, dass das Schiff nur in der\n\nNähe der angezeigten Position ist. Manchmal ist das Schiff links und manchmal\n\nrechts davon. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich das Schiff aufhält.';
+        txtScreen7 = 'Wie der Radar funktioniert:\n\n\nDer Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe der\n\nangezeigten Position sind. Manchmal ist sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
     end
     
     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
@@ -219,9 +258,9 @@ KbReleaseWait()
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen8='Mit LEERTASTE feuerst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch das\n\nMeeresrauschen nur ungefähr angibt wo das Schiff ist.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
+        txtScreen8='Mit LEERTASTE feuerst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den\n\nSeegang nur ungefähr angibt wo die Schiffe sind.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
     else
-        txtScreen8='Mit LEERTASTE feuerst du einen Schuss ab. Richte dich dabei nach der\n\nRadarnadel. Beachte, dass dir der Radar durch den Seegang nur\n\nungefähr angibt wo, das Schiff ist.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe zu treffen.';
+        txtScreen8='Mit LEERTASTE feuerst du einen Schuss ab. Richte dich dabei nach der\n\nRadarnadel. Beachte, dass dir der Radar durch den Seegang nur\n\nungefähr angibt wo, die Schiffe sind.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe zu treffen.';
     end
     
     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
@@ -606,7 +645,7 @@ elseif cBal == '2'
     
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 KbReleaseWait();
 
 
@@ -614,9 +653,9 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Kompassnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.';
+        txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.';
     else
-        txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nKompassnadel eine neue Position anzeigt, solltest du dich daran anpassen.';
+        txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nRadarnadel eine neue Position anzeigt, solltest du dich daran anpassen.';
     end
     
     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
@@ -826,27 +865,7 @@ if cBal == '1'
     KbReleaseWait();
     
     
-    % Thirteenths screen.
-% while 1
-%     
-%     if isequal(taskParam.computer, 'Humboldt')
-%         txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Kompassnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.';
-%     else
-%         txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nKompassnadel eine neue Position anzeigt, solltest du dich daran anpassen.';
-%     end
-%     
-%     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-%     DrawFormattedText(taskParam.window,txtScreen13, 200, 300');
-%     DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%     
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==enter
-%             break
-%         end
-%     end
-% end
+ 
     
 elseif cBal == '2'
     
@@ -945,30 +964,7 @@ elseif cBal == '2'
     
     KbReleaseWait();
     
-    
-    
-%     % Thirteenths screen.
-% while 1
-%     
-%     if isequal(taskParam.computer, 'Humboldt')
-%         txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Kompassnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.';
-%     else
-%         txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nKompassnadel eine neue Position anzeigt, solltest du dich daran anpassen.';
-%     end
-%     
-%     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-%     DrawFormattedText(taskParam.window,txtScreen13, 200, 300');
-%     DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%     
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==enter
-%             break
-%         end
-%     end
-% end
-    
+
     % Fourteenths screen.
     while 1
         txtLowNoise='Leichter Seegang';
@@ -1063,27 +1059,6 @@ elseif cBal == '2'
 end
 
 
-%     % Thirteenths screen.
-% while 1
-%     
-%     if isequal(taskParam.computer, 'Humboldt')
-%         txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Kompassnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.';
-%     else
-%         txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fährt das Schiff ab und zu weiter.\n\nWann ein Schiff weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nKompassnadel eine neue Position anzeigt, solltest du dich daran anpassen.';
-%     end
-%     
-%     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-%     DrawFormattedText(taskParam.window,txtScreen13, 200, 300');
-%     DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%     
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==enter
-%             break
-%         end
-%     end
-% end
 
 
 % Screen 18.
@@ -1109,238 +1084,6 @@ while 1
 end
 KbReleaseWait();
 
-
-
-
-%%%%%%%%%%%%%%%%%%%%
-
-%
-% % Screen 19.
-% while 1
-%     DrawFormattedText(taskParam.window,txtLowNoise,'center','center', [0 0 0]);
-%     DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==enter
-%             break
-%         end
-%     end
-% end
-%
-% KbReleaseWait();
-%
-% % Screen 20 with practice trials with low noise.
-% for i=1:taskParam.practTrials
-%
-%     while 1
-%
-%         if practiceData.catchTrial(i) == 1
-%             DrawHand(taskParam, practiceData.distMean(i))
-%         end
-%
-%         DrawCircle(taskParam.window)
-%         DrawCross(taskParam.window)
-%         PredictionSpot(taskParam)
-%         Screen('Flip', taskParam.window);
-%
-%         [ keyIsDown, seconds, keyCode ] = KbCheck;
-%
-%         if keyIsDown
-%             if keyCode(taskParam.rightKey)
-%                 if taskParam.rotAngle < 360*taskParam.unit
-%                     taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
-%                 else
-%                     taskParam.rotAngle = 0;
-%                 end
-%             elseif keyCode(taskParam.leftKey)
-%                 if taskParam.rotAngle > 0*taskParam.unit
-%                     taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
-%                 else
-%                     taskParam.rotAngle = 360*taskParam.unit;
-%                 end
-%             elseif keyCode(taskParam.space)
-%                 prediction(i) = taskParam.rotAngle;
-%                 break;
-%             end
-%         end
-%     end
-%
-%     predErr(i)=prediction(i) - practiceData.outcome(i);
-%     predErr(i)=sqrt((predErr(i)^2));
-%
-%     DrawCircle(taskParam.window)
-%     DrawCross(taskParam.window)
-%     Screen('Flip', taskParam.window);
-%     if practiceData.catchTrial(i) == 1
-%         DrawHand(taskParam, practiceData.distMean(i));
-%     end
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window);
-%     DrawOutcome(taskParam, practiceData.outcome(i));
-%     PredictionSpot(taskParam);
-%     DrawCross(taskParam.window);
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window);
-%     DrawCross(taskParam.window);
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window);
-%
-%     if practiceData.boatType(i) == 1
-%         DrawGoldBoat(taskParam)
-%     elseif practiceData.boatType(i) == 2
-%         DrawBronzeBoat(taskParam)
-%     else
-%         DrawSilverBoat(taskParam)
-%     end
-%
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window)
-%     DrawCross(taskParam.window)
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     if i >= 2
-%         learnR(i)= (prediction(i) - prediction(i-1))/predErr(i-1);
-%         learnR(i)=sqrt(learnR(i)^2);
-%     end
-%
-% end
-%
-% KbReleaseWait();
-%
-% % Screen 21.
-% while 1
-%     DrawFormattedText(taskParam.window,txtHighNoise,'center','center', [0 0 0]);
-%     DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==enter
-%             break
-%         end
-%     end
-% end
-% KbReleaseWait();
-%
-% % Screen 22 with practice block with high noise.
-% for i=1:taskParam.practTrials
-%
-%     while 1
-%
-%         if practiceData.catchTrial(i) == 1
-%             DrawHand(taskParam, practiceData.distMean(i))
-%         end
-%
-%         DrawCircle(taskParam.window)
-%         DrawCross(taskParam.window)
-%         PredictionSpot(taskParam)
-%         Screen('Flip', taskParam.window);
-%
-%         [ keyIsDown, seconds, keyCode ] = KbCheck;
-%
-%         if keyIsDown
-%             if keyCode(taskParam.rightKey)
-%                 if taskParam.rotAngle < 360*taskParam.unit
-%                     taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
-%                 else
-%                     taskParam.rotAngle = 0;
-%                 end
-%             elseif keyCode(taskParam.leftKey)
-%                 if taskParam.rotAngle > 0*taskParam.unit
-%                     taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
-%                 else
-%                     taskParam.rotAngle = 360*taskParam.unit;
-%                 end
-%             elseif keyCode(taskParam.space)
-%                 prediction(i) = taskParam.rotAngle;
-%                 break;
-%             end
-%         end
-%     end
-%     predErr(i)=prediction(i) - practiceData.outcome(i);
-%     predErr(i)=sqrt((predErr(i)^2));
-%
-%     DrawCircle(taskParam.window)
-%     DrawCross(taskParam.window)
-%     Screen('Flip', taskParam.window);
-%     if practiceData.catchTrial(i) == 1
-%         DrawHand(taskParam, practiceData.distMean(i))
-%     end
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window)
-%     DrawOutcome(taskParam, practiceData.outcome(i))
-%     PredictionSpot(taskParam)
-%     DrawCross(taskParam.window)
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window)
-%     DrawCross(taskParam.window)
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window)
-%
-%     if practiceData.boatType(i) == 1
-%         DrawGoldBoat(taskParam)
-%     elseif practiceData.boatType(i) == 2
-%         DrawBronzeBoat(taskParam)
-%     else
-%         DrawSilverBoat(taskParam)
-%     end
-%
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     DrawCircle(taskParam.window)
-%     DrawCross(taskParam.window)
-%     Screen('Flip', taskParam.window);
-%     WaitSecs(1);
-%
-%     if i >= 2
-%         learnR(i)= (prediction(i) - prediction(i-1))/predErr(i-1);
-%         learnR(i)=sqrt(learnR(i)^2);
-%     end
-%
-% end
-% KbReleaseWait();
-
-%%%%%%%%%%%%
-
-
-% Screen 23.
-% while 1
-%
-%     if isequal(taskParam.computer, 'Humboldt')
-%         txtScreen23 = 'Du hast die Übungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche\n\nwie in der letzten Übung. Zur Erinnerung: In den meisten Fällen\n\nmusst du die Schiffsposition selber herausfinden. Nur in wenigen\n\nFällen zeigt dir die Radarnadel wo sich das Schiff ungefähr aufhält,\n\ndies hilft dir das Schiff zu treffen.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\nViel Erfolg!';
-%     else
-%         txtScreen23 = 'Du hast die Übungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche wie in der\n\nletzten Übung. Zur Erinnerung: In den meisten Fällen musst du die\n\nSchiffsposition selber herausfinden. Nur in wenigen Fällen zeigt dir die\n\nRadarnadel wo sich das Schiff ungefähr aufhält, dies hilft dir das Schiff zu treffen.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\nViel Erfolg!';
-%     end
-%
-%     txtStartMain = 'Der Versuchsleiter startet jetzt die EEG-Aufzeichnung und die Aufgabe';
-%     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/11, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 5)] ) %(screensize(4) / 4)
-%     DrawFormattedText(taskParam.window,txtScreen23, 200, 100);
-%     DrawFormattedText(taskParam.window,txtStartMain,'center',screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==s
-%             break
-%         end
-%     end
-% end
 
 %% Save data.
 
