@@ -12,7 +12,7 @@ end
 taskData = GenerateOutcomes(taskParam, sigma, condition);
 
 %% Run trials.
-for i=1:taskParam.trials%taskData.trial
+for i=1:taskParam.trials %taskData.trial
     
     % Trigger: start task.
     if taskParam.sendTrigger == true
@@ -98,29 +98,20 @@ for i=1:taskParam.trials%taskData.trial
             end
         end
     end
+
+    % Calculate prediction error.
+    [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
-    % Calculate prediction error:
-    %   We have to calculate different prediction errors because the normal
-    %   prediction error is calculated from the beginning of the line
-    %   (degrees on the circle) to the end of the line (360 degrees).
-    %   However, on a circle a prediction error cannot be bigger than 180 degrees.
-    %   Therefore we also add and subtract 360 degrees to the normal prediction
-    %   error and choose the 'right' one which is bigger than zero and smaller than 180 degrees.
-    
-    taskData.predErrNorm(i) = sqrt((taskData.outcome(i) - taskData.pred(i))^2);
-    taskData.predErrPlus(i) = sqrt((taskData.outcome(i) - taskData.pred(i)+360)^2);
-    taskData.predErrMin(i) =  sqrt((taskData.outcome(i) - taskData.pred(i)-360)^2);
-    if taskData.predErrNorm(i) >= 0 && taskData.predErrNorm(i) <= 180
-        taskData.predErr(i) = taskData.predErrNorm(i);
-    elseif taskData.predErrPlus(i) >= 0 && taskData.predErrPlus(i) <= 180
-        taskData.predErr(i) = taskData.predErrPlus(i);
-    else
-        taskData.predErr(i) = taskData.predErrMin(i);
+    if i >= 2
+    % Calculate update.
+    [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
-    if taskData.predErr(i) <= 13
-        taskData.hit(i) = 1;
-    end
+    % Memory error = 99 because there is no memory error in this condition.
+    taskData.memErr(i) = 99; 
+    taskData.memErrNorm(i) = 99; 
+    taskData.memErrPlus(i) = 99; 
+    taskData.memErrMin(i) = 99; 
     
     % Show baseline 1.
     DrawCross(taskParam.window)
@@ -222,30 +213,16 @@ sigma = repmat(sigma, length(taskData.trial),1);
 
 %% Save data.
 
-fID = 'ID';
-fAge = 'age';
-fSex = 'sex';
-fSigma = 'sigma';
-fTrial = 'trial';
-fOutcome = 'outcome';
-fDistMean = 'distMean';
-fCp = 'cp';
-fTAC = 'TAC';
-fBoatType = 'boatType';
-fCatchTrial = 'catchTrial';
-fPred = 'pred';
-fPredErr = 'predErr';
-fHit = 'hit';
-fPerf = 'perf';
-fAccPerf ='accPerf';
-fDate = 'date';
-fCBal = 'cBal';
-
-Data = struct(fID, {taskData.ID}, fAge, taskData.age, fSex, {taskData.sex},...
-    fCBal, {taskData.cBal}, fSigma, sigma,  fTrial, taskData.trial, fOutcome, taskData.outcome,...
-    fDistMean, taskData.distMean, fCp, taskData.cp,  fTAC, taskData.TAC,...
-    fBoatType, taskData.boatType, fCatchTrial, taskData.catchTrial, ...
-    fPred, taskData.pred, fPredErr, taskData.predErr, fHit, taskData.hit,...
-    fPerf, taskData.perf, fAccPerf, taskData.accPerf, fDate, {taskData.date});
+fieldNames = taskParam.fieldNames;
+Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.sex, {taskData.sex},...
+fieldNames.cBal, {taskData.cBal}, fieldNames.sigma, sigma, fieldNames.trial, taskData.trial,...
+fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
+fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
+fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
+fieldNames.predErrPlus, taskData.predErrPlus, fieldNames.predErrMin, taskData.predErrMin,...
+fieldNames.memErr, taskData.memErr, fieldNames.memErrNorm, taskData.memErrNorm, fieldNames.memErrPlus, taskData.memErrPlus,...
+fieldNames.memErrMin, taskData.memErrMin, fieldNames.UP, taskData.UP,fieldNames.UPNorm, taskData.UPNorm,...
+fieldNames.UPPlus, taskData.UPPlus, fieldNames.UPMin, taskData.UPMin, fieldNames.hit, taskData.hit,...
+fieldNames.perf, taskData.perf, fieldNames.accPerf, taskData.accPerf, fieldNames.date, {taskData.date});
 
 end

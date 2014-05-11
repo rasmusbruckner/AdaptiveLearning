@@ -18,10 +18,8 @@ screensize = get(0,'MonitorPositions');
 
 if isequal(taskParam.computer, 'Macbook')
     enter = 40;
-    %s = 22;
 elseif isequal(taskParam.computer, 'Humboldt')
     enter = 13;
-    %s = 83;
 end
 
 

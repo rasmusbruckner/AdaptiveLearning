@@ -1,5 +1,5 @@
-function taskData = GenerateOutcomes(taskParam, sigma, condition)
-%This funtion generates the outcomes of the task.
+function taskData = GenerateOutcomes(taskParam, sigmas, condition)
+% This funtion generates the outcomes of the task.
 %   The outcomes that are centerend around the mean of a normal
 %   distribution (distMean) with standard deviation = sigma.
 %   All other variables are preallocated.
@@ -12,43 +12,39 @@ elseif isequal(condition, 'control')
     trials = taskParam.contTrials;
 end
 
-% if ~exist('isIntro', 'var') || ~exist('control', 'var') %Check session type (main vs. practice)
-%          trials = taskParam.trials;
-% elseif exist('isIntro', 'var')
-%      trials = taskParam.practTrials;
-% elseif exist('control', 'var')
-%      trials = taskParam.contTrials;
-% end
-
 % Preallocate variables.
-fID = 'ID'; ID = cell(trials, 1); % ID.
-fAge = 'age'; age = zeros(trials, 1); % Age.
-fSex = 'sex'; sex = cell(trials, 1); % Sex.
-fDate = 'date'; date = cell(trials, 1);
-fTrial = 'trial'; %trial = zeros(trials, 1); % Trial.
-fOutcome = 'outcome'; outcome=nan(trials, 1); % Outcome.       
-fDistMean = 'distMean'; distMean=nan(trials, 1); % Distribution mean.      
-fCp = 'cp'; cp=zeros(trials, 1); % Change point.           
-fTAC = 'TAC'; TAC=nan(trials, 1); % Trials after change-point.
-fBoatType = 'boatType'; boatType = zeros(trials, 1); % Boat type.
-fCatchTrial = 'catchTrial'; catchTrial = zeros(trials, 1); % Catch trial.
-fPred = 'pred';pred = zeros(trials, 1); % Prediction of participant.
-fPredErr = 'predErr'; predErr = nan(trials, 1); % Prediction error.
-fPredErrNorm = 'predErrNorm'; predErrNorm = zeros(trials, 1);% Regular prediction error.
-fPredErrPlus = 'predErrPlus'; predErrPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
-fPredErrMin = 'predErrMin'; predErrMin = zeros(trials, 1); % Prediction error minus 360 degrees.
-fHit = 'hit'; hit = zeros(trials, 1);
-fCBal = 'cBal'; cBal = cell(trials, 1);
+fieldNames = taskParam.fieldNames;
+ID = cell(trials, 1); % ID.
+age = zeros(trials, 1); % Age.
+sex = cell(trials, 1); % Sex.
+date = cell(trials, 1);
+%sigma = zeros(trials, 1); % Sigma.
+%fTrial = 'trial'; %trial = zeros(trials, 1); % Trial.
+outcome=nan(trials, 1); % Outcome.       
+distMean=nan(trials, 1); % Distribution mean.      
+cp=zeros(trials, 1); % Change point.           
+TAC=nan(trials, 1); % Trials after change-point.
+boatType = zeros(trials, 1); % Boat type.
+catchTrial = zeros(trials, 1); % Catch trial.
+pred = zeros(trials, 1); % Prediction of participant.
+predErr = nan(trials, 1); % Prediction error.
+predErrNorm = zeros(trials, 1);% Regular prediction error.
+predErrPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
+predErrMin = zeros(trials, 1); % Prediction error minus 360 degrees.
+memErr = zeros(trials, 1);% Memory error.
+memErrNorm = zeros(trials, 1);% Regular memory error.
+memErrPlus = zeros(trials, 1); % Memory error plus 360 degrees.
+memErrMin = zeros(trials, 1); % Memory error minus 360 degrees.
+UP = zeros(trials, 1); % Update of participant.
+UPNorm = zeros(trials, 1);% Regular prediction error.
+UPPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
+UPMin = zeros(trials, 1);
+hit = zeros(trials, 1); % Hit.
+cBal = cell(trials, 1); % Counterbalancing.
 s=taskParam.safe; % how many guaranteed trials before change-point.
-fPerf = 'perf'; perf = zeros(trials, 1); % Performance.
-fAccPerf = 'accPerf'; accPerf = zeros(trials, 1); % Accumulated performance. 
+perf = zeros(trials, 1); % Performance.
+accPerf = zeros(trials, 1); % Accumulated performance. 
 
-
-
-%%%%%%
-
-
-%%%%%%
 %% generateOutcomes
 
 for i = 1:trials
@@ -62,8 +58,7 @@ for i = 1:trials
         s=max([s-1, 0]);
     end
     %while ~isfinite(outcome(i))|outcome(i)>2*pi|outcome(i)<0;
-        outcome(i)=round(normrnd(mean, sigma));
-       
+        outcome(i)=round(normrnd(mean, sigmas)); 
     %end
     distMean(i)=mean;
     
@@ -83,12 +78,14 @@ for i = 1:trials
     else
         catchTrial(i) = 0;
     end
-    
 end
 
-taskData = struct(fID, {ID}, fAge, age,fSex, {sex}, fTrial, i, fOutcome,...
-    outcome, fDistMean, distMean, fCp, cp, fCBal, {cBal}, fTAC, TAC, fBoatType, boatType,...
-    fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm,...
-    predErrNorm, fPredErrPlus, predErrPlus, fPredErrMin, predErrMin,...
-    fHit, hit, fPerf, perf, fAccPerf, accPerf, fDate, {date});
+taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age},fieldNames.sex, {sex}, fieldNames.trial, i,...
+    fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
+    fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.pred,...
+    pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...
+    fieldNames.predErrMin, predErrMin, fieldNames.memErr, memErr, fieldNames.memErrNorm, memErrNorm,...
+    fieldNames.memErrPlus, memErrPlus, fieldNames.memErrMin, memErrMin, fieldNames.UP, UP,...
+    fieldNames.UPNorm, UPNorm, fieldNames.UPPlus, UPPlus, fieldNames.UPMin, UPMin, fieldNames.hit, hit,...
+    fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date, {date});
 end

@@ -1,4 +1,4 @@
-function [taskDataControl, dataControl] = BattleShipsControl(taskParam, sigma, condition, Subject)
+function [taskDataControl, dataControl] = BattleShipsControl(taskParam, sigmas, condition, Subject)
 
 KbReleaseWait()
 
@@ -9,7 +9,8 @@ KbReleaseWait()
 % taskData = GenerateControlOutcomes(taskParam);
 
 %taskData = GenerateOutcomes(taskParam, sigma, condition);
-taskDataControl = GenerateOutcomes(taskParam, sigma, condition);
+taskDataControl = GenerateOutcomes(taskParam, sigmas, condition);
+
 %% Run trials.
 for i=1:taskParam.contTrials
     
@@ -22,12 +23,10 @@ for i=1:taskParam.contTrials
     
     while 1
         
-        
         % Trial onset.
         DrawCircle(taskParam.window)
         DrawCross(taskParam.window)
         PredictionSpot(taskParam)
-        
         
         % Trigger: trial onset.
         if taskParam.sendTrigger == true
@@ -67,26 +66,18 @@ for i=1:taskParam.contTrials
         end
     end
     
-    % Calculate prediction error:
-    %   We have to calculate different prediction errors because the normal
-    %   prediction error is calculated from the beginning of the line
-    %   (degrees on the circle) to the end of the line (360 degrees).
-    %   However, on a circle a prediction error cannot be bigger than 180 degrees.
-    %   Therefore we also add and subtract 360 degrees to the normal prediction
-    %   error and choose the 'right' one which is bigger than zero and smaller than 180 degrees.
+    % Calculate prediction error.
+    [taskDataControl.predErr(i), taskDataControl.predErrNorm(i), taskDataControl.predErrPlus(i), taskDataControl.predErrMin(i)] = Diff(taskDataControl.outcome(i), taskDataControl.pred(i));
     
-    taskDataControl.predErrNorm(i) = sqrt((taskDataControl.outcome(i) - taskDataControl.pred(i))^2);
-    taskDataControl.predErrPlus(i) = sqrt((taskDataControl.outcome(i) - taskDataControl.pred(i)+360)^2);
-    taskDataControl.predErrMin(i) =  sqrt((taskDataControl.outcome(i) - taskDataControl.pred(i)-360)^2);
-    if taskDataControl.predErrNorm(i) >= 0 && taskDataControl.predErrNorm(i) <= 180
-        taskDataControl.predErr(i) = taskDataControl.predErrNorm(i);
-    elseif taskDataControl.predErrPlus(i) >= 0 && taskDataControl.predErrPlus(i) <= 180
-        taskDataControl.predErr(i) = taskDataControl.predErrPlus(i);
-    else
-        taskDataControl.predErr(i) = taskDataControl.predErrMin(i);
+    if i >= 2
+    % Calculate memory error.
+    [taskDataControl.memErr(i), taskDataControl.memErrNorm(i), taskDataControl.memErrPlus(i), taskDataControl.memErrMin(i)] = Diff(taskDataControl.outcome(i), taskDataControl.outcome(i-1));
+   
+    % Calculate update.
+    [taskDataControl.UP(i), taskDataControl.UPNorm(i), taskDataControl.UPPlus(i), taskDataControl.UPMin(i)] = Diff(taskDataControl.pred(i), taskDataControl.pred(i-1));
     end
     
-    if taskDataControl.predErr(i) <= 13
+    if taskDataControl.memErr(i) <= 13
         taskDataControl.hit(i) = 1;
     end
     
@@ -156,7 +147,6 @@ for i=1:taskParam.contTrials
     end
     
     % Trigger: boat.
-    
     if taskParam.sendTrigger == true
         lptwrite(taskParam.port, taskParam.boatTrigger);
         WaitSecs(1/taskParam.sampleRate);
@@ -187,34 +177,18 @@ for i=1:taskParam.contTrials
     taskDataControl.cBal{i} = Subject.cBal;
 end
 
-sigma = repmat(sigma, length(taskDataControl.trial),1);
-%% Save data.
+sigmas = repmat(sigmas, length(taskDataControl.trial),1);
 
-fID = 'ID';
-fAge = 'age';
-fSex = 'sex';
-fCbal = 'cBal';
-fSigma = 'sigma';
-fTrial = 'trial';
-fOutcome = 'outcome';
-fDistMean = 'distMean';
-fCp = 'cp';
-fTAC = 'TAC';
-fBoatType = 'boatType';
-fCatchTrial = 'catchTrial';
-fPred = 'pred';
-fPredErr = 'predErr';
-fHit = 'hit';
-fPerf = 'perf';
-fAccPerf ='accPerf';
-fDate = 'date';
-
-dataControl = struct(fID, {taskDataControl.ID}, fAge, taskDataControl.age, fSex, {taskDataControl.sex},...
-    fCbal, {taskDataControl.cBal}, fSigma, sigma,  fTrial, taskDataControl.trial, fOutcome, taskDataControl.outcome,...
-    fDistMean, taskDataControl.distMean, fCp, taskDataControl.cp,  fTAC, taskDataControl.TAC,...
-    fBoatType, taskDataControl.boatType, fCatchTrial, taskDataControl.catchTrial, ...
-    fPred, taskDataControl.pred, fPredErr, taskDataControl.predErr, fHit, taskDataControl.hit,...
-    fPerf, taskDataControl.perf, fAccPerf, taskDataControl.accPerf, fDate, {taskDataControl.date});
-
+fieldNames = taskParam.fieldNames;
+dataControl = struct(fieldNames.ID, {taskDataControl.ID}, fieldNames.age, taskDataControl.age, fieldNames.sex, {taskDataControl.sex},...
+    fieldNames.cBal, {taskDataControl.cBal}, fieldNames.sigma, sigmas, fieldNames.trial, taskDataControl.trial,...
+    fieldNames.outcome, taskDataControl.outcome, fieldNames.distMean, taskDataControl.distMean, fieldNames.cp, taskDataControl.cp,...
+    fieldNames.TAC, taskDataControl.TAC, fieldNames.boatType, taskDataControl.boatType, fieldNames.catchTrial, taskDataControl.catchTrial, ...
+    fieldNames.pred, taskDataControl.pred, fieldNames.predErr, taskDataControl.predErr, fieldNames.predErrNorm, taskDataControl.predErrNorm,...
+    fieldNames.predErrPlus, taskDataControl.predErrPlus, fieldNames.predErrMin, taskDataControl.predErrMin,...
+    fieldNames.memErr, taskDataControl.memErr, fieldNames.memErrNorm, taskDataControl.memErrNorm, fieldNames.memErrPlus, taskDataControl.memErrPlus,...
+    fieldNames.memErrMin, taskDataControl.memErrMin, fieldNames.UP, taskDataControl.UP,fieldNames.UPNorm, taskDataControl.UPNorm,...
+    fieldNames.UPPlus, taskDataControl.UPPlus,fieldNames.UPMin, taskDataControl.UPMin, fieldNames.hit, taskDataControl.hit,...
+    fieldNames.perf, taskDataControl.perf, fieldNames.accPerf, taskDataControl.accPerf, fieldNames.date, {taskDataControl.date});
 
 end

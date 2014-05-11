@@ -14,16 +14,16 @@ clear all
 
 %% Set parameters.
 
-runIntro = true;   % Run the intro with practice trials?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+runIntro = false;   % Run the intro with practice trials?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
+fTrials = 'trials'; trials = 3; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 1;
 fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
 fContTrials = 'contTrials'; contTrials = 3; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
-sigma = [25 35]; % SD's of distribution.
+sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
 if isequal(computer, 'Macbook')
@@ -132,6 +132,38 @@ fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
 fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
 fSpace = 'space'; space = KbName('Space');
 
+% Fieldnames.
+fID = 'ID'; ID = fID; % ID.
+fAge = 'age'; age = fAge; % Age.
+fSex = 'sex'; sex = fSex; % Sex.
+fSigma = 'sigma'; sigma = fSigma; % Sigma
+fDate = 'date'; date = fDate;
+fTrial = 'trial'; trial = fTrial; % Trial.
+fOutcome = 'outcome'; outcome = fOutcome; % Outcome.       
+fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean.      
+fCp = 'cp'; cp = fCp; % Change point.           
+fTAC = 'TAC'; TAC = fTAC; % Trials after change-point.
+fBoatType = 'boatType'; boatType = fBoatType; % Boat type.
+fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial.
+fPred = 'pred';pred = fPred; % Prediction of participant.
+fPredErr = 'predErr'; predErr = fPredErr; % Prediction error.
+fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;% Regular prediction error.
+fPredErrPlus = 'predErrPlus'; predErrPlus = fPredErrPlus; %Prediction error plus 360 degrees.
+fPredErrMin = 'predErrMin'; predErrMin = fPredErrMin; % Prediction error minus 360 degrees.
+fMemErr = 'memErr'; memErr = fMemErr;% Memory error.
+fMemErrNorm = 'memErrNorm'; memErrNorm = fMemErrNorm;% Regular memory error.
+fMemErrPlus = 'memErrPlus'; memErrPlus = fMemErrPlus; % Memory error plus 360 degrees.
+fMemErrMin = 'memErrMin'; memErrMin = fMemErrMin; % Memory error minus 360 degrees.
+fUP = 'UP'; UP = fUP; % Update of participant.
+fUPNorm = 'UPNorm'; UPNorm = fUPNorm;% Regular prediction error.
+fUPPlus = 'UPPlus'; UPPlus = fUPPlus; %Prediction error plus 360 degrees.
+fUPMin = 'UPMin'; UPMin = fUPMin;
+fHit = 'hit'; hit = fHit; % Hit.
+fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
+fPerf = 'perf'; perf = fPerf; % Performance.
+fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance. 
+%s=taskParam.safe; % how many guaranteed trials before change-point.
+
 %% Trigger settings.
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
@@ -148,6 +180,12 @@ fBlockLSTrigger = 'blockLSTrigger'; blockLSTrigger = 10; % Block with low sigma.
 fBlockHSTrigger = 'blockHSTrigger'; blockHSTrigger = 11; % Block with high sigma.
 fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
 
+fFieldNames = 'fieldNames';
+fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fDate, date, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...            
+fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,... 
+fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
+fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
+
 % Save task parameters in structure
 taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fHazardRate, hazardRate, fSafe, safe, fWindow, window, fWindowRect, windowRect, fPredSpotRad, predSpotRad,...
@@ -158,7 +196,8 @@ taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, tria
     fSpace, space, fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrigger, fTrialOnset, trialOnsetTrigger,...
     fPredTrigger, predTrigger, fBaseline1Trigger, baseline1Trigger, fOutcomeTrigger, outcomeTrigger, fBaseline2Trigger, baseline2Trigger,...
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLSTrigger, blockLSTrigger, fBlockHSTrigger, blockHSTrigger,...
-    fBlockControlTrigger, blockControlTrigger);
+    fBlockControlTrigger, blockControlTrigger, fFieldNames, fieldNames);
+
 
 if isequal(taskParam.computer,'Humboldt')
     enter = 13;
@@ -276,7 +315,7 @@ if Subject.cBal == '1'
     
     % This functions runs the main task.
     condition = 'main';
-    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigma(1), condition, Subject);
+    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
     
     while 1
         txtHighNoise = 'Starker Seegang';
@@ -301,7 +340,7 @@ if Subject.cBal == '1'
     end
     
     % This functions runs the main task.
-    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigma(2), condition, Subject);
+    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
     
     
     % Control trials: this task requires a learning rate = 1
@@ -316,7 +355,7 @@ if Subject.cBal == '1'
     
     % This function runs the control trials
     condition = 'control';
-    [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigma(1), condition, Subject);
+    [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
     
     while 1
         txtBreak = 'Kurze Pause';
@@ -332,7 +371,7 @@ if Subject.cBal == '1'
         end
     end
     
-    [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigma(2), condition, Subject);
+    [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
     while 1
         txtEnd = 'Ende';
         DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
@@ -357,7 +396,7 @@ elseif Subject.cBal == '2'
     % Run intro with practice trials if true.
     if runIntro == true
         
-        BattleShipsInstructions(taskParam, sigma(2), Subject.cBal); % Function for instructions.
+        BattleShipsInstructions(taskParam, sigmas(2), Subject.cBal); % Function for instructions.
         
         while 1
             txtHighNoise = 'Starker Seegang';
@@ -376,7 +415,7 @@ elseif Subject.cBal == '2'
         
         % Function for main task that is used for practice.
         condition = 'practice';
-        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigma(2), condition, Subject);
+        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
         
         while 1
             txtLowNoise = 'Leichter Seegang';
@@ -395,7 +434,7 @@ elseif Subject.cBal == '2'
         end
         
         % Function for main task that is used for practice.
-        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigma(1), condition, Subject);
+        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
         
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
@@ -448,7 +487,7 @@ elseif Subject.cBal == '2'
         lptwrite(taskParam.port,0) % Set port to 0.
     end
     condition = 'main';
-    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigma(2), condition, Subject);
+    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
     
     while 1
         txtHighNoise = 'Schwacher Seegang';
@@ -472,7 +511,7 @@ elseif Subject.cBal == '2'
     end
     
     % This Function runs main task.
-    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigma(1), condition, Subject);
+    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
     
     % Control trials: this task requires a learning rate = 1
     BattleShipsControlInstructions(taskParam) % Run instructions.
@@ -486,7 +525,7 @@ elseif Subject.cBal == '2'
     
     % This function runs the control trials
     condition = 'control';
-    [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigma(2), condition, Subject);
+    [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
     
     while 1
         txtBreak = 'Kurze Pause';
@@ -502,7 +541,7 @@ elseif Subject.cBal == '2'
         end
     end
     
-    [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigma(1), condition, Subject);
+    [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
     while 1
         txtEnd = 'Ende';
         DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
