@@ -6,7 +6,6 @@ KbReleaseWait();
 
 %% Generate outcomes for practice trials.
 
-%isIntro = 'isIntro';
 condition = 'practice';
 practiceData = GenerateOutcomes(taskParam, sigma, condition);
 
@@ -16,7 +15,6 @@ practiceData = GenerateOutcomes(taskParam, sigma, condition);
 screensize = get(0,'MonitorPositions');
 %%%%%%%%%%%%%%%%%%%%%
 
-NPractice = 1;
 
 if isequal(taskParam.computer, 'Macbook')
     enter = 40;
@@ -118,54 +116,55 @@ while 1
     end
 end
 
-        DrawCircle(taskParam.window);
-        DrawCross(taskParam.window);
-        Screen('Flip', taskParam.window);
-        WaitSecs(1);
-        
-        DrawCircle(taskParam.window);
-        DrawOutcome(taskParam, 238);
-        DrawCross(taskParam.window);
-        PredictionSpot(taskParam);
-        
-        if isequal(taskParam.computer, 'Humboldt')
-            txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
-        else
-            txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';       
-        end
-        
-        Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-        DrawFormattedText(taskParam.window,txtScreen3,200,100);
-        
-        Screen('Flip', taskParam.window);
-       
-        while 1
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode) == enter
-                break
-            end
-        end
-        end
+Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
+DrawCircle(taskParam.window);
+DrawCross(taskParam.window);
+Screen('Flip', taskParam.window);
+WaitSecs(1);
 
-        DrawCircle(taskParam.window);
-        DrawCross(taskParam.window);
-        Screen('Flip', taskParam.window);
-        WaitSecs(1);
+Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
+DrawCircle(taskParam.window);
+DrawOutcome(taskParam, 238);
+DrawCross(taskParam.window);
+PredictionSpot(taskParam);
+
+if isequal(taskParam.computer, 'Humboldt')
+    txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
+else
+    txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
+end
+
+Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
+DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+DrawFormattedText(taskParam.window,txtScreen3,200,100);
+
+Screen('Flip', taskParam.window);
+
+while 1
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if keyIsDown
+        if find(keyCode) == enter
+            break
+        end
+    end
+end
+
+Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
+DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+DrawCircle(taskParam.window);
+DrawCross(taskParam.window);
+Screen('Flip', taskParam.window);
+WaitSecs(1);
 
 KbReleaseWait();
-
-
-
 
 % Fourth screen.
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen4='Egal ob du das ein Schiff getroffen hast oder nicht, siehst du welche Ladung\n\ndas Schiff an Bord hat.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT. ';
+        txtScreen4='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch angezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT.';
     else
-        txtScreen4='Egal ob du das ein Schiff getroffen hast oder nicht, siehst du welche Ladung\n\ndas Schiff an Bord hat.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
+        txtScreen4='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     end
     
     Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
@@ -275,6 +274,29 @@ while 1
 end
 KbReleaseWait()
 
+% Screen 18.
+while 1
+    
+    if isequal(taskParam.computer, 'Humboldt')
+        txtScreenEEG = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.';
+    else
+        txtScreenEEG = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.';
+    end
+    
+    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)] )
+    DrawFormattedText(taskParam.window,txtScreenEEG, 200, 300);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    Screen('Flip', taskParam.window);
+    
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if keyIsDown
+        if find(keyCode)==enter
+            break
+        end
+    end
+end
+KbReleaseWait();
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% First practice
@@ -302,7 +324,7 @@ if cBal == '1'
     
     
     % Tenth screen with practice block with low noise.
-    for i = 1:NPractice
+    for i = 1:taskParam.intTrials
         
         while 1
             DrawCircle(taskParam.window);
@@ -393,7 +415,7 @@ if cBal == '1'
     outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
     
-    for i = 1:NPractice
+    for i = 1:taskParam.intTrials
         
         while 1
             DrawCircle(taskParam.window)
@@ -483,7 +505,7 @@ elseif cBal == '2'
     outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
     
-    for i = 1:NPractice
+    for i = 1:taskParam.intTrials
         
         while 1
             DrawCircle(taskParam.window)
@@ -569,7 +591,7 @@ elseif cBal == '2'
         outcome = [324;348;371;303;316;332;310;339;357;316;320;308;308;311;330;299;359;375;368;303];
         boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
         
-        for i = 1:NPractice
+        for i = 1:taskParam.intTrials
             
             while 1
                 DrawCircle(taskParam.window);
@@ -671,7 +693,29 @@ while 1
     end
 end
 
+KbReleaseWait();
 
+%    Thirteenths screen.
+while 1
+    
+    if isequal(taskParam.computer, 'Humboldt')
+        txtEEG='Versuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
+    else
+        txtEEG='Versuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
+    end
+    
+    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
+    DrawFormattedText(taskParam.window,txtEEG, 200, 300');
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    Screen('Flip', taskParam.window);
+    
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if keyIsDown
+        if find(keyCode)==enter
+            break
+        end
+    end
+end
 
 
 
@@ -699,7 +743,7 @@ if cBal == '1'
     distMean = [146;146;146;146;242;242;242;242;242;242;242;291;291;291;291;291;291;291;291;20];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
-    for i=1:NPractice
+    for i=1:taskParam.intTrials
         
         while 1
             DrawCircle(taskParam.window);
@@ -791,7 +835,7 @@ if cBal == '1'
     distMean = [312;312;312;312;312;312;312;312;312;176;176;176;176;176;176;176;224;224;224;224];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
-    for i=1:NPractice
+    for i=1:taskParam.intTrials
         
         while 1
             
@@ -865,7 +909,7 @@ if cBal == '1'
     KbReleaseWait();
     
     
- 
+    
     
 elseif cBal == '2'
     
@@ -891,7 +935,7 @@ elseif cBal == '2'
     distMean = [312;312;312;312;312;312;312;312;312;176;176;176;176;176;176;176;224;224;224;224];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
-    for i=1:NPractice
+    for i=1:taskParam.intTrials
         
         while 1
             
@@ -964,7 +1008,7 @@ elseif cBal == '2'
     
     KbReleaseWait();
     
-
+    
     % Fourteenths screen.
     while 1
         txtLowNoise='Leichter Seegang';
@@ -985,7 +1029,7 @@ elseif cBal == '2'
     distMean = [146;146;146;146;242;242;242;242;242;242;242;291;291;291;291;291;291;291;291;20];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
-    for i=1:NPractice
+    for i=1:taskParam.intTrials
         
         while 1
             DrawCircle(taskParam.window);

@@ -15,28 +15,40 @@ clear all
 %% Set parameters.
 
 runIntro = true;   % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
+fIntTrials = 'intTrials'; intTrials = 1;
 fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 3; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigma = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
 if isequal(computer, 'Macbook')
-
+    
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
-
+    
 elseif isequal(computer, 'Humboldt')
-
+    
     savdir = 'D:\!EXP\AdaptiveLearning\DataDirectory';
-
+    
 end
 %% User Input.
 
-if askSubjInfo == true
+fID = 'ID';
+fAge = 'age';
+fSex = 'sex';
+fCBal = 'cBal';
+fDate = 'date';
+
+if askSubjInfo == false
+    
+    cBal = '1';
+    Subject = struct(fCBal, cBal);
+    
+elseif askSubjInfo == true
     prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal'};
     name = 'SubjInfo';
     numlines = 1;
@@ -52,12 +64,6 @@ if askSubjInfo == true
     fNameDataPracticeHS = sprintf('DataPracticeHS_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlLS = sprintf('DataControlLS_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlHS = sprintf('DataControlHS_%s', num2str(cell2mat((subjInfo(1)))));
-
-    fID = 'ID';
-    fAge = 'age';
-    fSex = 'sex';
-    fCBal = 'cBal';
-    fDate = 'date';
     
     % Struct with demographic subject variables.
     Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex, subjInfo(3), fCBal, subjInfo(4), fDate, subjInfo(5));
@@ -67,6 +73,7 @@ if askSubjInfo == true
         msgbox('Diese ID wird bereits verwendet!');
         return
     end
+    
 end
 
 %% Open window.
@@ -141,9 +148,8 @@ fBlockLSTrigger = 'blockLSTrigger'; blockLSTrigger = 10; % Block with low sigma.
 fBlockHSTrigger = 'blockHSTrigger'; blockHSTrigger = 11; % Block with high sigma.
 fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
 
-
 % Save task parameters in structure
-taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractTrials, practTrials, fContTrials, contTrials,...
+taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fHazardRate, hazardRate, fSafe, safe, fWindow, window, fWindowRect, windowRect, fPredSpotRad, predSpotRad,...
     fOutcRad, outcRad, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
@@ -154,16 +160,13 @@ taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, tria
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLSTrigger, blockLSTrigger, fBlockHSTrigger, blockHSTrigger,...
     fBlockControlTrigger, blockControlTrigger);
 
-
 if isequal(taskParam.computer,'Humboldt')
     enter = 13;
     s = 83;
 else
     enter = 40;
-     s = 22;
+    s = 22;
 end
-
-
 
 %% Run task.
 
@@ -177,14 +180,14 @@ Screen('TextSize', taskParam.window, 30);
 
 KbReleaseWait()
 
-
 % cBal 1 first.
 if Subject.cBal == '1'
     
     % Run intro with practice trials if true.
     if runIntro == true
         
-        BattleShipsInstructions(taskParam, sigma(1), Subject.cBal); % Function for instructions.
+        % Function for instructions.
+        BattleShipsInstructions(taskParam, sigma(1), Subject.cBal); 
         
         while 1
             txtLowNoise = 'Leichter Seegang';
@@ -212,8 +215,6 @@ if Subject.cBal == '1'
             DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
             Screen('Flip', taskParam.window);
             
-            
-            
             [ keyIsDown, seconds, keyCode ] = KbCheck;
             if keyIsDown
                 if find(keyCode)==enter
@@ -230,18 +231,16 @@ if Subject.cBal == '1'
         while 1
             
             if isequal(taskParam.computer, 'Humboldt')
-                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche\n\nwie in der letzten ‹bung. Zur Erinnerung: In den meisten F‰llen\n\nmusst du die Schiffsposition selber herausfinden. Nur in wenigen\n\nF‰llen zeigt dir die Radarnadel wo sich die Schiffsflotte ungef‰hr aufh‰lt,\n\ndies hilft dir ein Schiff zu treffen.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\nViel Erfolg!';
+                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche\n\nwie in der letzten ‹bung. Zur Erinnerung: In den meisten F‰llen\n\nmusst du die Schiffsposition selber herausfinden. Nur in wenigen\n\nF‰llen zeigt dir die Radarnadel wo sich die Schiffsflotte ungef‰hr aufh‰lt,\n\ndies hilft dir ein Schiff zu treffen. Achte auﬂerdem darauf, dass du auf das Fixationskreuz guckst und\n\nblinzeln vermeidest.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.';
             else
-                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche wie in der\n\nletzten ‹bung. Zur Erinnerung: In den meisten F‰llen musst du die\n\nSchiffsposition selber herausfinden. Nur in wenigen F‰llen zeigt dir die\n\nRadarnadel wo sich die Schiffsflotte ungef‰hr aufh‰lt, dies hilft dir ein Schiff zu treffen.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\nViel Erfolg!';
+                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche wie in der\n\nletzten ‹bung. Zur Erinnerung: In den meisten F‰llen musst du die\n\nSchiffsposition selber herausfinden. Nur in wenigen F‰llen zeigt dir die\n\nRadarnadel wo sich die Schiffsflotte ungef‰hr aufh‰lt, dies hilft dir ein Schiff\n\nzu treffen. Achte auﬂerdem darauf, dass du auf das Fixationskreuz guckst und\n\nblinzeln vermeidest.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.';
             end
             
             txtStartMain = 'Der Versuchsleiter startet jetzt die EEG-Aufzeichnung und die Aufgabe';
-            Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/11, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 5)] ) %(screensize(4) / 4)
+            Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/11, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 6)] ) %(screensize(4) / 4)
             DrawFormattedText(taskParam.window,txtScreen23, 200, 100);
             DrawFormattedText(taskParam.window,txtStartMain,'center',screensize(4)*0.9);
             Screen('Flip', taskParam.window);
-            
-           
             
             [ keyIsDown, seconds, keyCode ] = KbCheck;
             if keyIsDown
@@ -250,11 +249,9 @@ if Subject.cBal == '1'
                 end
             end
         end
-        
     end
     
-    
-    % Run main task with different noise conditions
+    % Run main task with different noise conditions.
     while 1
         txtLowNoise = 'Leichter Seegang';
         txtPressEnter = 'Weiter mit Enter';
@@ -416,7 +413,7 @@ elseif Subject.cBal == '2'
             DrawFormattedText(taskParam.window,txtStartMain,'center',screensize(4)*0.9);
             Screen('Flip', taskParam.window);
             
-           
+            
             
             [ keyIsDown, seconds, keyCode ] = KbCheck;
             if keyIsDown
@@ -443,16 +440,15 @@ elseif Subject.cBal == '2'
             end
         end
     end
-    
+   
     % Trigger: block 1.
-    %   lptwrite(taskParam.port, taskParam.blockHSTrigger);
-    %   WaitSecs(1/taskParam.sampleRate);
-    %   lptwrite(taskParam.port,0) % Port wieder auf null stellen
-    
-    %[taskDataLS, DataLS] = BattleShipsMain(taskParam, sigma(2), Subject);
+    if taskParam.sendTrigger == true
+        lptwrite(taskParam.port, taskParam.blockHSTrigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
     condition = 'main';
     [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigma(2), condition, Subject);
-    
     
     while 1
         txtHighNoise = 'Schwacher Seegang';
@@ -469,13 +465,16 @@ elseif Subject.cBal == '2'
     end
     
     % Trigger: block 2.
-    %   lptwrite(taskParam.port, taskParam.blockLSTrigger);
-    %   WaitSecs(1/taskParam.sampleRate);
-    %   lptwrite(taskParam.port,0) % Port wieder auf null stellen
-    condition = 'main';
+    if taskParam.sendTrigger == true
+        lptwrite(taskParam.port, taskParam.blockLSTrigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
+    
+    % This Function runs main task.
     [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigma(1), condition, Subject);
     
-     % Control trials: this task requires a learning rate = 1
+    % Control trials: this task requires a learning rate = 1
     BattleShipsControlInstructions(taskParam) % Run instructions.
     
     % Trigger: control block.
@@ -510,21 +509,16 @@ elseif Subject.cBal == '2'
         %DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
-        
-        
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
             if find(keyCode)==s
                 break
             end
         end
-    end
-    
+    end 
 end
 
-
 %% Save data.
-
 
 if askSubjInfo == true && runIntro == true
     
@@ -559,7 +553,7 @@ end
 
 %% End of task.
 
-%allow input again.
+% Allow input again.
 ListenChar();
 ShowCursor;
 
