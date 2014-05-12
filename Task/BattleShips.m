@@ -1,11 +1,11 @@
-%%% Adaptive Learning EEG Task %%%
-
-% BattleShips in an adaptive learning EEG task for investigating belief
+% Adaptive Learning Task - EEG 
+%
+% BattleShips is an adaptive learning EEG task for investigating belief
 % updating in dynamical environments with systematic (hazardRate)
 % and random changes (sigma).
-
+%
 % Outcomes are presented on a circle which is expressed in 360 degrees.
-
+%
 % The function GenerateOutcomes generates outcomes that are centerend
 % around the mean of a normal distribution (distMean) with
 % standard deviation = sigma.
@@ -19,13 +19,14 @@ askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
-fIntTrials = 'intTrials'; intTrials = 1;
-fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
+fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
+fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
 fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
+% Savedirectory.
 if isequal(computer, 'Macbook')
     
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
@@ -54,7 +55,7 @@ elseif askSubjInfo == true
     numlines = 1;
     defaultanswer = {'9999','99', 'M', '1'};
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
-    subjInfo{5} = datestr(today);
+    subjInfo{5} = date;
     
     % Filenames.
     fname = sprintf('BattleShips_%s.mat', num2str(cell2mat((subjInfo(1)))));
@@ -88,7 +89,7 @@ Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('Preference', 'SkipSyncTests', 2);
 
 % Get screensize.
-screensize = get(0,'MonitorPositions');
+fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
 
 % Open a new window.
 [ window, windowRect ] = Screen('OpenWindow', 0, [], []);
@@ -131,6 +132,12 @@ KbName('UnifyKeyNames');
 fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
 fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
 fSpace = 'space'; space = KbName('Space');
+fEnter = 'enter';
+if isequal(computer, 'Macbook')
+    enter = 40;
+elseif isequal(computer, 'Humboldt')
+    enter = 13;
+end
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
@@ -194,10 +201,10 @@ taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, tria
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
     fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle, fRightKey, rightKey, fLeftKey, leftKey,...
-    fSpace, space, fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrigger, fTrialOnset, trialOnsetTrigger,...
+    fSpace, space, fEnter, enter, fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrigger, fTrialOnset, trialOnsetTrigger,...
     fPredTrigger, predTrigger, fBaseline1Trigger, baseline1Trigger, fOutcomeTrigger, outcomeTrigger, fBaseline2Trigger, baseline2Trigger,...
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLSTrigger, blockLSTrigger, fBlockHSTrigger, blockHSTrigger,...
-    fBlockControlTrigger, blockControlTrigger, fFieldNames, fieldNames);
+    fBlockControlTrigger, blockControlTrigger, fFieldNames, fieldNames, fScreensize, screensize);
 
 
 if isequal(taskParam.computer,'Humboldt')
@@ -208,6 +215,7 @@ else
     s = 22;
 end
 
+txtPressEnter = 'Weiter mit Enter';
 %% Run task.
 
 if taskParam.sendTrigger == true
@@ -266,45 +274,20 @@ if Subject.cBal == '1'
         % Function for main task that is used for practice.
         [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
         
-        
         % End of practice blocks. This part makes sure that you start your EEG setup!
-        while 1
-            
-            if isequal(taskParam.computer, 'Humboldt')
-                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche\n\nwie in der letzten ‹bung. Zur Erinnerung: In den meisten F‰llen\n\nmusst du die Schiffsposition selber herausfinden. Nur in wenigen\n\nF‰llen zeigt dir die Radarnadel wo sich die Schiffsflotte ungef‰hr aufh‰lt,\n\ndies hilft dir ein Schiff zu treffen. Achte auﬂerdem darauf, dass du auf das Fixationskreuz guckst und\n\nblinzeln vermeidest.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.';
-            else
-                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche wie in der\n\nletzten ‹bung. Zur Erinnerung: In den meisten F‰llen musst du die\n\nSchiffsposition selber herausfinden. Nur in wenigen F‰llen zeigt dir die\n\nRadarnadel wo sich die Schiffsflotte ungef‰hr aufh‰lt, dies hilft dir ein Schiff\n\nzu treffen. Achte auﬂerdem darauf, dass du auf das Fixationskreuz guckst und\n\nblinzeln vermeidest.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.';
-            end
-            
-            txtStartMain = 'Der Versuchsleiter startet jetzt die EEG-Aufzeichnung und die Aufgabe';
-            Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/11, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 6)] ) %(screensize(4) / 4)
-            DrawFormattedText(taskParam.window,txtScreen23, 200, 100);
-            DrawFormattedText(taskParam.window,txtStartMain,'center',screensize(4)*0.9);
-            Screen('Flip', taskParam.window);
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if keyIsDown
-                if find(keyCode)==s
-                    break
-                end
-            end
+        header = 'Anfang der Studie';
+        if isequal(taskParam.computer, 'Humboldt')
+            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+        else
+            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
-    end
-    
-    % Run main task with different noise conditions.
-    while 1
-        txtLowNoise = 'Leichter Seegang';
-        txtPressEnter = 'Weiter mit Enter';
-        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
         
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
+        BigScreen(taskParam, txtPressEnter, header, txt)
+        
+        
+        
+        
+
     end
     
     % Trigger: block 1.
@@ -347,6 +330,8 @@ if Subject.cBal == '1'
     % Control trials: this task requires a learning rate = 1
     BattleShipsControlInstructions(taskParam) % Run instructions.
     
+    KbReleaseWait();
+    
     % Trigger: control block.
     if taskParam.sendTrigger
         lptwrite(taskParam.port, taskParam.blockControlTrigger);
@@ -354,6 +339,7 @@ if Subject.cBal == '1'
         lptwrite(taskParam.port,0) % Set port to 0.
     end
     
+    txtLowNoise = 'Leichter Seegang';
     while 1
         DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
         DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
@@ -366,10 +352,13 @@ if Subject.cBal == '1'
             end
         end
     end
+     KbReleaseWait()
     
     % This function runs the control trials
     condition = 'control';
     [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
+    
+    KbReleaseWait()
     
     while 1
         
@@ -437,35 +426,22 @@ elseif Subject.cBal == '2'
         
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
-        while 1
-            
-            if isequal(taskParam.computer, 'Humboldt')
-                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche\n\nwie in der letzten ‹bung. Zur Erinnerung: In den meisten F‰llen\n\nmusst du die Schiffsposition selber herausfinden. Nur in wenigen\n\nF‰llen zeigt dir die Radarnadel wo sich das Schiff ungef‰hr aufh‰lt,\n\ndies hilft dir das Schiff zu treffen.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\nViel Erfolg!';
-            else
-                txtScreen23 = 'Du hast die ‹bungsphase erfolgreich abgeschlossen.\n\n\nJetzt geht es mit dem Hauptteil weiter. Die Aufgabe ist die gleiche wie in der\n\nletzten ‹bung. Zur Erinnerung: In den meisten F‰llen musst du die\n\nSchiffsposition selber herausfinden. Nur in wenigen F‰llen zeigt dir die\n\nRadarnadel wo sich das Schiff ungef‰hr aufh‰lt, dies hilft dir das Schiff zu treffen.\n\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\nViel Erfolg!';
-            end
-            
-            txtStartMain = 'Der Versuchsleiter startet jetzt die EEG-Aufzeichnung und die Aufgabe';
-            Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/11, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 5)] ) %(screensize(4) / 4)
-            DrawFormattedText(taskParam.window,txtScreen23, 200, 100);
-            DrawFormattedText(taskParam.window,txtStartMain,'center',screensize(4)*0.9);
-            Screen('Flip', taskParam.window);
-            
-            
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if keyIsDown
-                if find(keyCode)==s
-                    break
-                end
-            end
+        header = 'Anfang der Studie';
+        if isequal(taskParam.computer, 'Humboldt')
+            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+        else
+            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
+        
+        BigScreen(taskParam, txtPressEnter, header, txt)
+
         
     end
     
     % Run the task with different noise conditions
     while 1
         txtLowNoise = 'Schwacher Seegang';
+        txtHighNoise = 'Starker Seegang';
         txtPressEnter = 'Weiter mit Enter';
         DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
         DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
@@ -562,13 +538,19 @@ elseif Subject.cBal == '2'
     
 end
 
-totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
-
 while 1
     
-    txtFeedback = sprintf('Ende der Aufgabe\n\n\nVielen Dank f¸r deine Teilnahme!\n\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin');
-    DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
-    Screen('Flip', taskParam.window);
+header = 'Ende der Aufgabe!';
+totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
+txt = sprintf('Vielen Dank f¸r deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin');
+Screen('DrawLine', taskParam.window, [0 0 0], 0, 150, 1440, 150, [5]);
+Screen('DrawLine', taskParam.window, [0 0 0], 0, 800, 1440, 800, [5]);
+Screen('FillRect', taskParam.window, [224, 255, 255], [0, 150, 1440, 795]);
+Screen('TextSize', taskParam.window, 50);
+DrawFormattedText(taskParam.window, header, 'center', 100);
+Screen('TextSize', taskParam.window, 30);
+DrawFormattedText(taskParam.window, txt, 'center', 'center');
+Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
     if find(keyCode) == s % don't know why it does not understand return or enter?

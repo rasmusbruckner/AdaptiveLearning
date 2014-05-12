@@ -1,6 +1,6 @@
 function DataPractice = BattleShipsInstructions(taskParam, sigma, cBal)
-
 % BattleShipsInstructions runs the practice sessions.
+%   Depending on cBal you start with low or high noise condition.
 
 KbReleaseWait();
 
@@ -11,19 +11,11 @@ practiceData = GenerateOutcomes(taskParam, sigma, condition);
 
 %% Instructions section.
 
-%%%%%%%%%%???????????
-screensize = get(0,'MonitorPositions');
+%%%%%%%%%%%%%%%%%%%%%
+%screensize = get(0,'MonitorPositions');
 %%%%%%%%%%%%%%%%%%%%%
 
-
-if isequal(taskParam.computer, 'Macbook')
-    enter = 40;
-elseif isequal(taskParam.computer, 'Humboldt')
-    enter = 13;
-end
-
-
-%First screen with painting.
+% First screen with painting.
 while 1
     
     Screen('TextFont', taskParam.window, 'Arial');
@@ -36,145 +28,95 @@ while 1
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == enter
+    if find(keyCode) == taskParam.enter
         break
     end
 end
 
+Screen('TextSize', taskParam.window, 30);
+
 KbReleaseWait();
 
-%Second screen.
-distMean = 238;
-Screen('TextSize', taskParam.window, 30);
-txtPressEnter='Weiter mit Enter';
-
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen2='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen\n\nHinweis darauf gibt, wo sich ein Schiff aufhält.';
-    else
-        txtScreen2='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
-    end
-    
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
-    DrawFormattedText(taskParam.window,txtScreen2,screensize(3)*0.15,screensize(4)*0.1, [0 0 0]);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    DrawCircle(taskParam.window)
-    DrawCross(taskParam.window)
-    DrawHand(taskParam, distMean)
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if keyIsDown
-        if find(keyCode) == enter
-            break
-        end
-    end
+if isequal(taskParam.computer, 'Humboldt')
+    txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen\n\nHinweis darauf gibt, wo sich ein Schiff aufhält.';
+else
+    txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
 end
 
+button = taskParam.enter;
+taskParam = ControlLoop(taskParam, txt, button);
+txtPressEnter='Weiter mit Enter';
 KbReleaseWait();
 
 %Third screen.
+if isequal(taskParam.computer, 'Humboldt')
+    txt='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der\n\nrechten und linken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
+else
+    txt='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der rechten und\n\nlinken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
+end
+button = taskParam.space;
+taskParam = ControlLoop(taskParam, txt, button);
+
+LineAndBack(taskParam.window)
+DrawCircle(taskParam.window);
+DrawCross(taskParam.window);
+Screen('Flip', taskParam.window);
+WaitSecs(1);
+
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen3='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der\n\nrechten und linken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
+        txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
     else
-        txtScreen3='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der rechten und\n\nlinken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
+        txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
     end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-    DrawFormattedText(taskParam.window,txtScreen3,200,100);
-    
-    DrawCircle(taskParam.window)
-    DrawCross(taskParam.window)
-    DrawHand(taskParam, distMean)
-    PredictionSpot(taskParam)
+    LineAndBack(taskParam.window)
+    DrawCircle(taskParam.window);
+    DrawOutcome(taskParam, 238);
+    DrawCross(taskParam.window);
+    PredictionSpot(taskParam);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
+    DrawFormattedText(taskParam.window,txt,200,100);
     Screen('Flip', taskParam.window);
     
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    
-    if keyIsDown
-        if keyCode(taskParam.rightKey)
-            if taskParam.rotAngle < 360*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
-            else
-                taskParam.rotAngle = 0;
+   
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode) == taskParam.enter
+                break
             end
-        elseif keyCode(taskParam.leftKey)
-            if taskParam.rotAngle > 0*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
-            else
-                taskParam.rotAngle = 360*taskParam.unit;
-            end
-        elseif keyCode(taskParam.space)
-            break;
         end
     end
-end
-
-Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-DrawCircle(taskParam.window);
-DrawCross(taskParam.window);
-Screen('Flip', taskParam.window);
-WaitSecs(1);
-
-Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-DrawCircle(taskParam.window);
-DrawOutcome(taskParam, 238);
-DrawCross(taskParam.window);
-PredictionSpot(taskParam);
-
-if isequal(taskParam.computer, 'Humboldt')
-    txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
-else
-    txtScreen3='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
-end
-
-Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-DrawFormattedText(taskParam.window,txtScreen3,200,100);
-
-Screen('Flip', taskParam.window);
-
-while 1
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if keyIsDown
-        if find(keyCode) == enter
-            break
-        end
-    end
-end
-
-Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-DrawCircle(taskParam.window);
-DrawCross(taskParam.window);
-Screen('Flip', taskParam.window);
-WaitSecs(1);
 
 KbReleaseWait();
+% %Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
+% DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
+% DrawCircle(taskParam.window);
+% DrawCross(taskParam.window);
+% Screen('Flip', taskParam.window);
+% WaitSecs(1);
+%
+% KbReleaseWait();
 
 % Fourth screen.
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen4='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch angezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT.';
+        txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch angezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT.';
     else
-        txtScreen4='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
+        txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     end
     
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
-    DrawFormattedText(taskParam.window,txtScreen4,200, 100);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    LineAndBack(taskParam.window)
+    DrawFormattedText(taskParam.window,txt,200, 100);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     DrawCircle(taskParam.window)
     DrawGoldBoat(taskParam)
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode)==enter% don't know why it does not understand return or enter?
+    if find(keyCode)==taskParam.enter% don't know why it does not understand return or enter?
         break
     end
 end
@@ -184,22 +126,21 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen5='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst\n\ndu 10 CENT. ';
+        txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst\n\ndu 10 CENT. ';
     else
-        txtScreen5='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst du 10 CENT. ';
+        txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst du 10 CENT. ';
     end
     
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
-    DrawFormattedText(taskParam.window,txtScreen5,200, 100);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    LineAndBack(taskParam.window)
+    DrawFormattedText(taskParam.window,txt,200, 100);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     DrawCircle(taskParam.window)
-    
     DrawBronzeBoat(taskParam)
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
-    %break
+   
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode)==enter% don't know why it does not understand return or enter?
+    if find(keyCode) == taskParam.enter% don't know why it does not understand return or enter?
         break
     end
 end
@@ -209,92 +150,49 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txtScreen6='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst\n\ndu 0 CENT. ';
+        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst\n\ndu 0 CENT. ';
     else
-        txtScreen6='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du 0 CENT. ';
+        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du 0 CENT. ';
     end
     
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
-    DrawFormattedText(taskParam.window,txtScreen6,200, 100);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    LineAndBack(taskParam.window)
+    DrawFormattedText(taskParam.window,txt,200, 100);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     DrawCircle(taskParam.window)
     DrawSilverBoat(taskParam)
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode)==enter% don't know why it does not understand return or enter?
+    if find(keyCode) == taskParam.enter% don't know why it does not understand return or enter?
         break
     end
 end
 KbReleaseWait();
-
-% Seventh screen.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen7 = 'Wie der Radar funktioniert:\n\n\nDer Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal ist sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
-    else
-        txtScreen7 = 'Wie der Radar funktioniert:\n\n\nDer Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe der\n\nangezeigten Position sind. Manchmal ist sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-    DrawFormattedText(taskParam.window, txtScreen7, 200, 300);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode)==enter% don't know why it does not understand return or enter?
-        break
-    end
+header = 'Wie der Radar funktioniert';
+if isequal(taskParam.computer, 'Humboldt')
+    txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
+else
+    txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe der\n\nangezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
 end
 
-KbReleaseWait()
+BigScreen(taskParam, txtPressEnter, header, txt);
 
-% Eigths screen.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen8='Mit LEERTASTE feuerst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den\n\nSeegang nur ungefähr angibt wo die Schiffe sind.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
-    else
-        txtScreen8='Mit LEERTASTE feuerst du einen Schuss ab. Richte dich dabei nach der\n\nRadarnadel. Beachte, dass dir der Radar durch den Seegang nur\n\nungefähr angibt wo, die Schiffe sind.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe zu treffen.';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-    DrawFormattedText(taskParam.window, txtScreen8, 200, 300);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode)==enter% don't know why it does not understand return or enter?
-        break
-    end
+header = 'Wie du einen Schuss abgibst';
+if isequal(taskParam.computer, 'Humboldt')
+    txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den\n\nSeegang nur ungefähr angibt wo die Schiffe sind.';
+else
+    txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach der\n\nRadarnadel. Beachte, dass dir der Radar durch den Seegang nur\n\nungefähr angibt wo, die Schiffe sind.';
 end
-KbReleaseWait()
+BigScreen(taskParam, txtPressEnter, header, txt);
 
-% Screen 18.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreenEEG = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.';
-    else
-        txtScreenEEG = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)] )
-    DrawFormattedText(taskParam.window,txtScreenEEG, 200, 300);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if keyIsDown
-        if find(keyCode)==enter
-            break
-        end
-    end
+header = 'Worauf du achten solltest';
+if isequal(taskParam.computer, 'Humboldt')
+    txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
+else
+    txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe zu treffen.';
 end
-KbReleaseWait();
-
+BigScreen(taskParam, txtPressEnter, header, txt);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% First practice
@@ -305,12 +203,12 @@ if cBal == '1'
     while 1
         lowNoise='Leichter Seegang';
         DrawFormattedText(taskParam.window, lowNoise, 'center','center');
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)== enter
+            if find(keyCode) == taskParam.enter
                 break
             end
         end
@@ -397,12 +295,12 @@ if cBal == '1'
     while 1
         txtScreen11 = 'Starker Seegang';
         DrawFormattedText(taskParam.window,txtScreen11,'center','center', [0 0 0]);
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode)== taskParam.enter
                 break
             end
         end
@@ -487,12 +385,12 @@ elseif cBal == '2'
     while 1
         txtScreen11 = 'Starker Seegang';
         DrawFormattedText(taskParam.window,txtScreen11,'center','center', [0 0 0]);
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode) == taskParam.enter
                 break
             end
         end
@@ -574,12 +472,12 @@ elseif cBal == '2'
         while 1
             lowNoise='Leichter Seegang';
             DrawFormattedText(taskParam.window, lowNoise, 'center','center');
-            DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+            DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
             Screen('Flip', taskParam.window);
             
             [ keyIsDown, seconds, keyCode ] = KbCheck;
             if keyIsDown
-                if find(keyCode)== enter
+                if find(keyCode) == taskParam.enter
                     break
                 end
             end
@@ -669,55 +567,14 @@ end
 KbReleaseWait();
 
 
-%    Thirteenths screen.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.';
-    else
-        txtScreen13='Du hast die erste Übung abgeschlossen.\n\n\nIm nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nRadarnadel eine neue Position anzeigt, solltest du dich daran anpassen.';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-    DrawFormattedText(taskParam.window,txtScreen13, 200, 300');
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if keyIsDown
-        if find(keyCode)==enter
-            break
-        end
-    end
+header = 'Ende der ersten Übung'
+if isequal(taskParam.computer, 'Humboldt')
+    txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
+else
+    txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nRadarnadel eine neue Position anzeigt, solltest du dich daran anpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
 end
+BigScreen(taskParam, txtPressEnter, header, txt)
 
-KbReleaseWait();
-
-%    Thirteenths screen.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtEEG='Versuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
-    else
-        txtEEG='Versuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-    DrawFormattedText(taskParam.window,txtEEG, 200, 300');
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if keyIsDown
-        if find(keyCode)==enter
-            break
-        end
-    end
-end
-
-
-
-KbReleaseWait();
 
 if cBal == '1'
     
@@ -725,12 +582,12 @@ if cBal == '1'
     while 1
         txtLowNoise='Leichter Seegang';
         DrawFormattedText(taskParam.window,txtLowNoise, 'center','center');
-        DrawFormattedText(taskParam.window,txtPressEnter,'center', screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center', taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode)== taskParam.enter
                 break
             end
         end
@@ -816,12 +673,12 @@ if cBal == '1'
     while 1
         txtHighNoise = 'Starker Seegang';
         DrawFormattedText(taskParam.window,txtHighNoise,'center','center', [0 0 0]);
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode)== taskParam.enter
                 break
             end
         end
@@ -916,12 +773,12 @@ elseif cBal == '2'
     while 1
         txtHighNoise = 'Starker Seegang';
         DrawFormattedText(taskParam.window,txtHighNoise,'center','center', [0 0 0]);
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode) == taskParam.enter
                 break
             end
         end
@@ -1011,12 +868,12 @@ elseif cBal == '2'
     while 1
         txtLowNoise='Leichter Seegang';
         DrawFormattedText(taskParam.window,txtLowNoise, 'center','center');
-        DrawFormattedText(taskParam.window,txtPressEnter,'center', screensize(4)*0.9);
+        DrawFormattedText(taskParam.window,txtPressEnter,'center', taskParam.screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode) == taskParam.enter
                 break
             end
         end
@@ -1100,31 +957,32 @@ elseif cBal == '2'
     
 end
 
-
-
-
-% Screen 18.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen18 = 'Du hast die zweite Übung abgeschlossen.\n\n\nLetzte Übung: Leider ist dein Radar kaputt gegangen. Die Radarnadel\n\nkannst du jetzt nur noch selten sehen. In den meisten Fällen musst\n\ndu die Schiffsposition selber herausfinden. Trotzdem solltest du\n\nversuchen möglichst viele Schiffe abzuschießen.\n\n\nViel Erfolg!';
-    else
-        txtScreen18 = 'Du hast die zweite Übung abgeschlossen.\n\n\nLetzte Übung: Leider ist dein Radar kaputt gegangen. Die Radarnadel kannst du\n\njetzt nur noch selten sehen. In den meisten Fällen musst du die Schiffsposition\n\nselber herausfinden. Du solltest versuchen möglichst viele Schiffe\n\nabzuschießen. Viel Erfolg!';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)] )
-    DrawFormattedText(taskParam.window,txtScreen18, 200, 300);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if keyIsDown
-        if find(keyCode)==enter
-            break
-        end
-    end
+header = 'Ende der zweiten Übung';
+if isequal(taskParam.computer, 'Humboldt')
+    txt = 'In der folgenden Übung ist dein Radar leider kaputt. Die Radarnadel\n\nkannst du jetzt nur noch selten sehen. In den meisten Fällen musst\n\ndu die Schiffsposition selber herausfinden. Trotzdem solltest du\n\nversuchen, möglichst viele Schiffe abzuschießen.';
+else
+    txt = 'In der folgenden Übung ist dein Radar leider kaputt. Die Radarnadel kannst du\n\njetzt nur noch selten sehen. In den meisten Fällen musst du die Schiffsposition\n\nselber herausfinden. Du solltest versuchen, möglichst viele Schiffe\n\nabzuschießen.';
 end
-KbReleaseWait();
+BigScreen(taskParam, txtPressEnter, header, txt)
+
+% % Screen 18.
+% while 1
+%     
+%     
+%     
+%     %Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)] )
+%     DrawFormattedText(taskParam.window,txtScreen18, 200, 300);
+%     DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
+%     Screen('Flip', taskParam.window);
+%     
+%     [ keyIsDown, seconds, keyCode ] = KbCheck;
+%     if keyIsDown
+%         if find(keyCode) == taskParam.enter
+%             break
+%         end
+%     end
+% end
+%KbReleaseWait();
 
 
 %% Save data.

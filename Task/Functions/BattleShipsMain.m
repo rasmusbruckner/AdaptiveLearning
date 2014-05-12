@@ -40,8 +40,6 @@ for i=1:taskData.trial %taskData.trial
         DrawCross(taskParam.window)
         PredictionSpot(taskParam)
         
-        
-        
         Screen('Flip', taskParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
@@ -73,6 +71,8 @@ for i=1:taskData.trial %taskData.trial
             end
         end
     end
+
+
     
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));

@@ -21,111 +21,25 @@ txtPressEnter = 'Weiter mit Enter';
 
 KbReleaseWait();
 
-while 1
+%while 1
 
-txtControl = 'Zum Abschluss kommt eine Gedächtnisaufgabe. Deine Aufgabe\n\nist es, dir die Position des Bootes zu merken und den blauen Punkt\n\ndaraufhin genau auf diese Position zu steuern.';
-Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-DrawFormattedText(taskParam.window, txtControl, 200, 300);
-DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-Screen('Flip', taskParam.window);
+header = 'Gedächtnisaufgabe';    
+txt = 'Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du die\n\ndir die Position des Bootes merken und den blauen Punkt\n\ndaraufhin genau auf diese Position steuern.';
+    
+BigScreen(taskParam, txtPressEnter, header, txt)    
 
-[ keyIsDown, seconds, keyCode ] = KbCheck;
-if keyIsDown
-    if find(keyCode)==enter
-        break
-    end
-end
-end
+button = taskParam.enter;
 
+txt = 'Merke dir jetzt die Position des Bootes...';
 
-KbReleaseWait();
+taskParam = ControlLoop(taskParam, txt, button);
 
-distMean = 360;
-%Third screen.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen3='Merke dir jetzt die Position des Bootes...';
-    else
-        txtScreen3='Merke dir jetzt die Position des Bootes...';
-    end
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-    DrawFormattedText(taskParam.window,txtScreen3,200,100);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    DrawCircle(taskParam.window)
-    DrawCross(taskParam.window)
-    DrawOutcome(taskParam, distMean)
-    PredictionSpot(taskParam)
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    
-    if keyIsDown
-        if keyCode(taskParam.rightKey)
-            if taskParam.rotAngle < 360*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
-            else
-                taskParam.rotAngle = 0;
-            end
-        elseif keyCode(taskParam.leftKey)
-            if taskParam.rotAngle > 0*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
-            else
-                taskParam.rotAngle = 360*taskParam.unit;
-            end
-        elseif find(keyCode)==enter
-            break;
-        end
-    end
-end
+button = taskParam.space;
 
-KbReleaseWait();
+txt = '...und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nhast. Dücke dann LEERTASTE.';
 
-% Fourth screen.
-while 1
-    
-    if isequal(taskParam.computer, 'Humboldt')
-        txtScreen4='... und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nhast. Dücke dann LEERTASTE.';
-    else
-        txtScreen4='... und steuere den blauen Punkt auf die Postition die du dir gemerkt hast.\n\nDücke dann LEERTASTE.';
-    end
-    
-    
-    Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - screensize(3)/10, screensize(4)/3])
-    
- %  [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-    
-    DrawFormattedText(taskParam.window,txtScreen4, 200, 100);
-    %DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    DrawCircle(taskParam.window)
-    DrawCross(taskParam.window)
-    PredictionSpot(taskParam)
-    %DrawFormattedText(taskParam.window,txtPressEnter,'center',screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
-    
-    
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    
-    if keyIsDown
-        if keyCode(taskParam.rightKey)
-            if taskParam.rotAngle < 360*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
-            else
-                taskParam.rotAngle = 0;
-            end
-        elseif keyCode(taskParam.leftKey)
-            if taskParam.rotAngle > 0*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
-            else
-                taskParam.rotAngle = 360*taskParam.unit;
-            end
-        elseif find(keyCode)==taskParam.space
-            break;
-        end
-    end
-end
+taskParam = ControlLoop(taskParam, txt, button);
+
 
 KbReleaseWait();
 
@@ -144,7 +58,7 @@ WaitSecs(1);
 
 % Show boat and calculate performance.       %TRIGGER
 
-DrawCross(taskParam.window)
+%DrawCross(taskParam.window)
 DrawCircle(taskParam.window)
 DrawGoldBoat(taskParam)
 
@@ -176,37 +90,19 @@ WaitSecs(1);
 %     taskData.date{i} = Subject.date
 
 
-%%%%%%%%%%%%%%%%
 
 KbReleaseWait();
 
-
-while 1
-    
-Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)])
-
-    if isequal(taskParam.computer, 'Humboldt')
-        txtPay = 'Start der Gedächtnisaufgabe: Denke daran, dass du den blauen\n\nPunkt ab jetzt immer auf die letzte Position des Bootes steuerst.\n\n\nBezahlung:\n\nGoldenes Boot: Wenn du dir die letzte Position richtig gemerkt hast,\nbekommst du 20 CENT.\n\nBronzenes Boot: Wenn du dir die letzte Postion richtig gemerkt hast,\nbekommst du 10 CENT.\n\nSteine: Hier verdienst du leider nichts.';
-    else
-        txtPay = 'Start der Gedächtnisaufgabe: Denke daran, dass du den blauen Punkt ab jetzt\n\nimmer auf die letzte Position des Bootes steuerst.\n\n\nBezahlung:\n\nGoldenes Boot: Wenn du dir die letzte Position richtig gemerkt hast, bekommst\ndu 20 CENT.\n\nBronzenes Boot: Wenn du dir die letzte Postion richtig gemerkt hast, bekommst\ndu 10 CENT.\n\nSteine: Hier verdienst du leider nichts.';
-    end
-
-DrawFormattedText(taskParam.window, txtPay, 200, 230);
-
-EnterGo = 'Mit Enter geht es los';
-DrawFormattedText(taskParam.window, EnterGo, 'center', screensize(4)*0.9);
-Screen('Flip', taskParam.window);
-
-[ keyIsDown, seconds, keyCode ] = KbCheck;
-if keyIsDown
-    if find(keyCode)==enter
-        break
-    end
-end
+header = 'Start der Gedächtnisaufgabe';
+if isequal(taskParam.computer, 'Humboldt')
+    txt = 'Denke daran, dass du den blauen\n\nPunkt ab jetzt immer auf die letzte Position des Bootes steuerst.\n\n\nBezahlung:\n\nGoldenes Boot: Wenn du dir die letzte Position richtig gemerkt hast,\nbekommst du 20 CENT.\n\nBronzenes Boot: Wenn du dir die letzte Postion richtig gemerkt hast,\nbekommst du 10 CENT.\n\nSteine: Hier verdienst du leider nichts.';
+else
+    txt = 'Denke daran, dass du den blauen Punkt ab jetzt\n\nimmer auf die letzte Position des Bootes steuerst.\n\n\nBezahlung:\n\nGoldenes Boot: Wenn du dir die letzte Position richtig gemerkt hast, bekommst\ndu 20 CENT.\n\nBronzenes Boot: Wenn du dir die letzte Postion richtig gemerkt hast, bekommst\ndu 10 CENT.\n\nSteine: Hier verdienst du leider nichts.';
 end
 
+BigScreen(taskParam, txtPressEnter, header, txt)    
 
-%%%%%%%%%%%%%%%%%
 
 
-end
+
+%end
