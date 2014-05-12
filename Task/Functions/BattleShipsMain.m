@@ -12,7 +12,7 @@ end
 taskData = GenerateOutcomes(taskParam, sigma, condition);
 
 %% Run trials.
-for i=1:taskParam.trials %taskData.trial
+for i=1:taskData.trial %taskData.trial
     
     % Trigger: start task.
     if taskParam.sendTrigger == true
@@ -193,10 +193,13 @@ elseif isequal(taskParam.computer, 'Humboldt')
 end
 
 while 1
-    
+    if isequal(condition, 'practice')
+        txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(i), maxMon);
+    else
+        txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(i), maxMon);
+    end
     txtBreak = 'Ende des Blocks';
     txtPressEnter = 'Weiter mit Enter';
-    txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(i), maxMon);
     Screen('TextSize', taskParam.window, 50);
     DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
     Screen('TextSize', taskParam.window, 30);

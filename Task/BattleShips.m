@@ -246,7 +246,7 @@ if Subject.cBal == '1'
         
         % Function for main task that is used for practice.
         condition = 'practice';
-        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigma(1), condition, Subject);
+        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
         
         while 1
             txtHighNoise = 'Starker Seegang';
@@ -264,7 +264,7 @@ if Subject.cBal == '1'
         end
         
         % Function for main task that is used for practice.
-        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigma(2), condition, Subject);
+        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
         
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
@@ -354,29 +354,39 @@ if Subject.cBal == '1'
         lptwrite(taskParam.port,0) % Set port to 0.
     end
     
+    while 1
+        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
+        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+        Screen('Flip', taskParam.window);
+        
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode)==enter
+                break
+            end
+        end
+    end
+    
     % This function runs the control trials
     condition = 'control';
     [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
     
-    
+    while 1
+        
+        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
+        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+        Screen('Flip', taskParam.window);
+        
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode)==enter
+                break
+            end
+        end
+    end
     
     [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
-    %     while 1
-    %         txtEnd = 'Ende';
-    %         DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
-    %         %DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-    %         Screen('Flip', taskParam.window);
-    %
-    %
-    %
-    %         [ keyIsDown, seconds, keyCode ] = KbCheck;
-    %         if keyIsDown
-    %             if find(keyCode)==s
-    %                 break
-    %             end
-    %         end
-    %     end
-    
+   
     
     % cBal 2 first.
 elseif Subject.cBal == '2'
@@ -455,9 +465,9 @@ elseif Subject.cBal == '2'
     
     % Run the task with different noise conditions
     while 1
-        txtLowNoise = 'Starker Seegang';
+        txtLowNoise = 'Schwacher Seegang';
         txtPressEnter = 'Weiter mit Enter';
-        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
+        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
         DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
@@ -479,8 +489,8 @@ elseif Subject.cBal == '2'
     [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
     
     while 1
-        txtHighNoise = 'Schwacher Seegang';
-        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
+        txtHighNoise = 'Starker Seegang';
+        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
         DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
         Screen('Flip', taskParam.window);
         
@@ -512,30 +522,52 @@ elseif Subject.cBal == '2'
         lptwrite(taskParam.port,0) % Set port to 0.
     end
     
+    KbReleaseWait()
+    
+    while 1
+        
+        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
+        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+        Screen('Flip', taskParam.window);
+        
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode)==enter
+                break
+            end
+        end
+    end
+    
+    KbReleaseWait()
+    
+    
     % This function runs the control trials
     condition = 'control';
     [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
     
-    
+     while 1
+        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
+        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+        Screen('Flip', taskParam.window);
+        
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode)==enter
+                break
+            end
+        end
+    end
     
     [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
     
-    
-    
-    
 end
+
 totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
 
 while 1
     
-    %txtBreak = 'Ende des Blocks';
-    %txtPressEnter = 'Weiter mit Enter';
     txtFeedback = sprintf('Ende der Aufgabe\n\n\nVielen Dank für deine Teilnahme!\n\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin');
-    %Screen('TextSize', taskParam.window, 50);
-    %DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
-    %Screen('TextSize', taskParam.window, 30);
     DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
-    %DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
@@ -543,25 +575,6 @@ while 1
         break
     end
 end
-
-
-
-
-% 
-%     
-%     txtEnd = sprintf('Ende der Aufgabe\n\n\nVielen Dank für deine Teilnahme!\n\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
-%     DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
-%     Screen('Flip', taskParam.window);
-% 
-% while 1    
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode)==s
-%             break
-%         end
-%     end
-% end
-
 
 %% Save data.
 
