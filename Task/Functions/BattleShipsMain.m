@@ -21,38 +21,13 @@ for i=1:taskParam.trials %taskData.trial
         lptwrite(taskParam.port,0) % Set port to 0.
     end
     
-    if i == 400
-        
-        while 1
-            
-            
-            txtBreak = 'Pause';
-            txtPressEnter = 'Weiter mit Enter';
-            txtFeedback = sprintf('In diesem Block hast du %.2f von 5 Euro gewonnen.', taskData.accPerf(i-1));
-            Screen('TextSize', taskParam.window, 50);
-            
-            DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
-            
-            Screen('TextSize', taskParam.window, 30);
-            DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
-            DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
-            
-            
-            Screen('Flip', taskParam.window);
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if find(keyCode) == 40 % don't know why it does not understand return or enter?
-                break
-            end
-        end
-    end
     
     % Trigger: trial onset.
-        if taskParam.sendTrigger == true
-            lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
-            WaitSecs(1/taskParam.sampleRate);
-            lptwrite(taskParam.port,0) % Set port to 0.
-        end
+    if taskParam.sendTrigger == true
+        lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
+        WaitSecs(1/taskParam.sampleRate);
+        lptwrite(taskParam.port,0) % Set port to 0.
+    end
     
     while 1
         
@@ -98,20 +73,20 @@ for i=1:taskParam.trials %taskData.trial
             end
         end
     end
-
+    
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
     if i >= 2
-    % Calculate update.
-    [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
+        % Calculate update.
+        [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
     % Memory error = 99 because there is no memory error in this condition.
-    taskData.memErr(i) = 99; 
-    taskData.memErrNorm(i) = 99; 
-    taskData.memErrPlus(i) = 99; 
-    taskData.memErrMin(i) = 99; 
+    taskData.memErr(i) = 999;
+    taskData.memErrNorm(i) = 999;
+    taskData.memErrPlus(i) = 999;
+    taskData.memErrMin(i) = 999;
     
     % Show baseline 1.
     DrawCross(taskParam.window)
@@ -195,7 +170,7 @@ for i=1:taskParam.trials %taskData.trial
     if taskParam.sendTrigger == true
         lptwrite(taskParam.port, taskParam.baseline3Trigger);
         WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0. 
+        lptwrite(taskParam.port,0) % Set port to 0.
     end
     Screen('Flip', taskParam.window);
     WaitSecs(1);
@@ -205,9 +180,38 @@ for i=1:taskParam.trials %taskData.trial
     taskData.ID{i} = Subject.ID;
     taskData.sex{i} = Subject.sex;
     taskData.date{i} = Subject.date;
+    taskData.cond{i} = condition;
     taskData.cBal{i} = Subject.cBal;
     
 end
+
+maxMon = (length(find(taskData.boatType == 1)) * 0.2) + (length(find(taskData.boatType == 2)) * 0.1);
+if isequal(taskParam.computer, 'Macbook')
+    enter = 40;
+elseif isequal(taskParam.computer, 'Humboldt')
+    enter = 13;
+end
+
+while 1
+    
+    txtBreak = 'Ende des Blocks';
+    txtPressEnter = 'Weiter mit Enter';
+    txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(i), maxMon);
+    Screen('TextSize', taskParam.window, 50);
+    DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
+    Screen('TextSize', taskParam.window, 30);
+    DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
+    DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
+    Screen('Flip', taskParam.window);
+    
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if find(keyCode) == enter % don't know why it does not understand return or enter?
+        break
+    end
+end
+
+KbReleaseWait()
+
 
 sigma = repmat(sigma, length(taskData.trial),1);
 
@@ -215,14 +219,14 @@ sigma = repmat(sigma, length(taskData.trial),1);
 
 fieldNames = taskParam.fieldNames;
 Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.sex, {taskData.sex},...
-fieldNames.cBal, {taskData.cBal}, fieldNames.sigma, sigma, fieldNames.trial, taskData.trial,...
-fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
-fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
-fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
-fieldNames.predErrPlus, taskData.predErrPlus, fieldNames.predErrMin, taskData.predErrMin,...
-fieldNames.memErr, taskData.memErr, fieldNames.memErrNorm, taskData.memErrNorm, fieldNames.memErrPlus, taskData.memErrPlus,...
-fieldNames.memErrMin, taskData.memErrMin, fieldNames.UP, taskData.UP,fieldNames.UPNorm, taskData.UPNorm,...
-fieldNames.UPPlus, taskData.UPPlus, fieldNames.UPMin, taskData.UPMin, fieldNames.hit, taskData.hit,...
-fieldNames.perf, taskData.perf, fieldNames.accPerf, taskData.accPerf, fieldNames.date, {taskData.date});
+    fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.sigma, sigma, fieldNames.trial, taskData.trial,...
+    fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
+    fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
+    fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
+    fieldNames.predErrPlus, taskData.predErrPlus, fieldNames.predErrMin, taskData.predErrMin,...
+    fieldNames.memErr, taskData.memErr, fieldNames.memErrNorm, taskData.memErrNorm, fieldNames.memErrPlus, taskData.memErrPlus,...
+    fieldNames.memErrMin, taskData.memErrMin, fieldNames.UP, taskData.UP,fieldNames.UPNorm, taskData.UPNorm,...
+    fieldNames.UPPlus, taskData.UPPlus, fieldNames.UPMin, taskData.UPMin, fieldNames.hit, taskData.hit,...
+    fieldNames.perf, taskData.perf, fieldNames.accPerf, taskData.accPerf, fieldNames.date, {taskData.date});
 
 end

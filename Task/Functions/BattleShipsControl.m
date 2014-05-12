@@ -175,13 +175,42 @@ for i=1:taskParam.contTrials
     taskDataControl.sex{i} = Subject.sex;
     taskDataControl.date{i} = Subject.date;
     taskDataControl.cBal{i} = Subject.cBal;
+    taskDataControl.cond{i} = condition;
 end
+
+maxMon = (length(find(taskDataControl.boatType == 1)) * 0.2) + (length(find(taskDataControl.boatType == 2)) * 0.1);
+if isequal(taskParam.computer, 'Macbook')
+    enter = 40;
+elseif isequal(taskParam.computer, 'Humboldt')
+    enter = 13;
+end
+
+while 1
+    
+    txtBreak = 'Ende des Blocks';
+    txtPressEnter = 'Weiter mit Enter';
+    txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskDataControl.accPerf(i), maxMon);
+    Screen('TextSize', taskParam.window, 50);
+    DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
+    Screen('TextSize', taskParam.window, 30);
+    DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
+    DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
+    Screen('Flip', taskParam.window);
+    
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if find(keyCode) == enter % don't know why it does not understand return or enter?
+        break
+    end
+end
+
+KbReleaseWait()
+
 
 sigmas = repmat(sigmas, length(taskDataControl.trial),1);
 
 fieldNames = taskParam.fieldNames;
 dataControl = struct(fieldNames.ID, {taskDataControl.ID}, fieldNames.age, taskDataControl.age, fieldNames.sex, {taskDataControl.sex},...
-    fieldNames.cBal, {taskDataControl.cBal}, fieldNames.sigma, sigmas, fieldNames.trial, taskDataControl.trial,...
+    fieldNames.cond, {taskDataControl.cond}, fieldNames.cBal, {taskDataControl.cBal}, fieldNames.sigma, sigmas, fieldNames.trial, taskDataControl.trial,...
     fieldNames.outcome, taskDataControl.outcome, fieldNames.distMean, taskDataControl.distMean, fieldNames.cp, taskDataControl.cp,...
     fieldNames.TAC, taskDataControl.TAC, fieldNames.boatType, taskDataControl.boatType, fieldNames.catchTrial, taskDataControl.catchTrial, ...
     fieldNames.pred, taskDataControl.pred, fieldNames.predErr, taskDataControl.predErr, fieldNames.predErrNorm, taskDataControl.predErrNorm,...

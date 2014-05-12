@@ -18,6 +18,7 @@ ID = cell(trials, 1); % ID.
 age = zeros(trials, 1); % Age.
 sex = cell(trials, 1); % Sex.
 date = cell(trials, 1);
+cond = cell(trials, 1);
 %sigma = zeros(trials, 1); % Sigma.
 %fTrial = 'trial'; %trial = zeros(trials, 1); % Trial.
 outcome=nan(trials, 1); % Outcome.       
@@ -80,7 +81,7 @@ for i = 1:trials
     end
 end
 
-taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age},fieldNames.sex, {sex}, fieldNames.trial, i,...
+taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age},fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
     fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.pred,...
     pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...

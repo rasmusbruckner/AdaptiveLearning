@@ -8,7 +8,7 @@ clear all
 
 plotData = false;
 %% Which subjects do you want to load?
-subject = {'9999'}; % '0023' '0025' '0027'
+subject = {'te'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);
@@ -60,10 +60,11 @@ sigma = [];
 date= [];
 pDiff = [];
 hit = [];
+cond = [];
 %% Merges all data and exports them to a text file.
 
 Data = fopen('AdaptiveLearning/DataDirectory/MergedData.txt','wt');
-fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'mErr', 'mENorm', 'mEPlus', 'mEMin', 'UP', 'UPNorm', 'UPPlus', 'UPMin', 'lR', 'hit', 'perf', 'accP', 'date');
+fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cond', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'mErr', 'mENorm', 'mEPlus', 'mEMin', 'UP', 'UPNorm', 'UPPlus', 'UPMin', 'lR', 'hit', 'perf', 'accP', 'date');
 
 for i = 1:length(subject)
     
@@ -96,6 +97,16 @@ for i = 1:length(subject)
     age = [age; temp];
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).age;
     age = [age; temp];
+    
+     % Condtition
+    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).cond;
+    cond = [cond; temp];
+    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).cond;
+    cond = [cond; temp];
+    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).cond;
+    cond = [cond; temp];
+    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).cond;
+    cond = [cond; temp];
 
     % Trial
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).trial';
@@ -315,7 +326,7 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
     UPMin = [UPMin; temp];
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
-    UPMin = [memErrMin; temp];
+    UPMin = [UPMin; temp];
     
     
     % Outcome
@@ -430,7 +441,7 @@ end
 %Regular loop.
 for i = 1:length(trial)
     
-    fprintf(Data,'%7s %7s %7d %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.2f %7.f %7.2f %7.2f %12s\n', ID{i}, sex{i}, age(i), cBal{i}, sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), memErr(i), memErrNorm(i), memErrPlus(i), memErrMin(i), UP(i), UPNorm(i), UPPlus(i), UPMin(i), lR(i), hit(i), perf(i), accPerf(i), date{i}); % learnR(i)
+    fprintf(Data,'%7s %7s %7d %7s %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.2f %7.f %7.2f %7.2f %12s\n', ID{i}, sex{i}, age(i), cond{i}, cBal{i}, sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), memErr(i), memErrNorm(i), memErrPlus(i), memErrMin(i), UP(i), UPNorm(i), UPPlus(i), UPMin(i), lR(i), hit(i), perf(i), accPerf(i), date{i}); % learnR(i)
 end
 
 fclose(Data)

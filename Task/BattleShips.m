@@ -18,10 +18,10 @@ runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 3; % Number of trials per (sigma-)condition.
+fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 1;
 fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 3; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
@@ -138,10 +138,11 @@ fAge = 'age'; age = fAge; % Age.
 fSex = 'sex'; sex = fSex; % Sex.
 fSigma = 'sigma'; sigma = fSigma; % Sigma
 fDate = 'date'; date = fDate;
+fCond = 'cond'; cond = fCond;
 fTrial = 'trial'; trial = fTrial; % Trial.
-fOutcome = 'outcome'; outcome = fOutcome; % Outcome.       
-fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean.      
-fCp = 'cp'; cp = fCp; % Change point.           
+fOutcome = 'outcome'; outcome = fOutcome; % Outcome.
+fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean.
+fCp = 'cp'; cp = fCp; % Change point.
 fTAC = 'TAC'; TAC = fTAC; % Trials after change-point.
 fBoatType = 'boatType'; boatType = fBoatType; % Boat type.
 fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial.
@@ -161,7 +162,7 @@ fUPMin = 'UPMin'; UPMin = fUPMin;
 fHit = 'hit'; hit = fHit; % Hit.
 fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
 fPerf = 'perf'; perf = fPerf; % Performance.
-fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance. 
+fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 %s=taskParam.safe; % how many guaranteed trials before change-point.
 
 %% Trigger settings.
@@ -181,10 +182,10 @@ fBlockHSTrigger = 'blockHSTrigger'; blockHSTrigger = 11; % Block with high sigma
 fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fDate, date, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...            
-fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,... 
-fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
-fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
+fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fDate, date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+    fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
+    fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
+    fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
 
 % Save task parameters in structure
 taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
@@ -226,7 +227,7 @@ if Subject.cBal == '1'
     if runIntro == true
         
         % Function for instructions.
-        BattleShipsInstructions(taskParam, sigma(1), Subject.cBal); 
+        BattleShipsInstructions(taskParam, sigma(1), Subject.cBal);
         
         while 1
             txtLowNoise = 'Leichter Seegang';
@@ -357,36 +358,24 @@ if Subject.cBal == '1'
     condition = 'control';
     [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
     
-    while 1
-        txtBreak = 'Kurze Pause';
-        DrawFormattedText(taskParam.window, txtBreak, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    
     
     [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
-    while 1
-        txtEnd = 'Ende';
-        DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
-        %DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==s
-                break
-            end
-        end
-    end
+    %     while 1
+    %         txtEnd = 'Ende';
+    %         DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
+    %         %DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+    %         Screen('Flip', taskParam.window);
+    %
+    %
+    %
+    %         [ keyIsDown, seconds, keyCode ] = KbCheck;
+    %         if keyIsDown
+    %             if find(keyCode)==s
+    %                 break
+    %             end
+    %         end
+    %     end
     
     
     % cBal 2 first.
@@ -479,7 +468,7 @@ elseif Subject.cBal == '2'
             end
         end
     end
-   
+    
     % Trigger: block 1.
     if taskParam.sendTrigger == true
         lptwrite(taskParam.port, taskParam.blockHSTrigger);
@@ -527,35 +516,52 @@ elseif Subject.cBal == '2'
     condition = 'control';
     [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
     
-    while 1
-        txtBreak = 'Kurze Pause';
-        DrawFormattedText(taskParam.window, txtBreak, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    
     
     [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
-    while 1
-        txtEnd = 'Ende';
-        DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
-        %DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==s
-                break
-            end
-        end
-    end 
+    
+    
+    
+    
 end
+totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
+
+while 1
+    
+    %txtBreak = 'Ende des Blocks';
+    %txtPressEnter = 'Weiter mit Enter';
+    txtFeedback = sprintf('Ende der Aufgabe\n\n\nVielen Dank für deine Teilnahme!\n\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin');
+    %Screen('TextSize', taskParam.window, 50);
+    %DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
+    %Screen('TextSize', taskParam.window, 30);
+    DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
+    %DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
+    Screen('Flip', taskParam.window);
+    
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if find(keyCode) == s % don't know why it does not understand return or enter?
+        break
+    end
+end
+
+
+
+
+% 
+%     
+%     txtEnd = sprintf('Ende der Aufgabe\n\n\nVielen Dank für deine Teilnahme!\n\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
+%     DrawFormattedText(taskParam.window, txtEnd, 'center', 'center');
+%     Screen('Flip', taskParam.window);
+% 
+% while 1    
+%     [ keyIsDown, seconds, keyCode ] = KbCheck;
+%     if keyIsDown
+%         if find(keyCode)==s
+%             break
+%         end
+%     end
+% end
+
 
 %% Save data.
 
