@@ -23,24 +23,23 @@ txt = '...und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nh
 taskParam = ControlLoop(taskParam, txt, button);
 
 % Show baseline 2.
+LineAndBack(taskParam.window, taskParam.screensize)
 DrawCross(taskParam.window)
 DrawCircle(taskParam.window)
-
 Screen('Flip', taskParam.window)
 WaitSecs(1);
 
-%DrawCross(taskParam.window)
+% Show boat.
+LineAndBack(taskParam.window, taskParam.screensize)
 DrawCircle(taskParam.window)
 DrawGoldBoat(taskParam)
-
-
 Screen('Flip', taskParam.window);
 WaitSecs(1);
 
 % Show baseline 3.
+LineAndBack(taskParam.window, taskParam.screensize)
 DrawCircle(taskParam.window)
 DrawCross(taskParam.window)
-
 Screen('Flip', taskParam.window);
 WaitSecs(1);
 
