@@ -201,10 +201,10 @@ while 1
     txtBreak = 'Ende des Blocks';
     txtPressEnter = 'Weiter mit Enter';
     Screen('TextSize', taskParam.window, 50);
-    DrawFormattedText(taskParam.window, txtBreak, 'center', 300);
+    DrawFormattedText(taskParam.window, txtBreak, 'center', taskParam.screensize(4)*0.3);
     Screen('TextSize', taskParam.window, 30);
     DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
-    DrawFormattedText(taskParam.window, txtPressEnter, 'center', 800);
+    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;

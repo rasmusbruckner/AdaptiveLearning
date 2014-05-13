@@ -33,7 +33,7 @@ KbReleaseWait();
 % Second screen.
 Screen('TextSize', taskParam.window, 30);
 if isequal(taskParam.computer, 'Humboldt')
-    txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen\n\nHinweis darauf gibt, wo sich ein Schiff aufhält.';
+    txt='Auf rauer See möchtest du möglichst viele Schiffe einer\n\nSchiffsflotte versenken. Als Hilfsmittel benutzt du einen Radar,\n\nder dir einen Hinweis darauf gibt, wo sich ein Schiff aufhält.';
 else
     txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
 end
@@ -89,7 +89,7 @@ KbReleaseWait();
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
-        txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch angezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT.';
+        txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat.\n\nDies wird dir auch angezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT.';
     else
         txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     end
@@ -157,7 +157,7 @@ KbReleaseWait();
 % Seventh screen.
 header = 'Wie der Radar funktioniert';
 if isequal(taskParam.computer, 'Humboldt')
-    txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
+    txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal sind sie etwas weiter links\n\nund manchmal etwas weiter rechts. Diese Abweichungen von der\n\nRadarnadel sind zufällig und du kannst nicht perfekt vorhersagen,\n\nwo sich ein Schiff aufhält.';
 else
     txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe der\n\nangezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
 end
@@ -166,7 +166,7 @@ BigScreen(taskParam, txtPressEnter, header, txt);
 % Eigths screen.
 header = 'Wie du einen Schuss abgibst';
 if isequal(taskParam.computer, 'Humboldt')
-    txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den\n\nSeegang nur ungefähr angibt wo die Schiffe sind.';
+    txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den Seegang\n\nnur ungefähr angibt wo die Schiffe sind.';
 else
     txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach der\n\nRadarnadel. Beachte, dass dir der Radar durch den Seegang nur\n\nungefähr angibt wo, die Schiffe sind.';
 end
@@ -175,7 +175,7 @@ BigScreen(taskParam, txtPressEnter, header, txt);
 % Ninth screen.
 header = 'Worauf du achten solltest';
 if isequal(taskParam.computer, 'Humboldt')
-    txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
+    txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das\n\nFixationskreuz schaust. Wir bitten dich darum, möglichst wenige\n\nAugenbewegungen zu machen. Versuche außerdem wenig zu blinzeln.\n\nWenn du blinzeln musst, dann bitte bevor du einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
 else
     txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe zu treffen.';
 end
@@ -557,7 +557,7 @@ KbReleaseWait();
 
 header = 'Ende der ersten Übung';
 if isequal(taskParam.computer, 'Humboldt')
-    txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
+    txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich daran\n\nanpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst\n\nwenig zu blinzeln.';
 else
     txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nRadarnadel eine neue Position anzeigt, solltest du dich daran anpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
 end

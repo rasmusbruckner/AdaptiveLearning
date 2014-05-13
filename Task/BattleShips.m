@@ -17,11 +17,11 @@ clear all
 runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 10; % Number of trials per (sigma-)condition.
+fComputer = 'computer'; computer = 'Humboldt'; % On which computer do you run the task? Macbook or Humboldt?
+fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 10; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
@@ -277,9 +277,9 @@ if Subject.cBal == '1'
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
         if isequal(taskParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
-            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
         
         BigScreen(taskParam, txtPressEnter, header, txt)
@@ -295,6 +295,20 @@ if Subject.cBal == '1'
         lptwrite(taskParam.port, taskParam.blockLSTrigger);
         WaitSecs(1/taskParam.sampleRate);
         lptwrite(taskParam.port,0) % Set port to 0.
+    end
+    
+     while 1
+        txtLowNoise = 'Leichter Seegang';
+        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
+        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+        Screen('Flip', taskParam.window);
+        
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if keyIsDown
+            if find(keyCode)==enter
+                break
+            end
+        end
     end
     
     % This functions runs the main task.
@@ -428,9 +442,9 @@ elseif Subject.cBal == '2'
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
         if isequal(taskParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
-            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
         
         BigScreen(taskParam, txtPressEnter, header, txt)
@@ -440,7 +454,7 @@ elseif Subject.cBal == '2'
     
     % Run the task with different noise conditions
     while 1
-        txtLowNoise = 'Schwacher Seegang';
+        txtLowNoise = 'Leichter Seegang';
         txtHighNoise = 'Starker Seegang';
         txtPressEnter = 'Weiter mit Enter';
         DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
@@ -547,12 +561,11 @@ header = 'Ende der Aufgabe!';
 %totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
 txt = sprintf('Vielen Dank f¸r deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
 
-
-Screen('DrawLine', taskParam.window, [0 0 0], 0, 150, 1440, 150, [5]);
-Screen('DrawLine', taskParam.window, [0 0 0], 0, 800, 1440, 800, [5]);
-Screen('FillRect', taskParam.window, [224, 255, 255], [0, 150, 1440, 795]);
+Screen('DrawLine', taskParam.window, [0 0 0], 0, taskParam.screensize(4)*0.16, taskParam.screensize(3), taskParam.screensize(4)*0.16, [5]);
+Screen('DrawLine', taskParam.window, [0 0 0], 0, taskParam.screensize(4)*0.8, taskParam.screensize(3), taskParam.screensize(4)*0.8, [5]);
+Screen('FillRect', taskParam.window, [224, 255, 255], [0, (taskParam.screensize(4)*0.16)+3, taskParam.screensize(3), (taskParam.screensize(4)*0.8)-2]);
 Screen('TextSize', taskParam.window, 50);
-DrawFormattedText(taskParam.window, header, 'center', 100);
+DrawFormattedText(taskParam.window, header, 'center', taskParam.screensize(4)*0.1);
 Screen('TextSize', taskParam.window, 30);
 DrawFormattedText(taskParam.window, txt, 'center', 'center');
 Screen('Flip', taskParam.window);
