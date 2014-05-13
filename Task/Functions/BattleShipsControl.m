@@ -71,13 +71,13 @@ for i=1:taskParam.contTrials
     
     if i >= 2
     % Calculate memory error.
-    [taskDataControl.memErr(i), taskDataControl.memErrNorm(i), taskDataControl.memErrPlus(i), taskDataControl.memErrMin(i)] = Diff(taskDataControl.outcome(i), taskDataControl.outcome(i-1));
+    [taskDataControl.memErr(i), taskDataControl.memErrNorm(i), taskDataControl.memErrPlus(i), taskDataControl.memErrMin(i)] = Diff(taskDataControl.pred(i), taskDataControl.outcome(i-1));
     
     % Calculate update.
     [taskDataControl.UP(i), taskDataControl.UPNorm(i), taskDataControl.UPPlus(i), taskDataControl.UPMin(i)] = Diff(taskDataControl.pred(i), taskDataControl.pred(i-1));
     end
     
-    if taskDataControl.memErr(i) <= 13
+    if taskDataControl.memErr(i) <= 13 && i >=2
         taskDataControl.hit(i) = 1;
     end
     
