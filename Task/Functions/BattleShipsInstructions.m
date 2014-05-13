@@ -11,10 +11,6 @@ practiceData = GenerateOutcomes(taskParam, sigma, condition);
 
 %% Instructions section.
 
-%%%%%%%%%%%%%%%%%%%%%
-%screensize = get(0,'MonitorPositions');
-%%%%%%%%%%%%%%%%%%%%%
-
 % First screen with painting.
 while 1
     
@@ -32,37 +28,38 @@ while 1
         break
     end
 end
-
-Screen('TextSize', taskParam.window, 30);
-
 KbReleaseWait();
 
+% Second screen.
+Screen('TextSize', taskParam.window, 30);
 if isequal(taskParam.computer, 'Humboldt')
     txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen\n\nHinweis darauf gibt, wo sich ein Schiff aufhält.';
 else
     txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
 end
 
+txtPressEnter='Weiter mit Enter';
+DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
 button = taskParam.enter;
 taskParam = ControlLoop(taskParam, txt, button);
-txtPressEnter='Weiter mit Enter';
 KbReleaseWait();
 
-%Third screen.
+% Third screen.
 if isequal(taskParam.computer, 'Humboldt')
     txt='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der\n\nrechten und linken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
 else
     txt='Dein Abschussziel gibst du mit dem blauen Punkt an, den du mit der rechten und\n\nlinken Pfeiltaste steuerst.\n\nVersuche den Punkt auf den Zeiger zu bewegen und drücke LEERTASTE.';
 end
+
 button = taskParam.space;
 taskParam = ControlLoop(taskParam, txt, button);
-
-LineAndBack(taskParam.window)
+LineAndBack(taskParam.window, taskParam.screensize)
 DrawCircle(taskParam.window);
 DrawCross(taskParam.window);
 Screen('Flip', taskParam.window);
 WaitSecs(1);
 
+% Fourth screen.
 while 1
     
     if isequal(taskParam.computer, 'Humboldt')
@@ -70,33 +67,23 @@ while 1
     else
         txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
     end
-    LineAndBack(taskParam.window)
+    LineAndBack(taskParam.window, taskParam.screensize)
     DrawCircle(taskParam.window);
     DrawOutcome(taskParam, 238);
     DrawCross(taskParam.window);
     PredictionSpot(taskParam);
     DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
-    DrawFormattedText(taskParam.window,txt,200,100);
+    DrawFormattedText(taskParam.window,txt,taskParam.screensize(3)*0.15,taskParam.screensize(4)*0.1, [0 0 0]);
     Screen('Flip', taskParam.window);
     
-   
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode) == taskParam.enter
-                break
-            end
+    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    if keyIsDown
+        if find(keyCode) == taskParam.enter
+            break
         end
     end
-
+end
 KbReleaseWait();
-% %Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4)/15, screensize(3) - 100, screensize(4)/3] )
-% DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
-% DrawCircle(taskParam.window);
-% DrawCross(taskParam.window);
-% Screen('Flip', taskParam.window);
-% WaitSecs(1);
-%
-% KbReleaseWait();
 
 % Fourth screen.
 while 1
@@ -107,16 +94,15 @@ while 1
         txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     end
     
-    LineAndBack(taskParam.window)
-    DrawFormattedText(taskParam.window,txt,200, 100);
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
+    LineAndBack(taskParam.window, taskParam.screensize)
+    DrawFormattedText(taskParam.window,txt,taskParam.screensize(3)*0.15,taskParam.screensize(4)*0.1, [0 0 0]);
     DrawCircle(taskParam.window)
     DrawGoldBoat(taskParam)
     DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode)==taskParam.enter% don't know why it does not understand return or enter?
+    if find(keyCode)==taskParam.enter
         break
     end
 end
@@ -131,16 +117,15 @@ while 1
         txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst du 10 CENT. ';
     end
     
-    LineAndBack(taskParam.window)
-    DrawFormattedText(taskParam.window,txt,200, 100);
+    LineAndBack(taskParam.window, taskParam.screensize)
+    DrawFormattedText(taskParam.window,txt,taskParam.screensize(3)*0.15,taskParam.screensize(4)*0.1, [0 0 0]);
     DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     DrawCircle(taskParam.window)
     DrawBronzeBoat(taskParam)
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
-   
+    
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.enter% don't know why it does not understand return or enter?
+    if find(keyCode) == taskParam.enter
         break
     end
 end
@@ -155,29 +140,30 @@ while 1
         txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du 0 CENT. ';
     end
     
-    LineAndBack(taskParam.window)
-    DrawFormattedText(taskParam.window,txt,200, 100);
+    LineAndBack(taskParam.window, taskParam.screensize)
+    DrawFormattedText(taskParam.window,txt,taskParam.screensize(3)*0.15,taskParam.screensize(4)*0.1, [0 0 0]);
     DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     DrawCircle(taskParam.window)
     DrawSilverBoat(taskParam)
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.enter% don't know why it does not understand return or enter?
+    if find(keyCode) == taskParam.enter
         break
     end
 end
 KbReleaseWait();
+
+% Seventh screen.
 header = 'Wie der Radar funktioniert';
 if isequal(taskParam.computer, 'Humboldt')
     txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
 else
     txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe der\n\nangezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
 end
-
 BigScreen(taskParam, txtPressEnter, header, txt);
 
+% Eigths screen.
 header = 'Wie du einen Schuss abgibst';
 if isequal(taskParam.computer, 'Humboldt')
     txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den\n\nSeegang nur ungefähr angibt wo die Schiffe sind.';
@@ -186,6 +172,7 @@ else
 end
 BigScreen(taskParam, txtPressEnter, header, txt);
 
+% Ninth screen.
 header = 'Worauf du achten solltest';
 if isequal(taskParam.computer, 'Humboldt')
     txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
@@ -195,7 +182,8 @@ end
 BigScreen(taskParam, txtPressEnter, header, txt);
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% First practice
+%%% Intro-trials with length == taskParam.intTrials and also counterbalance condition (cBal) %%%
+% TODO: write function for control loop.
 
 if cBal == '1'
     
@@ -567,7 +555,7 @@ end
 KbReleaseWait();
 
 
-header = 'Ende der ersten Übung'
+header = 'Ende der ersten Übung';
 if isequal(taskParam.computer, 'Humboldt')
     txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich\n\ndaran anpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
 else
@@ -957,6 +945,8 @@ elseif cBal == '2'
     
 end
 
+%% End of intro %% 
+
 header = 'Ende der zweiten Übung';
 if isequal(taskParam.computer, 'Humboldt')
     txt = 'In der folgenden Übung ist dein Radar leider kaputt. Die Radarnadel\n\nkannst du jetzt nur noch selten sehen. In den meisten Fällen musst\n\ndu die Schiffsposition selber herausfinden. Trotzdem solltest du\n\nversuchen, möglichst viele Schiffe abzuschießen.';
@@ -964,25 +954,6 @@ else
     txt = 'In der folgenden Übung ist dein Radar leider kaputt. Die Radarnadel kannst du\n\njetzt nur noch selten sehen. In den meisten Fällen musst du die Schiffsposition\n\nselber herausfinden. Du solltest versuchen, möglichst viele Schiffe\n\nabzuschießen.';
 end
 BigScreen(taskParam, txtPressEnter, header, txt)
-
-% % Screen 18.
-% while 1
-%     
-%     
-%     
-%     %Screen('FillRect', taskParam.window, [224,255,255], [screensize(3)/10, screensize(4) / 4, screensize(3) - (screensize(3)/10), screensize(4) - (screensize(4) / 4)] )
-%     DrawFormattedText(taskParam.window,txtScreen18, 200, 300);
-%     DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
-%     Screen('Flip', taskParam.window);
-%     
-%     [ keyIsDown, seconds, keyCode ] = KbCheck;
-%     if keyIsDown
-%         if find(keyCode) == taskParam.enter
-%             break
-%         end
-%     end
-% end
-%KbReleaseWait();
 
 
 %% Save data.

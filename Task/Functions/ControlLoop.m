@@ -7,13 +7,17 @@ screensize = get(0,'MonitorPositions');
 distMean = 238;
 while 1
     
-    LineAndBack(taskParam.window)
+    LineAndBack(taskParam.window, taskParam.screensize)
     DrawFormattedText(taskParam.window,txt,screensize(3)*0.15,screensize(4)*0.1, [0 0 0]);
     
     DrawCircle(taskParam.window)
     DrawCross(taskParam.window)
     DrawHand(taskParam, distMean)
     PredictionSpot(taskParam)
+    if button == taskParam.enter
+        txtPressEnter='Weiter mit Enter';
+        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
+    end
     Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;

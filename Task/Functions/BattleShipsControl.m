@@ -72,7 +72,7 @@ for i=1:taskParam.contTrials
     if i >= 2
     % Calculate memory error.
     [taskDataControl.memErr(i), taskDataControl.memErrNorm(i), taskDataControl.memErrPlus(i), taskDataControl.memErrMin(i)] = Diff(taskDataControl.outcome(i), taskDataControl.outcome(i-1));
-   
+    
     % Calculate update.
     [taskDataControl.UP(i), taskDataControl.UPNorm(i), taskDataControl.UPPlus(i), taskDataControl.UPMin(i)] = Diff(taskDataControl.pred(i), taskDataControl.pred(i-1));
     end
@@ -129,12 +129,12 @@ for i=1:taskParam.contTrials
     DrawCircle(taskParam.window)
     if taskDataControl.boatType(i) == 1
         DrawGoldBoat(taskParam)
-        if taskDataControl.predErr(i) < 13
+        if taskDataControl.hit(i) == 1
             taskDataControl.perf(i)  =  0.2;
         end
     elseif taskDataControl.boatType(i) == 2
         DrawBronzeBoat(taskParam)
-        if taskDataControl.predErr(i) < 13
+        if taskDataControl.hit(i) == 1
             taskDataControl.perf(i) = 0.1;
         end
     else

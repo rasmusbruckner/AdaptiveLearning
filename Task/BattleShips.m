@@ -18,10 +18,10 @@ runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
+fTrials = 'trials'; trials = 10; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 10; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
@@ -277,9 +277,9 @@ if Subject.cBal == '1'
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
         if isequal(taskParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
-            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung: Wenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
         
         BigScreen(taskParam, txtPressEnter, header, txt)
@@ -538,11 +538,16 @@ elseif Subject.cBal == '2'
     
 end
 
+
+totWin = DataLS.accPerf(end) + DataHS.accPerf(end) + DataControlLS.accPerf(end) + DataControlHS.accPerf(end);
+
 while 1
     
 header = 'Ende der Aufgabe!';
-totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
-txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin');
+%totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
+txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
+
+
 Screen('DrawLine', taskParam.window, [0 0 0], 0, 150, 1440, 150, [5]);
 Screen('DrawLine', taskParam.window, [0 0 0], 0, 800, 1440, 800, [5]);
 Screen('FillRect', taskParam.window, [224, 255, 255], [0, 150, 1440, 795]);
@@ -553,7 +558,7 @@ DrawFormattedText(taskParam.window, txt, 'center', 'center');
 Screen('Flip', taskParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == s % don't know why it does not understand return or enter?
+    if find(keyCode) == s
         break
     end
 end
