@@ -14,7 +14,7 @@ clear all
 
 %% Set parameters.
 
-runIntro = true;   % Run the intro with practice trials?
+runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = true; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Humboldt'; % On which computer do you run the task? Macbook or Humboldt?
