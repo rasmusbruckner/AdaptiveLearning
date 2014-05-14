@@ -8,7 +8,7 @@ clear all
 
 plotData = false;
 %% Which subjects do you want to load?
-subject = {'testCB2'}; % '0023' '0025' '0027'
+subject = {'testHU'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);

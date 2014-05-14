@@ -21,6 +21,13 @@ for i=1:taskParam.contTrials
         lptwrite(taskParam.port,0) % Set port to 0.
     end
     
+     % Trigger: trial onset.
+        if taskParam.sendTrigger == true
+            lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
+            WaitSecs(1/taskParam.sampleRate);
+            lptwrite(taskParam.port,0) % Set port to 0.
+        end
+    
     while 1
         
         % Trial onset.
@@ -28,12 +35,7 @@ for i=1:taskParam.contTrials
         DrawCross(taskParam.window)
         PredictionSpot(taskParam)
         
-        % Trigger: trial onset.
-        if taskParam.sendTrigger == true
-            lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
-            WaitSecs(1/taskParam.sampleRate);
-            lptwrite(taskParam.port,0) % Set port to 0.
-        end
+       
         
         Screen('Flip', taskParam.window);
         
