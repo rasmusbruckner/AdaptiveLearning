@@ -8,7 +8,7 @@ clear all
 
 plotData = false;
 %% Which subjects do you want to load?
-subject = {'testDD'}; % '0023' '0025' '0027'
+subject = {'Pilo2_1'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);
@@ -64,7 +64,7 @@ cond = [];
 %% Merges all data and exports them to a text file.
 
 Data = fopen('AdaptiveLearning/DataDirectory/MergedData.txt','wt');
-fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'cond', 'cBal', 'sigma', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'mErr', 'mENorm', 'mEPlus', 'mEMin', 'UP', 'UPNorm', 'UPPlus', 'UPMin', 'lR', 'hit', 'perf', 'accP', 'date');
+fprintf(Data, '%7s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %6s\t %11s\n', 'ID', 'sex', 'age', 'trial', 'CP', 'TAC', 'cTrial', 'boat', 'dMean', 'outc', 'pred', 'pErr', 'pENorm', 'pEPlus', 'pEMin', 'mErr', 'mENorm', 'mEPlus', 'mEMin', 'UP', 'UPNorm', 'UPPlus', 'UPMin', 'lR', 'hit', 'date');
 
 for i = 1:length(subject)
     
@@ -98,15 +98,15 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).age;
     age = [age; temp];
     
-    % Condtition
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).cond;
-    cond = [cond; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).cond;
-    cond = [cond; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).cond;
-    cond = [cond; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).cond;
-    cond = [cond; temp];
+%     % Condtition
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).cond;
+%     cond = [cond; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).cond;
+%     cond = [cond; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).cond;
+%     cond = [cond; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).cond;
+%     cond = [cond; temp];
     
     % Trial
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).trial';
@@ -158,25 +158,25 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).TAC;
     TAC = [TAC; temp];
     
-    % Accumulated performance
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
-    accPerf = [accPerf; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
-    accPerf = [accPerf; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
-    accPerf = [accPerf; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
-    accPerf = [accPerf; temp];
-    
-    % Performance
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).perf;
-    perf = [perf; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).perf;
-    perf = [perf; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).perf;
-    perf = [perf; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).perf;
-    perf = [perf; temp];
+%     % Accumulated performance
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
+%     accPerf = [accPerf; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
+%     accPerf = [accPerf; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
+%     accPerf = [accPerf; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).accPerf;
+%     accPerf = [accPerf; temp];
+%     
+%     % Performance
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).perf;
+%     perf = [perf; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).perf;
+%     perf = [perf; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).perf;
+%     perf = [perf; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).perf;
+%     perf = [perf; temp];
     
     % Boat type
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).boatType;
@@ -198,137 +198,137 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).pred;
     pred = [pred; temp];
     
-    % Prediction Error
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
+%     % Prediction Error
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     
+%     % Prediction Error
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
+%     predErr = [predErr; temp];
     
-    % Prediction Error
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErr;
-    predErr = [predErr; temp];
+%     % Prediction Error Norm
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
+%     predErrNorm = [predErrNorm; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
+%     predErrNorm = [predErrNorm; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
+%     predErrNorm = [predErrNorm; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
+%     predErrNorm = [predErrNorm; temp];
     
-    % Prediction Error Norm
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
-    predErrNorm = [predErrNorm; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
-    predErrNorm = [predErrNorm; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
-    predErrNorm = [predErrNorm; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErrNorm;
-    predErrNorm = [predErrNorm; temp];
-    
-    % Prediction Error Plus
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
-    predErrPlus = [predErrPlus; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
-    predErrPlus = [predErrPlus; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
-    predErrPlus = [predErrPlus; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
-    predErrPlus = [predErrPlus; temp];
-    
-    % Prediction Error Min
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
-    predErrMin = [predErrMin; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
-    predErrMin = [predErrMin; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
-    predErrMin = [predErrMin; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
-    predErrMin = [predErrMin; temp];
-    
-    % Memory Error
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErr;
-    memErr = [memErr; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErr;
-    memErr = [memErr; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErr;
-    memErr = [memErr; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErr;
-    memErr = [memErr; temp];
-    
-    % Memory Error Norm
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
-    memErrNorm = [memErrNorm; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
-    memErrNorm = [memErrNorm; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
-    memErrNorm = [memErrNorm; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
-    memErrNorm = [memErrNorm; temp];
-    
-    % Memory Error Plus
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
-    memErrPlus = [memErrPlus; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
-    memErrPlus = [memErrPlus; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
-    memErrPlus = [memErrPlus; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
-    memErrPlus = [memErrPlus; temp];
-    
-    % Memory Error Min
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
-    memErrMin = [memErrMin; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
-    memErrMin = [memErrMin; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
-    memErrMin = [memErrMin; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
-    memErrMin = [memErrMin; temp];
-    
-    % Update
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UP;
-    UP = [UP; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UP;
-    UP = [UP; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UP;
-    UP = [UP; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UP;
-    UP = [UP; temp];
-    
-    % Update Norm
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
-    UPNorm = [UPNorm; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
-    UPNorm = [UPNorm; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
-    UPNorm = [UPNorm; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
-    UPNorm = [UPNorm; temp];
-    
-    % Update Plus
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
-    UPPlus = [UPPlus; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
-    UPPlus = [UPPlus; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
-    UPPlus = [UPPlus; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
-    UPPlus = [UPPlus; temp];
-    
-    % Update Min
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
-    UPMin = [UPMin; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
-    UPMin = [UPMin; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
-    UPMin = [UPMin; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
-    UPMin = [UPMin; temp];
-    
-    
+%     % Prediction Error Plus
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
+%     predErrPlus = [predErrPlus; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
+%     predErrPlus = [predErrPlus; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
+%     predErrPlus = [predErrPlus; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErrPlus;
+%     predErrPlus = [predErrPlus; temp];
+%     
+%     % Prediction Error Min
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
+%     predErrMin = [predErrMin; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
+%     predErrMin = [predErrMin; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
+%     predErrMin = [predErrMin; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).predErrMin;
+%     predErrMin = [predErrMin; temp];
+%     
+%     % Memory Error
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErr;
+%     memErr = [memErr; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErr;
+%     memErr = [memErr; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErr;
+%     memErr = [memErr; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErr;
+%     memErr = [memErr; temp];
+%     
+%     % Memory Error Norm
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
+%     memErrNorm = [memErrNorm; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
+%     memErrNorm = [memErrNorm; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
+%     memErrNorm = [memErrNorm; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErrNorm;
+%     memErrNorm = [memErrNorm; temp];
+%     
+%     % Memory Error Plus
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
+%     memErrPlus = [memErrPlus; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
+%     memErrPlus = [memErrPlus; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
+%     memErrPlus = [memErrPlus; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErrPlus;
+%     memErrPlus = [memErrPlus; temp];
+%     
+%     % Memory Error Min
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
+%     memErrMin = [memErrMin; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
+%     memErrMin = [memErrMin; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
+%     memErrMin = [memErrMin; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).memErrMin;
+%     memErrMin = [memErrMin; temp];
+%     
+%     % Update
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UP;
+%     UP = [UP; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UP;
+%     UP = [UP; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UP;
+%     UP = [UP; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UP;
+%     UP = [UP; temp];
+%     
+%     % Update Norm
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
+%     UPNorm = [UPNorm; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
+%     UPNorm = [UPNorm; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
+%     UPNorm = [UPNorm; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPNorm;
+%     UPNorm = [UPNorm; temp];
+%     
+%     % Update Plus
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
+%     UPPlus = [UPPlus; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
+%     UPPlus = [UPPlus; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
+%     UPPlus = [UPPlus; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPPlus;
+%     UPPlus = [UPPlus; temp];
+%     
+%     % Update Min
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
+%     UPMin = [UPMin; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
+%     UPMin = [UPMin; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
+%     UPMin = [UPMin; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).UPMin;
+%     UPMin = [UPMin; temp];
+     
+     
     % Outcome
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).outcome;
     outcome = [outcome; temp];
@@ -338,7 +338,7 @@ for i = 1:length(subject)
     outcome = [outcome; temp];
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).outcome;
     outcome = [outcome; temp];
-    
+     
     % Sigma
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).sigma;
     sigma = [sigma; temp];
@@ -348,7 +348,7 @@ for i = 1:length(subject)
     sigma = [sigma; temp];
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).sigma;
     sigma = [sigma; temp];
-    
+     
     % Counterbalance
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).cBal;
     cBal = [cBal; temp];
@@ -359,15 +359,15 @@ for i = 1:length(subject)
     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).cBal;
     cBal = [cBal; temp];
     
-    % Hit
-    temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).hit;
-    hit = [hit; temp];
-    temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).hit;
-    hit = [hit; temp];
-    temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).hit;
-    hit = [hit; temp];
-    temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).hit;
-    hit = [hit; temp];
+%     % Hit
+%     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).hit;
+%     hit = [hit; temp];
+%     temp = allData{i}.(sprintf('DataHS_%s',  num2str(cell2mat((subject(i)))))).hit;
+%     hit = [hit; temp];
+%     temp = allData{i}.(sprintf('DataControlLS_%s',  num2str(cell2mat((subject(i)))))).hit;
+%     hit = [hit; temp];
+%     temp = allData{i}.(sprintf('DataControlHS_%s',  num2str(cell2mat((subject(i)))))).hit;
+%     hit = [hit; temp];
     
     % date
     temp = allData{i}.(sprintf('DataLS_%s',  num2str(cell2mat((subject(i)))))).date;
@@ -385,7 +385,36 @@ for i = 1:length(subject)
 end
 
 
+for i = 1:length(trial)
+   [predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i)] = Diff(outcome(i), pred(i));
+    
+    % Calculate hits
+    if predErr(i) <= 13
+        hit(i) = 1;
+    end
+    
+    if i >=200
+    [memErr(i), memErrNorm(i), memErrPlus(i), memErrMin(i)] = Diff(pred(i), outcome(i-1));
+    else
+    
+    memErr(i) = 999;
+    memErrNorm(i) = 999;
+    memErrPlus(i) = 999;
+    memErrMin(i) = 999;
+    end
+    
+    if memErr(i) <= 13
+        hit(i) =1
+    end
+    
+    
 
+    
+    if i >= 2
+        % Calculate update.
+        [UP(i), UPNorm(i), UPPlus(i), UPMin(i)] = Diff(pred(i), pred(i-1));
+    end
+end
 
 
 for i = 1:length(trial)
@@ -395,6 +424,18 @@ for i = 1:length(trial)
         lR(i) = 0;
     end
 end
+
+
+
+    
+
+
+
+
+
+
+
+
 
 % end
 
@@ -407,7 +448,7 @@ end
 %Regular loop.
 for i = 1:length(trial)
     
-    fprintf(Data,'%7s %7s %7d %7s %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.2f %7.f %7.2f %7.2f %12s\n', ID{i}, sex{i}, age(i), cond{i}, cBal{i}, sigma(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), memErr(i), memErrNorm(i), memErrPlus(i), memErrMin(i), UP(i), UPNorm(i), UPPlus(i), UPMin(i), lR(i), hit(i), perf(i), accPerf(i), date{i}); % learnR(i)
+    fprintf(Data,'%7s %7s %7d %7d %7d %7d %7d %7d %7d %7d %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.f %7.2f %7.f %12s\n', ID{i}, sex{i}, age(i), trial(i), CP(i), TAC(i), catchTrial(i), boatType(i), distMean(i), outcome(i), pred(i), predErr(i), predErrNorm(i), predErrPlus(i), predErrMin(i), memErr(i), memErrNorm(i), memErrPlus(i), memErrMin(i), UP(i), UPNorm(i), UPPlus(i), UPMin(i), lR(i), hit(i), date{i}); % learnR(i)
 end
 
 fclose(Data)

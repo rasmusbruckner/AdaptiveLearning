@@ -2,67 +2,63 @@ function [taskDataControl, dataControl] = BattleShipsControl(taskParam, sigmas, 
 
 KbReleaseWait()
 
-% Set port to 0.
-%lptwrite(taskParam.port,0);
 
 %% generateOutcomes
-% taskData = GenerateControlOutcomes(taskParam);
-
-%taskData = GenerateOutcomes(taskParam, sigma, condition);
 taskDataControl = GenerateOutcomes(taskParam, sigmas, condition);
 
 %% Run trials.
-for i=1:taskParam.contTrials
+for i=1:taskParam.gParam.contTrials
     
     % Trigger: start task.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.startTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+     SendTrigger(taskParam, taskParam.triggers.startTrigger)
+%     if taskParam.gParam.sendTrigger == true
+%         lptwrite(taskParam.triggers.port, taskParam.triggers.startTrigger);
+%         WaitSecs(1/taskParam.triggers.sampleRate);
+%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%     end
     
      % Trigger: trial onset.
-        if taskParam.sendTrigger == true
-            lptwrite(taskParam.port, taskParam.trialOnsetTrigger);
-            WaitSecs(1/taskParam.sampleRate);
-            lptwrite(taskParam.port,0) % Set port to 0.
-        end
+     SendTrigger(taskParam, taskParam.triggers.trialOnsetTrigger)
+%         if taskParam.gParam.sendTrigger == true
+%             lptwrite(taskParam.triggers.port, taskParam.triggers.trialOnsetTrigger);
+%             WaitSecs(1/taskParam.triggers.sampleRate);
+%             lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%         end
     
     while 1
         
         % Trial onset.
-        DrawCircle(taskParam.window)
-        DrawCross(taskParam.window)
+        DrawCircle(taskParam.gParam.window)
+        DrawCross(taskParam.gParam.window)
         PredictionSpot(taskParam)
         
-       
+        Screen('Flip', taskParam.gParam.window);
         
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck;
         
         if keyIsDown
-            if keyCode(taskParam.rightKey)
-                if taskParam.rotAngle < 360*taskParam.unit
-                    taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
+            if keyCode(taskParam.keys.rightKey)
+                if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                    taskParam.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
                 else
-                    taskParam.rotAngle = 0;
+                    taskParam.circle.rotAngle = 0;
                 end
-            elseif keyCode(taskParam.leftKey)
-                if taskParam.rotAngle > 0*taskParam.unit
-                    taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
+            elseif keyCode(taskParam.keys.leftKey)
+                if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 1*taskParam.circle.unit;
                 else
-                    taskParam.rotAngle = 360*taskParam.unit;
+                    taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
-            elseif keyCode(taskParam.space)
-                taskDataControl.pred(i) = taskParam.rotAngle/taskParam.unit;
+            elseif keyCode(taskParam.keys.space)
+                taskDataControl.pred(i) = taskParam.circle.rotAngle/taskParam.circle.unit;
                 
                 % Trigger: prediction.
-                if taskParam.sendTrigger == true
-                    lptwrite(taskParam.port, taskParam.predTrigger);
-                    WaitSecs(1/taskParam.sampleRate);
-                    lptwrite(taskParam.port,0) % Set port to 0.
-                end
+                SendTrigger(taskParam, taskParam.triggers.predTrigger)
+%                 if taskParam.gParam.sendTrigger == true
+%                     lptwrite(taskParam.triggers.port, taskParam.triggers.predTrigger);
+%                     WaitSecs(1/taskParam.triggers.sampleRate);
+%                     lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%                 end
                 break;
             end
         end
@@ -84,51 +80,57 @@ for i=1:taskParam.contTrials
     end
     
     % Show baseline.
-    DrawCross(taskParam.window)
-    DrawCircle(taskParam.window)
+    DrawCross(taskParam.gParam.window)
+    DrawCircle(taskParam.gParam.window)
     
     % Trigger: baseline 1.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.baseline1Trigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.baseline1Trigger)
+
+%     if taskParam.gParam.sendTrigger == true
+%         lptwrite(taskParam.triggers.port, taskParam.triggers.baseline1Trigger);
+%         WaitSecs(1/taskParam.triggers.sampleRate);
+%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%     end
     
-    Screen('Flip', taskParam.window);
+    Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
     % Show outcome.
-    DrawCross(taskParam.window)
-    DrawCircle(taskParam.window)
+    DrawCross(taskParam.gParam.window)
+    DrawCircle(taskParam.gParam.window)
     DrawOutcome(taskParam, taskDataControl.outcome(i)) %%TRIGGER
     PredictionSpot(taskParam)
     
     % Trigger: outcome.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.outcomeTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.outcomeTrigger)
+
+%     if taskParam.gParam.sendTrigger == true
+%         lptwrite(taskParam.triggers.port, taskParam.triggers.outcomeTrigger);
+%         WaitSecs(1/taskParam.triggers.sampleRate);
+%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%     end
     
-    Screen('Flip', taskParam.window);
+    Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
     % Show baseline
-    DrawCross(taskParam.window)
-    DrawCircle(taskParam.window)
+    DrawCross(taskParam.gParam.window)
+    DrawCircle(taskParam.gParam.window)
     
     % Trigger: baseline 2.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.baseline2Trigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.baseline2Trigger)
+
+%     if taskParam.gParam.sendTrigger == true
+%         lptwrite(taskParam.triggers.port, taskParam.triggers.baseline2Trigger);
+%         WaitSecs(1/taskParam.triggers.sampleRate);
+%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%     end
     
-    Screen('Flip', taskParam.window)
+    Screen('Flip', taskParam.gParam.window)
     WaitSecs(1);
     
     % Show boat and calculate performance.       %TRIGGER
-    DrawCircle(taskParam.window)
+    DrawCircle(taskParam.gParam.window)
     if taskDataControl.boatType(i) == 1
         DrawGoldBoat(taskParam)
         if taskDataControl.hit(i) == 1
@@ -149,29 +151,34 @@ for i=1:taskParam.contTrials
     end
     
     % Trigger: boat.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.boatTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
-    Screen('Flip', taskParam.window);
+    SendTrigger(taskParam, taskParam.triggers.boatTrigger)
+
+%     if taskParam.gParam.sendTrigger == true
+%         lptwrite(taskParam.triggers.port, taskParam.triggers.boatTrigger);
+%         WaitSecs(1/taskParam.triggers.sampleRate);
+%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%     end
+    Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
     % Show baseline.
-    DrawCircle(taskParam.window)
-    DrawCross(taskParam.window)
+    DrawCircle(taskParam.gParam.window)
+    DrawCross(taskParam.gParam.window)
     
     % Trigger: baseline 3.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.baseline3Trigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.baseline3Trigger)
+
+%     if taskParam.gParam.sendTrigger == true
+%         lptwrite(taskParam.triggers.port, taskParam.triggers.baseline3Trigger);
+%         WaitSecs(1/taskParam.triggers.sampleRate);
+%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+%     end
     
-    Screen('Flip', taskParam.window);
+    Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
     taskDataControl.trial(i) = i;
+    taskDataControl.catchTrial(i) = 999;
     taskDataControl.age(i) = str2double(Subject.age);
     taskDataControl.ID{i} = Subject.ID;
     taskDataControl.sex{i} = Subject.sex;
@@ -181,26 +188,21 @@ for i=1:taskParam.contTrials
 end
 
 maxMon = (length(find(taskDataControl.boatType == 1)) * 0.2) + (length(find(taskDataControl.boatType == 2)) * 0.1);
-if isequal(taskParam.computer, 'Macbook')
-    enter = 40;
-elseif isequal(taskParam.computer, 'Humboldt')
-    enter = 13;
-end
 
 while 1
     
     txtBreak = 'Ende des Blocks';
     txtPressEnter = 'Weiter mit Enter';
     txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskDataControl.accPerf(i), maxMon);
-    Screen('TextSize', taskParam.window, 50);
-    DrawFormattedText(taskParam.window, txtBreak, 'center', taskParam.screensize(4)*0.3);
-    Screen('TextSize', taskParam.window, 30);
-    DrawFormattedText(taskParam.window, txtFeedback, 'center', 'center');
-    DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
-    Screen('Flip', taskParam.window);
+    Screen('TextSize', taskParam.gParam.window, 50);
+    DrawFormattedText(taskParam.gParam.window, txtBreak, 'center', taskParam.gParam.screensize(4)*0.3);
+    Screen('TextSize', taskParam.gParam.window, 30);
+    DrawFormattedText(taskParam.gParam.window, txtFeedback, 'center', 'center');
+    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+    Screen('Flip', taskParam.gParam.window);
     
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == enter % don't know why it does not understand return or enter?
+    [~ ,~ , keyCode ] = KbCheck;
+    if find(keyCode) == taskParam.keys.enter % don't know why it does not understand return or enter?
         break
     end
 end

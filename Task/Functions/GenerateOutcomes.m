@@ -5,11 +5,11 @@ function taskData = GenerateOutcomes(taskParam, sigmas, condition)
 %   All other variables are preallocated.
 
 if isequal(condition, 'main')
-    trials = taskParam.trials;
+    trials = taskParam.gParam.trials;
 elseif isequal(condition, 'practice')
-    trials = taskParam.practTrials;
+    trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'control')
-    trials = taskParam.contTrials;
+    trials = taskParam.gParam.contTrials;
 end
 
 % Preallocate variables.
@@ -42,17 +42,17 @@ UPPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
 UPMin = zeros(trials, 1);
 hit = zeros(trials, 1); % Hit.
 cBal = cell(trials, 1); % Counterbalancing.
-s=taskParam.safe; % how many guaranteed trials before change-point.
+s=taskParam.gParam.safe; % how many guaranteed trials before change-point.
 perf = zeros(trials, 1); % Performance.
 accPerf = zeros(trials, 1); % Accumulated performance. 
 
 %% generateOutcomes
 
 for i = 1:trials
-    if (rand<taskParam.hazardRate && s==0) || i == 1;
+    if (rand<taskParam.gParam.hazardRate && s==0) || i == 1;
         mean=round(rand(1).*360); % Outcome expressed in degrees.
         cp(i)=1;
-        s=taskParam.safe;
+        s=taskParam.gParam.safe;
         TAC(i)=0; %TAC(i)=1;
     else
         TAC(i)=TAC(i-1)+1; %TAC(i)=TAC(i-1)+1;

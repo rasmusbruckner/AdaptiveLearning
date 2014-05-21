@@ -1,44 +1,73 @@
-function taskParam = ControlLoop(taskParam, txt, button)
+function [taskParam] = ControlLoop(taskParam, distMean, outcome, boatType)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-screensize = get(0,'MonitorPositions');
 
-distMean = 238;
 while 1
+    DrawCircle(taskParam.gParam.window);
+    DrawCross(taskParam.gParam.window);
+    DrawHand(taskParam, distMean);
+    PredictionSpot(taskParam);
+    Screen('Flip', taskParam.gParam.window);
     
-    LineAndBack(taskParam.window, taskParam.screensize)
-    DrawFormattedText(taskParam.window,txt,screensize(3)*0.15,screensize(4)*0.1, [0 0 0]);
-    
-    DrawCircle(taskParam.window)
-    DrawCross(taskParam.window)
-    DrawHand(taskParam, distMean)
-    PredictionSpot(taskParam)
-    if button == taskParam.enter
-        txtPressEnter='Weiter mit Enter';
-        DrawFormattedText(taskParam.window,txtPressEnter,'center',taskParam.screensize(4)*0.9);
-    end
-    Screen('Flip', taskParam.window);
-    
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
+    [ keyIsDown, ~, keyCode ] = KbCheck;
     
     if keyIsDown
-        if keyCode(taskParam.rightKey)
-            if taskParam.rotAngle < 360*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle + 1*taskParam.unit; %0.02
+        if keyCode(taskParam.keys.rightKey)
+            if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                taskParam.circle.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
             else
-                taskParam.rotAngle = 0;
+                taskParam.cirlce.rotAngle = 0;
             end
-        elseif keyCode(taskParam.leftKey)
-            if taskParam.rotAngle > 0*taskParam.unit
-                taskParam.rotAngle = taskParam.rotAngle - 1*taskParam.unit;
+        elseif keyCode(taskParam.keys.leftKey)
+            if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                taskParam.circle.rotAngle = taskParam.circle.rotAngle - 1*taskParam.circle.unit;
             else
-                taskParam.rotAngle = 360*taskParam.unit;
+                taskParam.circle.rotAngle = 360*taskParam.circle.unit;
             end
-        elseif keyCode(button) %keyCode(taskParam.space)
+        elseif keyCode(taskParam.keys.space)
             break;
         end
     end
 end
 
- KbReleaseWait()
+DrawCircle(taskParam.gParam.window);
+DrawCross(taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window);
+WaitSecs(1);
+
+DrawCircle(taskParam.gParam.window);
+DrawOutcome(taskParam, outcome);
+DrawCross(taskParam.gParam.window);
+PredictionSpot(taskParam);
+Screen('Flip', taskParam.gParam.window);
+WaitSecs(1);
+
+DrawCircle(taskParam.gParam.window);
+DrawCross(taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window);
+WaitSecs(1);
+
+%imageRect = [0 0 100 100];
+%winRect = taskParam.gParam.windowRect;
+%dstRect = CenterRect(imageRect, winRect);
+
+if boatType == 1
+    DrawGoldBoat(taskParam)
+elseif boatType == 2
+    DrawBronzeBoat(taskParam)
+else
+    DrawSilverBoat(taskParam)
+end
+
+DrawCircle(taskParam.gParam.window)
+Screen('Flip', taskParam.gParam.window);
+WaitSecs(1);
+
+DrawCircle(taskParam.gParam.window)
+DrawCross(taskParam.gParam.window)
+Screen('Flip', taskParam.gParam.window);
+WaitSecs(1)
+
+KbReleaseWait();
+end

@@ -1,4 +1,4 @@
-% Adaptive Learning Task - EEG 
+% Adaptive Learning Task - EEG
 %
 % BattleShips is an adaptive learning EEG task for investigating belief
 % updating in dynamical environments with systematic (hazardRate)
@@ -12,30 +12,27 @@
 
 clear all
 
-%% Set parameters.
+%% Set general parameters.
 
 runIntro = false;   % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
-fSendTrigger = 'sendTrigger'; sendTrigger = true; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Humboldt'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 90; % Number of trials per (sigma-)condition.
-fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
-fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 90; % Number of control trials.
+askSubjInfo = false; % Do you want some basic demographic subject variables?
+fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
+fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
+fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
+fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
+fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
-    
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
-    
 elseif isequal(computer, 'Humboldt')
-    
     savdir = 'D:\!EXP\AdaptiveLearning\DataDirectory';
-    
 end
+
 %% User Input.
 
 fID = 'ID';
@@ -46,8 +43,11 @@ fDate = 'date';
 
 if askSubjInfo == false
     
+    ID = '999';
+    age = '999';
+    sex = 'm/w';
     cBal = '1';
-    Subject = struct(fCBal, cBal);
+    Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fDate, date);
     
 elseif askSubjInfo == true
     prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal'};
@@ -56,6 +56,14 @@ elseif askSubjInfo == true
     defaultanswer = {'9999','99', 'M', '1'};
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     subjInfo{5} = date;
+    
+    % TODO: is not equal to!!!!
+    %     if subjInfo{4} ~= '1' || subjInfo{4} ~= '2'
+    %         msgbox('cBal muss 1 oder 2 sein!');
+    %         return
+    %     elseif subjInfo{3} ~= 'm' || subjInfo{3} ~= 'w'
+    %         msgbox('Geschlecht: "m" oder "w"?');
+    %     end
     
     % Filenames.
     fname = sprintf('BattleShips_%s.mat', num2str(cell2mat((subjInfo(1)))));
@@ -74,7 +82,6 @@ elseif askSubjInfo == true
         msgbox('Diese ID wird bereits verwendet!');
         return
     end
-    
 end
 
 %% Open window.
@@ -84,20 +91,21 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-Screen('Preference', 'VisualDebugLevel', 3);
-Screen('Preference', 'SuppressAllWarnings', 1);
-Screen('Preference', 'SkipSyncTests', 2);
-
-% Get screensize.
-fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
+%Screen('Preference', 'VisualDebugLevel', 3);
+%Screen('Preference', 'SuppressAllWarnings', 1);
+%Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
-[ window, windowRect ] = Screen('OpenWindow', 0, [], []);
-
-%% Task parameters.
-
+fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
 fWindow = 'window';
 fWindowRect = 'windowRect';
+[ window, windowRect ] = Screen('OpenWindow', 0, [], []);
+
+fGParam = 'gParam';
+gParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+    fHazardRate, hazardRate, fSafe, safe, fScreensize, screensize, fWindow, window, fWindowRect, windowRect);
+
+%% Circle parameters.
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
@@ -127,17 +135,29 @@ fUnit = 'unit'; unit = 2*pi/360; % This expresses the circle (2*pi) as a fractio
 fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 270*unit; % The initial rotation angle (on top of circle).
 fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when prediction spot is moved.
 
+% Circle parameters.
+fCircle = 'circle';
+circle = struct(fPredSpotRad, predSpotRad, fOutcRad, outcRad, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
+    outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
+    fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
+    centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
+
 % Set key names.
-KbName('UnifyKeyNames');
 fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
 fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
 fSpace = 'space'; space = KbName('Space');
 fEnter = 'enter';
+fS = 's'; 
 if isequal(computer, 'Macbook')
     enter = 40;
+    s = 22;
 elseif isequal(computer, 'Humboldt')
     enter = 13;
+    s = 83;
 end
+
+fKeys = 'keys';
+keys = struct(fRightKey, rightKey, fLeftKey, leftKey, fSpace, space, fEnter, enter, fS, s);
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
@@ -170,7 +190,13 @@ fHit = 'hit'; hit = fHit; % Hit.
 fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
 fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
-%s=taskParam.safe; % how many guaranteed trials before change-point.
+
+fFieldNames = 'fieldNames';
+fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fDate, date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+    fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
+    fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
+    fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
+
 
 %% Trigger settings.
 
@@ -188,43 +214,36 @@ fBlockLSTrigger = 'blockLSTrigger'; blockLSTrigger = 10; % Block with low sigma.
 fBlockHSTrigger = 'blockHSTrigger'; blockHSTrigger = 11; % Block with high sigma.
 fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
 
-fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fDate, date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
-    fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
-    fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
-    fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
-
-% Save task parameters in structure
-taskParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
-    fHazardRate, hazardRate, fSafe, safe, fWindow, window, fWindowRect, windowRect, fPredSpotRad, predSpotRad,...
-    fOutcRad, outcRad, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
-    outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
-    fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
-    centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle, fRightKey, rightKey, fLeftKey, leftKey,...
-    fSpace, space, fEnter, enter, fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrigger, fTrialOnset, trialOnsetTrigger,...
+fTriggers = 'triggers';
+triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrigger, fTrialOnset, trialOnsetTrigger,...
     fPredTrigger, predTrigger, fBaseline1Trigger, baseline1Trigger, fOutcomeTrigger, outcomeTrigger, fBaseline2Trigger, baseline2Trigger,...
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLSTrigger, blockLSTrigger, fBlockHSTrigger, blockHSTrigger,...
-    fBlockControlTrigger, blockControlTrigger, fFieldNames, fieldNames, fScreensize, screensize);
+    fBlockControlTrigger, blockControlTrigger);
+
+taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers);
 
 
-if isequal(taskParam.computer,'Humboldt')
-    enter = 13;
-    s = 83;
-else
-    enter = 40;
-    s = 22;
-end
+% if isequal(taskParam.gParam.computer,'Humboldt')
+%     enter = 13;
+%     s = 83;
+% else
+%     enter = 40;
+%     s = 22;
+% end
 
+txtLowNoise = 'Leichter Seegang';
+txtHighNoise = 'Starker Seegang';
 txtPressEnter = 'Weiter mit Enter';
 %% Run task.
 
-if taskParam.sendTrigger == true
-    lptwrite(taskParam.port,0); % Set port to 0.
+% Set port to 0.
+if taskParam.gParam.sendTrigger == true
+    lptwrite(taskParam.triggers.port,0);
 end
 
 % Set text parameters.
-Screen('TextFont', taskParam.window, 'Arial');
-Screen('TextSize', taskParam.window, 30);
+Screen('TextFont', taskParam.gParam.window, 'Arial');
+Screen('TextSize', taskParam.gParam.window, 30);
 
 KbReleaseWait()
 
@@ -235,48 +254,22 @@ if Subject.cBal == '1'
     if runIntro == true
         
         % Function for instructions.
-        BattleShipsInstructions(taskParam, sigma(1), Subject.cBal);
+        BattleShipsInstructions(taskParam, Subject.cBal);
         
-        while 1
-            txtLowNoise = 'Leichter Seegang';
-            txtPressEnter = 'Weiter mit Enter';
-            DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-            DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-            Screen('Flip', taskParam.window);
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if keyIsDown
-                if find(keyCode)==enter
-                    break
-                end
-            end
-        end
+        NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
         
         % Function for main task that is used for practice.
         condition = 'practice';
         [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
         
-        while 1
-            txtHighNoise = 'Starker Seegang';
-            txtPressEnter = 'Weiter mit Enter';
-            DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
-            DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-            Screen('Flip', taskParam.window);
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if keyIsDown
-                if find(keyCode)==enter
-                    break
-                end
-            end
-        end
+        NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
         
         % Function for main task that is used for practice.
         [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
-        if isequal(taskParam.computer, 'Humboldt')
+        if isequal(taskParam.gParam.computer, 'Humboldt')
             txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
             txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
@@ -284,58 +277,35 @@ if Subject.cBal == '1'
         
         BigScreen(taskParam, txtPressEnter, header, txt)
         
-        
-        
-        
-
     end
     
     % Trigger: block 1.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.blockLSTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger)
     
-     while 1
-        txtLowNoise = 'Leichter Seegang';
-        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    %     if taskParam.gParam.sendTrigger == true
+    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockLSTrigger);
+    %         WaitSecs(1/taskParam.triggers.sampleRate);
+    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+    %     end
+    
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+    
     
     % This functions runs the main task.
     condition = 'main';
     [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
     
-    while 1
-        txtHighNoise = 'Starker Seegang';
-        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
-    
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
     
     % Trigger: block 2.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.blockHSTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger)
+    
+    %
+    %     if taskParam.gParam.sendTrigger == true
+    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockHSTrigger);
+    %         WaitSecs(1/taskParam.triggers.sampleRate);
+    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+    %     end
     
     % This functions runs the main task.
     [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
@@ -347,26 +317,16 @@ if Subject.cBal == '1'
     KbReleaseWait();
     
     % Trigger: control block.
-    if taskParam.sendTrigger
-        lptwrite(taskParam.port, taskParam.blockControlTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
     
-    txtLowNoise = 'Leichter Seegang';
-    while 1
-        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
-     KbReleaseWait()
+    %     if taskParam.gParam.sendTrigger
+    %         lptwrite(taskParam.port, taskParam.triggers.blockControlTrigger);
+    %         WaitSecs(1/taskParam.triggers.sampleRate);
+    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+    %     end
+    
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+    
     
     % This function runs the control trials
     condition = 'control';
@@ -376,20 +336,20 @@ if Subject.cBal == '1'
     
     while 1
         
-        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
+        DrawFormattedText(taskParam.gParam.window, txtHighNoise, 'center', 'center');
+        DrawFormattedText(taskParam.gParam.window, txtPressEnter, 'center', screensize(4)*0.9);
+        Screen('Flip', taskParam.gParam.window);
         
         [ keyIsDown, seconds, keyCode ] = KbCheck;
         if keyIsDown
-            if find(keyCode)==enter
+            if find(keyCode)==taskParam.keys.enter
                 break
             end
         end
     end
     
     [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
-   
+    
     
     % cBal 2 first.
 elseif Subject.cBal == '2'
@@ -398,42 +358,17 @@ elseif Subject.cBal == '2'
     % Run intro with practice trials if true.
     if runIntro == true
         
-        BattleShipsInstructions(taskParam, sigmas(2), Subject.cBal); % Function for instructions.
+        BattleShipsInstructions(taskParam, Subject.cBal); % Function for instructions.
         
-        while 1
-            txtHighNoise = 'Starker Seegang';
-            txtPressEnter = 'Weiter mit Enter';
-            DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
-            DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-            Screen('Flip', taskParam.window);
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if keyIsDown
-                if find(keyCode)==enter
-                    break
-                end
-            end
-        end
+        NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
+        
         
         % Function for main task that is used for practice.
         condition = 'practice';
         [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
         
-        while 1
-            txtLowNoise = 'Leichter Seegang';
-            DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-            DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-            Screen('Flip', taskParam.window);
-            
-            
-            
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if keyIsDown
-                if find(keyCode)==enter
-                    break
-                end
-            end
-        end
+        
+        NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
         
         % Function for main task that is used for practice.
         [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
@@ -441,63 +376,41 @@ elseif Subject.cBal == '2'
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
-        if isequal(taskParam.computer, 'Humboldt')
+        if isequal(taskParam.gParam.computer, 'Humboldt')
             txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
             txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschießt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
         
         BigScreen(taskParam, txtPressEnter, header, txt)
-
+        
         
     end
     
     % Run the task with different noise conditions
-    while 1
-        txtLowNoise = 'Leichter Seegang';
-        txtHighNoise = 'Starker Seegang';
-        txtPressEnter = 'Weiter mit Enter';
-        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
+    
     
     % Trigger: block 1.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.blockHSTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger)
+    %     if taskParam.gParam.sendTrigger == true
+    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockHSTrigger);
+    %         WaitSecs(1/taskParam.triggers.sampleRate);
+    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+    %     end
     condition = 'main';
     [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
     
-    while 1
-        txtHighNoise = 'Starker Seegang';
-        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+    
     
     % Trigger: block 2.
-    if taskParam.sendTrigger == true
-        lptwrite(taskParam.port, taskParam.blockLSTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger)
+    %     if taskParam.gParam.sendTrigger == true
+    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockLSTrigger);
+    %         WaitSecs(1/taskParam.triggers.sampleRate);
+    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+    %     end
     
     % This Function runs main task.
     [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
@@ -506,27 +419,16 @@ elseif Subject.cBal == '2'
     BattleShipsControlInstructions(taskParam) % Run instructions.
     
     % Trigger: control block.
-    if taskParam.sendTrigger
-        lptwrite(taskParam.port, taskParam.blockControlTrigger);
-        WaitSecs(1/taskParam.sampleRate);
-        lptwrite(taskParam.port,0) % Set port to 0.
-    end
+    SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
+    %     if taskParam.gParam.sendTrigger
+    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockControlTrigger);
+    %         WaitSecs(1/taskParam.triggers.sampleRate);
+    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
+    %     end
     
     KbReleaseWait()
     
-    while 1
-        
-        DrawFormattedText(taskParam.window, txtHighNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
     
     KbReleaseWait()
     
@@ -535,43 +437,31 @@ elseif Subject.cBal == '2'
     condition = 'control';
     [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
     
-     while 1
-        DrawFormattedText(taskParam.window, txtLowNoise, 'center', 'center');
-        DrawFormattedText(taskParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==enter
-                break
-            end
-        end
-    end
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+    
     
     [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
     
 end
 
-
 totWin = DataLS.accPerf(end) + DataHS.accPerf(end) + DataControlLS.accPerf(end) + DataControlHS.accPerf(end);
 
 while 1
     
-header = 'Ende der Aufgabe!';
-%totWin = DataLS.accPerf + DataHS.accPerf + DataControlLS.accPerf + DataControlHS.accPerf;
-txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
-
-Screen('DrawLine', taskParam.window, [0 0 0], 0, taskParam.screensize(4)*0.16, taskParam.screensize(3), taskParam.screensize(4)*0.16, [5]);
-Screen('DrawLine', taskParam.window, [0 0 0], 0, taskParam.screensize(4)*0.8, taskParam.screensize(3), taskParam.screensize(4)*0.8, [5]);
-Screen('FillRect', taskParam.window, [224, 255, 255], [0, (taskParam.screensize(4)*0.16)+3, taskParam.screensize(3), (taskParam.screensize(4)*0.8)-2]);
-Screen('TextSize', taskParam.window, 50);
-DrawFormattedText(taskParam.window, header, 'center', taskParam.screensize(4)*0.1);
-Screen('TextSize', taskParam.window, 30);
-DrawFormattedText(taskParam.window, txt, 'center', 'center');
-Screen('Flip', taskParam.window);
+    header = 'Ende der Aufgabe!';
+    txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
+    
+    Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
+    Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
+    Screen('FillRect', taskParam.gParam.window, [224, 255, 255], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
+    Screen('TextSize', taskParam.gParam.window, 50);
+    DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
+    Screen('TextSize', taskParam.gParam.window, 30);
+    DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center');
+    Screen('Flip', taskParam.gParam.window);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == s
+    if find(keyCode) == taskParam.keys.s
         break
     end
 end

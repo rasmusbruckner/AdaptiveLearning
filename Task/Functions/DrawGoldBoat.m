@@ -4,12 +4,12 @@ function DrawGoldBoat(taskParam)
 
 
 imageRect = [0 0 100 100];
-dstRect = CenterRect(imageRect, taskParam.windowRect);
-[ShipGold map alpha]  = imread('ShipGold.png');
+dstRect = CenterRect(imageRect, taskParam.gParam.windowRect);
+[ShipGold, ~, alpha]  = imread('ShipGold.png');
 ShipGold(:,:,4) = alpha(:,:);
-Screen('BlendFunction', taskParam.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-ShipGoldTxt = Screen('MakeTexture', taskParam.window, ShipGold);
-Screen('DrawTexture', taskParam.window, ShipGoldTxt,[], dstRect);
+Screen('BlendFunction', taskParam.gParam.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ShipGoldTxt = Screen('MakeTexture', taskParam.gParam.window, ShipGold);
+Screen('DrawTexture', taskParam.gParam.window, ShipGoldTxt,[], dstRect);
 
 end
 

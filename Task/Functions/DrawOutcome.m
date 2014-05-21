@@ -19,7 +19,7 @@ screensize = (screensize(3:4));
 
 zero = screensize / 2;
 
-Screen('FrameArc',taskParam.window,[0 0 0],[zero(1) - 115, zero(2) - 115, zero(1) + 115, zero(2) + 115],OutcSpot, 26, 30, [], [])
+Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - 115, zero(2) - 115, zero(1) + 115, zero(2) + 115],OutcSpot, 26, 30, [], [])
                                             %605 335 835 565
 
 end
