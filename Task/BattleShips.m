@@ -15,7 +15,7 @@ clear all
 %% Set general parameters.
 
 runIntro = false;   % Run the intro with practice trials?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
@@ -53,17 +53,23 @@ elseif askSubjInfo == true
     prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal'};
     name = 'SubjInfo';
     numlines = 1;
-    defaultanswer = {'9999','99', 'M', '1'};
+    defaultanswer = {'9999','99', 'm', '1'};
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     subjInfo{5} = date;
     
     % TODO: is not equal to!!!!
-    %     if subjInfo{4} ~= '1' || subjInfo{4} ~= '2'
-    %         msgbox('cBal muss 1 oder 2 sein!');
-    %         return
-    %     elseif subjInfo{3} ~= 'm' || subjInfo{3} ~= 'w'
-    %         msgbox('Geschlecht: "m" oder "w"?');
-    %     end
+         if isequal(subjInfo{4}, '1') || isequal(subjInfo{4}, '2')
+         else
+             msgbox('cBal muss 1 oder 2 sein!');
+             return
+         end
+         
+         if isequal(subjInfo{3}, 'm') || isequal(subjInfo{3}, 'w')
+         else 
+             msgbox('Geschlecht: m oder w?');
+             return
+         end
+   
     
     % Filenames.
     fname = sprintf('BattleShips_%s.mat', num2str(cell2mat((subjInfo(1)))));

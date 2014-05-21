@@ -39,7 +39,7 @@ for i=1:taskParam.gParam.contTrials
         if keyIsDown
             if keyCode(taskParam.keys.rightKey)
                 if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
                 else
                     taskParam.circle.rotAngle = 0;
                 end
