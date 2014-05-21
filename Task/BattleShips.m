@@ -16,8 +16,8 @@ clear all
 
 runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
-fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+fSendTrigger = 'sendTrigger'; sendTrigger = true; % Do you want to send triggers?
+fComputer = 'computer'; computer = 'Humboldt'; % On which computer do you run the task? Macbook or Humboldt?
 fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
@@ -149,6 +149,7 @@ circle = struct(fPredSpotRad, predSpotRad, fOutcRad, outcRad, fMeanPoint, meanPo
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
 
 % Set key names.
+KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
 fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
 fSpace = 'space'; space = KbName('Space');
