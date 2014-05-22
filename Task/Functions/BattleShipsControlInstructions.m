@@ -8,12 +8,14 @@ txtPressEnter = 'Weiter mit Enter';
 header = 'Gedächtnisaufgabe';    
 txt = 'Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir\n\ndie Position des Bootes merken und den blauen Punkt daraufhin\n\ngenau auf diese Position steuern.';
     
-BigScreen(taskParam, txtPressEnter, header, txt)    
-button = taskParam.keys.enter;
+BigScreen(taskParam, txtPressEnter, header, txt)  
 
+button = taskParam.keys.enter;
+% DrawOutcome(taskParam, 238);
 txt = 'Merke dir jetzt die Position des Bootes...';
 
 taskParam = ControlLoopInstrTxt(taskParam, txt, button);
+
 button = taskParam.keys.space;
 
 txt = '...und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nhast. Dücke dann LEERTASTE.';
