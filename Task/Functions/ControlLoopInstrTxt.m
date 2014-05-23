@@ -1,4 +1,4 @@
-function taskParam = ControlLoopInstrTxt(taskParam, txt, button)
+function taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,7 +11,9 @@ while 1
     
     DrawCircle(taskParam.gParam.window)
     DrawCross(taskParam.gParam.window)
+    if hand == true
     DrawHand(taskParam, distMean)
+    end
     PredictionSpot(taskParam)
     if button == taskParam.keys.enter
         txtPressEnter='Weiter mit Enter';

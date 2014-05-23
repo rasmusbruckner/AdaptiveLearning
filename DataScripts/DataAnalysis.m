@@ -6,9 +6,9 @@
 clear all
 
 
-plotData = false;
+%plotData = true;
 %% Which subjects do you want to load?
-subject = {'testDD'}; % '0023' '0025' '0027'
+subject = {'Pilot5_1'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);
@@ -412,226 +412,226 @@ end
 
 fclose(Data)
 
-if plotData == true
-    
-    %% Basic statistics.
-    
-    %%% Learning rate %%%
-    % Cut everything above 1.5
-    lR(lR > 1.5) = 1.5;
-    
-    LR1A = 0;
-    LR2A = 0;
-    LR3A = 0;
-    LR4A = 0;
-    LR5A = 0;
-    LR6A = 0;
-    LR7A = 0;
-    LR8A = 0;
-    LR9A = 0;
-    LR10A = 0;
-    
-    % Group learning rates depending on TAC.
-    
-    for i = 1:length(trial)
-        
-        if TAC(i) == 1
-            
-            LR1A = LR1A + lR(i);
-            
-        elseif TAC(i) == 2
-            
-            LR2A = LR2A + lR(i);
-            
-        elseif TAC(i) == 3
-            
-            LR3A = LR3A + lR(i);
-            
-        elseif TAC(i) == 4
-            
-            LR4A = LR4A + lR(i);
-            
-        elseif TAC(i) == 5
-            
-            LR5A = LR5A + lR(i);
-            
-        elseif TAC(i) == 6
-            
-            LR6A = LR6A + lR(i);
-            
-        elseif TAC(i) == 7
-            
-            LR7A = LR7A + lR(i);
-            
-        elseif TAC(i) == 8
-            
-            LR8A = LR8A + lR(i);
-            
-        elseif TAC(i) == 9
-            
-            LR9A = LR9A + lR(i);
-            
-        elseif TAC(i) == 10
-            
-            LR10A = LR10A + lR(i);
-        end
-    end
-    
-    
-    % Calculate mean of learning rates.
-    
-    LR1A = LR1A / sum(TAC == 1);
-    LR2A = LR2A / sum(TAC == 2);
-    LR3A = LR3A / sum(TAC == 3);
-    LR4A = LR4A / sum(TAC == 4);
-    LR5A = LR5A / sum(TAC == 5);
-    LR6A = LR6A / sum(TAC == 6);
-    LR7A = LR7A / sum(TAC == 7);
-    LR8A = LR8A / sum(TAC == 8);
-    LR9A = LR9A / sum(TAC == 9);
-    LR10A = LR10A / sum(TAC == 10);
-    
-    % Plot of learning rate as a function of TAC.
-    figure
-    bar([LR1A LR2A LR3A LR4A LR5A LR6A])
-    
-    
-    %%%%%%%%%%%%
-    
-    
-    PECP = 0;
-    PE1A = 0;
-    PE2A = 0;
-    PE3A = 0;
-    PE4A = 0;
-    PE5A = 0;
-    PE6A = 0;
-    PE7A = 0;
-    PE8A = 0;
-    PE9A = 0;
-    PE10A = 0;
-    
-    % Group PE depending on TAC.
-    
-    for i = 1:length(trial)
-        
-        if TAC(i) == 0
-            
-            PECP = PECP + predErr(i);
-            
-        elseif TAC(i) == 1
-            
-            PE1A = PE1A + predErr(i);
-            
-        elseif TAC(i) == 2
-            
-            PE2A = PE2A + predErr(i);
-            
-        elseif TAC(i) == 3
-            
-            PE3A = PE3A + predErr(i);
-            
-        elseif TAC(i) == 4
-            
-            PE4A = PE4A + predErr(i);
-            
-        elseif TAC(i) == 5
-            
-            PE5A = PE5A + predErr(i);
-            
-        elseif TAC(i) == 6
-            
-            PE6A = PE6A + predErr(i);
-            
-        elseif TAC(i) == 7
-            
-            PE7A = PE7A + predErr(i);
-            
-        elseif TAC(i) == 8
-            
-            PE8A = PE8A + predErr(i);
-            
-        elseif TAC(i) == 9
-            
-            PE9A = PE9A + predErr(i);
-            
-        elseif TAC(i) == 10
-            
-            PE10A = PE10A + predErr(i);
-        end
-    end
-    
-    
-    % Calculate mean of PE.
-    
-    PECP = PECP / sum(TAC == 0);
-    PE1A = PE1A / sum(TAC == 1);
-    PE2A = PE2A / sum(TAC == 2);
-    PE3A = PE3A / sum(TAC == 3);
-    PE4A = PE4A / sum(TAC == 4);
-    PE5A = PE5A / sum(TAC == 5);
-    PE6A = PE6A / sum(TAC == 6);
-    PE7A = PE7A / sum(TAC == 7);
-    PE8A = PE8A / sum(TAC == 8);
-    PE9A = PE9A / sum(TAC == 9);
-    PE10A = PE10A / sum(TAC == 10);
-    
-    % Plot of learning rate as a function of TAC.
-    figure
-    bar([PECP PE1A PE2A PE3A PE4A PE5A])
-    
-    
-    %%% Distribution of boat types %%%
-    
-    figure
-    hist(boatType)
-    
-    
-    %% Do subjects adapt their prediction after a catch trial %%%
-    
-    %prediction error catch trial!!!!!!!!!!!!
-    
-    PECatchTrial = 0;
-    PENoCatchTrial = 0;
-    
-    
-    for i = 1:length(trial)
-        
-        if catchTrial(i) == 1
-            
-            PECatchTrial = PECatchTrial + predErr(i);
-            
-        elseif catchTrial(i) == 0
-            
-            PENoCatchTrial = PENoCatchTrial + predErr(i);
-            
-        end
-    end
-    
-    
-    PECatchTrial = PECatchTrial / sum(catchTrial == 1);
-    
-    PENoCatchTrial = PENoCatchTrial / sum(catchTrial == 0);
-    
-    figure
-    bar([PECatchTrial PENoCatchTrial])
-    
-    for i = 1:length(trial)
-        xOutc(i) = 100 * cos(outcome(i));
-        yOutc(i) = 100 * sin(outcome(i));
-        
-        xPredS(i) = 100 * cos(pred(i));
-        yPredS(i) = 100 * sin(pred(i));
-        
-        xHand(i) = 100 * cos(distMean(i));
-        yHand(i) = 100 * sin(distMean(i));
-    end
-    
-    figure
-    hold on
-    plot(xOutc, yOutc, '.g', 'MarkerSize', 30)
-    plot(xPredS, yPredS, '.r', 'MarkerSize', 20)
-    plot(xHand, yHand, '--rs','MarkerSize', 20, 'MarkerEdgeColor', 'b')
-    axis equal
-    
-end
+% if plotData == true
+%     
+%     %% Basic statistics.
+%     
+%     %%% Learning rate %%%
+%     % Cut everything above 1.5
+%     lR(lR > 1.5) = 1.5;
+%     
+%     LR1A = 0;
+%     LR2A = 0;
+%     LR3A = 0;
+%     LR4A = 0;
+%     LR5A = 0;
+%     LR6A = 0;
+%     LR7A = 0;
+%     LR8A = 0;
+%     LR9A = 0;
+%     LR10A = 0;
+%     
+%     % Group learning rates depending on TAC.
+%     
+%     for i = 1:length(trial)
+%         
+%         if TAC(i) == 1
+%             
+%             LR1A = LR1A + lR(i);
+%             
+%         elseif TAC(i) == 2
+%             
+%             LR2A = LR2A + lR(i);
+%             
+%         elseif TAC(i) == 3
+%             
+%             LR3A = LR3A + lR(i);
+%             
+%         elseif TAC(i) == 4
+%             
+%             LR4A = LR4A + lR(i);
+%             
+%         elseif TAC(i) == 5
+%             
+%             LR5A = LR5A + lR(i);
+%             
+%         elseif TAC(i) == 6
+%             
+%             LR6A = LR6A + lR(i);
+%             
+%         elseif TAC(i) == 7
+%             
+%             LR7A = LR7A + lR(i);
+%             
+%         elseif TAC(i) == 8
+%             
+%             LR8A = LR8A + lR(i);
+%             
+%         elseif TAC(i) == 9
+%             
+%             LR9A = LR9A + lR(i);
+%             
+%         elseif TAC(i) == 10
+%             
+%             LR10A = LR10A + lR(i);
+%         end
+%     end
+%     
+%     
+%     % Calculate mean of learning rates.
+%     
+%     LR1A = LR1A / sum(TAC == 1);
+%     LR2A = LR2A / sum(TAC == 2);
+%     LR3A = LR3A / sum(TAC == 3);
+%     LR4A = LR4A / sum(TAC == 4);
+%     LR5A = LR5A / sum(TAC == 5);
+%     LR6A = LR6A / sum(TAC == 6);
+%     LR7A = LR7A / sum(TAC == 7);
+%     LR8A = LR8A / sum(TAC == 8);
+%     LR9A = LR9A / sum(TAC == 9);
+%     LR10A = LR10A / sum(TAC == 10);
+%     
+%     % Plot of learning rate as a function of TAC.
+%     figure
+%     bar([LR1A LR2A LR3A LR4A LR5A LR6A])
+%     
+%     
+%     %%%%%%%%%%%%
+%     
+%     
+%     PECP = 0;
+%     PE1A = 0;
+%     PE2A = 0;
+%     PE3A = 0;
+%     PE4A = 0;
+%     PE5A = 0;
+%     PE6A = 0;
+%     PE7A = 0;
+%     PE8A = 0;
+%     PE9A = 0;
+%     PE10A = 0;
+%     
+%     % Group PE depending on TAC.
+%     
+%     for i = 1:length(trial)
+%         
+%         if TAC(i) == 0
+%             
+%             PECP = PECP + predErr(i);
+%             
+%         elseif TAC(i) == 1
+%             
+%             PE1A = PE1A + predErr(i);
+%             
+%         elseif TAC(i) == 2
+%             
+%             PE2A = PE2A + predErr(i);
+%             
+%         elseif TAC(i) == 3
+%             
+%             PE3A = PE3A + predErr(i);
+%             
+%         elseif TAC(i) == 4
+%             
+%             PE4A = PE4A + predErr(i);
+%             
+%         elseif TAC(i) == 5
+%             
+%             PE5A = PE5A + predErr(i);
+%             
+%         elseif TAC(i) == 6
+%             
+%             PE6A = PE6A + predErr(i);
+%             
+%         elseif TAC(i) == 7
+%             
+%             PE7A = PE7A + predErr(i);
+%             
+%         elseif TAC(i) == 8
+%             
+%             PE8A = PE8A + predErr(i);
+%             
+%         elseif TAC(i) == 9
+%             
+%             PE9A = PE9A + predErr(i);
+%             
+%         elseif TAC(i) == 10
+%             
+%             PE10A = PE10A + predErr(i);
+%         end
+%     end
+%     
+%     
+%     % Calculate mean of PE.
+%     
+%     PECP = PECP / sum(TAC == 0);
+%     PE1A = PE1A / sum(TAC == 1);
+%     PE2A = PE2A / sum(TAC == 2);
+%     PE3A = PE3A / sum(TAC == 3);
+%     PE4A = PE4A / sum(TAC == 4);
+%     PE5A = PE5A / sum(TAC == 5);
+%     PE6A = PE6A / sum(TAC == 6);
+%     PE7A = PE7A / sum(TAC == 7);
+%     PE8A = PE8A / sum(TAC == 8);
+%     PE9A = PE9A / sum(TAC == 9);
+%     PE10A = PE10A / sum(TAC == 10);
+%     
+%     % Plot of learning rate as a function of TAC.
+%     figure
+%     bar([PECP PE1A PE2A PE3A PE4A PE5A])
+%     
+%     
+%     %%% Distribution of boat types %%%
+%     
+%     figure
+%     hist(boatType)
+%     
+%     
+%     %% Do subjects adapt their prediction after a catch trial %%%
+%     
+%     %prediction error catch trial!!!!!!!!!!!!
+%     
+%     PECatchTrial = 0;
+%     PENoCatchTrial = 0;
+%     
+%     
+%     for i = 1:length(trial)
+%         
+%         if catchTrial(i) == 1
+%             
+%             PECatchTrial = PECatchTrial + predErr(i);
+%             
+%         elseif catchTrial(i) == 0
+%             
+%             PENoCatchTrial = PENoCatchTrial + predErr(i);
+%             
+%         end
+%     end
+%     
+%     
+%     PECatchTrial = PECatchTrial / sum(catchTrial == 1);
+%     
+%     PENoCatchTrial = PENoCatchTrial / sum(catchTrial == 0);
+%     
+%     figure
+%     bar([PECatchTrial PENoCatchTrial])
+%     
+%     for i = 1:length(trial)
+%         xOutc(i) = 100 * cos(outcome(i));
+%         yOutc(i) = 100 * sin(outcome(i));
+%         
+%         xPredS(i) = 100 * cos(pred(i));
+%         yPredS(i) = 100 * sin(pred(i));
+%         
+%         xHand(i) = 100 * cos(distMean(i));
+%         yHand(i) = 100 * sin(distMean(i));
+%     end
+%     
+%     figure
+%     hold on
+%     plot(xOutc, yOutc, '.g', 'MarkerSize', 30)
+%     plot(xPredS, yPredS, '.r', 'MarkerSize', 20)
+%     plot(xHand, yHand, '--rs','MarkerSize', 20, 'MarkerEdgeColor', 'b')
+%     axis equal
+%     
+% end

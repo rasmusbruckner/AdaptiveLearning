@@ -11,6 +11,7 @@ KbReleaseWait();
 txtLowNoise='Leichter Seegang';
 txtHighNoise = 'Starker Seegang';
 txtPressEnter='Weiter mit Enter';
+hand = true;
 %% Instructions section.
 
 % Screen 1 with painting.
@@ -42,7 +43,7 @@ end
 
 DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
 button = taskParam.keys.enter;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button);
+taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand);
 KbReleaseWait();
 
 % Screen 3.
@@ -53,7 +54,7 @@ else
 end
 
 button = taskParam.keys.space;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button);
+taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand);
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam.gParam.window);
 DrawCross(taskParam.gParam.window);

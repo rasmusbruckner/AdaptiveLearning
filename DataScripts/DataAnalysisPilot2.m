@@ -6,9 +6,9 @@
 clear all
 
 
-plotData = false;
+plotData = true;
 %% Which subjects do you want to load?
-subject = {'Pilo2_1'}; % '0023' '0025' '0027'
+subject = {'Pilot1'}; % '0023' '0025' '0027'
 
 % This is a cell containing the names of the data files.
 DataLoad = cell(numel(subject),1);

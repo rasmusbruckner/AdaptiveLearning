@@ -1,4 +1,4 @@
-% Adaptive Learning Task - EEG
+%% Adaptive Learning Task - EEG
 %
 % BattleShips is an adaptive learning EEG task for investigating belief
 % updating in dynamical environments with systematic (hazardRate)
@@ -16,12 +16,12 @@ clear all
 
 runIntro = true;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
-fSendTrigger = 'sendTrigger'; sendTrigger = true; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Humboldt'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 90; % Number of trials per (sigma-)condition.
+fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
+fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+fTrials = 'trials'; trials = 10; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
-fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 90; % Number of control trials.
+fPractTrials = 'practTrials'; practTrials = 10; % Number of practice trials per condition.
+fContTrials = 'contTrials'; contTrials = 10; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [25 35]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
@@ -228,15 +228,6 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrig
     fBlockControlTrigger, blockControlTrigger);
 
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers);
-
-
-% if isequal(taskParam.gParam.computer,'Humboldt')
-%     enter = 13;
-%     s = 83;
-% else
-%     enter = 40;
-%     s = 22;
-% end
 
 txtLowNoise = 'Leichter Seegang';
 txtHighNoise = 'Starker Seegang';

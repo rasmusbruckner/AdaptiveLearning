@@ -2,7 +2,8 @@ function taskData = GenerateOutcomes(taskParam, sigmas, condition)
 % This funtion generates the outcomes of the task.
 %   The outcomes that are centerend around the mean of a normal
 %   distribution (distMean) with standard deviation = sigma.
-%   All other variables are preallocated.
+%   All other variables are preallocated. 
+% This function uses code from Matt Nassar (Brown University). Thank you Matt! 
 
 if isequal(condition, 'main')
     trials = taskParam.gParam.trials;
@@ -46,7 +47,7 @@ s=taskParam.gParam.safe; % how many guaranteed trials before change-point.
 perf = zeros(trials, 1); % Performance.
 accPerf = zeros(trials, 1); % Accumulated performance. 
 
-%% generateOutcomes
+%% generateOutcomes (by Matt Nassar)
 
 for i = 1:trials
     if (rand<taskParam.gParam.hazardRate && s==0) || i == 1;
@@ -62,7 +63,7 @@ for i = 1:trials
         outcome(i)=round(normrnd(mean, sigmas)); 
     %end
     distMean(i)=mean;
-    
+%%    
     % BoatType
     r = rand(1);
     if r <= 0.33 
