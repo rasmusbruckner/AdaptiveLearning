@@ -14,12 +14,14 @@ clear all
 
 %% Set general parameters.
 
-runIntro = true;   % Run the intro with practice trials?
+runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 10; % Number of trials per (sigma-)condition.
+fTrials = 'trials'; trials = 5; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
+fPractTrials = 'practTrials'; practTrials = 10; % Number of practice trials per condition.
+fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
 fContTrials = 'contTrials'; contTrials = 10; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
