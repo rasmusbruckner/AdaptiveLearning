@@ -72,7 +72,6 @@ elseif askSubjInfo == true
              return
          end
    
-    
     % Filenames.
     fname = sprintf('BattleShips_%s.mat', num2str(cell2mat((subjInfo(1)))));
     fNameDataLS = sprintf('DataLS_%s', num2str(cell2mat((subjInfo(1)))));
