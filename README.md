@@ -12,5 +12,5 @@ Just create a new project in your git client (or git itself). It's recommended t
 
 ### Who do I talk to? ###
 
-Rasmus Bruckner (Humboldt Universität zu Berlin)
-*bruckner@hu-berlin.de
+* Rasmus Bruckner (Humboldt Universität zu Berlin)
+* bruckner@hu-berlin.de
