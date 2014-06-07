@@ -3,25 +3,14 @@
 ### What is this repository for? ###
 
 This repo manages the Adaptive Learning Task (EEG).
-This task is used for investigating learning under uncertainty in environments with systematic changes and random variability. 
+This task is used for investigating learning under uncertainty
+in environments with systematic changes and random variability. 
 
 ### How do I get set up? ###
 
-Just create a new 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
+Just create a new project in your git client (or git itself). It's recommended to put the task in a folder in your MATLAB directory. There you should add a new folder "DataDirectory" which git currently ignores (otherwise every new dataset will require a commit).
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* Rasmus Bruckner
+* bruckner@hu-berlin.de
