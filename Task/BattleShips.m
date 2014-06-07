@@ -14,10 +14,10 @@ clear all
 
 %% Set general parameters.
 
-runIntro = false;   % Run the intro with practice trials?
+runIntro = true;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+fComputer = 'computer'; computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
 fTrials = 'trials'; trials = 5; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
@@ -29,6 +29,8 @@ fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 % Savedirectory.
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+elseif isequal(computer, 'Dresden')
+    savdir = 'C:\Users\TU-Dresden\Documents\MATLAB\AdaptiveLearning\DataDirectory';
 elseif isequal(computer, 'Humboldt')
     savdir = 'D:\!EXP\AdaptiveLearning\DataDirectory';
 end
@@ -157,6 +159,9 @@ fS = 's';
 if isequal(computer, 'Macbook')
     enter = 40;
     s = 22;
+elseif isequal(computer, 'Dresden')
+    enter = 13;
+    s = 83;
 elseif isequal(computer, 'Humboldt')
     enter = 13;
     s = 83;
