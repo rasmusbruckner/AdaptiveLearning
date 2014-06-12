@@ -60,6 +60,7 @@ for i = 1:trials
         s=max([s-1, 0]);
     end
     %while ~isfinite(outcome(i))|outcome(i)>2*pi|outcome(i)<0;
+        %outcome(i)=0
         outcome(i)=round(normrnd(mean, sigmas)); 
     %end
     distMean(i)=mean;

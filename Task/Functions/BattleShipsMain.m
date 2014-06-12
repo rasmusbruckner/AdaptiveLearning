@@ -16,20 +16,12 @@ for i=1:taskData.trial %taskData.trial
     
     % Trigger: start task.
     SendTrigger(taskParam, taskParam.triggers.startTrigger)
-%     if taskParam.gParam.sendTrigger == true
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.startTrigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
+
     
     
     % Trigger: trial onset.
     SendTrigger(taskParam, taskParam.triggers.trialOnsetTrigger)
-%     if taskParam.gParam.sendTrigger == true
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.trialOnsetTrigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
+
     
     while 1
         
@@ -64,11 +56,7 @@ for i=1:taskData.trial %taskData.trial
                 
                 % Trigger: prediction.
                 SendTrigger(taskParam, taskParam.triggers.predTrigger)
-%                 if taskParam.gParam.sendTrigger == true
-%                     lptwrite(taskParam.triggers.port, taskParam.triggers.predTrigger);
-%                     WaitSecs(1/taskParam.triggers.sampleRate);
-%                     lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%                 end
+
                 
                 break
             end
@@ -102,11 +90,6 @@ for i=1:taskData.trial %taskData.trial
     
     % Trigger: baseline 1.
     SendTrigger(taskParam, taskParam.triggers.baseline1Trigger)
-%     if taskParam.gParam.sendTrigger == true
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.baseline1Trigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
     Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
@@ -118,12 +101,6 @@ for i=1:taskData.trial %taskData.trial
     
     % Trigger: outcome.
     SendTrigger(taskParam, taskParam.triggers.outcomeTrigger)
-%     if taskParam.gParam.sendTrigger
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.outcomeTrigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
-    
     Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
@@ -133,12 +110,6 @@ for i=1:taskData.trial %taskData.trial
     
     % Trigger: baseline 2.
     SendTrigger(taskParam, taskParam.triggers.baseline2Trigger)
-%     if taskParam.gParam.sendTrigger
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.baseline2Trigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
-    
     Screen('Flip', taskParam.gParam.window)
     WaitSecs(1);
     
@@ -165,12 +136,6 @@ for i=1:taskData.trial %taskData.trial
     
     % Trigger: boat.
     SendTrigger(taskParam, taskParam.triggers.boatTrigger)
-%     if taskParam.gParam.sendTrigger
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.boatTrigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
-    
     Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
@@ -180,12 +145,6 @@ for i=1:taskData.trial %taskData.trial
     
     % Trigger: baseline 3.
     SendTrigger(taskParam, taskParam.triggers.baseline3Trigger)
-    
-%     if taskParam.gParam.sendTrigger == true
-%         lptwrite(taskParam.triggers.port, taskParam.triggers.baseline3Trigger);
-%         WaitSecs(1/taskParam.triggers.sampleRate);
-%         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-%     end
     Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     

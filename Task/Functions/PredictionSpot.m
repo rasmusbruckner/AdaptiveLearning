@@ -1,5 +1,6 @@
 function PredictionSpot(taskParam)
-%This function draws the prediction spot.
+%This function draws the prediction spot and works with sine and cosine
+%in order to print it on a circle. 
 
 xPredS = (taskParam.circle.rotationRad * cos(taskParam.circle.rotAngle));
 yPredS = (taskParam.circle.rotationRad * sin(taskParam.circle.rotAngle));

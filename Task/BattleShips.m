@@ -14,16 +14,16 @@ clear all
 
 %% Set general parameters.
 
-runIntro = true;   % Run the intro with practice trials?
+runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 5; % Number of trials per (sigma-)condition.
+fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+fTrials = 'trials'; trials = 2; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 10; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
-sigmas = [25 35]; % SD's of distribution.
+sigmas = [10 20]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
 % Savedirectory.
@@ -98,9 +98,9 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-%Screen('Preference', 'VisualDebugLevel', 3);
-%Screen('Preference', 'SuppressAllWarnings', 1);
-%Screen('Preference', 'SkipSyncTests', 2);
+Screen('Preference', 'VisualDebugLevel', 3);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
@@ -451,7 +451,7 @@ totWin = DataLS.accPerf(end) + DataHS.accPerf(end) + DataControlLS.accPerf(end) 
 while 1
     
     header = 'Ende der Aufgabe!';
-    txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgemsamt hast du %.2f Euro gewonnen', totWin);
+    txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
     
     Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
     Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
