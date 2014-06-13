@@ -50,7 +50,7 @@ for i=1:taskParam.gParam.contTrials
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
             elseif keyCode(taskParam.keys.space)
-                taskDataControl.pred(i) = taskParam.circle.rotAngle/taskParam.circle.unit;
+                taskDataControl.pred(i) = (taskParam.circle.rotAngle/taskParam.circle.unit);
                 
                 % Trigger: prediction.
                 SendTrigger(taskParam, taskParam.triggers.predTrigger)

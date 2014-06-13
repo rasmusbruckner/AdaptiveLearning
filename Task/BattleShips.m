@@ -23,7 +23,7 @@ fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per 
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
 fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
-sigmas = [10 20]; % SD's of distribution.
+sigmas = [0 0]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
 % Savedirectory.
@@ -138,8 +138,8 @@ fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect);
 fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar hand.
 
 % Rotation angle of prediction spot.
-fUnit = 'unit'; unit = 2*pi/360; % This expresses the circle (2*pi) as a fraction of 360 degrees.
-fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 270*unit; % The initial rotation angle (on top of circle).
+fUnit = 'unit'; unit = 2*pi/359; % This expresses the circle (2*pi) as a fraction of 360 degrees.
+fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit; % The initial rotation angle (on top of circle).
 fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when prediction spot is moved.
 
 % Circle parameters.

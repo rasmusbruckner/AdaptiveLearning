@@ -51,7 +51,7 @@ accPerf = zeros(trials, 1); % Accumulated performance.
 
 for i = 1:trials
     if (rand<taskParam.gParam.hazardRate && s==0) || i == 1;
-        mean=round(rand(1).*360); % Outcome expressed in degrees.
+        mean=round(rand(1).*359); % Outcome expressed in degrees.
         cp(i)=1;
         s=taskParam.gParam.safe;
         TAC(i)=0; %TAC(i)=1;
@@ -60,9 +60,9 @@ for i = 1:trials
         s=max([s-1, 0]);
     end
     %while ~isfinite(outcome(i))|outcome(i)>2*pi|outcome(i)<0;
-        %outcome(i)=0
-        outcome(i)=round(normrnd(mean, sigmas)); 
-    %end
+        outcome(i)=0
+        %outcome(i)=round(normrnd(mean, sigmas)); 
+    
     distMean(i)=mean;
 %%    
     % BoatType

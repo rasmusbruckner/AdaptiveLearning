@@ -10,8 +10,7 @@ function DrawOutcome(taskParam, outcome)
     % In order to center this bar, we end up with 90 - 26/2 = 77
 
 
-%OutcSpot = outcome0 + 77;
-OutcSpot = outcome + 77;
+OutcSpot = outcome-13;
 screensize = get(0,'MonitorPositions'); 
 screensize = (screensize(3:4));
 zero = screensize / 2;
