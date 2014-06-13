@@ -21,7 +21,7 @@ fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the
 fTrials = 'trials'; trials = 2; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 2; % Number of control trials.
 fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
 sigmas = [0 0]; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
@@ -60,18 +60,18 @@ elseif askSubjInfo == true
     subjInfo{5} = date;
     
     % TODO: is not equal to!!!!
-         if isequal(subjInfo{4}, '1') || isequal(subjInfo{4}, '2')
-         else
-             msgbox('cBal muss 1 oder 2 sein!');
-             return
-         end
-         
-         if isequal(subjInfo{3}, 'm') || isequal(subjInfo{3}, 'w')
-         else 
-             msgbox('Geschlecht: m oder w?');
-             return
-         end
-   
+    if isequal(subjInfo{4}, '1') || isequal(subjInfo{4}, '2')
+    else
+        msgbox('cBal muss 1 oder 2 sein!');
+        return
+    end
+    
+    if isequal(subjInfo{3}, 'm') || isequal(subjInfo{3}, 'w')
+    else
+        msgbox('Geschlecht: m oder w?');
+        return
+    end
+    
     % Filenames.
     fname = sprintf('BattleShips_%s.mat', num2str(cell2mat((subjInfo(1)))));
     fNameDataLS = sprintf('DataLS_%s', num2str(cell2mat((subjInfo(1)))));
@@ -138,7 +138,7 @@ fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect);
 fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar hand.
 
 % Rotation angle of prediction spot.
-fUnit = 'unit'; unit = 2*pi/359; % This expresses the circle (2*pi) as a fraction of 360 degrees.
+fUnit = 'unit'; unit = 2*pi/360; % This expresses the circle (2*pi) as a fraction of 360 degrees.
 fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit; % The initial rotation angle (on top of circle).
 fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when prediction spot is moved.
 
@@ -155,7 +155,7 @@ fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
 fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
 fSpace = 'space'; space = KbName('Space');
 fEnter = 'enter';
-fS = 's'; 
+fS = 's';
 if isequal(computer, 'Macbook')
     enter = 40;
     s = 22;
@@ -236,6 +236,7 @@ taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, f
 txtLowNoise = 'Leichter Seegang';
 txtHighNoise = 'Starker Seegang';
 txtPressEnter = 'Weiter mit Enter';
+
 %% Run task.
 
 % Set port to 0.
@@ -249,201 +250,84 @@ Screen('TextSize', taskParam.gParam.window, 30);
 
 KbReleaseWait()
 
-% cBal 1 first.
+% Run intro with practice trials if true.
+if runIntro == true
+    
+    % Function for instructions.
+    BattleShipsInstructions(taskParam, Subject.cBal);
+    
+    condition = 'practice';
+    if Subject.cBal == '1'
+        NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
+        NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
+        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
+    else
+        NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
+        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
+        NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
+        
+    end
+    
+% End of practice blocks. This part makes sure that you start your EEG setup!
+header = 'Anfang der Studie';
+if isequal(taskParam.gParam.computer, 'Humboldt')
+    txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+else
+    txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+end
+
+BigScreen(taskParam, txtPressEnter, header, txt)    
+        
+end
+
+
+% This functions runs the main task.
+condition = 'main';
 if Subject.cBal == '1'
-    
-    % Run intro with practice trials if true.
-    if runIntro == true
-        
-        % Function for instructions.
-        BattleShipsInstructions(taskParam, Subject.cBal);
-        
-        NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-        
-        % Function for main task that is used for practice.
-        condition = 'practice';
-        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
-        
-        NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-        
-        % Function for main task that is used for practice.
-        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
-        
-        % End of practice blocks. This part makes sure that you start your EEG setup!
-        header = 'Anfang der Studie';
-        if isequal(taskParam.gParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-        else
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-        end
-        
-        BigScreen(taskParam, txtPressEnter, header, txt)
-        
-    end
-    
-    % Trigger: block 1.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger)
-    
-    %     if taskParam.gParam.sendTrigger == true
-    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockLSTrigger);
-    %         WaitSecs(1/taskParam.triggers.sampleRate);
-    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-    %     end
-    
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    % This functions runs the main task.
-    condition = 'main';
-    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
-    
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
-    % Trigger: block 2.
-    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger)
-    
-    %
-    %     if taskParam.gParam.sendTrigger == true
-    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockHSTrigger);
-    %         WaitSecs(1/taskParam.triggers.sampleRate);
-    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-    %     end
-    
-    % This functions runs the main task.
-    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
-    
-    
-    % Control trials: this task requires a learning rate = 1
-    BattleShipsControlInstructions(taskParam) % Run instructions.
-    
-    KbReleaseWait();
-    
-    % Trigger: control block.
-    SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
-    
-    %     if taskParam.gParam.sendTrigger
-    %         lptwrite(taskParam.port, taskParam.triggers.blockControlTrigger);
-    %         WaitSecs(1/taskParam.triggers.sampleRate);
-    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-    %     end
-    
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    % This function runs the control trials
-    condition = 'control';
-    [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
-    
-    KbReleaseWait()
-    
-    while 1
-        
-        DrawFormattedText(taskParam.gParam.window, txtHighNoise, 'center', 'center');
-        DrawFormattedText(taskParam.gParam.window, txtPressEnter, 'center', screensize(4)*0.9);
-        Screen('Flip', taskParam.gParam.window);
-        
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if keyIsDown
-            if find(keyCode)==taskParam.keys.enter
-                break
-            end
-        end
-    end
-    
-    [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
-    
-    
-    % cBal 2 first.
-elseif Subject.cBal == '2'
-    
-    
-    % Run intro with practice trials if true.
-    if runIntro == true
-        
-        BattleShipsInstructions(taskParam, Subject.cBal); % Function for instructions.
-        
-        NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-        
-        
-        % Function for main task that is used for practice.
-        condition = 'practice';
-        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
-        
-        
-        NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-        
-        % Function for main task that is used for practice.
-        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
-        
-        
-        % End of practice blocks. This part makes sure that you start your EEG setup!
-        header = 'Anfang der Studie';
-        if isequal(taskParam.gParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-        else
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-        end
-        
-        BigScreen(taskParam, txtPressEnter, header, txt)
-        
-        
-    end
-    
-    % Run the task with different noise conditions
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
-    
-    % Trigger: block 1.
-    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger)
-    %     if taskParam.gParam.sendTrigger == true
-    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockHSTrigger);
-    %         WaitSecs(1/taskParam.triggers.sampleRate);
-    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-    %     end
-    condition = 'main';
-    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
-    
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    % Trigger: block 2.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger)
-    %     if taskParam.gParam.sendTrigger == true
-    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockLSTrigger);
-    %         WaitSecs(1/taskParam.triggers.sampleRate);
-    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-    %     end
-    
-    % This Function runs main task.
-    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
-    
-    % Control trials: this task requires a learning rate = 1
-    BattleShipsControlInstructions(taskParam) % Run instructions.
-    
-    % Trigger: control block.
-    SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
-    %     if taskParam.gParam.sendTrigger
-    %         lptwrite(taskParam.triggers.port, taskParam.triggers.blockControlTrigger);
-    %         WaitSecs(1/taskParam.triggers.sampleRate);
-    %         lptwrite(taskParam.triggers.port,0) % Set port to 0.
-    %     end
-    
-    KbReleaseWait()
-    
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
-    KbReleaseWait()
-    
-    
-    % This function runs the control trials
-    condition = 'control';
-    [taskDataControlHS, DataControlHS] = BattleShipsControl(taskParam, sigmas(2), condition, Subject);
-    
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    [taskDataControlLS, DataControlLS] = BattleShipsControl(taskParam, sigmas(1), condition, Subject);
-    
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) % Trigger.
+    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger) % Trigger.
+    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); % Run task (high sigma).
+else
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger) % Trigger.
+    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); % Run task (high sigma).
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) % Trigger.
+    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+end
+
+
+% Control trials: this task requires a learning rate = 1
+BattleShipsControlInstructions(taskParam) % Run instructions.
+
+KbReleaseWait();
+
+% Trigger: control block.
+SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
+
+
+
+% This function runs the control trials
+condition = 'control';
+if Subject.cBal == '1'
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) %Trigger.
+    [taskDataControlLS, DataControlLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) %Trigger.
+    [taskDataControlHS, DataControlHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); %Run task (high sigma).
+else
+    NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger) %Trigger.
+    [taskDataControlHS, DataControlHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); %Run task (high sigma).
+    NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
+    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) %Trigger.
+    [taskDataControlLS, DataControlLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
 end
 
 totWin = DataLS.accPerf(end) + DataHS.accPerf(end) + DataControlLS.accPerf(end) + DataControlHS.accPerf(end);

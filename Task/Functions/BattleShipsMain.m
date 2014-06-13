@@ -68,9 +68,28 @@ for i=1:taskData.trial %taskData.trial
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
+    if isequal(condition,'main') || isequal(condition,'main')
+    % Memory error = 99 because there is no memory error in this condition.
+    taskData.memErr(i) = 999;
+    taskData.memErrNorm(i) = 999;
+    taskData.memErrPlus(i) = 999;
+    taskData.memErrMin(i) = 999;
+    else
+        if i >= 2
+    % Calculate memory error.
+    [taskData.memErr(i), taskData.memErrNorm(i), taskData.memErrPlus(i), taskData.memErrMin(i)] = Diff(taskData.pred(i), taskData.outcome(i-1));
+        end
+    end
+    
     % Calculate hits
-    if taskData.predErr(i) <= 13
-        taskData.hit(i) = 1;
+    if isequal(condition,'main') || isequal(condition,'main')
+        if taskData.predErr(i) <= 13
+            taskData.hit(i) = 1;
+        end
+    else
+        if taskData.memErr(i) <= 13;
+            taskData.hit(i) = 1;
+        end
     end
     
     if i >= 2
@@ -78,11 +97,7 @@ for i=1:taskData.trial %taskData.trial
         [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
-    % Memory error = 99 because there is no memory error in this condition.
-    taskData.memErr(i) = 999;
-    taskData.memErrNorm(i) = 999;
-    taskData.memErrPlus(i) = 999;
-    taskData.memErrMin(i) = 999;
+    
     
     % Show baseline 1.
     DrawCross(taskParam.gParam.window)
@@ -118,7 +133,7 @@ for i=1:taskData.trial %taskData.trial
     if taskData.boatType(i) == 1
         DrawGoldBoat(taskParam)
         if taskData.hit(i) == 1
-            taskData.perf(i)  =  0.2;
+            taskData.perf(i)  = 0.2;
         end
     elseif taskData.boatType(i) == 2
         DrawBronzeBoat(taskParam)
@@ -130,9 +145,9 @@ for i=1:taskData.trial %taskData.trial
     end
     
     % Calculate accumulated performance.
-    if i >= 2
-        taskData.accPerf(i) = taskData.accPerf(i-1) + taskData.perf(i);
-    end
+    %if i >= 2
+        taskData.accPerf(i) = sum(taskData.accPerf) + taskData.perf(i);
+    %end
     
     % Trigger: boat.
     SendTrigger(taskParam, taskParam.triggers.boatTrigger)
