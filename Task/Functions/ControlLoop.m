@@ -53,11 +53,9 @@ WaitSecs(1);
 %dstRect = CenterRect(imageRect, winRect);
 
 if boatType == 1
-    DrawGoldBoat(taskParam)
-elseif boatType == 2
-    DrawBronzeBoat(taskParam)
+    DrawBoat(taskParam, taskParam.colors.gold)
 else
-    DrawSilverBoat(taskParam)
+    DrawBoat(taskParam, taskParam.colors.silver)
 end
 
 DrawCircle(taskParam.gParam.window)

@@ -1,4 +1,4 @@
-function taskData = GenerateOutcomes(taskParam, sigmas, condition)
+function taskData = GenerateOutcomes(taskParam, vola, condition)
 % This funtion generates the outcomes of the task.
 %   The outcomes that are centerend around the mean of a normal
 %   distribution (distMean) with standard deviation = sigma.
@@ -50,7 +50,7 @@ accPerf = zeros(trials, 1); % Accumulated performance.
 %% generateOutcomes (by Matt Nassar)
 
 for i = 1:trials
-    if (rand<taskParam.gParam.hazardRate && s==0) || i == 1;
+    if (rand < vola && s==0) || i == 1;
         mean=round(rand(1).*359); % Outcome expressed in degrees.
         cp(i)=1;
         s=taskParam.gParam.safe;
@@ -60,19 +60,17 @@ for i = 1:trials
         s=max([s-1, 0]);
     end
     %while ~isfinite(outcome(i))|outcome(i)>2*pi|outcome(i)<0;
-        outcome(i)=0
-        %outcome(i)=round(normrnd(mean, sigmas)); 
+        %outcome(i)=0
+        outcome(i)=round(normrnd(mean, taskParam.gParam.sigma)); 
     
     distMean(i)=mean;
 %%    
     % BoatType
     r = rand(1);
-    if r <= 0.33 
+    if r <= 0.5 
         boatType(i) = 1;
-    elseif r > 0.33 && r <= 0.66
+    else
         boatType(i) = 2;
-    elseif r > 0.66
-        boatType(i) = 3;
     end
     
     %CatchTrial

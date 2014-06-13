@@ -49,7 +49,7 @@ WaitSecs(1);
 % Show boat.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam.gParam.window)
-DrawGoldBoat(taskParam)
+DrawBoat(taskParam, taskParam.colors.gold)
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 

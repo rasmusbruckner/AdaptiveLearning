@@ -8,8 +8,8 @@ KbReleaseWait();
 
 %condition = 'practice';
 
-txtLowNoise='Leichter Seegang';
-txtHighNoise = 'Starker Seegang';
+txtLowNoise='Jetzt fahren die Schiffe selten weiter';
+txtHighNoise = 'Jetzt fahren die Schiffe häufiger weiter';
 txtPressEnter='Weiter mit Enter';
 hand = true;
 %% Instructions section.
@@ -19,7 +19,7 @@ while 1
     
     Screen('TextFont', taskParam.gParam.window, 'Arial');
     Screen('TextSize', taskParam.gParam.window, 50);
-    Ship = imread('Ship.jpg');
+    Ship = imread('Sea.jpg');
     ShipTxt = Screen('MakeTexture', taskParam.gParam.window, Ship);
     Screen('DrawTexture', taskParam.gParam.window, ShipTxt,[]);
     txtScreen1='Schiffeversenken';
@@ -65,9 +65,9 @@ WaitSecs(1);
 while 1
     
     if isequal(taskParam.gParam.computer, 'Humboldt')
-        txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
+        txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an. Wenn dein Punkt auf dem Schiff ist, hast du es getroffen.';
     else
-        txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an.';
+        txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an. Wenn dein\n\nPunkt auf dem Schiff ist, hast du es getroffen.';
     end
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawCircle(taskParam.gParam.window);
@@ -99,7 +99,7 @@ while 1
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     DrawCircle(taskParam.gParam.window)
-    DrawGoldBoat(taskParam)
+    DrawBoat(taskParam, taskParam.colors.gold)
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('Flip', taskParam.gParam.window);
     
@@ -111,42 +111,42 @@ end
 KbReleaseWait();
 
 % Screen 6.
-while 1
-    
-    if isequal(taskParam.gParam.computer, 'Humboldt')
-        txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst\n\ndu 10 CENT. ';
-    else
-        txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst du 10 CENT. ';
-    end
-    
-    LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
-    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    DrawCircle(taskParam.gParam.window)
-    DrawBronzeBoat(taskParam)
-    Screen('Flip', taskParam.gParam.window);
-    
-    [ ~,~ , keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.keys.enter
-        break
-    end
-end
-KbReleaseWait();
+% while 1
+%     
+%     if isequal(taskParam.gParam.computer, 'Humboldt')
+%         txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst\n\ndu 10 CENT. ';
+%     else
+%         txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst du 10 CENT. ';
+%     end
+%     
+%     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
+%     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
+%     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+%     DrawCircle(taskParam.gParam.window)
+%     DrawBronzeBoat(taskParam)
+%     Screen('Flip', taskParam.gParam.window);
+%     
+%     [ ~,~ , keyCode ] = KbCheck;
+%     if find(keyCode) == taskParam.keys.enter
+%         break
+%     end
+% end
+% KbReleaseWait();
 
 % Screen 7.
 while 1
     
     if isequal(taskParam.gParam.computer, 'Humboldt')
-        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst\n\ndu 0 CENT. ';
+        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst\n\ndu leider NICHTS. ';
     else
-        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du 0 CENT. ';
+        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du leider NICHTS. ';
     end
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     DrawCircle(taskParam.gParam.window)
-    DrawSilverBoat(taskParam)
+    DrawBoat(taskParam, taskParam.colors.silver)
     Screen('Flip', taskParam.gParam.window);
     
     [~, ~, keyCode ] = KbCheck;
@@ -186,11 +186,11 @@ BigScreen(taskParam, txtPressEnter, header, txt);
 
 %%% Intro-trials with length == taskParam.intTrials and counterbalance condition (cBal) %%%
 
-if cBal == '1'
+% if cBal == '1'
     
     % Screen 11.
     
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+    %NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
     
     
     
@@ -199,63 +199,63 @@ if cBal == '1'
     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
     
     
-    % Screen 12 (1st practice block with low noise).
+    % Screen 12 (1st practice block).
     for i = 1:taskParam.gParam.intTrials
         
         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
         
     end
     
-    % Screen 13.
+%     % Screen 13.
+%     
+%     NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
+%     
+%     
+%     %  Screen 14 (1st practice block with high noise).
+%     distMean = 249;
+%     outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
+%     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
+%     
+%     for i = 1:taskParam.gParam.intTrials
+%         
+%         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
+%         
+%     end
     
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
-    
-    %  Screen 14 (1st practice block with high noise).
-    distMean = 249;
-    outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
-    boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-    
-    for i = 1:taskParam.gParam.intTrials
-        
-        taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-        
-    end
-    
-elseif cBal == '2'
-    
-    % Screen 15.
-    
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
-    
-    % Screen 16 (1st practice block with high noise).
-    distMean = 249;
-    outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
-    boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-    
-    for i = 1:taskParam.gParam.intTrials
-        
-        taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-        
-    end
-    
-    % Screen 17.
-    
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    % Screen 18 (1st practice block with low noise)
-    distMean = 338;
-    outcome = [324;348;371;303;316;332;310;339;357;316;320;308;308;311;330;299;359;375;368;303];
-    boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-    
-    for i = 1:taskParam.gParam.intTrials
-        
-        taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-        
-    end
-end
+% elseif cBal == '2'
+%     
+%     % Screen 15.
+%     
+%     NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
+%     
+%     
+%     % Screen 16 (1st practice block with high noise).
+%     distMean = 249;
+%     outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
+%     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
+%     
+%     for i = 1:taskParam.gParam.intTrials
+%         
+%         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
+%         
+%     end
+%     
+%     % Screen 17.
+%     
+%     NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+%     
+%     
+%     % Screen 18 (1st practice block with low noise)
+%     distMean = 338;
+%     outcome = [324;348;371;303;316;332;310;339;357;316;320;308;308;311;330;299;359;375;368;303];
+%     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
+%     
+%     for i = 1:taskParam.gParam.intTrials
+%         
+%         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
+%         
+%     end
+% end
 
 %KbReleaseWait();
 
@@ -328,7 +328,6 @@ elseif cBal == '2'
     end
     
     % Screen 26.
-    
     NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
     
     
@@ -356,10 +355,6 @@ BigScreen(taskParam, txtPressEnter, header, txt)
 
 
 %% End of intro // Save data.
-
-
-
-
 
 
 end

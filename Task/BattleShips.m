@@ -14,16 +14,16 @@ clear all
 
 %% Set general parameters.
 
-runIntro = false;   % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+runIntro = true;   % Run the intro with practice trials?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
+vola = [.4 .8]; % Volatility of the environment.
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 2; % Number of trials per (sigma-)condition.
-fIntTrials = 'intTrials'; intTrials = 10; % Trials during the introduction (per condition).
-fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
+fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
+fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
+fPractTrials = 'practTrials'; practTrials = 20; % Number of practice trials per condition.
 fContTrials = 'contTrials'; contTrials = 2; % Number of control trials.
-fHazardRate = 'hazardRate'; hazardRate = .4; % Rate of change-points.
-sigmas = [0 0]; % SD's of distribution.
+fSigma = 'sigma'; sigma = 15; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
 % Savedirectory.
@@ -41,6 +41,7 @@ fID = 'ID';
 fAge = 'age';
 fSex = 'sex';
 fCBal = 'cBal';
+fReward = 'reward';
 fDate = 'date';
 
 if askSubjInfo == false
@@ -49,15 +50,16 @@ if askSubjInfo == false
     age = '999';
     sex = 'm/w';
     cBal = '1';
+    reward = '1';
     Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fDate, date);
     
 elseif askSubjInfo == true
-    prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal'};
+    prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal', 'reward'};
     name = 'SubjInfo';
     numlines = 1;
-    defaultanswer = {'9999','99', 'm', '1'};
+    defaultanswer = {'9999','99', 'm', '1', '1'};
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
-    subjInfo{5} = date;
+    subjInfo{6} = date;
     
     % TODO: is not equal to!!!!
     if isequal(subjInfo{4}, '1') || isequal(subjInfo{4}, '2')
@@ -72,14 +74,20 @@ elseif askSubjInfo == true
         return
     end
     
+    if isequal(subjInfo{3}, 'm') || isequal(subjInfo{3}, 'w')
+    else
+        msgbox('Geschlecht: m oder w?');
+        return
+    end
+    
     % Filenames.
     fname = sprintf('BattleShips_%s.mat', num2str(cell2mat((subjInfo(1)))));
-    fNameDataLS = sprintf('DataLS_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataHS = sprintf('DataHS_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataPracticeLS = sprintf('DataPracticeLS_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataPracticeHS = sprintf('DataPracticeHS_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataControlLS = sprintf('DataControlLS_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataControlHS = sprintf('DataControlHS_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataLV = sprintf('DataLV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataHV = sprintf('DataHV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataPracticeLV = sprintf('DataPracticeLV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataPracticeHV = sprintf('DataPracticeHV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataControlLV = sprintf('DataControlLV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataControlHV = sprintf('DataControlHV_%s', num2str(cell2mat((subjInfo(1)))));
     
     % Struct with demographic subject variables.
     Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex, subjInfo(3), fCBal, subjInfo(4), fDate, subjInfo(5));
@@ -110,19 +118,19 @@ fWindowRect = 'windowRect';
 
 fGParam = 'gParam';
 gParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
-    fHazardRate, hazardRate, fSafe, safe, fScreensize, screensize, fWindow, window, fWindowRect, windowRect);
+     fSigma, sigma, fSafe, safe, fScreensize, screensize, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcRad = 'outcRad'; outcRad = 30; % Outcome spot (green).
+fOutcSize = 'outcSize'; outcSize = 26; % Black bar.
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar hand.
 fRotationRad = 'rotationRad'; rotationRad = 100; % Rotation Radius.
 
 %Diameter of the spots.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
-fOutcSpotDiam = 'outcDiam'; outcDiam = outcRad * 2; % Diameter of outcome.
+fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome.
 fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; % Size of Radar hand.
 
 %Position of the spots and the boats.
@@ -144,10 +152,16 @@ fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when predic
 
 % Circle parameters.
 fCircle = 'circle';
-circle = struct(fPredSpotRad, predSpotRad, fOutcRad, outcRad, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
+circle = struct(fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
     fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
+
+% Boat colors.
+fGold = 'gold'; gold = [255 215 0];
+fSilver = 'silver'; silver = [192 192 192];
+fColors = 'colors';
+colors = struct(fGold, gold, fSilver, silver);
 
 % Set key names.
 KbName('UnifyKeyNames')
@@ -174,7 +188,7 @@ keys = struct(fRightKey, rightKey, fLeftKey, leftKey, fSpace, space, fEnter, ent
 fID = 'ID'; ID = fID; % ID.
 fAge = 'age'; age = fAge; % Age.
 fSex = 'sex'; sex = fSex; % Sex.
-fSigma = 'sigma'; sigma = fSigma; % Sigma
+fVola = 'vola'; vola = fVola; % Sigma
 fDate = 'date'; date = fDate;
 fCond = 'cond'; cond = fCond;
 fTrial = 'trial'; trial = fTrial; % Trial.
@@ -203,7 +217,7 @@ fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fDate, date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct(fID, ID, fVola, vola, fAge, age, fSex, sex, fDate, date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
@@ -221,21 +235,22 @@ fOutcomeTrigger = 'outcomeTrigger'; outcomeTrigger = 4; % Outcome.
 fBaseline2Trigger = 'baseline2Trigger'; baseline2Trigger = 5; % Baseline.
 fBoatTrigger = 'boatTrigger'; boatTrigger = 6; % Boat type.
 fBaseline3Trigger = 'baseline3Trigger'; baseline3Trigger = 9; % Baseline.
-fBlockLSTrigger = 'blockLSTrigger'; blockLSTrigger = 10; % Block with low sigma.
-fBlockHSTrigger = 'blockHSTrigger'; blockHSTrigger = 11; % Block with high sigma.
+fBlockLVTrigger = 'blockLVTrigger'; blockLVTrigger = 10; % Block with low sigma.
+fBlockHVTrigger = 'blockHVTrigger'; blockHVTrigger = 11; % Block with high sigma.
 fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
 
 fTriggers = 'triggers';
 triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrigger, fTrialOnset, trialOnsetTrigger,...
     fPredTrigger, predTrigger, fBaseline1Trigger, baseline1Trigger, fOutcomeTrigger, outcomeTrigger, fBaseline2Trigger, baseline2Trigger,...
-    fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLSTrigger, blockLSTrigger, fBlockHSTrigger, blockHSTrigger,...
+    fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLVTrigger, blockLVTrigger, fBlockHVTrigger, blockHVTrigger,...
     fBlockControlTrigger, blockControlTrigger);
 
-taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers);
+taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers, fColors, colors);
 
-txtLowNoise = 'Leichter Seegang';
-txtHighNoise = 'Starker Seegang';
+txtLowNoise = 'Jetzt fahren die Schiffe selten weiter';
+txtHighNoise = 'Jetzt fahren die Schiffe h‰ufiger weiter';
 txtPressEnter = 'Weiter mit Enter';
+
 
 %% Run task.
 
@@ -259,23 +274,23 @@ if runIntro == true
     condition = 'practice';
     if Subject.cBal == '1'
         NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
+        [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
         NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
+        [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
     else
         NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-        [taskDataPracticeHS, DataPracticeHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject);
+        [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
         NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-        [taskDataPracticeLS, DataPracticeLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject);
+        [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
         
     end
     
 % End of practice blocks. This part makes sure that you start your EEG setup!
 header = 'Anfang der Studie';
 if isequal(taskParam.gParam.computer, 'Humboldt')
-    txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+    txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
 else
-    txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nWenn du ein bronzenes Schiff abschieﬂt, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+    txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
 end
 
 BigScreen(taskParam, txtPressEnter, header, txt)    
@@ -287,18 +302,18 @@ end
 condition = 'main';
 if Subject.cBal == '1'
     NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) % Trigger.
-    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) % Trigger.
+    [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
     NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger) % Trigger.
-    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); % Run task (high sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockHVTrigger) % Trigger.
+    [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
 else
     NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger) % Trigger.
-    [taskDataHS, DataHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); % Run task (high sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockHVTrigger) % Trigger.
+    [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
     NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) % Trigger.
-    [taskDataLS, DataLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) % Trigger.
+    [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
 end
 
 
@@ -316,21 +331,21 @@ SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
 condition = 'control';
 if Subject.cBal == '1'
     NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) %Trigger.
-    [taskDataControlLS, DataControlLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) %Trigger.
+    [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
     NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) %Trigger.
-    [taskDataControlHS, DataControlHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); %Run task (high sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) %Trigger.
+    [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
 else
     NoiseIndication(taskParam, txtHighNoise, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockHSTrigger) %Trigger.
-    [taskDataControlHS, DataControlHS] = BattleShipsMain(taskParam, sigmas(2), condition, Subject); %Run task (high sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockHVTrigger) %Trigger.
+    [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
     NoiseIndication(taskParam, txtLowNoise, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLSTrigger) %Trigger.
-    [taskDataControlLS, DataControlLS] = BattleShipsMain(taskParam, sigmas(1), condition, Subject); % Run task (low sigma).
+    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) %Trigger.
+    [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
 end
 
-totWin = DataLS.accPerf(end) + DataHS.accPerf(end) + DataControlLS.accPerf(end) + DataControlHS.accPerf(end);
+totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
 
 while 1
     
@@ -356,32 +371,32 @@ end
 
 if askSubjInfo == true && runIntro == true
     
-    DataPracticeLS = catstruct(Subject, DataPracticeLS);
-    DataPracticeHS = catstruct(Subject, DataPracticeHS);
-    DataLS = catstruct(Subject, DataLS);
-    DataHS = catstruct(Subject, DataHS);
-    DataControlLS = catstruct(Subject, DataControlLS);
-    DataControlHS = catstruct(Subject, DataControlHS);
+    DataPracticeLV = catstruct(Subject, DataPracticeLV);
+    DataPracticeHV = catstruct(Subject, DataPracticeHV);
+    DataLV = catstruct(Subject, DataLV);
+    DataHV = catstruct(Subject, DataHV);
+    DataControlLV = catstruct(Subject, DataControlLV);
+    DataControlHV = catstruct(Subject, DataControlHV);
     
-    assignin('base',['DataPracticeLS_' num2str(cell2mat((subjInfo(1))))],DataPracticeLS)
-    assignin('base',['DataPracticeHS_' num2str(cell2mat((subjInfo(1))))],DataPracticeHS)
-    assignin('base',['DataLS_' num2str(cell2mat((subjInfo(1))))],DataLS)
-    assignin('base',['DataHS_' num2str(cell2mat((subjInfo(1))))],DataHS)
-    assignin('base', ['DataControlLS_' num2str(cell2mat((subjInfo(1))))], DataControlLS)
-    assignin('base', ['DataControlHS_' num2str(cell2mat((subjInfo(1))))], DataControlHS)
-    save(fullfile(savdir,fname),fNameDataPracticeLS, fNameDataPracticeHS, fNameDataLS, fNameDataHS, fNameDataControlLS, fNameDataControlHS);
+    assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
+    assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
+    assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
+    assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
+    assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
+    assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+    save(fullfile(savdir,fname),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
     
 elseif askSubjInfo == true && runIntro == false
     
-    DataLS = catstruct(Subject, DataLS);
-    DataHS = catstruct(Subject, DataHS);
-    DataControlLS = catstruct(Subject, DataControlLS);
-    DataControlHS = catstruct(Subject, DataControlHS);
-    assignin('base',['DataLS_' num2str(cell2mat((subjInfo(1))))],DataLS)
-    assignin('base',['DataHS_' num2str(cell2mat((subjInfo(1))))],DataHS)
-    assignin('base', ['DataControlLS_' num2str(cell2mat((subjInfo(1))))], DataControlLS)
-    assignin('base', ['DataControlHS_' num2str(cell2mat((subjInfo(1))))], DataControlHS)
-    save(fullfile(savdir,fname), fNameDataLS, fNameDataHS, fNameDataControlLS, fNameDataControlHS);
+    DataLV = catstruct(Subject, DataLV);
+    DataHV = catstruct(Subject, DataHV);
+    DataControlLV = catstruct(Subject, DataControlLV);
+    DataControlHV = catstruct(Subject, DataControlHV);
+    assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
+    assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
+    assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
+    assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+    save(fullfile(savdir,fname), fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
     
 end
 

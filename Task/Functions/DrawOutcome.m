@@ -10,10 +10,10 @@ function DrawOutcome(taskParam, outcome)
     % In order to center this bar, we end up with 90 - 26/2 = 77
 
 
-OutcSpot = outcome-13;
+OutcSpot = outcome - (taskParam.circle.outcSize/2);
 screensize = get(0,'MonitorPositions'); 
 screensize = (screensize(3:4));
 zero = screensize / 2;
-Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - 115, zero(2) - 115, zero(1) + 115, zero(2) + 115],OutcSpot, 26, 30, [], []) %605 335 835 565
+Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - 115, zero(2) - 115, zero(1) + 115, zero(2) + 115],OutcSpot, taskParam.circle.outcSize, 30, [], []) %605 335 835 565
 end
 
