@@ -1,4 +1,6 @@
 function [taskData, Data] = BattleShipsMain(taskParam, vola, condition, Subject)
+% This function acutally runs the task. You can specify "main", "practice"
+% or "control".
 
 KbReleaseWait()
 
@@ -11,7 +13,7 @@ end
 taskData = GenerateOutcomes(taskParam, vola, condition);
 
 %% Run trials.
-for i=1:taskData.trial %taskData.trial
+for i=1:taskData.trial
     
     % Trigger: start task.
     SendTrigger(taskParam, taskParam.triggers.startTrigger)
@@ -22,12 +24,12 @@ for i=1:taskData.trial %taskData.trial
     while 1
         
         if taskData.catchTrial(i) == 1
-            DrawHand(taskParam, taskData.distMean(i))
+            DrawNeedle(taskParam, taskData.distMean(i))
         end
         
         % Start trial - subject predicts boat.
-        DrawCircle(taskParam.gParam.window)
-        DrawCross(taskParam.gParam.window)
+        DrawCircle(taskParam)
+        DrawCross(taskParam)
         PredictionSpot(taskParam)
         
         Screen('Flip', taskParam.gParam.window);
@@ -52,25 +54,25 @@ for i=1:taskData.trial %taskData.trial
                 
                 % Trigger: prediction.
                 SendTrigger(taskParam, taskParam.triggers.predTrigger)
-
+                
                 break
             end
         end
     end
-
+    
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
     if isequal(condition,'main') || isequal(condition,'main')
-    % Memory error = 99 because there is no memory error in this condition.
-    taskData.memErr(i) = 999;
-    taskData.memErrNorm(i) = 999;
-    taskData.memErrPlus(i) = 999;
-    taskData.memErrMin(i) = 999;
+        % Memory error = 99 because there is no memory error in this condition.
+        taskData.memErr(i) = 999;
+        taskData.memErrNorm(i) = 999;
+        taskData.memErrPlus(i) = 999;
+        taskData.memErrMin(i) = 999;
     else
         if i >= 2
-    % Calculate memory error.
-    [taskData.memErr(i), taskData.memErrNorm(i), taskData.memErrPlus(i), taskData.memErrMin(i)] = Diff(taskData.pred(i), taskData.outcome(i-1));
+            % Calculate memory error.
+            [taskData.memErr(i), taskData.memErrNorm(i), taskData.memErrPlus(i), taskData.memErrMin(i)] = Diff(taskData.pred(i), taskData.outcome(i-1));
         end
     end
     
@@ -91,8 +93,8 @@ for i=1:taskData.trial %taskData.trial
     end
     
     % Show baseline 1.
-    DrawCross(taskParam.gParam.window)
-    DrawCircle(taskParam.gParam.window)
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
     
     % Trigger: baseline 1.
     SendTrigger(taskParam, taskParam.triggers.baseline1Trigger)
@@ -100,8 +102,8 @@ for i=1:taskData.trial %taskData.trial
     WaitSecs(1);
     
     % Show outcome.
-    DrawCross(taskParam.gParam.window)
-    DrawCircle(taskParam.gParam.window)
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
     PredictionSpot(taskParam)
     
@@ -111,8 +113,8 @@ for i=1:taskData.trial %taskData.trial
     WaitSecs(1);
     
     % Show baseline 2.
-    DrawCross(taskParam.gParam.window)
-    DrawCircle(taskParam.gParam.window)
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
     
     % Trigger: baseline 2.
     SendTrigger(taskParam, taskParam.triggers.baseline2Trigger)
@@ -120,7 +122,7 @@ for i=1:taskData.trial %taskData.trial
     WaitSecs(1);
     
     % Show boat and calculate performance.       %TRIGGER
-    DrawCircle(taskParam.gParam.window)
+    DrawCircle(taskParam)
     if taskData.boatType(i) == 1
         DrawBoat(taskParam, taskParam.colors.gold)
         if taskData.hit(i) == 1
@@ -133,15 +135,15 @@ for i=1:taskData.trial %taskData.trial
     % Calculate accumulated performance.
     
     taskData.accPerf(i) = sum(taskData.perf) + taskData.perf(i);
-
+    
     % Trigger: boat.
     SendTrigger(taskParam, taskParam.triggers.boatTrigger)
     Screen('Flip', taskParam.gParam.window);
     WaitSecs(1);
     
     % Show baseline 3.
-    DrawCircle(taskParam.gParam.window)
-    DrawCross(taskParam.gParam.window)
+    DrawCircle(taskParam)
+    DrawCross(taskParam)
     
     % Trigger: baseline 3.
     SendTrigger(taskParam, taskParam.triggers.baseline3Trigger)
@@ -183,15 +185,15 @@ end
 
 KbReleaseWait()
 
-
 vola = repmat(vola, length(taskData.trial),1);
+sigma = repmat(taskParam.gParam.sigma, length(taskData.trial),1);
 
 %% Save data.
 
 fieldNames = taskParam.fieldNames;
 Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.sex, {taskData.sex},...
-    fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.vola, vola, fieldNames.trial, taskData.trial,...
-    fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
+    fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
+    fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
     fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
     fieldNames.predErrPlus, taskData.predErrPlus, fieldNames.predErrMin, taskData.predErrMin,...

@@ -1,7 +1,6 @@
 function NoiseIndication(taskParam, txtNoise, txtPressEnter)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
-
+% This function tells the participant whether he is in a high or low
+% volatility environment.
 
 while 1
     
@@ -16,6 +15,5 @@ while 1
         end
     end
 end
-
 end
 

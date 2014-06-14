@@ -5,9 +5,9 @@ KbReleaseWait();
 
 % Screen 1.
 txtPressEnter = 'Weiter mit Enter';
-header = 'Gedächtnisaufgabe';    
-txt = 'Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir\n\ndie Position des Bootes merken und den blauen Punkt daraufhin\n\ngenau auf diese Position steuern.';   
-BigScreen(taskParam, txtPressEnter, header, txt)  
+header = 'Gedächtnisaufgabe';
+txt = 'Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir\n\ndie Position des Bootes merken und den blauen Punkt daraufhin\n\ngenau auf diese Position steuern.';
+BigScreen(taskParam, txtPressEnter, header, txt)
 
 % Screen 2.
 outcome = 238;
@@ -18,45 +18,45 @@ while 1
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     
-    DrawCircle(taskParam.gParam.window)
-    DrawCross(taskParam.gParam.window)
+    DrawCircle(taskParam)
+    DrawCross(taskParam)
     DrawOutcome(taskParam, outcome)
-
+    
     PredictionSpot(taskParam)
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('Flip', taskParam.gParam.window);
     
- [~, ~, keyCode] = KbCheck;
+    [~, ~, keyCode] = KbCheck;
     if find(keyCode) == taskParam.keys.enter
         break
     end
-
-end
     
+end
+
 % Screen 3.
 button = taskParam.keys.space;
 txt = '...und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nhast. Dücke dann LEERTASTE.';
-hand = false; 
-taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand);
+needle = false;
+taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
 
 % Show baseline 2.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-DrawCross(taskParam.gParam.window)
-DrawCircle(taskParam.gParam.window)
+DrawCross(taskParam)
+DrawCircle(taskParam)
 Screen('Flip', taskParam.gParam.window)
 WaitSecs(1);
 
 % Show boat.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-DrawCircle(taskParam.gParam.window)
+DrawCircle(taskParam)
 DrawBoat(taskParam, taskParam.colors.gold)
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 
 % Show baseline 3.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-DrawCircle(taskParam.gParam.window)
-DrawCross(taskParam.gParam.window)
+DrawCircle(taskParam)
+DrawCross(taskParam)
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 

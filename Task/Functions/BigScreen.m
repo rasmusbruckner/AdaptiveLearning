@@ -1,6 +1,5 @@
 function BigScreen(taskParam, txtPressEnter, header, txt)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+% This function draws background during the intro.
 
 while 1
     Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);

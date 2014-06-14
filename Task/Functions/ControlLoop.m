@@ -1,12 +1,11 @@
 function [taskParam] = ControlLoop(taskParam, distMean, outcome, boatType)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-
+% This function is called when participants move their spot in the
+% instructions.
 
 while 1
-    DrawCircle(taskParam.gParam.window);
-    DrawCross(taskParam.gParam.window);
-    DrawHand(taskParam, distMean);
+    DrawCircle(taskParam);
+    DrawCross(taskParam);
+    DrawNeedle(taskParam, distMean);
     PredictionSpot(taskParam);
     Screen('Flip', taskParam.gParam.window);
     
@@ -17,7 +16,7 @@ while 1
             if taskParam.circle.rotAngle < 360*taskParam.circle.unit
                 taskParam.circle.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
             else
-                taskParam.cirlce.rotAngle = 0;
+                taskParam.circle.rotAngle = 0;
             end
         elseif keyCode(taskParam.keys.leftKey)
             if taskParam.circle.rotAngle > 0*taskParam.circle.unit
@@ -26,31 +25,28 @@ while 1
                 taskParam.circle.rotAngle = 360*taskParam.circle.unit;
             end
         elseif keyCode(taskParam.keys.space)
-            break;
+            
+            break
         end
     end
 end
 
-DrawCircle(taskParam.gParam.window);
-DrawCross(taskParam.gParam.window);
+DrawCircle(taskParam);
+DrawCross(taskParam);
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 
-DrawCircle(taskParam.gParam.window);
+DrawCircle(taskParam);
 DrawOutcome(taskParam, outcome);
-DrawCross(taskParam.gParam.window);
+DrawCross(taskParam);
 PredictionSpot(taskParam);
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 
-DrawCircle(taskParam.gParam.window);
-DrawCross(taskParam.gParam.window);
+DrawCircle(taskParam);
+DrawCross(taskParam);
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
-
-%imageRect = [0 0 100 100];
-%winRect = taskParam.gParam.windowRect;
-%dstRect = CenterRect(imageRect, winRect);
 
 if boatType == 1
     DrawBoat(taskParam, taskParam.colors.gold)
@@ -58,12 +54,12 @@ else
     DrawBoat(taskParam, taskParam.colors.silver)
 end
 
-DrawCircle(taskParam.gParam.window)
+DrawCircle(taskParam)
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 
-DrawCircle(taskParam.gParam.window)
-DrawCross(taskParam.gParam.window)
+DrawCircle(taskParam)
+DrawCross(taskParam)
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1)
 

@@ -1,17 +1,9 @@
 function BattleShipsInstructions(taskParam, cBal)
 % BattleShipsInstructions runs the practice sessions.
-%   Depending on cBal you start with low or high noise condition.
+%   Depending on cBal you start with low or high volatility.
 
 KbReleaseWait();
-
-%% Generate outcomes for practice trials.
-
-%condition = 'practice';
-
-txtLowNoise='Jetzt fahren die Schiffe selten weiter';
-txtHighNoise = 'Jetzt fahren die Schiffe häufiger weiter';
-txtPressEnter='Weiter mit Enter';
-hand = true;
+needle = true;
 %% Instructions section.
 
 % Screen 1 with painting.
@@ -41,9 +33,9 @@ else
     txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
 end
 
-DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+DrawFormattedText(taskParam.gParam.window, taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
 button = taskParam.keys.enter;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand);
+taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
 KbReleaseWait();
 
 % Screen 3.
@@ -54,10 +46,10 @@ else
 end
 
 button = taskParam.keys.space;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand);
+taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-DrawCircle(taskParam.gParam.window);
-DrawCross(taskParam.gParam.window);
+DrawCircle(taskParam);
+DrawCross(taskParam);
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 
@@ -70,11 +62,11 @@ while 1
         txt='Der schwarze Balken zeigt dir dann die Position des Schiffs an. Wenn dein\n\nPunkt auf dem Schiff ist, hast du es getroffen.';
     end
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-    DrawCircle(taskParam.gParam.window);
+    DrawCircle(taskParam);
     DrawOutcome(taskParam, 238);
-    DrawCross(taskParam.gParam.window);
+    DrawCross(taskParam);
     PredictionSpot(taskParam);
-    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+    DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     Screen('Flip', taskParam.gParam.window);
     
@@ -98,9 +90,9 @@ while 1
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
-    DrawCircle(taskParam.gParam.window)
+    DrawCircle(taskParam)
     DrawBoat(taskParam, taskParam.colors.gold)
-    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+    DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('Flip', taskParam.gParam.window);
     
     [ ~, ~ , keyCode ] = KbCheck;
@@ -111,29 +103,6 @@ end
 KbReleaseWait();
 
 % Screen 6.
-% while 1
-%     
-%     if isequal(taskParam.gParam.computer, 'Humboldt')
-%         txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst\n\ndu 10 CENT. ';
-%     else
-%         txt='Dieses Schiff hat BRONZE geladen. Wenn du es triffst, verdienst du 10 CENT. ';
-%     end
-%     
-%     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-%     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
-%     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-%     DrawCircle(taskParam.gParam.window)
-%     DrawBronzeBoat(taskParam)
-%     Screen('Flip', taskParam.gParam.window);
-%     
-%     [ ~,~ , keyCode ] = KbCheck;
-%     if find(keyCode) == taskParam.keys.enter
-%         break
-%     end
-% end
-% KbReleaseWait();
-
-% Screen 7.
 while 1
     
     if isequal(taskParam.gParam.computer, 'Humboldt')
@@ -144,8 +113,8 @@ while 1
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
-    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    DrawCircle(taskParam.gParam.window)
+    DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+    DrawCircle(taskParam)
     DrawBoat(taskParam, taskParam.colors.silver)
     Screen('Flip', taskParam.gParam.window);
     
@@ -156,193 +125,110 @@ while 1
 end
 KbReleaseWait();
 
-% Screen 8.
+% Screen 7.
 header = 'Wie der Radar funktioniert';
 if isequal(taskParam.gParam.computer, 'Humboldt')
     txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe\n\nder angezeigten Position sind. Manchmal sind sie etwas weiter links\n\nund manchmal etwas weiter rechts. Diese Abweichungen von der\n\nRadarnadel sind zufällig und du kannst nicht perfekt vorhersagen,\n\nwo sich ein Schiff aufhält.';
 else
     txt = 'Der Radar zeigt dir die Position der Schiffsflotte leider nur ungefähr an.\n\nDurch den Seegang kommt es oft vor, dass die Schiffe nur in der Nähe der\n\nangezeigten Position sind. Manchmal sind sie etwas weiter links und manchmal\n\netwas weiter rechts. Diese Abweichungen von der Radarnadel sind zufällig und du\n\nkannst nicht perfekt vorhersagen, wo sich ein Schiff aufhält.';
 end
-BigScreen(taskParam, txtPressEnter, header, txt);
+BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
 
-% Screen 9.
+% Screen 8.
 header = 'Wie du einen Schuss abgibst';
 if isequal(taskParam.gParam.computer, 'Humboldt')
     txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach\n\nder Radarnadel. Beachte, dass der Radar dir durch den Seegang\n\nnur ungefähr angibt wo die Schiffe sind.';
 else
     txt='Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei nach der\n\nRadarnadel. Beachte, dass dir der Radar durch den Seegang nur\n\nungefähr angibt wo, die Schiffe sind.';
 end
-BigScreen(taskParam, txtPressEnter, header, txt);
+BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
 
-% Screen 10.
+% Screen 9.
 header = 'Worauf du achten solltest';
 if isequal(taskParam.gParam.computer, 'Humboldt')
     txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das\n\nFixationskreuz schaust. Wir bitten dich darum, möglichst wenige\n\nAugenbewegungen zu machen. Versuche außerdem wenig zu blinzeln.\n\nWenn du blinzeln musst, dann bitte bevor du einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe\n\nzu treffen.';
 else
     txt = 'Es ist wichtig, dass du während der Aufgabe immer auf das Fixationskreuz\n\nschaust. Wir bitten dich darum, möglichst wenige Augenbewegungen zu machen.\n\nVersuche außerdem wenig zu blinzeln. Wenn du blinzeln musst, dann bitte bevor\n\ndu einen Schuss abgibst.\n\n\nIn der folgenden Übung sollst du probieren, möglichst viele Schiffe zu treffen.';
 end
-BigScreen(taskParam, txtPressEnter, header, txt);
+BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
 
 
-%%% Intro-trials with length == taskParam.intTrials and counterbalance condition (cBal) %%%
+distMean = 338;
+outcome = [324;348;371;303;316;332;310;339;357;316;320;308;308;311;330;299;359;375;368;303];
+boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
 
-% if cBal == '1'
-    
-    % Screen 11.
-    
-    %NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    
-    distMean = 338;
-    outcome = [324;348;371;303;316;332;310;339;357;316;320;308;308;311;330;299;359;375;368;303];
-    boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-    
-    
-    % Screen 12 (1st practice block).
-    for i = 1:taskParam.gParam.intTrials
-        
-        taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-        
-    end
-    
-%     % Screen 13.
-%     
-%     NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-%     
-%     
-%     %  Screen 14 (1st practice block with high noise).
-%     distMean = 249;
-%     outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
-%     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-%     
-%     for i = 1:taskParam.gParam.intTrials
-%         
-%         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-%         
-%     end
-    
-% elseif cBal == '2'
-%     
-%     % Screen 15.
-%     
-%     NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-%     
-%     
-%     % Screen 16 (1st practice block with high noise).
-%     distMean = 249;
-%     outcome = [255;237;195;277;205;222;274;263;324;232;236;184;266;240;184;272;244;268;185;236];
-%     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-%     
-%     for i = 1:taskParam.gParam.intTrials
-%         
-%         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-%         
-%     end
-%     
-%     % Screen 17.
-%     
-%     NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-%     
-%     
-%     % Screen 18 (1st practice block with low noise)
-%     distMean = 338;
-%     outcome = [324;348;371;303;316;332;310;339;357;316;320;308;308;311;330;299;359;375;368;303];
-%     boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
-%     
-%     for i = 1:taskParam.gParam.intTrials
-%         
-%         taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-%         
-%     end
-% end
 
-%KbReleaseWait();
+% Screen 10 (1st practice block).
+for i = 1:taskParam.gParam.intTrials
+    
+    taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
+    
+end
 
-% Screen 19.
+% Screen 11.
 header = 'Ende der ersten Übung';
 if isequal(taskParam.gParam.computer, 'Humboldt')
     txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir\n\ndie Radarnadel eine neue Position anzeigt, solltest du dich daran\n\nanpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst\n\nwenig zu blinzeln.';
 else
     txt='Im nächsten Übungsdurchgang fahren die Schiffe ab und zu weiter.\n\nWann die Flotte weiterfährt kannst du nicht vorhersagen. Wenn dir die\n\nRadarnadel eine neue Position anzeigt, solltest du dich daran anpassen.\n\n\nVersuche bitte wieder auf das Fixationskreuz zu gucken und möglichst wenig\n\nzu blinzeln.';
 end
-BigScreen(taskParam, txtPressEnter, header, txt)
-
+BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
 
 if cBal == '1'
     
-    % Screen 20.
+    % Screen 21.
+    VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
     
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
-    
-    
-    % Screen 21 (2nd practice block with low noise).
+    % Screen 22 (2nd practice block with low volatility).
     outcome = [142;165;88;147;248;250;232;268;237;231;271;315;315;309;327;260;299;250;291;42];
     distMean = [146;146;146;146;242;242;242;242;242;242;242;291;291;291;291;291;291;291;291;20];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
     for i=1:taskParam.gParam.intTrials
-        
         taskParam = ControlLoop(taskParam, distMean(i), outcome(i), boatType(i));
-        
     end
     
-    % Screen 22.
-    
-    
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
+    % Screen 23.
+    VolaIndication(taskParam, taskParam.strings.txtHighVola, taskParam.strings.txtPressEnter)
     
     KbReleaseWait();
     
-    % Screen 23 (2nd practice block with high noise).
+    % Screen 24 (2nd practice block with high volatility).
     outcome = [329;372;317;285;340;344;266;332;264;110;135;180;163;237;189;93;229;247;312;179];
     distMean = [312;312;312;312;312;312;312;312;312;176;176;176;176;176;176;176;224;224;224;224];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
     for i=1:taskParam.gParam.intTrials
-        
         taskParam = ControlLoop(taskParam, distMean(i), outcome(i), boatType(i));
-        
     end
     
 elseif cBal == '2'
     
-    % Screen 24.
-    
-    NoiseIndication(taskParam, txtHighNoise, txtPressEnter)
-    
-    
+    % Screen 25.
+    VolaIndication(taskParam, taskParam.strings.txtHighVola, taskParam.strings.txtPressEnter)
     
     KbReleaseWait();
     
-    % Screen 25 (2nd practice block with high noise).
+    % Screen 26 (2nd practice block with high volatility).
     outcome = [329;372;317;285;340;344;266;332;264;110;135;180;163;237;189;93;229;247;312;179];
     distMean = [312;312;312;312;312;312;312;312;312;176;176;176;176;176;176;176;224;224;224;224];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
     for i=1:taskParam.gParam.intTrials
-        
         taskParam = ControlLoop(taskParam, distMean(i), outcome(i), boatType(i));
-        
     end
     
-    % Screen 26.
-    NoiseIndication(taskParam, txtLowNoise, txtPressEnter)
+    % Screen 27.
+    VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
     
-    
-    
-    % Screen 27 (2nd practice block with low noise).
+    % Screen 28 (2nd practice block with low volatility).
     outcome = [142;165;88;147;248;250;232;268;237;231;271;315;315;309;327;260;299;250;291;42];
     distMean = [146;146;146;146;242;242;242;242;242;242;242;291;291;291;291;291;291;291;291;20];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
     for i=1:taskParam.gParam.intTrials
-        
         taskParam = ControlLoop(taskParam, distMean(i), outcome(i), boatType(i));
-        
     end
-    
 end
 
 header = 'Ende der zweiten Übung';
@@ -351,7 +237,7 @@ if isequal(taskParam.gParam.computer, 'Humboldt')
 else
     txt = 'In der folgenden Übung ist dein Radar leider kaputt. Die Radarnadel kannst du\n\njetzt nur noch selten sehen. In den meisten Fällen musst du die Schiffsposition\n\nselber herausfinden. Du solltest versuchen, möglichst viele Schiffe\n\nabzuschießen.';
 end
-BigScreen(taskParam, txtPressEnter, header, txt)
+BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
 
 
 %% End of intro // Save data.

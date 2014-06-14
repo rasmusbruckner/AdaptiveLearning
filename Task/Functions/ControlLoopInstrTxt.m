@@ -1,7 +1,9 @@
-function taskParam = ControlLoopInstrTxt(taskParam, txt, button, hand)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-
+function taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle)
+% This function instructs participants for the control condition.
+% The idea is that participants remember the last outcome and indicate
+% this by aiming at this point. This requires a learning rate = 1. We are
+% therefore able to dissociate sensory processes and more cognitive
+% processes, that is, learning and updating the belief.
 
 distMean = 238;
 while 1
@@ -9,10 +11,10 @@ while 1
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     
-    DrawCircle(taskParam.gParam.window)
-    DrawCross(taskParam.gParam.window)
-    if hand == true
-    DrawHand(taskParam, distMean)
+    DrawCircle(taskParam)
+    DrawCross(taskParam)
+    if needle == true
+        DrawNeedle(taskParam, distMean)
     end
     PredictionSpot(taskParam)
     if button == taskParam.keys.enter
@@ -20,9 +22,6 @@ while 1
         DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     end
     Screen('Flip', taskParam.gParam.window);
-    
-    
-    
     
     [ keyIsDown, ~, keyCode ] = KbCheck;
     
@@ -39,10 +38,10 @@ while 1
             else
                 taskParam.circle.rotAngle = 360*taskParam.circle.unit;
             end
-        elseif keyCode(button) %keyCode(taskParam.space)
+        elseif keyCode(button)
             break;
         end
     end
 end
 
- KbReleaseWait()
+KbReleaseWait()
