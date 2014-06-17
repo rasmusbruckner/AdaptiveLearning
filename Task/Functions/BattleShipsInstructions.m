@@ -28,7 +28,8 @@ KbReleaseWait();
 % Screen 2.
 Screen('TextSize', taskParam.gParam.window, 30);
 if isequal(taskParam.gParam.computer, 'Humboldt')
-    txt='Auf rauer See möchtest du möglichst viele Schiffe einer\n\nSchiffsflotte versenken. Als Hilfsmittel benutzt du einen Radar,\n\nder dir einen Hinweis darauf gibt, wo sich ein Schiff aufhält.';
+    txt=['Auf rauer See möchtest'...
+    'du möglichst viele Schiffe einer\n\nSchiffsflotte versenken. Als Hilfsmittel benutzt du einen Radar,\n\nder dir einen Hinweis darauf gibt, wo sich ein Schiff aufhält.'];
 else
     txt='Auf rauer See möchtest du möglichst viele Schiffe einer Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein Schiff aufhält.';
 end

@@ -19,10 +19,10 @@ askSubjInfo = true; % Do you want some basic demographic subject variables?
 vola = [.4 .8]; % Volatility of the environment.
 fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
 fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 1; % Number of trials per (sigma-)condition.
+fTrials = 'trials'; trials = 3; % Number of trials per (sigma-)condition.
 fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
 fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 1; % Number of control trials.
+fContTrials = 'contTrials'; contTrials = 3; % Number of control trials.
 fSigma = 'sigma'; sigma = 15; % SD's of distribution.
 fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
 
