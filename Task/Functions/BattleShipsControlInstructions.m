@@ -1,4 +1,4 @@
-function BattleShipsControlInstructions(taskParam)
+function BattleShipsControlInstructions(taskParam, subject)
 % Function BattleShipsControlInstructions is an intro for the control session.
 
 KbReleaseWait();
@@ -49,7 +49,11 @@ WaitSecs(1);
 % Show boat.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam)
-DrawBoat(taskParam, taskParam.colors.gold)
+if subject.rew == '1'
+    DrawBoat(taskParam, taskParam.colors.gold)
+else
+    DrawBoat(taskParam, taskParam.colors.silver)
+end
 Screen('Flip', taskParam.gParam.window);
 WaitSecs(1);
 
@@ -63,10 +67,12 @@ WaitSecs(1);
 KbReleaseWait();
 
 header = 'Start der Gedächtnisaufgabe';
-if isequal(taskParam.gParam.computer, 'Humboldt')
-    txt = 'Denke daran, dass du den blauen Punkt ab jetzt immer auf die\n\nletzte Position des Bootes steuerst.\n\n\nWenn du dir die letzte Position richtig gemerkt hast bekommst du...\n\nGoldenes Boot: 20 CENT\n\nBronzenes Boot: 10 CENT\n\nSteine: Hier verdienst du leider nichts\n\n\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich.';
+if subject.rew == '1'
+    txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
+        'die letzte Position\n\ndes Bootes steuerst.\n\n\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...\n\nGoldenes Boot: 20 CENT\n\nSteine: Hier verdienst du leider nichts\n\n\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich'];
 else
-    txt = 'Denke daran, dass du den blauen Punkt ab jetzt immer auf die letzte Position\n\ndes Bootes steuerst.\n\n\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...\n\nGoldenes Boot: 20 CENT\n\nBronzenes Boot: 10 CENT\n\nSteine: Hier verdienst du leider nichts\n\n\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich.';
+    txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
+        'die letzte Position\n\ndes Bootes steuerst.\n\n\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...\n\nSilbernes Boot: 20 CENT\n\nSand: Hier verdienst du leider nichts\n\n\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich.'];
 end
 
 BigScreen(taskParam, txtPressEnter, header, txt)

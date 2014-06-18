@@ -8,23 +8,24 @@
 %
 % The function GenerateOutcomes generates outcomes that are centerend
 % around the mean of a normal distribution (distMean) with
-% standard deviation = sigma.
+% standard deviation = sigma and volatility = vola.
 
 clear all
 
 %% Set general parameters.
 
+computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
+sendTrigger = false; % Do you want to send triggers?
+intTrials = 1; % Trials during the introduction (per condition).
+practTrials = 1; % Number of practice trials per condition.
+trials = 1; % Number of trials per (sigma-)condition.
+contTrials = 1; % Number of control trials.
 vola = [.4 .8]; % Volatility of the environment.
-fSendTrigger = 'sendTrigger'; sendTrigger = false; % Do you want to send triggers?
-fComputer = 'computer'; computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-fTrials = 'trials'; trials = 3; % Number of trials per (sigma-)condition.
-fIntTrials = 'intTrials'; intTrials = 1; % Trials during the introduction (per condition).
-fPractTrials = 'practTrials'; practTrials = 1; % Number of practice trials per condition.
-fContTrials = 'contTrials'; contTrials = 3; % Number of control trials.
-fSigma = 'sigma'; sigma = 15; % SD's of distribution.
-fSafe = 'safe'; safe = 3; % How many guaranteed trials without change-points.
+safe = 3; % How many guaranteed trials without change-points.
+sigma = 15; % SD's of distribution.
+rewMag = 0.2; % Reward magnitude.
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
@@ -51,7 +52,7 @@ if askSubjInfo == false
     sex = 'm/w';
     cBal = '1';
     reward = '1';
-    Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, rew, fDate, date);
+    Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
     
 elseif askSubjInfo == true
     prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal', 'reward'};
@@ -73,7 +74,7 @@ elseif askSubjInfo == true
     end
     
     if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
-        msgbox('reward muss 1 oder 2 sein!');
+        msgbox('Reward muss 1 oder 2 sein!');
         return
     end
     
@@ -116,14 +117,23 @@ fWindowRect = 'windowRect';
 [ window, windowRect ] = Screen('OpenWindow', 0, [], []);
 
 fGParam = 'gParam';
+fSendTrigger = 'sendTrigger'; 
+fComputer = 'computer'; 
+fTrials = 'trials'; 
+fIntTrials = 'intTrials'; 
+fPractTrials = 'practTrials'; 
+fContTrials = 'contTrials';
+fSigma = 'sigma';
+fSafe = 'safe';
+fRewMag = 'rewMag';
 gParam = struct(fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
-    fSigma, sigma, fSafe, safe, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
+    fSigma, sigma, fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcSize = 'outcSize'; outcSize = 26; % Black bar.
+fOutcSize = 'outcSize'; outcSize = 26; % Black bar. Number must be equal.
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
 fRotationRad = 'rotationRad'; rotationRad = 100; % Rotation Radius.
 
@@ -189,7 +199,7 @@ fAge = 'age'; age = fAge; % Age.
 fSex = 'sex'; sex = fSex; % Sex.
 fRew = 'rew'; rew = fRew; %Rew.
 fVolas = 'vola'; volas = fVolas; % Volatility.
-fSigma = 'sigma'; sigma = fSigma, % Sigma.
+fSigma = 'sigma'; sigma = fSigma; % Sigma.
 fDate = 'date'; date = fDate; % Date.
 fCond = 'cond'; cond = fCond; % Condition.
 fTrial = 'trial'; trial = fTrial; % Trial.
@@ -222,6 +232,8 @@ fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fDa
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
+
+
 
 %% Trigger settings.
 
@@ -273,7 +285,7 @@ KbReleaseWait()
 if runIntro == true
     
     % Function for instructions.
-    BattleShipsInstructions(taskParam, Subject.cBal);
+    BattleShipsInstructions(taskParam, Subject);
     
     condition = 'practice';
     if Subject.cBal == '1'
@@ -321,7 +333,7 @@ end
 
 
 % Control trials: this task requires a learning rate = 1
-BattleShipsControlInstructions(taskParam) % Run instructions.
+BattleShipsControlInstructions(taskParam, Subject) % Run instructions.
 
 KbReleaseWait();
 

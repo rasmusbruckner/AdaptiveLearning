@@ -1,4 +1,4 @@
-function BattleShipsInstructions(taskParam, cBal)
+function BattleShipsInstructions(taskParam, subject)
 % BattleShipsInstructions runs the practice sessions.
 %   Depending on cBal you start with low or high volatility.
 
@@ -83,16 +83,20 @@ KbReleaseWait();
 % Screen 5.
 while 1
     
-    if isequal(taskParam.gParam.computer, 'Humboldt')
-        txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat.\n\nDies wird dir auch angezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst\n\ndu 20 CENT.';
+    if subject.rew == '1'
+    txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     else
-        txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du es triffst, verdienst du 20 CENT. ';
+    txt='Daraufhin siehst du welche Ladung das Schiff an Bord hat. Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht getroffen hast.\n\nDieses Schiff hat SILBER geladen. Wenn du es triffst, verdienst du 20 CENT. ';
     end
-    
+        
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     DrawCircle(taskParam)
+    if subject.rew == '1'
     DrawBoat(taskParam, taskParam.colors.gold)
+    else
+    DrawBoat(taskParam, taskParam.colors.silver)
+    end
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('Flip', taskParam.gParam.window);
     
@@ -106,17 +110,21 @@ KbReleaseWait();
 % Screen 6.
 while 1
     
-    if isequal(taskParam.gParam.computer, 'Humboldt')
-        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst\n\ndu leider NICHTS. ';
-    else
-        txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du leider NICHTS. ';
+    if subject.rew == '1'
+    txt='Dieses Schiff hat STEINE geladen. Wenn du es triffst, verdienst du leider NICHTS. ';
+    else    
+    txt='Dieses Schiff hat SAND geladen. Wenn du es triffst, verdienst du leider NICHTS. ';
     end
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     DrawCircle(taskParam)
+    if subject.rew == '1'
     DrawBoat(taskParam, taskParam.colors.silver)
+    else
+    DrawBoat(taskParam, taskParam.colors.gold)
+    end
     Screen('Flip', taskParam.gParam.window);
     
     [~, ~, keyCode ] = KbCheck;
@@ -161,9 +169,7 @@ boatType = [1;3;1;1;3;3;3;1;2;2;1;3;1;3;3;1;3;2;3;2];
 
 % Screen 10 (1st practice block).
 for i = 1:taskParam.gParam.intTrials
-    
     taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
-    
 end
 
 % Screen 11.
@@ -175,7 +181,7 @@ else
 end
 BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
 
-if cBal == '1'
+if subject.cBal == '1'
     
     % Screen 21.
     VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
@@ -203,7 +209,7 @@ if cBal == '1'
         taskParam = ControlLoop(taskParam, distMean(i), outcome(i), boatType(i));
     end
     
-elseif cBal == '2'
+elseif subject.cBal == '2'
     
     % Screen 25.
     VolaIndication(taskParam, taskParam.strings.txtHighVola, taskParam.strings.txtPressEnter)

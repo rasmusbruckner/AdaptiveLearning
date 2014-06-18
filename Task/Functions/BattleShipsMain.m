@@ -54,7 +54,6 @@ for i=1:taskData.trial
                 
                 % Trigger: prediction.
                 SendTrigger(taskParam, taskParam.triggers.predTrigger)
-                
                 break
             end
         end
@@ -63,8 +62,8 @@ for i=1:taskData.trial
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
-    if isequal(condition,'main') || isequal(condition,'main')
-        % Memory error = 99 because there is no memory error in this condition.
+    if isequal(condition,'main') || isequal(condition,'practice')
+        % Memory error = 999 because there is no memory error in this condition.
         taskData.memErr(i) = 999;
         taskData.memErrNorm(i) = 999;
         taskData.memErrPlus(i) = 999;
@@ -77,12 +76,12 @@ for i=1:taskData.trial
     end
     
     % Calculate hits
-    if isequal(condition,'main') || isequal(condition,'main')
-        if taskData.predErr(i) <= 13
+    if isequal(condition,'main') || isequal(condition,'practice')
+        if taskData.predErr(i) <= taskParam.circle.outcSize/2%13
             taskData.hit(i) = 1;
         end
-    else
-        if taskData.memErr(i) <= 13;
+    elseif isequal(condition,'control')
+        if taskData.memErr(i) <= taskParam.circle.outcSize/2%13;
             taskData.hit(i) = 1;
         end
     end
@@ -125,16 +124,19 @@ for i=1:taskData.trial
     DrawCircle(taskParam)
     if taskData.boatType(i) == 1
         DrawBoat(taskParam, taskParam.colors.gold)
-        if taskData.hit(i) == 1
-            taskData.perf(i)  = 0.2;
+        if Subject.rew == '1' && taskData.hit(i) == 1 
+            taskData.perf(i) = taskParam.gParam.rewMag; %0.2;
         end
     else
         DrawBoat(taskParam, taskParam.colors.silver)
+        if Subject.rew == '2' && taskData.hit(i) == 1
+            taskData.perf(i) = taskParam.gParam.rewMag;
+        end
     end
     
     % Calculate accumulated performance.
     
-    taskData.accPerf(i) = sum(taskData.perf) + taskData.perf(i);
+    taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
     
     % Trigger: boat.
     SendTrigger(taskParam, taskParam.triggers.boatTrigger)
@@ -157,16 +159,21 @@ for i=1:taskData.trial
     taskData.date{i} = Subject.date;
     taskData.cond{i} = condition;
     taskData.cBal{i} = Subject.cBal;
+    taskData.rew{i} = Subject.rew;
     
 end
 
-maxMon = (length(find(taskData.boatType == 1)) * 0.2); %+ (length(find(taskData.boatType == 2)) * 0.1);
+if Subject.rew == '1'
+    maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+elseif Subject.rew == '2'
+    maxMon = (length(find(taskData.boatType == 2)) * taskParam.gParam.rewMag);
+end
 
 while 1
     if isequal(condition, 'practice')
-        txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(i), maxMon);
+        txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
     else
-        txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(i), maxMon);
+        txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
     end
     txtBreak = 'Ende des Blocks';
     txtPressEnter = 'Weiter mit Enter';
@@ -191,7 +198,7 @@ sigma = repmat(taskParam.gParam.sigma, length(taskData.trial),1);
 %% Save data.
 
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
