@@ -14,14 +14,14 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
-sendTrigger = false; % Do you want to send triggers?
+sendTrigger = true; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition).
 practTrials = 1; % Number of practice trials per condition.
-trials = 1; % Number of trials per (sigma-)condition.
-contTrials = 1; % Number of control trials.
+trials = 40; % Number of trials per (sigma-)condition.
+contTrials = 30; % Number of control trials.
 vola = [.4 .8]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = 15; % SD's of distribution.
@@ -31,7 +31,7 @@ rewMag = 0.2; % Reward magnitude.
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden')
-    savdir = 'C:\Users\TU-Dresden\Documents\MATLAB\AdaptiveLearning\DataDirectory';
+    savdir = 'C:\Users\ma_epsy\Documents\MATLAB\AdaptiveLearning\DataDirectory';
 elseif isequal(computer, 'Humboldt')
     savdir = 'D:\!EXP\AdaptiveLearning\DataDirectory';
 end
@@ -237,8 +237,8 @@ fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fDa
 
 %% Trigger settings.
 
-fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
-fPort = 'port'; port = 53264; % LPT port
+fSampleRate = 'sampleRate'; sampleRate = 1000; % Sample rate.
+fPort = 'port'; port = 53328; % LPT port 53264
 fStartTrigger = 'startTrigger'; startTrigger = 7; % Start of the task.
 fTrialOnset = 'trialOnsetTrigger'; trialOnsetTrigger = 1; % Trial onset.
 fPredTrigger = 'predTrigger'; predTrigger = 2; % Prediction.
