@@ -1,4 +1,4 @@
-function DrawBoat(taskParam, color)
+function ShipTxt = DrawBoat(taskParam, color)
 %This function draws the boat.
 
 imageRect = [0 0 100 100];

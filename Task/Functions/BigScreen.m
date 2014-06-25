@@ -13,7 +13,9 @@ while 1
     DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2);
     
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window);
+    time = GetSecs;
+    Screen('Flip', taskParam.gParam.window, time + 0.1);
     
     [ ~, ~, keyCode ] = KbCheck;
     if find(keyCode)==taskParam.keys.enter% don't know why it does not understand return or enter?

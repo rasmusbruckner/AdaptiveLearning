@@ -16,6 +16,7 @@ while 1
     Screen('DrawTexture', taskParam.gParam.window, ShipTxt,[]);
     txtScreen1='Schiffeversenken';
     DrawFormattedText(taskParam.gParam.window, txtScreen1, 'center', 100, [255 255 255]);
+    Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window);
     
     [~, ~, keyCode] = KbCheck;
@@ -51,7 +52,9 @@ taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam);
 DrawCross(taskParam);
-Screen('Flip', taskParam.gParam.window);
+Screen('DrawingFinished', taskParam.gParam.window);
+t = GetSecs; 
+Screen('Flip', taskParam.gParam.window, t + 0.001);
 WaitSecs(1);
 
 % Screen 4.
@@ -69,7 +72,9 @@ while 1
     PredictionSpot(taskParam);
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window);
+    t = GetSecs;
+    Screen('Flip', taskParam.gParam.window, t + 0.001);
     
     [ keyIsDown, ~, keyCode ] = KbCheck;
     if keyIsDown
@@ -98,7 +103,10 @@ while 1
     DrawBoat(taskParam, taskParam.colors.silver)
     end
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window, [], []);
+    t = GetSecs;
+    Screen('Flip', taskParam.gParam.window, t + 0.001);
+    
     
     [ ~, ~ , keyCode ] = KbCheck;
     if find(keyCode)==taskParam.keys.enter
@@ -125,7 +133,9 @@ while 1
     else
     DrawBoat(taskParam, taskParam.colors.gold)
     end
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window, [], []);
+    t = GetSecs;
+    Screen('Flip', taskParam.gParam.window, t + 0.001);
     
     [~, ~, keyCode ] = KbCheck;
     if find(keyCode) == taskParam.keys.enter

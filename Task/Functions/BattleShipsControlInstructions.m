@@ -24,7 +24,9 @@ while 1
     
     PredictionSpot(taskParam)
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window);
+    time = GetSecs;
+    Screen('Flip', taskParam.gParam.window, time + 0.1);
     
     [~, ~, keyCode] = KbCheck;
     if find(keyCode) == taskParam.keys.enter
@@ -38,13 +40,14 @@ button = taskParam.keys.space;
 txt = '...und steuere den blauen Punkt auf die Postition die du dir gemerkt\n\nhast. Dücke dann LEERTASTE.';
 needle = false;
 taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
+time = GetSecs;
 
 % Show baseline 2.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCross(taskParam)
 DrawCircle(taskParam)
-Screen('Flip', taskParam.gParam.window)
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window, time + 1)
 
 % Show boat.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -54,15 +57,15 @@ if subject.rew == '1'
 else
     DrawBoat(taskParam, taskParam.colors.silver)
 end
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window, time + 2);
 
 % Show baseline 3.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam)
 DrawCross(taskParam)
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window, time + 3);
 
 KbReleaseWait();
 

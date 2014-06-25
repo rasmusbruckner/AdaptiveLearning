@@ -19,7 +19,7 @@ ID = cell(trials, 1); % ID.
 age = zeros(trials, 1); % Age.
 sex = cell(trials, 1); % Sex.
 rew = cell(trials, 1); % Reward.
-date = cell(trials, 1); % Date.
+Date = cell(trials, 1); % Date.
 cond = cell(trials, 1); % Condition.
 outcome=nan(trials, 1); % Outcome.
 distMean=nan(trials, 1); % Distribution mean.
@@ -27,6 +27,9 @@ cp=zeros(trials, 1); % Change point.
 TAC=nan(trials, 1); % Trials after change-point.
 boatType = zeros(trials, 1); % Boat type.
 catchTrial = zeros(trials, 1); % Catch trial.
+predT = zeros(trials, 1); % Trigger: prediction.
+outT = zeros(trials, 1); % Trigger: outcome.
+boatT = zeros(trials, 1); % Trigger: boat.
 pred = zeros(trials, 1); % Prediction of participant.
 predErr = nan(trials, 1); % Prediction error.
 predErrNorm = zeros(trials, 1);% Regular prediction error.
@@ -47,6 +50,8 @@ perf = zeros(trials, 1); % Performance.
 accPerf = zeros(trials, 1); % Accumulated performance.
 
 %% generateOutcomes (by Matt Nassar)
+
+%rand('RNG', sum(clock));
 
 for i = 1:trials
     if (rand < vola && s==0) || i == 1;
@@ -80,10 +85,10 @@ end
 %% Save data.
 taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
-    fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.pred,...
-    pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...
+    fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.predT, predT,...
+    fieldNames.outT, outT, fieldNames.boatT, boatT, fieldNames.pred, pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...
     fieldNames.predErrMin, predErrMin, fieldNames.memErr, memErr, fieldNames.memErrNorm, memErrNorm,...
     fieldNames.memErrPlus, memErrPlus, fieldNames.memErrMin, memErrMin, fieldNames.UP, UP,...
     fieldNames.UPNorm, UPNorm, fieldNames.UPPlus, UPPlus, fieldNames.UPMin, UPMin, fieldNames.hit, hit,...
-    fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date, {date});
+    fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.Date, {Date});
 end

@@ -6,6 +6,7 @@ function taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle)
 % processes, that is, learning and updating the belief.
 
 distMean = 238;
+Priority(9);
 while 1
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -21,7 +22,9 @@ while 1
         txtPressEnter='Weiter mit Enter';
         DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     end
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window);
+    t = GetSecs;
+    Screen('Flip', taskParam.gParam.window, t + 0.001);
     
     [ keyIsDown, ~, keyCode ] = KbCheck;
     
@@ -44,4 +47,6 @@ while 1
     end
 end
 
+Priority(9);
 KbReleaseWait()
+end

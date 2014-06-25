@@ -7,10 +7,10 @@ clear all
 
 %% Which subjects and variables do you want to load?
 % Use {'all'} for all subjects or give IDs like {'001' '002'}.
-subject = {'all'}; %'test' 'test2'
+subject = {'ben'}; %'test' 'test2'
 variable = {'ID', 'sex', 'age', 'cBal', 'rew', 'sigma','cond', 'vola',...
-    'trial', 'cp', 'TAC', 'catchTrial', 'boatType', 'outcome', 'pred',...
-    'predErr', 'memErr', 'hit', 'UP', 'perf', 'accPerf'};
+    'trial', 'cp', 'TAC', 'catchTrial', 'boatType', 'outcome', 'pred', 'predErr', 'memErr', 'hit', 'UP', 'perf',...
+    'accPerf'}; % 'predT',... 'outT', 'boatT'
 
 if isequal(subject,{'all'})
     subjectFile= dir(fullfile('AdaptiveLearning/DataDirectory/*.mat'));
@@ -68,7 +68,7 @@ for a = 1:length(allData)
         for k = 1:trials
             for x = 1:length(variable) % variable.
                 val = allData{a}.(name{a}{i}).(variable{x})(k);  % und hier auch! val = allData{a}.(name{i,a}{1}).(variable{1})(1) %%%allData{a}.(name{i,a}).(variable{x})(k);
-                type = class(val);
+                type = class(val)
                 if isequal(type, 'cell')
                     val = cell2mat(val);
                 elseif isequal(type, 'double')

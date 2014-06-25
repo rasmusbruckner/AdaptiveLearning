@@ -2,12 +2,16 @@ function [taskParam] = ControlLoop(taskParam, distMean, outcome, boatType)
 % This function is called when participants move their spot in the
 % instructions.
 
+Priority(9);
 while 1
     DrawCircle(taskParam);
     DrawCross(taskParam);
     DrawNeedle(taskParam, distMean);
     PredictionSpot(taskParam);
-    Screen('Flip', taskParam.gParam.window);
+    t = GetSecs;
+    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('Flip', taskParam.gParam.window, t + 0.01);
+    
     
     [ keyIsDown, ~, keyCode ] = KbCheck;
     
@@ -30,38 +34,47 @@ while 1
         end
     end
 end
+t = GetSecs;
 
+% Show baseline 1. 
 DrawCircle(taskParam);
 DrawCross(taskParam);
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window, 1);
+Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
 
+% Show outcome.
 DrawCircle(taskParam);
 DrawOutcome(taskParam, outcome);
 DrawCross(taskParam);
 PredictionSpot(taskParam);
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window, 1);
+Screen('Flip', taskParam.gParam.window, t + 2);
 
+% Show baseline 2. 
 DrawCircle(taskParam);
 DrawCross(taskParam);
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window, 1);
+Screen('Flip', taskParam.gParam.window, t + 3, 1);
 
+% Show boat. 
 if boatType == 1
-    DrawBoat(taskParam, taskParam.colors.gold)
+    ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
 else
-    DrawBoat(taskParam, taskParam.colors.silver)
+    ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
 end
 
 DrawCircle(taskParam)
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1);
+Screen('DrawingFinished', taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window, t + 4);
+Screen('Close', ShipTxt);
 
+% Show baseline 3.
 DrawCircle(taskParam)
 DrawCross(taskParam)
-Screen('Flip', taskParam.gParam.window);
-WaitSecs(1)
+Screen('DrawingFinished', taskParam.gParam.window);
+Screen('Flip', taskParam.gParam.window, t + 5);
+WaitSecs(1);
 
 KbReleaseWait();
+Priority(0);
 end

@@ -16,16 +16,17 @@ clear all
 
 computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = false;   % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
-sendTrigger = false; % Do you want to send triggers?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
+sendTrigger = true; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition).
 practTrials = 1; % Number of practice trials per condition.
 trials = 1; % Number of trials per (sigma-)condition.
 contTrials = 1; % Number of control trials.
-vola = [.4 .8]; % Volatility of the environment.
+vola = [.2 .8]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = 15; % SD's of distribution.
-rewMag = 0.2; % Reward magnitude.
+rewMag = 0.1; % Reward magnitude.
+test = false; % If you want to test triggering timing accuracy.
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
@@ -43,7 +44,7 @@ fAge = 'age';
 fSex = 'sex';
 fCBal = 'cBal';
 fRew = 'rew';
-fDate = 'date';
+fDate = 'Date';
 
 if askSubjInfo == false
     
@@ -104,9 +105,9 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-Screen('Preference', 'VisualDebugLevel', 3);
-Screen('Preference', 'SuppressAllWarnings', 1);
-Screen('Preference', 'SkipSyncTests', 2);
+% Screen('Preference', 'VisualDebugLevel', 3);
+% Screen('Preference', 'SuppressAllWarnings', 1);
+% Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
@@ -200,7 +201,7 @@ fSex = 'sex'; sex = fSex; % Sex.
 fRew = 'rew'; rew = fRew; %Rew.
 fVolas = 'vola'; volas = fVolas; % Volatility.
 fSigma = 'sigma'; sigma = fSigma; % Sigma.
-fDate = 'date'; date = fDate; % Date.
+fDate = 'Date'; Date = fDate; % Date.
 fCond = 'cond'; cond = fCond; % Condition.
 fTrial = 'trial'; trial = fTrial; % Trial.
 fOutcome = 'outcome'; outcome = fOutcome; % Outcome.
@@ -209,6 +210,9 @@ fCp = 'cp'; cp = fCp; % Change point.
 fTAC = 'TAC'; TAC = fTAC; % Trials after change-point.
 fBoatType = 'boatType'; boatType = fBoatType; % Boat type.
 fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial.
+fPredT = 'predT'; predT = fPredT; % Trigger: prediction.
+fOutT = 'outT'; outT = fOutT; % Trigger: outcome.
+fBoatT = 'boatT'; boatT = fBoatT; % Trigger: boat.
 fPred = 'pred';pred = fPred; % Prediction of participant.
 fPredErr = 'predErr'; predErr = fPredErr; % Prediction error.
 fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;% Regular prediction error.
@@ -228,11 +232,10 @@ fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fDate, date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
-    fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
+fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+    fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
-
 
 
 %% Trigger settings.
@@ -268,18 +271,24 @@ taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, f
     fColors, colors, fStrings, strings);
 
 
+if test == true
+    
+    BattleShipsTriggerTest(taskParam, vola(1), 'main', Subject); % Run task (low sigma).
+    Screen('CloseAll');
+    
+else
 %% Run task.
 
 % Set port to 0.
-if taskParam.gParam.sendTrigger == true
-    lptwrite(taskParam.triggers.port,0);
-end
+%if taskParam.gParam.sendTrigger == true
+%    lptwrite(taskParam.triggers.port,0);
+%end
 
 % Set text parameters.
 Screen('TextFont', taskParam.gParam.window, 'Arial');
 Screen('TextSize', taskParam.gParam.window, 30);
 
-KbReleaseWait()
+KbReleaseWait();
 
 % Run intro with practice trials if true.
 if runIntro == true
@@ -317,17 +326,13 @@ end
 condition = 'main';
 if Subject.cBal == '1'
     VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) % Trigger.
     [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
     VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockHVTrigger) % Trigger.
     [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
 else
     VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockHVTrigger) % Trigger.
     [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
     VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) % Trigger.
     [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
 end
 
@@ -337,26 +342,17 @@ BattleShipsControlInstructions(taskParam, Subject) % Run instructions.
 
 KbReleaseWait();
 
-% Trigger: control block.
-SendTrigger(taskParam, taskParam.triggers.blockControlTrigger)
-
-
-
 % This function runs the control trials
 condition = 'control';
 if Subject.cBal == '1'
     VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) %Trigger.
     [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
     VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) %Trigger.
     [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
 else
     VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockHVTrigger) %Trigger.
     [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
     VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    SendTrigger(taskParam, taskParam.triggers.blockLVTrigger) %Trigger.
     [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
 end
 
@@ -374,7 +370,9 @@ while 1
     DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
     Screen('TextSize', taskParam.gParam.window, 30);
     DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center');
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window, [], []);
+    time = GetSecs;
+    Screen('Flip', taskParam.gParam.window, time + 0.1);
     
     [ keyIsDown, seconds, keyCode ] = KbCheck;
     if find(keyCode) == taskParam.keys.s
@@ -423,3 +421,4 @@ ShowCursor;
 
 % Close screen.
 Screen('CloseAll');
+end

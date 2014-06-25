@@ -1,25 +1,23 @@
 function [taskData, Data] = BattleShipsMain(taskParam, vola, condition, Subject)
 % This function acutally runs the task. You can specify "main", "practice"
-% or "control".
+% or "control". This loop is optimized for triggering accuracy. 
 
-KbReleaseWait()
+KbReleaseWait();
 
 % Set port to 0.
-if taskParam.gParam.sendTrigger == true
-    lptwrite(taskParam.triggers.port,0);
-end
+%if taskParam.gParam.sendTrigger == true
+ %   lptwrite(taskParam.triggers.port,0);
+%end
 
 %% generateOutcomes
 taskData = GenerateOutcomes(taskParam, vola, condition);
 
+RT_Flip = zeros(taskData.trial, 1);
+
 %% Run trials.
+Priority(9);
 for i=1:taskData.trial
     
-    % Trigger: start task.
-    SendTrigger(taskParam, taskParam.triggers.startTrigger)
-    
-    % Trigger: trial onset.
-    SendTrigger(taskParam, taskParam.triggers.trialOnsetTrigger)
     
     while 1
         
@@ -31,8 +29,10 @@ for i=1:taskData.trial
         DrawCircle(taskParam)
         DrawCross(taskParam)
         PredictionSpot(taskParam)
+        Screen('DrawingFinished', taskParam.gParam.window);
+        t = GetSecs;
+        Screen('Flip', taskParam.gParam.window, t + 0.01);
         
-        Screen('Flip', taskParam.gParam.window);
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
         
@@ -50,15 +50,36 @@ for i=1:taskData.trial
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
             elseif keyCode(taskParam.keys.space)
-                taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit) ;
+                taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 
                 % Trigger: prediction.
-                SendTrigger(taskParam, taskParam.triggers.predTrigger)
+                Tevent = 1;
+                taskData.predT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+                time = GetSecs;
+                
                 break
             end
         end
     end
+    t = GetSecs;
     
+    
+    % Show baseline 1.
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window, 1);
+    
+    tx = GetSecs;
+    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
+    fliptime(i) = GetSecs - tx;
+    %SendTrigger(taskParam, taskParam.triggers.baseline1Trigger)
+    RT_Flip(i) = GetSecs-time
+   
+    % Show outcome.
+    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
+    PredictionSpot(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window, 1);
+
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
@@ -91,44 +112,28 @@ for i=1:taskData.trial
         [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
-    % Show baseline 1.
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
-    
-    % Trigger: baseline 1.
-    SendTrigger(taskParam, taskParam.triggers.baseline1Trigger)
-    Screen('Flip', taskParam.gParam.window);
-    WaitSecs(1);
-    
-    % Show outcome.
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
-    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
-    PredictionSpot(taskParam)
-    
     % Trigger: outcome.
-    SendTrigger(taskParam, taskParam.triggers.outcomeTrigger)
-    Screen('Flip', taskParam.gParam.window);
-    WaitSecs(1);
+    Tevent = 2;
+    Screen('Flip', taskParam.gParam.window, t + 1);
+    taskData.outT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+    
     
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window, 1);
+    Screen('Flip', taskParam.gParam.window, t + 2, 1);
     
-    % Trigger: baseline 2.
-    SendTrigger(taskParam, taskParam.triggers.baseline2Trigger)
-    Screen('Flip', taskParam.gParam.window)
-    WaitSecs(1);
     
     % Show boat and calculate performance.       %TRIGGER
     DrawCircle(taskParam)
     if taskData.boatType(i) == 1
-        DrawBoat(taskParam, taskParam.colors.gold)
+        ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
         if Subject.rew == '1' && taskData.hit(i) == 1 
             taskData.perf(i) = taskParam.gParam.rewMag; %0.2;
         end
     else
-        DrawBoat(taskParam, taskParam.colors.silver)
+        ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
         if Subject.rew == '2' && taskData.hit(i) == 1
             taskData.perf(i) = taskParam.gParam.rewMag;
         end
@@ -138,30 +143,33 @@ for i=1:taskData.trial
     
     taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
     
+    %WaitSecs(1);
     % Trigger: boat.
-    SendTrigger(taskParam, taskParam.triggers.boatTrigger)
-    Screen('Flip', taskParam.gParam.window);
-    WaitSecs(1);
+    Tevent = 3;
+    
+    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('Flip', taskParam.gParam.window, t + 3);
+    taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+    Screen('Close', ShipTxt);
     
     % Show baseline 3.
-    DrawCircle(taskParam)
     DrawCross(taskParam)
-    
-    % Trigger: baseline 3.
-    SendTrigger(taskParam, taskParam.triggers.baseline3Trigger)
-    Screen('Flip', taskParam.gParam.window);
-    WaitSecs(1);
+    DrawCircle(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('Flip', taskParam.gParam.window, t + 4);
     
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
     taskData.ID{i} = Subject.ID;
     taskData.sex{i} = Subject.sex;
-    taskData.date{i} = Subject.date;
+    taskData.Date{i} = Subject.Date;
     taskData.cond{i} = condition;
     taskData.cBal{i} = Subject.cBal;
     taskData.rew{i} = Subject.rew;
+    WaitSecs(1);
     
 end
+Priority(0);
 
 if Subject.rew == '1'
     maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
@@ -182,7 +190,9 @@ while 1
     Screen('TextSize', taskParam.gParam.window, 30);
     DrawFormattedText(taskParam.gParam.window, txtFeedback, 'center', 'center');
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    Screen('Flip', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window);
+    t = GetSecs;
+    Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     [~, ~, keyCode ] = KbCheck;
     if find(keyCode) == taskParam.keys.enter % don't know why it does not understand return or enter?
@@ -190,7 +200,7 @@ while 1
     end
 end
 
-KbReleaseWait()
+KbReleaseWait();
 
 vola = repmat(vola, length(taskData.trial),1);
 sigma = repmat(taskParam.gParam.sigma, length(taskData.trial),1);
@@ -202,11 +212,11 @@ Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldN
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
-    fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
+    fieldNames.predT, taskData.predT, fieldNames.outT, taskData.outT, fieldNames.boatT, taskData.boatT, fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
     fieldNames.predErrPlus, taskData.predErrPlus, fieldNames.predErrMin, taskData.predErrMin,...
     fieldNames.memErr, taskData.memErr, fieldNames.memErrNorm, taskData.memErrNorm, fieldNames.memErrPlus, taskData.memErrPlus,...
     fieldNames.memErrMin, taskData.memErrMin, fieldNames.UP, taskData.UP,fieldNames.UPNorm, taskData.UPNorm,...
     fieldNames.UPPlus, taskData.UPPlus, fieldNames.UPMin, taskData.UPMin, fieldNames.hit, taskData.hit,...
-    fieldNames.perf, taskData.perf, fieldNames.accPerf, taskData.accPerf, fieldNames.date, {taskData.date});
+    fieldNames.perf, taskData.perf, fieldNames.accPerf, taskData.accPerf, fieldNames.Date, {taskData.Date});
 
 end
