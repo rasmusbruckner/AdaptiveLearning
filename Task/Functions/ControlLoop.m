@@ -2,7 +2,7 @@ function [taskParam] = ControlLoop(taskParam, distMean, outcome, boatType)
 % This function is called when participants move their spot in the
 % instructions.
 
-Priority(9);
+%Priority(9);
 while 1
     DrawCircle(taskParam);
     DrawCross(taskParam);
@@ -76,5 +76,5 @@ Screen('Flip', taskParam.gParam.window, t + 4);
 WaitSecs(1);
 
 KbReleaseWait();
-Priority(0);
+%Priority(0);
 end

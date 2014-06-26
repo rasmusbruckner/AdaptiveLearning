@@ -20,6 +20,7 @@ ID = cell(trials, 1); % ID.
 age = zeros(trials, 1); % Age.
 sex = cell(trials, 1); % Sex.
 rew = cell(trials, 1); % Reward.
+actRew = zeros(trials,1); % Actual reward.
 Date = cell(trials, 1); % Date.
 cond = cell(trials, 1); % Condition.
 outcome=nan(trials, 1); % Outcome.
@@ -84,7 +85,7 @@ for i = 1:trials
 end
 
 %% Save data.
-taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
+taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
     fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.predT, predT,...
     fieldNames.outT, outT, fieldNames.boatT, boatT, fieldNames.pred, pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...

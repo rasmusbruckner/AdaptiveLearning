@@ -22,6 +22,25 @@ RT_Flip = zeros(taskData.trial, 1);
 
 for i=1:taskData.trial
     
+    taskData.trial(i) = i;
+    taskData.age(i) = str2double(Subject.age);
+    taskData.ID{i} = Subject.ID;
+    taskData.sex{i} = Subject.sex;
+    taskData.Date{i} = Subject.Date;
+    taskData.cond{i} = condition;
+    taskData.cBal{i} = Subject.cBal;
+    taskData.rew{i} = Subject.rew;
+    if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
+        taskData.actRew(i) = 1;
+    elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
+        taskData.actRew(i) = 2;
+    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
+        taskData.actRew(i) = 1;    
+    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
+        taskData.actRew(i) = 2;
+    end   
+    
+    
     while 1
         
         if taskData.catchTrial(i) == 1
@@ -72,7 +91,7 @@ for i=1:taskData.trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     
-    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
+    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1)
     RT_Flip(i) = GetSecs-time;
     
     % Show outcome.
@@ -145,6 +164,7 @@ for i=1:taskData.trial
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 3);
     taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+    %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
     Screen('Close', ShipTxt);
     
     % Show baseline 3.
@@ -153,14 +173,23 @@ for i=1:taskData.trial
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 4);
     
-    taskData.trial(i) = i;
-    taskData.age(i) = str2double(Subject.age);
-    taskData.ID{i} = Subject.ID;
-    taskData.sex{i} = Subject.sex;
-    taskData.Date{i} = Subject.Date;
-    taskData.cond{i} = condition;
-    taskData.cBal{i} = Subject.cBal;
-    taskData.rew{i} = Subject.rew;
+%     taskData.trial(i) = i;
+%     taskData.age(i) = str2double(Subject.age);
+%     taskData.ID{i} = Subject.ID;
+%     taskData.sex{i} = Subject.sex;
+%     taskData.Date{i} = Subject.Date;
+%     taskData.cond{i} = condition;
+%     taskData.cBal{i} = Subject.cBal;
+%     taskData.rew{i} = Subject.rew;
+%     if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
+%         taskData.actRew(i) = 1;
+%     elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
+%         taskData.actRew(i) = 2;
+%     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
+%         taskData.actRew(i) = 1;    
+%     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
+%         taskData.actRew(i) = 2;
+%     end   
     WaitSecs(1);
 end
 
@@ -206,7 +235,7 @@ sigma = repmat(taskParam.gParam.sigma, length(taskData.trial),1);
 %% Save data.
 
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...

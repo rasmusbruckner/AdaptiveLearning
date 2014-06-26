@@ -18,13 +18,13 @@ clear all
 %% Set general parameters.
 
 computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = false;   % Run the intro with practice trials?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
-sendTrigger = true; % Do you want to send triggers?
-intTrials = 10; % Trials during the introduction (per condition).
-practTrials = 1; % Number of practice trials per condition.
-trials = 5; % Number of trials per (sigma-)condition.
-contTrials = 1; % Number of control trials.
+runIntro = true; % Run the intro with practice trials?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
+sendTrigger = false; % Do you want to send triggers?
+intTrials = 5; % Trials during the introduction (per condition).
+practTrials = 20; % Number of practice trials per condition.
+trials = 50; % Number of trials per (sigma-)condition.
+contTrials = 30; % Number of control trials.
 vola = [.2 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = 10; % SD's of distribution.
@@ -108,9 +108,9 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-% Screen('Preference', 'VisualDebugLevel', 3);
-% Screen('Preference', 'SuppressAllWarnings', 1);
-% Screen('Preference', 'SkipSyncTests', 2);
+Screen('Preference', 'VisualDebugLevel', 3);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
@@ -202,6 +202,7 @@ fID = 'ID'; ID = fID; % ID.
 fAge = 'age'; age = fAge; % Age.
 fSex = 'sex'; sex = fSex; % Sex.
 fRew = 'rew'; rew = fRew; %Rew.
+fActRew = 'actRew'; actRew = fActRew; % Actual Reward;
 fVolas = 'vola'; volas = fVolas; % Volatility.
 fSigma = 'sigma'; sigma = fSigma; % Sigma.
 fDate = 'Date'; Date = fDate; % Date.
@@ -235,7 +236,7 @@ fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);

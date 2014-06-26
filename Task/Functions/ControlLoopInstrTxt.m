@@ -6,7 +6,7 @@ function taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle)
 % processes, that is, learning and belief updating.
 
 distMean = 238;
-Priority(9);
+%Priority(9);
 while 1
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -46,6 +46,6 @@ while 1
         end
     end
 end
-Priority(9);
+%Priority(9);
 KbReleaseWait()
 end
