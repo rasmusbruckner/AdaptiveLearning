@@ -6,30 +6,30 @@
 %
 % Outcomes are presented on a circle which is expressed in 360 degrees.
 %
-% The function GenerateOutcomes generates outcomes that are centered
+% The function GenerateOutcomes generates outcomes that are centerend
 % around the mean of a normal distribution (distMean) with
-% standard deviation = sigma
+% standard deviation = sigma and volatility = vola.
 %
 % The code is optimized for EEG recordings but should be tested on every
-% machine.
+% maschine.
 
 clear all
 
 %% Set general parameters.
 
-computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = false;   % Run the intro with practice trials?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
 sendTrigger = true; % Do you want to send triggers?
-intTrials = 10; % Trials during the introduction (per condition).
+intTrials = 1; % Trials during the introduction (per condition).
 practTrials = 1; % Number of practice trials per condition.
-trials = 5; % Number of trials per (sigma-)condition.
+trials = 1; % Number of trials per (sigma-)condition.
 contTrials = 1; % Number of control trials.
-vola = [.2 .7]; % Volatility of the environment.
+vola = [.2 .8]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
-sigma = 10; % SD's of distribution.
+sigma = 15; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
-test = false; % Test triggering timing accuracy (see PTB output CW).
+test = true; % If you want to test triggering timing accuracy.
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
@@ -243,10 +243,8 @@ fieldNames = struct(fID, ID, fSigma, sigma, fAge, age, fSex, sex, fRew, rew, fDa
 
 %% Trigger settings.
 
-config_io;
-
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
-fPort = 'port'; port = 53328; % LPT port
+fPort = 'port'; port = 53264; % LPT port
 fStartTrigger = 'startTrigger'; startTrigger = 7; % Start of the task.
 fTrialOnset = 'trialOnsetTrigger'; trialOnsetTrigger = 1; % Trial onset.
 fPredTrigger = 'predTrigger'; predTrigger = 2; % Prediction.
@@ -275,8 +273,7 @@ strings = struct(fTxtLowVola, txtLowVola, fTxtHighVola, txtHighVola, fTxtPressEn
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers,...
     fColors, colors, fStrings, strings);
 
-% If true you run through one main block which enables you to check timing
-% accuracy (see PTB output in command window).
+% If true you run through one  block 
 if test == true
     
     [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), 'main', Subject); % Run task (low sigma).

@@ -18,7 +18,7 @@ RT_Flip = zeros(taskData.trial, 1);
 %% Run trials.
 
 % Enable real-time mode.
-Priority(9); 
+% Priority(9); 
 
 for i=1:taskData.trial
     
@@ -165,7 +165,7 @@ for i=1:taskData.trial
 end
 
 % Disable real-time mode.
-Priority(0);
+% Priority(0);
 
 % Compute max gain.
 if Subject.rew == '1'
