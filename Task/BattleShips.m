@@ -6,27 +6,30 @@
 %
 % Outcomes are presented on a circle which is expressed in 360 degrees.
 %
-% The function GenerateOutcomes generates outcomes that are centerend
+% The function GenerateOutcomes generates outcomes that are centered
 % around the mean of a normal distribution (distMean) with
-% standard deviation = sigma and volatility = vola.
+% standard deviation = sigma
+%
+% The code is optimized for EEG recordings but should be tested on every
+% machine.
 
 clear all
 
 %% Set general parameters.
 
 computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = false;   % Run the intro with practice trials?
+runIntro = true;   % Run the intro with practice trials?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
-sendTrigger = true; % Do you want to send triggers?
-intTrials = 1; % Trials during the introduction (per condition).
+sendTrigger = false; % Do you want to send triggers?
+intTrials = 10; % Trials during the introduction (per condition).
 practTrials = 1; % Number of practice trials per condition.
 trials = 1; % Number of trials per (sigma-)condition.
 contTrials = 1; % Number of control trials.
-vola = [.2 .8]; % Volatility of the environment.
+vola = [.2 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
-sigma = 15; % SD's of distribution.
+sigma = 10; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
-test = false; % If you want to test triggering timing accuracy.
+test = false; % Test triggering timing accuracy (see PTB output CW).
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
@@ -118,11 +121,11 @@ fWindowRect = 'windowRect';
 [ window, windowRect ] = Screen('OpenWindow', 0, [], []);
 
 fGParam = 'gParam';
-fSendTrigger = 'sendTrigger'; 
-fComputer = 'computer'; 
-fTrials = 'trials'; 
-fIntTrials = 'intTrials'; 
-fPractTrials = 'practTrials'; 
+fSendTrigger = 'sendTrigger';
+fComputer = 'computer';
+fTrials = 'trials';
+fIntTrials = 'intTrials';
+fPractTrials = 'practTrials';
 fContTrials = 'contTrials';
 fSigma = 'sigma';
 fSafe = 'safe';
@@ -270,155 +273,154 @@ strings = struct(fTxtLowVola, txtLowVola, fTxtHighVola, txtHighVola, fTxtPressEn
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers,...
     fColors, colors, fStrings, strings);
 
-
+% If true you run through one main block which enables you to check timing
+% accuracy (see PTB output in command window).
 if test == true
     
-    BattleShipsTriggerTest(taskParam, vola(1), 'main', Subject); % Run task (low sigma).
+    [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), 'main', Subject); % Run task (low sigma).
+    
+    % Allow input again.
+    ListenChar();
+    ShowCursor;
     Screen('CloseAll');
     
 else
-%% Run task.
-
-% Set port to 0.
-%if taskParam.gParam.sendTrigger == true
-%    lptwrite(taskParam.triggers.port,0);
-%end
-
-% Set text parameters.
-Screen('TextFont', taskParam.gParam.window, 'Arial');
-Screen('TextSize', taskParam.gParam.window, 30);
-
-KbReleaseWait();
-
-% Run intro with practice trials if true.
-if runIntro == true
+    %% Run task.
     
-    % Function for instructions.
-    BattleShipsInstructions(taskParam, Subject);
+    % Set port to 0.
+    %if taskParam.gParam.sendTrigger == true
+    %    lptwrite(taskParam.triggers.port,0);
+    %end
     
-    condition = 'practice';
-    if Subject.cBal == '1'
-        VolaIndication(taskParam, txtLowVola, txtPressEnter)
-        [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
-        VolaIndication(taskParam, txtHighVola, txtPressEnter)
-        [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
-    else
-        VolaIndication(taskParam, txtHighVola, txtPressEnter)
-        [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
-        VolaIndication(taskParam, txtLowVola, txtPressEnter)
-        [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
-        
-    end
-    
-    % End of practice blocks. This part makes sure that you start your EEG setup!
-    header = 'Anfang der Studie';
-    if isequal(taskParam.gParam.computer, 'Humboldt')
-        txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-    else
-        txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-    end
-    
-    BigScreen(taskParam, txtPressEnter, header, txt)
-    
-end
-
-% This functions runs the main task.
-condition = 'main';
-if Subject.cBal == '1'
-    VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-    VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
-else
-    VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
-    VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-end
-
-
-% Control trials: this task requires a learning rate = 1
-BattleShipsControlInstructions(taskParam, Subject) % Run instructions.
-
-KbReleaseWait();
-
-% This function runs the control trials
-condition = 'control';
-if Subject.cBal == '1'
-    VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-    VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
-else
-    VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-    [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
-    VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-    [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-end
-
-totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
-
-while 1
-    
-    header = 'Ende der Aufgabe!';
-    txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
-    
-    Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
-    Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
-    Screen('FillRect', taskParam.gParam.window, [224, 255, 255], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
-    Screen('TextSize', taskParam.gParam.window, 50);
-    DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
+    % Set text parameters.
+    Screen('TextFont', taskParam.gParam.window, 'Arial');
     Screen('TextSize', taskParam.gParam.window, 30);
-    DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center');
-    Screen('DrawingFinished', taskParam.gParam.window, [], []);
-    time = GetSecs;
-    Screen('Flip', taskParam.gParam.window, time + 0.1);
     
-    [ keyIsDown, seconds, keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.keys.s
-        break
+    KbReleaseWait();
+    
+    % Run intro with practice trials if true.
+    if runIntro == true
+        
+        % Function for instructions.
+        BattleShipsInstructions(taskParam, Subject);
+        
+        condition = 'practice';
+        if Subject.cBal == '1'
+            VolaIndication(taskParam, txtLowVola, txtPressEnter)
+            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
+            VolaIndication(taskParam, txtHighVola, txtPressEnter)
+            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
+        else
+            VolaIndication(taskParam, txtHighVola, txtPressEnter)
+            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
+            VolaIndication(taskParam, txtLowVola, txtPressEnter)
+            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
+        end
+        
+        % End of practice blocks. This part makes sure that you start your EEG setup!
+        header = 'Anfang der Studie';
+        if isequal(taskParam.gParam.computer, 'Humboldt')
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+        else
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+        end
+        BigScreen(taskParam, txtPressEnter, header, txt)
     end
-end
-
-%% Save data.
-
-if askSubjInfo == true && runIntro == true
     
-    DataPracticeLV = catstruct(Subject, DataPracticeLV);
-    DataPracticeHV = catstruct(Subject, DataPracticeHV);
-    DataLV = catstruct(Subject, DataLV);
-    DataHV = catstruct(Subject, DataHV);
-    DataControlLV = catstruct(Subject, DataControlLV);
-    DataControlHV = catstruct(Subject, DataControlHV);
+    % This functions runs the main task.
+    condition = 'main';
+    if Subject.cBal == '1'
+        VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+        [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+        VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+        [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
+    else
+        VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+        [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); % Run task (high sigma).
+        VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+        [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+    end
     
-    assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
-    assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
-    assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
-    assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
-    assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
-    assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
-    save(fullfile(savdir,fName),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
+    % Control trials: this task requires a learning rate = 1
+    BattleShipsControlInstructions(taskParam, Subject) % Run instructions.
+    KbReleaseWait();
     
-elseif askSubjInfo == true && runIntro == false
+    % This function runs the control trials
+    condition = 'control';
+    if Subject.cBal == '1'
+        VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+        [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+        VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+        [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+    else
+        VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+        [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+        VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+        [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+    end
     
-    DataLV = catstruct(Subject, DataLV);
-    DataHV = catstruct(Subject, DataHV);
-    DataControlLV = catstruct(Subject, DataControlLV);
-    DataControlHV = catstruct(Subject, DataControlHV);
-    assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
-    assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
-    assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
-    assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
-    save(fullfile(savdir,fName), fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
+    % Compute total gain.
+    totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     
-end
-
-%% End of task.
-
-% Allow input again.
-ListenChar();
-ShowCursor;
-
-% Close screen.
-Screen('CloseAll');
+    while 1
+        header = 'Ende der Aufgabe!';
+        txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
+        
+        Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
+        Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
+        Screen('FillRect', taskParam.gParam.window, [224, 255, 255], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
+        Screen('TextSize', taskParam.gParam.window, 50);
+        DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
+        Screen('TextSize', taskParam.gParam.window, 30);
+        DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center');
+        Screen('DrawingFinished', taskParam.gParam.window, [], []);
+        time = GetSecs;
+        Screen('Flip', taskParam.gParam.window, time + 0.1);
+        
+        [ keyIsDown, seconds, keyCode ] = KbCheck;
+        if find(keyCode) == taskParam.keys.s
+            break
+        end
+    end
+    
+    %% Save data.
+    
+    if askSubjInfo == true && runIntro == true
+        
+        DataPracticeLV = catstruct(Subject, DataPracticeLV);
+        DataPracticeHV = catstruct(Subject, DataPracticeHV);
+        DataLV = catstruct(Subject, DataLV);
+        DataHV = catstruct(Subject, DataHV);
+        DataControlLV = catstruct(Subject, DataControlLV);
+        DataControlHV = catstruct(Subject, DataControlHV);
+        
+        assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
+        assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
+        assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
+        assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
+        assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
+        assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+        save(fullfile(savdir,fName),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
+        
+    elseif askSubjInfo == true && runIntro == false
+        
+        DataLV = catstruct(Subject, DataLV);
+        DataHV = catstruct(Subject, DataHV);
+        DataControlLV = catstruct(Subject, DataControlLV);
+        DataControlHV = catstruct(Subject, DataControlHV);
+        assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
+        assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
+        assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
+        assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+        save(fullfile(savdir,fName), fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
+    end
+    
+    %% End of task.
+    
+    % Allow input again.
+    ListenChar();
+    ShowCursor;
+    
+    % Close screen.
+    Screen('CloseAll');
 end

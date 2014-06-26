@@ -48,13 +48,13 @@ DrawOutcome(taskParam, outcome);
 DrawCross(taskParam);
 PredictionSpot(taskParam);
 Screen('DrawingFinished', taskParam.gParam.window, 1);
-Screen('Flip', taskParam.gParam.window, t + 2);
+Screen('Flip', taskParam.gParam.window, t + 1);
 
 % Show baseline 2. 
 DrawCircle(taskParam);
 DrawCross(taskParam);
 Screen('DrawingFinished', taskParam.gParam.window, 1);
-Screen('Flip', taskParam.gParam.window, t + 3, 1);
+Screen('Flip', taskParam.gParam.window, t + 2, 1);
 
 % Show boat. 
 if boatType == 1
@@ -65,14 +65,14 @@ end
 
 DrawCircle(taskParam)
 Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, t + 4);
+Screen('Flip', taskParam.gParam.window, t + 3);
 Screen('Close', ShipTxt);
 
 % Show baseline 3.
 DrawCircle(taskParam)
 DrawCross(taskParam)
 Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, t + 5);
+Screen('Flip', taskParam.gParam.window, t + 4);
 WaitSecs(1);
 
 KbReleaseWait();

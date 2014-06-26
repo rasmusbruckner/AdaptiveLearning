@@ -53,12 +53,13 @@ Screen('Flip', taskParam.gParam.window, time + 1)
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam)
 if subject.rew == '1'
-    DrawBoat(taskParam, taskParam.colors.gold)
+    ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
 else
-    DrawBoat(taskParam, taskParam.colors.silver)
+    ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
 end
 Screen('DrawingFinished', taskParam.gParam.window);
 Screen('Flip', taskParam.gParam.window, time + 2);
+Screen('Close', ShipTxt);
 
 % Show baseline 3.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -66,6 +67,7 @@ DrawCircle(taskParam)
 DrawCross(taskParam)
 Screen('DrawingFinished', taskParam.gParam.window);
 Screen('Flip', taskParam.gParam.window, time + 3);
+WaitSecs(1);
 
 KbReleaseWait();
 

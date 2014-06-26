@@ -3,7 +3,8 @@ function taskData = GenerateOutcomes(taskParam, vola, condition)
 %   The outcomes that are centerend around the mean of a normal
 %   distribution (distMean) with standard deviation = sigma.
 %   All other variables are preallocated.
-% This function uses code from Matt Nassar (Brown University). Thank you Matt!
+% 
+%   This function uses code from Matt Nassar (Brown University). Thanks Matt!
 
 if isequal(condition, 'main')
     trials = taskParam.gParam.trials;

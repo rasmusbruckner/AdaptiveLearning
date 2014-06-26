@@ -1,23 +1,26 @@
 function [taskData, Data] = BattleShipsMain(taskParam, vola, condition, Subject)
-% This function acutally runs the task. You can specify "main", "practice"
-% or "control". This loop is optimized for triggering accuracy. 
+% This function acutally runs the task. You can specify "main",
+% "practice" or "control". This loop is optimized for triggering accuracy.
 
 KbReleaseWait();
 
 % Set port to 0.
 %if taskParam.gParam.sendTrigger == true
- %   lptwrite(taskParam.triggers.port,0);
+%   lptwrite(taskParam.triggers.port,0);
 %end
 
 %% generateOutcomes
 taskData = GenerateOutcomes(taskParam, vola, condition);
 
+% For trigger testing.
 RT_Flip = zeros(taskData.trial, 1);
 
 %% Run trials.
-Priority(9);
+
+% Enable real-time mode.
+Priority(9); 
+
 for i=1:taskData.trial
-    
     
     while 1
         
@@ -69,17 +72,14 @@ for i=1:taskData.trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     
-    tx = GetSecs;
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
-    fliptime(i) = GetSecs - tx;
-    %SendTrigger(taskParam, taskParam.triggers.baseline1Trigger)
-    RT_Flip(i) = GetSecs-time
-   
+    RT_Flip(i) = GetSecs-time;
+    
     % Show outcome.
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
     PredictionSpot(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-
+    
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     
@@ -117,19 +117,17 @@ for i=1:taskData.trial
     Screen('Flip', taskParam.gParam.window, t + 1);
     taskData.outT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
     
-    
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2, 1);
     
-    
     % Show boat and calculate performance.       %TRIGGER
     DrawCircle(taskParam)
     if taskData.boatType(i) == 1
         ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
-        if Subject.rew == '1' && taskData.hit(i) == 1 
+        if Subject.rew == '1' && taskData.hit(i) == 1
             taskData.perf(i) = taskParam.gParam.rewMag; %0.2;
         end
     else
@@ -140,13 +138,10 @@ for i=1:taskData.trial
     end
     
     % Calculate accumulated performance.
-    
     taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
     
-    %WaitSecs(1);
     % Trigger: boat.
     Tevent = 3;
-    
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 3);
     taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
@@ -167,16 +162,19 @@ for i=1:taskData.trial
     taskData.cBal{i} = Subject.cBal;
     taskData.rew{i} = Subject.rew;
     WaitSecs(1);
-    
 end
+
+% Disable real-time mode.
 Priority(0);
 
+% Compute max gain.
 if Subject.rew == '1'
     maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
 elseif Subject.rew == '2'
     maxMon = (length(find(taskData.boatType == 2)) * taskParam.gParam.rewMag);
 end
 
+% Give performance feedback.
 while 1
     if isequal(condition, 'practice')
         txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
@@ -218,5 +216,4 @@ Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldN
     fieldNames.memErrMin, taskData.memErrMin, fieldNames.UP, taskData.UP,fieldNames.UPNorm, taskData.UPNorm,...
     fieldNames.UPPlus, taskData.UPPlus, fieldNames.UPMin, taskData.UPMin, fieldNames.hit, taskData.hit,...
     fieldNames.perf, taskData.perf, fieldNames.accPerf, taskData.accPerf, fieldNames.Date, {taskData.Date});
-
 end

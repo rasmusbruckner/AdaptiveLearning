@@ -3,7 +3,7 @@ function taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle)
 % The idea is that participants remember the last outcome and indicate
 % this by aiming at this point. This requires a learning rate = 1. We are
 % therefore able to dissociate sensory processes and more cognitive
-% processes, that is, learning and updating the belief.
+% processes, that is, learning and belief updating.
 
 distMean = 238;
 Priority(9);
@@ -46,7 +46,6 @@ while 1
         end
     end
 end
-
 Priority(9);
 KbReleaseWait()
 end

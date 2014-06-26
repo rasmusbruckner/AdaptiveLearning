@@ -17,7 +17,8 @@ while 1
     txtScreen1='Schiffeversenken';
     DrawFormattedText(taskParam.gParam.window, txtScreen1, 'center', 100, [255 255 255]);
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window);
+    t = GetSecs; 
+    Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     [~, ~, keyCode] = KbCheck;
     if find(keyCode) == taskParam.keys.enter
@@ -54,7 +55,7 @@ DrawCircle(taskParam);
 DrawCross(taskParam);
 Screen('DrawingFinished', taskParam.gParam.window);
 t = GetSecs; 
-Screen('Flip', taskParam.gParam.window, t + 0.001);
+Screen('Flip', taskParam.gParam.window, t + 0.1);
 WaitSecs(1);
 
 % Screen 4.
@@ -74,7 +75,7 @@ while 1
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
     Screen('DrawingFinished', taskParam.gParam.window);
     t = GetSecs;
-    Screen('Flip', taskParam.gParam.window, t + 0.001);
+    Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     [ keyIsDown, ~, keyCode ] = KbCheck;
     if keyIsDown
@@ -105,7 +106,7 @@ while 1
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('DrawingFinished', taskParam.gParam.window, [], []);
     t = GetSecs;
-    Screen('Flip', taskParam.gParam.window, t + 0.001);
+    Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     
     [ ~, ~ , keyCode ] = KbCheck;
@@ -135,7 +136,7 @@ while 1
     end
     Screen('DrawingFinished', taskParam.gParam.window, [], []);
     t = GetSecs;
-    Screen('Flip', taskParam.gParam.window, t + 0.001);
+    Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     [~, ~, keyCode ] = KbCheck;
     if find(keyCode) == taskParam.keys.enter
@@ -197,8 +198,8 @@ if subject.cBal == '1'
     VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
     
     % Screen 22 (2nd practice block with low volatility).
-    outcome = [142;165;88;147;248;250;232;268;237;231;271;315;315;309;327;260;299;250;291;42];
-    distMean = [146;146;146;146;242;242;242;242;242;242;242;291;291;291;291;291;291;291;291;20];
+    outcome = [192; 208; 212; 185; 191; 191; 208; 218; 20; 17; 13; -5; 20; 223; 249; 249; 254; 224; 251; 246];
+    distMean = [208; 208; 208; 208; 208; 208; 208; 208; 11; 11; 11; 11; 11; 245; 245; 245; 245; 245; 245; 245];
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
     for i=1:taskParam.gParam.intTrials
@@ -211,8 +212,11 @@ if subject.cBal == '1'
     KbReleaseWait();
     
     % Screen 24 (2nd practice block with high volatility).
-    outcome = [329;372;317;285;340;344;266;332;264;110;135;180;163;237;189;93;229;247;312;179];
-    distMean = [312;312;312;312;312;312;312;312;312;176;176;176;176;176;176;176;224;224;224;224];
+    %outcome = [329;372;317;285;340;344;266;332;264;110;135;180;163;237;189;93;229;247;312;179];
+    outcome = [103; 93; 99; 109; 335; 345; 330; 332; 63; 76; 65; 60; 108; 114; 123; 107; 49; 57; 43; 69];
+    distMean = [105; 105; 105; 105; 338; 338; 338; 338; 68; 68; 68; 68; 104; 104; 104; 104; 58; 58; 58; 58];
+    %distMean = [312;312;312;312;312;312;312;312;312;176;176;176;176;176;176;176;224;224;224;224];
+    
     boatType = [1;1;2;2;2;2;3;1;3;2;2;3;3;1;1;2;1;2;2;3];
     
     for i=1:taskParam.gParam.intTrials
@@ -255,9 +259,4 @@ else
     txt = 'In der folgenden Übung ist dein Radar leider kaputt. Die Radarnadel kannst du\n\njetzt nur noch selten sehen. In den meisten Fällen musst du die Schiffsposition\n\nselber herausfinden. Du solltest versuchen, möglichst viele Schiffe\n\nabzuschießen.';
 end
 BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
-
-
-%% End of intro // Save data.
-
-
 end

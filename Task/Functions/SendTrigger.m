@@ -1,10 +1,15 @@
 function trigger = SendTrigger(taskParam, taskData, Subject, condition, vola, trial, Tevent)
 % This function sends the EEG triggers.
-
-% Reward: also welches Boot belohnt wurde
-% Trigger codes mit output codes 0 1 etc. abgleichen.
-% auch cBal einbauen?
-
+%   
+%   1. condition (1: practice, 2: main, 3: control)
+%   2. vola (1: low, 2: high)
+%   3. cp (0: no CP, 1: CP)
+%   4. which boat is rewarded? (1: gold, 2: silver)
+%   5. boat on trial N-1 (1: gold, 2: silver)
+%   6. event: (1: prediction, 2: outcome, 3: boat)
+%
+% Example: 210211 - main, low vola, no CP, silver rewarded,
+% in last trial gold boat was shown, event: prediction.
 
 if taskParam.gParam.sendTrigger == true
     
@@ -21,7 +26,7 @@ if taskParam.gParam.sendTrigger == true
     %vola
     if vola == .2 % abstrahieren
         Tvola = 1;
-    elseif vola == .8
+    elseif vola == .7
         Tvola = 2;
     end
     
@@ -33,7 +38,7 @@ if taskParam.gParam.sendTrigger == true
     end
     
     
-    %condition
+    % reward.
     if isequal(Subject.rew, '1')
         Trew = 1;
     elseif isequal(Subject.rew, '2')
