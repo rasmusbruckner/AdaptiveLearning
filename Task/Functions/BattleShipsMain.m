@@ -1,4 +1,4 @@
-function [taskData, Data] = BattleShipsMain(taskParam, vola, condition, Subject)
+function [taskData, Data] = BattleShipsMain(taskParam, vola, sigma, condition, Subject)
 % This function acutally runs the task. You can specify "main",
 % "practice" or "control". This loop is optimized for triggering accuracy.
 
@@ -10,7 +10,7 @@ KbReleaseWait();
 %end
 
 %% generateOutcomes
-taskData = GenerateOutcomes(taskParam, vola, condition);
+taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
 
 % For trigger testing.
 RT_Flip = zeros(taskData.trial, 1);
@@ -35,9 +35,9 @@ for i=1:taskData.trial
     elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
         taskData.actRew(i) = 2;
     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
-        taskData.actRew(i) = 1;    
+        taskData.actRew(i) = 2;    
     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
-        taskData.actRew(i) = 2;
+        taskData.actRew(i) = 1;
     end   
     
     
@@ -76,7 +76,7 @@ for i=1:taskData.trial
                 
                 % Trigger: prediction.
                 Tevent = 1;
-                taskData.predT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+                taskData.predT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
                 time = GetSecs;
                 
                 break
@@ -134,7 +134,7 @@ for i=1:taskData.trial
     % Trigger: outcome.
     Tevent = 2;
     Screen('Flip', taskParam.gParam.window, t + 1);
-    taskData.outT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+    taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     
     % Show baseline 2.
     DrawCross(taskParam)
@@ -163,7 +163,7 @@ for i=1:taskData.trial
     Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 3);
-    taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+    taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
     Screen('Close', ShipTxt);
     
@@ -230,7 +230,7 @@ end
 KbReleaseWait();
 
 vola = repmat(vola, length(taskData.trial),1);
-sigma = repmat(taskParam.gParam.sigma, length(taskData.trial),1);
+sigma = repmat(sigma, length(taskData.trial),1);
 
 %% Save data.
 

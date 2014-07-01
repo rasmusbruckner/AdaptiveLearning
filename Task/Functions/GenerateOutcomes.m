@@ -1,4 +1,4 @@
-function taskData = GenerateOutcomes(taskParam, vola, condition)
+function taskData = GenerateOutcomes(taskParam, vola, sig, condition)
 % This funtion generates the outcomes of the task.
 %   The outcomes that are centerend around the mean of a normal
 %   distribution (distMean) with standard deviation = sigma.
@@ -65,7 +65,7 @@ for i = 1:trials
         TAC(i)=TAC(i-1)+1;
         s=max([s-1, 0]);
     end
-    outcome(i)=round(normrnd(mean, taskParam.gParam.sigma));
+    outcome(i)=round(normrnd(mean, sig));
     distMean(i)=mean;
     
     % BoatType

@@ -10,13 +10,12 @@ distMean = 238;
 while 1
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
-    
-    DrawCircle(taskParam)
-    DrawCross(taskParam)
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [255 255 255]);
     if needle == true
         DrawNeedle(taskParam, distMean)
     end
+    DrawCircle(taskParam)
+    DrawCross(taskParam)
     PredictionSpot(taskParam)
     if button == taskParam.keys.enter
         txtPressEnter='Weiter mit Enter';

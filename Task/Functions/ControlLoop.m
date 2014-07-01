@@ -4,9 +4,9 @@ function [taskParam] = ControlLoop(taskParam, distMean, outcome, boatType)
 
 %Priority(9);
 while 1
+    DrawNeedle(taskParam, distMean);
     DrawCircle(taskParam);
     DrawCross(taskParam);
-    DrawNeedle(taskParam, distMean);
     PredictionSpot(taskParam);
     t = GetSecs;
     Screen('DrawingFinished', taskParam.gParam.window);

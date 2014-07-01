@@ -5,6 +5,6 @@ xPredS = (taskParam.circle.rotationRad * sin(taskParam.circle.rotAngle));
 yPredS = (taskParam.circle.rotationRad * (-cos(taskParam.circle.rotAngle)));
 
 PredSpot = OffsetRect(taskParam.circle.predCentSpotRect, xPredS, yPredS);
-Screen('FillOval', taskParam.gParam.window, [0 0 255], PredSpot);
+Screen('FillOval', taskParam.gParam.window, [51 51 255], PredSpot);
 end
 

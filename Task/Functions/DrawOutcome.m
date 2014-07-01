@@ -13,7 +13,7 @@ xNeedle2 = (taskParam.circle.rotationRad-14) * sin(outcome*taskParam.circle.unit
 
 meanSpot = OffsetRect(taskParam.circle.centSpotRectMean, xNeedle, yNeedle);
 meanSpot2 = OffsetRect(taskParam.circle.centSpotRectMean, xNeedle2, yNeedle2);
-Screen('DrawLine', taskParam.gParam.window, [0 0 255], meanSpot2(1), meanSpot2(2), meanSpot(1), meanSpot(2), 4);
+Screen('DrawLine', taskParam.gParam.window, [51 51 255], meanSpot2(1), meanSpot2(2), meanSpot(1), meanSpot(2), 4);
 
 
 end

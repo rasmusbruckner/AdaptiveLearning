@@ -16,7 +16,7 @@ txt = 'Merke dir jetzt die Position des Bootes...';
 while 1
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [0 0 0]);
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, []);
     
     DrawCircle(taskParam)
     DrawCross(taskParam)
@@ -47,7 +47,7 @@ LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCross(taskParam)
 DrawCircle(taskParam)
 Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, time + 1)
+Screen('Flip', taskParam.gParam.window, time + 0.1)
 
 % Show boat.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -58,7 +58,7 @@ else
     ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
 end
 Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, time + 2);
+Screen('Flip', taskParam.gParam.window, time + 1);
 Screen('Close', ShipTxt);
 
 % Show baseline 3.
@@ -66,7 +66,7 @@ LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam)
 DrawCross(taskParam)
 Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, time + 3);
+Screen('Flip', taskParam.gParam.window, time + 2);
 WaitSecs(1);
 
 KbReleaseWait();
