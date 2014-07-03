@@ -372,7 +372,7 @@ else
             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
             [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), sigma(1), scondition, Subject); % Run task (high sigma).
+            [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
@@ -403,9 +403,9 @@ else
             %[taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
         else
             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+            [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+            [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
