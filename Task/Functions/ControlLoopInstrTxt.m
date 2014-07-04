@@ -8,9 +8,16 @@ function taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle)
 distMean = 238;
 %Priority(9);
 while 1
-    
+   
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
+   
+    if isequal(taskParam.gParam.computer, 'Dresden')
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05, [255 255 255]);
+    else
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1, [255 255 255]);
+    
+    end
+    
     if needle == true
         DrawNeedle(taskParam, distMean)
     end

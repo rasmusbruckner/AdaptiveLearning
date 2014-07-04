@@ -28,17 +28,20 @@ end
 KbReleaseWait();
 
 % Screen 2.
-Screen('TextSize', taskParam.gParam.window, 30);
-if isequal(taskParam.gParam.computer, 'Humboldt')
-    txt=['Auf rauer See möchtest du möglichst viele Schiffe einer '...
-         '\n\nSchiffsflotte versenken. Als Hilfsmittel benutzt du '...
+
+if isequal(taskParam.gParam.computer, 'Dresden')
+    Screen('TextSize', taskParam.gParam.window, 25);
+    txt=['Auf rauer See möchtest du möglichst viele Schiffe einer\n\n'...
+         'Schiffsflotte versenken. Als Hilfsmittel benutzt du '...
          'einen Radar,\n\nder dir einen Hinweis darauf gibt, wo sich '...
          'ein Schiff aufhält.'];
 else
+    Screen('TextSize', taskParam.gParam.window, 30);
     txt=['Auf rauer See möchtest du möglichst viele Schiffe einer '...
          'Schiffsflotte versenken.\n\nAls Hilfsmittel benutzt du einen '...
-         'Radar, der dir einen Hinweis darauf gibt, wo sich\n\nein '...
+         'Radar, der dir einen Hinweis darauf gibt,\n\nwo sich ein '...
          'Schiff aufhält.'];
+
 end
 
 DrawFormattedText(taskParam.gParam.window, taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
@@ -47,10 +50,10 @@ taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
 KbReleaseWait();
 
 % Screen 3.
-if isequal(taskParam.gParam.computer, 'Humboldt')
-    txt=['Dein Abschussziel gibst du mit dem blauen Punkt an, den du '...
-         'mit der\n\nrechten und linken Pfeiltaste steuerst.\n\n '...
-         'Versuche den Punkt auf den Zeiger zu bewegen und drücke '...
+if isequal(taskParam.gParam.computer, 'Dresden')
+    txt=['Dein Abschussziel gibst du mit dem blauen Punkt an, den du\n\n'...
+         'mit der rechten und linken Pfeiltaste steuerst.'...
+         'Versuche den\n\nPunkt auf den Zeiger zu bewegen und drücke '...
          'LEERTASTE.'];
 else
     txt=['Dein Abschussziel gibst du mit dem blauen Punkt an, den '...
@@ -72,9 +75,9 @@ WaitSecs(1);
 % Screen 4.
 while 1
     
-    if isequal(taskParam.gParam.computer, 'Humboldt')
+    if isequal(taskParam.gParam.computer, 'Dresden')
         txt=['Der schwarze Balken zeigt dir dann die Position '...
-             'des Schiffs an. Wenn dein Punkt auf dem Schiff ist, '...
+             'des Schiffs an.\n\nWenn dein Punkt auf dem Schiff ist, '...
              'hast du es getroffen.'];
     else
         txt=['Der schwarze Balken zeigt dir dann die Position des '...
@@ -87,7 +90,12 @@ while 1
     DrawCross(taskParam);
     PredictionSpot(taskParam);
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+    
+    if isequal(taskParam.gParam.computer, 'Dresden')
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+    else
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1);
+    end
     Screen('DrawingFinished', taskParam.gParam.window);
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window, t + 0.1);
@@ -105,10 +113,17 @@ KbReleaseWait();
 while 1
     
     if subject.rew == '1'
-    txt=['Daraufhin siehst du welche Ladung das Schiff an Bord hat. '...
-         'Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht '...
+    if isequal(taskParam.gParam.computer, 'Dresden')    
+    txt=['Daraufhin siehst du welche Ladung das Schiff an Bord hat.\n\n'...
+         'Dies wird dir auch angezeigt, wenn du das Schiff nicht '...
+         'getroffen\n\nhast. Dieses Schiff hat GOLD geladen. Wenn du '...
+         'es triffst,\n\nverdienst du 20 CENT.'];
+    else
+    txt=['Daraufhin siehst du welche Ladung das Schiff an Bord hat.\n\n'...
+         'Dies wird dir auch angezeigt, wenn du das Schiff nicht '...
          'getroffen hast.\n\nDieses Schiff hat GOLD geladen. Wenn du '...
-         'es triffst, verdienst du 20 CENT.'];
+         'es triffst, verdienst du 20 CENT.'];   
+    end
     else
     txt=['Daraufhin siehst du welche Ladung das Schiff an Bord hat. '...
          'Dies wird dir auch\n\nangezeigt, wenn du das Schiff nicht '...
@@ -117,7 +132,11 @@ while 1
     end
         
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
+    if isequal(taskParam.gParam.computer, 'Dresden')
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+    else
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1);
+    end
     DrawCircle(taskParam)
     if subject.rew == '1'
     DrawBoat(taskParam, taskParam.colors.gold)
@@ -142,14 +161,18 @@ while 1
     
     if subject.rew == '1'
     txt=['Dieses Schiff hat STEINE geladen. Wenn du es triffst, '...
-        'verdienst du leider NICHTS.'];
+        'verdienst\n\ndu leider NICHTS.'];
     else    
     txt=['Dieses Schiff hat SAND geladen. Wenn du es triffst, '...
          'verdienst du leider NICHTS.'];
     end
     
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
+    if isequal(taskParam.gParam.computer, 'Dresden')
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+    else
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.15,taskParam.gParam.screensize(4)*0.1);
+    end
     DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     DrawCircle(taskParam)
     if subject.rew == '1'

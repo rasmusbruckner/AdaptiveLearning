@@ -4,25 +4,31 @@ function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Teve
 %   See triggerscheme for details
 
 % preallocats everytime NOT GOOD!!!!!!!!!!!!!!!! in script!
-%digit1 = zeros(taskParam.gParam.trials,1);
-%digit2 = zeros(taskParam.gParam.trials,1);
-%digit3 = zeros(taskParam.gParam.trials,1);
+digit1 = 0;
+digit2 = 0;
+digit3 = 0;
 
-if taskParam.gParam.sendTrigger == true
+if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequal(condition, 'control'))
     
     %first digit
-    if isequal(condition, 'main') 
-        digit1 = 1;
-    elseif isequal(condition, 'control')   
-        digit1 = 2;
+    if trial > 1
+        if isequal(condition, 'main')
+            digit1 = 1;
+        elseif isequal(condition, 'control')
+            digit1 = 2;
+        end
     end
     
     % second digit
     if trial == 1 % only vola
-        if vola == .2 % Low vola = 0
-            digit2 = 0;
-        elseif vola == .7 % High vola = 3
-            digit2 = 3;
+        if isequal(condition, 'main') && vola == .2 % Low vola = 0
+            digit2 = 5;
+        elseif isequal(condition, 'main') && vola == .7 % High vola = 3
+            digit2 = 6;
+        elseif isequal(condition, 'control') && vola == .2 % High vola = 3
+            digit2 = 7;
+        elseif isequal(condition, 'control') && vola == .7 % High vola = 3
+            digit2 = 8;    
         end
     else % vola + cp
         if vola == .2 && taskData.cp(trial) == 1 % Low vola + cp = 0
