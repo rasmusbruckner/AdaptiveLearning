@@ -17,19 +17,19 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = false; % Run the intro with practice trials?
+computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions?
-runSigma = false; % Do you want to run different sigma conditions?
+runSigma = true; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
-sendTrigger = true; % Do you want to send triggers?
+sendTrigger = false; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition).
 practTrials = 1; % Number of practice trials per condition.
-trials = 50; % Number of trials per (sigma-)condition.
-contTrials = 1; % Number of control trials.
+trials = 5; % Number of trials per (sigma-)condition.
+contTrials = 5; % Number of control trials.
 vola = [.2 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
-sigma = [10 15]; % SD's of distribution.
+sigma = [10 20]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
 
@@ -38,8 +38,8 @@ if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden')
     savdir = 'C:\Users\TU-Dresden\Documents\MATLAB\AdaptiveLearning\DataDirectory';
-elseif isequal(computer, 'Humboldt')
-    savdir = 'D:\!EXP\AdaptiveLearning\DataDirectory';
+elseif isequal(computer, 'D_Pilot')
+    savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 end
 
 %% User Input.
@@ -204,9 +204,9 @@ if isequal(computer, 'Macbook')
 elseif isequal(computer, 'Dresden')
     enter = 13;
     s = 83;
-elseif isequal(computer, 'Humboldt')
-    enter = 13;
-    s = 83;
+elseif isequal(computer, 'D_Pilot')
+    enter = 40;
+    s = 22;
 end
 
 fKeys = 'keys';

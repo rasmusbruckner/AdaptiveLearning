@@ -43,7 +43,7 @@ for i=1:taskData.trial
     
     while 1
         
-        if taskData.catchTrial(i) == 1
+        if taskData.catchTrial(i) == 1 && (isequal(condition,'main') || isequal(condition,'practice'))
             DrawNeedle(taskParam, taskData.distMean(i))
         end
         
@@ -109,9 +109,11 @@ for i=1:taskData.trial
         taskData.memErrPlus(i) = 999;
         taskData.memErrMin(i) = 999;
     else
-        if i >= 2
+        if i > 1
             % Calculate memory error.
             [taskData.memErr(i), taskData.memErrNorm(i), taskData.memErrPlus(i), taskData.memErrMin(i)] = Diff(taskData.pred(i), taskData.outcome(i-1));
+        else
+            taskData.memErr(i) = 999;
         end
     end
     
@@ -126,21 +128,21 @@ for i=1:taskData.trial
         end
     end
     
-    if i >= 2
+    if i > 1
         % Calculate update.
         [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
     % Trigger: outcome.
     Tevent = 2;
-    Screen('Flip', taskParam.gParam.window, t + 1);
+    Screen('Flip', taskParam.gParam.window, t + 1.1);
     taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-    Screen('Flip', taskParam.gParam.window, t + 2, 1);
+    Screen('Flip', taskParam.gParam.window, t + 1.6, 1);
     
     % Show boat and calculate performance.       %TRIGGER
     DrawCircle(taskParam)
@@ -162,7 +164,7 @@ for i=1:taskData.trial
     % Trigger: boat.
     Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 3);
+    Screen('Flip', taskParam.gParam.window, t + 2.6);
     taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
     Screen('Close', ShipTxt);
@@ -171,7 +173,7 @@ for i=1:taskData.trial
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 4);
+    Screen('Flip', taskParam.gParam.window, t + 3.1);
     
 %     taskData.trial(i) = i;
 %     taskData.age(i) = str2double(Subject.age);
