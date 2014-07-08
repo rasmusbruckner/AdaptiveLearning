@@ -17,7 +17,7 @@ clear all
 
 %% Set general parameters.
 
-computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions?
 runSigma = true; % Do you want to run different sigma conditions?

@@ -8,9 +8,17 @@ while 1
     
     
     Screen('TextSize', taskParam.gParam.window, 50);
-    DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
-    Screen('TextSize', taskParam.gParam.window, 30);
-    DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2);
+    if isequal(taskParam.gParam.computer, 'Dresden')
+        DrawFormattedText(taskParam.gParam.window, header, 'center', 50);
+    else
+        DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
+    end
+        Screen('TextSize', taskParam.gParam.window, 30);
+   if isequal(taskParam.gParam.computer, 'Dresden')
+      DrawFormattedText(taskParam.gParam.window, txt, 50, taskParam.gParam.screensize(4)*0.2);
+   else
+      DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2);
+   end
     
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('DrawingFinished', taskParam.gParam.window);
