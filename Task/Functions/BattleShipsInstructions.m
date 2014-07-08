@@ -295,7 +295,7 @@ boatType = [2 2 1 2 1 1 2 1 2 1];
 
 
 % Screen 10 (1st practice block).
-for i = 1:1%taskParam.gParam.intTrials
+for i = 1:5%taskParam.gParam.intTrials
     taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
 end
 
