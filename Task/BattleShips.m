@@ -34,14 +34,16 @@ safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 20]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
-
+Computer2 = true;
 % Savedirectory.
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden')
     savdir = 'C:\Users\TU-Dresden\Documents\MATLAB\AdaptiveLearning\DataDirectory';
-elseif isequal(computer, 'D_Pilot')
+elseif isequal(computer, 'D_Pilot') && Computer2 == false
     savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+elseif isequal(computer, 'D_Pilot') && Computer2 == true
+    savdir = '/Users/TUDresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 end
 
 %% User Input.
