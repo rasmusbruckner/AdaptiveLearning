@@ -13,20 +13,22 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
+% Insgesamt hatte ich ~30 min und 8.60? dann  ~10 min Intro macht 40.  
+
 clear all
 
 %% Set general parameters.
 
-computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
-runSigma = true; % Do you want to run different sigma conditions?
+runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 10; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 10; % Number of practice trials per condition. Für Pilot: 20 
-trials = 30; % Number of trials per (sigma-)condition. Für Pilot: 60
-contTrials = 30; % Number of control trials. Für Pilot: 40 
+practTrials = 2; % Number of practice trials per condition. Für Pilot: 20 
+trials = 2; % Number of trials per (sigma-)condition. Für Pilot: 60 //  ~6 min
+contTrials = 2; % Number of control trials. Für Pilot: 40 ~4 min
 vola = [.2 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 20]; % SD's of distribution.
@@ -99,6 +101,8 @@ elseif askSubjInfo == true
     fNameDataHVHS = sprintf('DataHVHS_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataPracticeLV = sprintf('DataPracticeLV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataPracticeHV = sprintf('DataPracticeHV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataPracticeLVHS = sprintf('DataPracticeLVHS_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataPracticeHVLS = sprintf('DataPracticeHVLS_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlLV = sprintf('DataControlLV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlHV = sprintf('DataControlHV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlLVLS = sprintf('DataControlLVLS_%s', num2str(cell2mat((subjInfo(1)))));
@@ -137,6 +141,7 @@ fWindowRect = 'windowRect';
 
 fGParam = 'gParam';
 fRunVola = 'runVola';
+fRunSigma = 'runSigma';
 fSendTrigger = 'sendTrigger';
 fComputer = 'computer';
 fTrials = 'trials';
@@ -145,7 +150,7 @@ fPractTrials = 'practTrials';
 fContTrials = 'contTrials';
 fSafe = 'safe';
 fRewMag = 'rewMag';
-gParam = struct(fRunVola, runVola, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
@@ -333,24 +338,28 @@ else
         BattleShipsInstructions(taskParam, Subject);
         
         condition = 'practice';
-        if Subject.cBal == '1'
+        %if Subject.cBal == '1'
+            if runSigma == true
             VolaIndication(taskParam, txtLVHS, txtPressEnter)
             [taskDataPracticeLVHS, DataPracticeLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject);
             VolaIndication(taskParam, txtHVLS, txtPressEnter)
             [taskDataPracticeHVLS, DataPracticeHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject);
-        else
-            VolaIndication(taskParam, txtHighVola, txtPressEnter)
-            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
+            else
             VolaIndication(taskParam, txtLowVola, txtPressEnter)
-            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
-        end
+            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject);
+            VolaIndication(taskParam, txtHighVola, txtPressEnter)
+            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject);
+            end
+       % else
+        %Cbal2    
+       % end
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
         if isequal(taskParam.gParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
         BigScreen(taskParam, txtPressEnter, header, txt)
     end
@@ -362,10 +371,10 @@ else
         if runSigma == true
             VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
             [taskDataLVLS, DataLVLS] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-            [taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-            VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-            [taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+            VolaIndication(taskParam, txtLVHS, txtPressEnter) % High sigma.
+            [taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
+            VolaIndication(taskParam, txtHVLS, txtPressEnter) % Low sigma.
+            [taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
             [taskDataHVHS, DataHVHS] = BattleShipsMain(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
         else
@@ -389,14 +398,14 @@ else
     condition = 'control';
     if Subject.cBal == '1'
         if runSigma == true
-            VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
-            [taskDataControlLVLS, DataControlLVLS] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+            VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
+            [taskDataControlLVHS, DataControlLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
             %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
             %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
             %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
-            [taskDataControlHVHS, DataControlHVHS] = BattleShipsMain(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
+            VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
+            [taskDataControlHVLS, DataControlHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
             %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
@@ -416,7 +425,7 @@ else
     
     % Compute total gain.
     if runSigma == true
-    totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVLS.accPerf(end) + DataControlHVHS.accPerf(end);
+    totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVHS.accPerf(end) + DataControlHVLS.accPerf(end);
     %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     else
     totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
@@ -447,12 +456,35 @@ else
     
     if askSubjInfo == true && runIntro == true
         
+        if runSigma == true
+        DataPracticeLVHS = catstruct(Subject, DataPracticeLVHS);
+        DataPracticeHVLS = catstruct(Subject, DataPracticeHVLS);
+        DataLVHS = catstruct(Subject, DataLVHS);
+        DataHVHS = catstruct(Subject, DataHVHS);
+        DataControlLVHS = catstruct(Subject, DataControlLVHS);
+        DataControlHVLS = catstruct(Subject, DataControlHVLS);
+%         DataLV = catstruct(Subject, DataLV);
+%         DataHV = catstruct(Subject, DataHV);
+%         DataControlLV = catstruct(Subject, DataControlLV);
+%         DataControlHV = catstruct(Subject, DataControlHV);
+        
+        assignin('base',['DataPracticeLVHS_' num2str(cell2mat((subjInfo(1))))],DataPracticeLVHS)
+        assignin('base',['DataPracticeHVLS_' num2str(cell2mat((subjInfo(1))))],DataPracticeHVLS)
+        assignin('base',['DataLVLS_' num2str(cell2mat((subjInfo(1))))],DataLVLS)
+        assignin('base',['DataHVLS_' num2str(cell2mat((subjInfo(1))))],DataHVLS)
+        assignin('base',['DataLVHS_' num2str(cell2mat((subjInfo(1))))],DataLVHS)
+        assignin('base',['DataHVHS_' num2str(cell2mat((subjInfo(1))))],DataHVHS)
+        assignin('base', ['DataControlLVHS_' num2str(cell2mat((subjInfo(1))))], DataControlLVHS)
+        assignin('base', ['DataControlHVLS_' num2str(cell2mat((subjInfo(1))))], DataControlHVLS)
+        save(fullfile(savdir,fName), fNameDataPracticeLVHS, fNameDataPracticeHVLS, fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVHS, fNameDataControlHVLS);
+
+        else
         DataPracticeLV = catstruct(Subject, DataPracticeLV);
         DataPracticeHV = catstruct(Subject, DataPracticeHV);
         DataLV = catstruct(Subject, DataLV);
         DataHV = catstruct(Subject, DataHV);
         DataControlLV = catstruct(Subject, DataControlLV);
-        DataControlHV = catstruct(Subject, DataControlHV);
+        DataControlHV = catstruct(Subject, DataControlHV);    
         
         assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
         assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
@@ -460,8 +492,9 @@ else
         assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
         assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
         assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+        %save(fullfile(savdir,fName), fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVLS, fNameDataControlHVHS);
         save(fullfile(savdir,fName),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
-        
+        end
     elseif askSubjInfo == true && runIntro == false
         
         if runSigma == true

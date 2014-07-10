@@ -43,7 +43,7 @@ for i=1:taskData.trial
     
     while 1
         
-        if taskData.catchTrial(i) == 1 && (isequal(condition,'main') || isequal(condition,'practice'))
+        if taskData.catchTrial(i) == 1 && taskData.cp(i) == 0 &&(isequal(condition,'main') || isequal(condition,'practice'))
             DrawNeedle(taskParam, taskData.distMean(i))
         end
         
@@ -149,12 +149,12 @@ for i=1:taskData.trial
     if taskData.boatType(i) == 1
         ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
         if Subject.rew == '1' && taskData.hit(i) == 1
-            taskData.perf(i) = taskParam.gParam.rewMag; %0.2;
+            taskData.perf(i) = taskParam.gParam.rewMag;  
         end
     else
         ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
         if Subject.rew == '2' && taskData.hit(i) == 1
-            taskData.perf(i) = taskParam.gParam.rewMag;
+            taskData.perf(i) = taskParam.gParam.rewMag;  
         end
     end
     
@@ -175,23 +175,6 @@ for i=1:taskData.trial
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 3.1);
     
-%     taskData.trial(i) = i;
-%     taskData.age(i) = str2double(Subject.age);
-%     taskData.ID{i} = Subject.ID;
-%     taskData.sex{i} = Subject.sex;
-%     taskData.Date{i} = Subject.Date;
-%     taskData.cond{i} = condition;
-%     taskData.cBal{i} = Subject.cBal;
-%     taskData.rew{i} = Subject.rew;
-%     if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
-%         taskData.actRew(i) = 1;
-%     elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
-%         taskData.actRew(i) = 2;
-%     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
-%         taskData.actRew(i) = 1;    
-%     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
-%         taskData.actRew(i) = 2;
-%     end   
     WaitSecs(1);
 end
 
@@ -201,8 +184,14 @@ end
 % Compute max gain.
 if Subject.rew == '1'
     maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+    if isequal(condition, 'control') && taskData.boatType(1) == 1
+        maxMon = maxMon - taskParam.gParam.rewMag;
+    end
 elseif Subject.rew == '2'
     maxMon = (length(find(taskData.boatType == 2)) * taskParam.gParam.rewMag);
+    if isequal(condition, 'control') && taskData.boatType(1) == 2
+        maxMon = maxMon - taskParam.gParam.rewMag;
+    end
 end
 
 % Give performance feedback.

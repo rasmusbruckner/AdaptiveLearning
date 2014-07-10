@@ -1,8 +1,10 @@
 function totPerf = getPay(ID)
 % This function reads out the performance of a subject.
 
+% Has to be adapted to silver.
+
 % Load data.
-DataLoad = sprintf('BattleShips_%s.mat', num2str(cell2mat({ID})));
+DataLoad = sprintf('ADL_G_%s.mat', num2str(cell2mat({ID})));
 subject = load(DataLoad);
 subBlocks = struct2cell(subject);
 
