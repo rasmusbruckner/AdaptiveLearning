@@ -10,9 +10,13 @@ function [diff, diffNorm, diffPlus, diffMin] = Diff(parameter1, parameter2)
 %   Therefore we also add and subtract 360 degrees to/from the normal parameter
 %   and choose the 'right' one which is smaller than 180 degrees.
 
-diffNorm = sqrt((parameter1 - parameter2)^2);
-diffPlus = sqrt((parameter1 - parameter2 + 360)^2);
-diffMin =  sqrt((parameter1 - parameter2 - 360)^2);
+% diffNorm = sqrt((parameter1 - parameter2)^2);
+% diffPlus = sqrt((parameter1 - parameter2 + 360)^2);
+% diffMin =  sqrt((parameter1 - parameter2 - 360)^2);
+
+diffNorm = abs(parameter1-parameter2);
+diffPlus = abs(parameter1 - parameter2 + 360);
+diffMin =  abs(parameter1 - parameter2 - 360);
 if diffNorm <= 180
     diff = diffNorm;
 elseif diffPlus <= 180
