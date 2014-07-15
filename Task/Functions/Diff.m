@@ -1,4 +1,4 @@
-function [diff, diffNorm, diffPlus, diffMin] = Diff(parameter1, parameter2)
+function [diff, diffNorm, diffPlus, diffMin, rawDiff] = Diff(parameter1, parameter2)
 %This function calculates some difference parameters.
 %
 %   Depending on the input you calculate prediction error, memory error
@@ -14,9 +14,11 @@ function [diff, diffNorm, diffPlus, diffMin] = Diff(parameter1, parameter2)
 % diffPlus = sqrt((parameter1 - parameter2 + 360)^2);
 % diffMin =  sqrt((parameter1 - parameter2 - 360)^2);
 
+
 diffNorm = abs(parameter1-parameter2);
 diffPlus = abs(parameter1 - parameter2 + 360);
 diffMin =  abs(parameter1 - parameter2 - 360);
+rawDiff = (parameter1 - parameter2)
 if diffNorm <= 180
     diff = diffNorm;
 elseif diffPlus <= 180

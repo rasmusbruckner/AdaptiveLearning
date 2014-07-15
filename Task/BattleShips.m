@@ -19,13 +19,14 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Dresden_Rene'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = true; % Run the intro with practice trials?
+computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
-runSigma = true; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+runSigma = false; % Do you want to run different sigma conditions?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
+PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
-intTrials = 10; % Trials during the introduction (per condition). Für Pilot: 10 
+intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
 trials = 80; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
 contTrials = 40; % Number of control trials. Für Pilot: 40 ~4 min
@@ -146,6 +147,7 @@ fWindowRect = 'windowRect';
 fGParam = 'gParam';
 fRunVola = 'runVola';
 fRunSigma = 'runSigma';
+fPE_Bar = 'PE_Bar';
 fSendTrigger = 'sendTrigger';
 fComputer = 'computer';
 fTrials = 'trials';
@@ -154,14 +156,14 @@ fPractTrials = 'practTrials';
 fContTrials = 'contTrials';
 fSafe = 'safe';
 fRewMag = 'rewMag';
-gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcSize = 'outcSize'; outcSize = 26; % Black bar. Number must be equal.
+fOutcSize = 'outcSize'; outcSize = 10; % Black bar. Number must be equal.
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
 fRotationRad = 'rotationRad'; rotationRad = 100; % Rotation Radius.
 

@@ -47,10 +47,16 @@ for i=1:taskData.trial
             DrawNeedle(taskParam, taskData.distMean(i))
         end
         
+        
         % Start trial - subject predicts boat.
         DrawCircle(taskParam)
         DrawCross(taskParam)
         PredictionSpot(taskParam)
+
+        if i > 1 && taskParam.gParam.PE_Bar == true
+           DrawPE_Bar(taskParam, taskData, i-1) 
+        end
+        
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window, t + 0.01);
@@ -93,15 +99,22 @@ for i=1:taskData.trial
     
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1)
     RT_Flip(i) = GetSecs-time;
-    
+    % Calculate prediction error.
+    [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i), taskData.rawPredErr(i)] = Diff(taskData.outcome(i), taskData.pred(i));
+    %if i > 1 && taskParam.gParam.PE_Bar == true
+      
+    DrawPE_Bar(taskParam, taskData, i) 
+    %end
     % Show outcome.
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
-    PredictionSpot(taskParam)
+    PredictionSpot(taskParam)  
+    %PredictionSpot(taskParam) 
+    % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
+    % centered around the outcome
+    
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     
-    % Calculate prediction error.
-    [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
-    
+        
     if isequal(condition,'main') || isequal(condition,'practice')
         % Memory error = 999 because there is no memory error in this condition.
         taskData.memErr(i) = 999;
