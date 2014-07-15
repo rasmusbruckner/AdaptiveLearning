@@ -19,7 +19,7 @@ clear all
 
 %% Set general parameters.
 
-computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Dresden_Rene'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = true; % Do you want to run different sigma conditions?
@@ -44,6 +44,8 @@ elseif isequal(computer, 'D_Pilot') && Computer2 == false
     savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'D_Pilot') && Computer2 == true
     savdir = '/Users/TUDresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+elseif isequal(computer, 'Dresden_Rene')
+    savdir = 'F:\dokumente\MATLAB\adaptive_learning\DataDirectory';
 end
 
 %% User Input.
@@ -214,6 +216,9 @@ elseif isequal(computer, 'Dresden')
 elseif isequal(computer, 'D_Pilot')
     enter = 40;
     s = 22;
+elseif isequal(computer, 'Dresden_Rene')
+    enter = 13;
+    s = 32;
 end
 
 fKeys = 'keys';
