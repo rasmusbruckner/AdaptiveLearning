@@ -51,12 +51,12 @@ for i=1:taskData.trial
         % Start trial - subject predicts boat.
         DrawCircle(taskParam)
         DrawCross(taskParam)
-        PredictionSpot(taskParam)
+        
 
         if i > 1 && taskParam.gParam.PE_Bar == true
            DrawPE_Bar(taskParam, taskData, i-1) 
         end
-        
+        PredictionSpot(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window, t + 0.01);
@@ -67,16 +67,28 @@ for i=1:taskData.trial
         if keyIsDown
             if keyCode(taskParam.keys.rightKey)
                 if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.5*taskParam.circle.unit; %0.02
                 else
                     taskParam.circle.rotAngle = 0;
                 end
+            elseif keyCode(taskParam.keys.rightSlowKey)
+                if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
+                else
+                    taskParam.circle.rotAngle = 0;
+                end    
             elseif keyCode(taskParam.keys.leftKey)
                 if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 1*taskParam.circle.unit;
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.5*taskParam.circle.unit;
                 else
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
+            elseif keyCode(taskParam.keys.leftSlowKey)
+                if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
+                else
+                    taskParam.circle.rotAngle = 360*taskParam.circle.unit;
+                end    
             elseif keyCode(taskParam.keys.space)
                 taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 

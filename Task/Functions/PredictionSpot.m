@@ -1,10 +1,10 @@
 function PredictionSpot(taskParam)
 % This function draws the prediction spot and works with sine and cosine.
 % 
-yNeedle = (taskParam.circle.rotationRad+22) * (-cos(taskParam.circle.rotAngle));  
-xNeedle = (taskParam.circle.rotationRad+22) * sin(taskParam.circle.rotAngle);
-yNeedle2 = (taskParam.circle.rotationRad-14) * (-cos(taskParam.circle.rotAngle));      
-xNeedle2 = (taskParam.circle.rotationRad-14) * sin(taskParam.circle.rotAngle);
+yNeedle = (taskParam.circle.rotationRad+12) * (-cos(taskParam.circle.rotAngle));  
+xNeedle = (taskParam.circle.rotationRad+12) * sin(taskParam.circle.rotAngle);
+yNeedle2 = (taskParam.circle.rotationRad-22) * (-cos(taskParam.circle.rotAngle));      
+xNeedle2 = (taskParam.circle.rotationRad-22) * sin(taskParam.circle.rotAngle);
 
 meanSpot = OffsetRect(taskParam.circle.centSpotRectMean, xNeedle, yNeedle);
 meanSpot2 = OffsetRect(taskParam.circle.centSpotRectMean, xNeedle2, yNeedle2);

@@ -20,7 +20,7 @@ clear all
 %% Set general parameters.
 
 computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
@@ -163,9 +163,9 @@ gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTr
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcSize = 'outcSize'; outcSize = 10; % Black bar. Number must be equal.
+fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
-fRotationRad = 'rotationRad'; rotationRad = 100; % Rotation Radius.
+fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
 
 %Diameter of the spots.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
@@ -204,8 +204,10 @@ colors = struct(fGold, gold, fSilver, silver);
 
 % Set key names.
 KbName('UnifyKeyNames')
-fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
-fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
+fRightKey = 'rightKey'; rightKey = KbName('j');
+fLeftKey = 'leftKey'; leftKey = KbName('f');
+fRightSlowKey = 'rightSlowKey'; rightSlowKey = KbName('h');
+fLeftSlowKey = 'leftSlowKey'; leftSlowKey = KbName('g');
 fSpace = 'space'; space = KbName('Space');
 fEnter = 'enter';
 fS = 's';
@@ -224,7 +226,7 @@ elseif isequal(computer, 'Dresden_Rene')
 end
 
 fKeys = 'keys';
-keys = struct(fRightKey, rightKey, fLeftKey, leftKey, fSpace, space, fEnter, enter, fS, s);
+keys = struct(fRightKey, rightKey, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
