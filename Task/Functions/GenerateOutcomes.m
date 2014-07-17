@@ -78,10 +78,10 @@ for i = 1:trials
     end
     
     %CatchTrial
-    if rand(1) <= 1
-        catchTrial(i) = 0;
+    if rand(1) <= 0.05
+        catchTrial(i) = 1;
     else
-        catchTrial(i) = 0;
+        catchTrial(i) = 1;
     end
 end
 

@@ -27,15 +27,16 @@ askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 80; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
-contTrials = 40; % Number of control trials. Für Pilot: 40 ~4 min
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
+trials = 1; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
+contTrials = 1; % Number of control trials. Für Pilot: 40 ~4 min
 vola = [.2 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 20]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
 Computer2 = true;
+
 % Savedirectory.
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
@@ -203,6 +204,8 @@ fGold = 'gold'; gold = [255 215 0];
 fSilver = 'silver'; silver = [160 160 160];
 fColors = 'colors';
 colors = struct(fGold, gold, fSilver, silver);
+
+% Cannon parameters.
 
 % Set key names.
 KbName('UnifyKeyNames')
