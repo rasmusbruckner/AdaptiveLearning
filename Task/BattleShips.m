@@ -163,6 +163,7 @@ gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTr
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
+fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red).
 fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
@@ -182,6 +183,7 @@ fBoatRect = 'boatRect'; boatRect = [0 0 60 60]; % Boat position.
 fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); % Center boat
 fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);% Center the prediction spot.
 fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect); % Center the outcome.
+fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect); % Center the outcome.
 fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar needle.
 
 % Rotation angle of prediction spot.
@@ -191,7 +193,7 @@ fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when predic
 
 % Circle parameters.
 fCircle = 'circle';
-circle = struct(fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
+circle = struct(fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
     fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);

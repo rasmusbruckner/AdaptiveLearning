@@ -52,11 +52,11 @@ for i=1:taskData.trial
         DrawCircle(taskParam)
         DrawCross(taskParam)
         
+        PredictionSpot(taskParam)
 
         if i > 1 && taskParam.gParam.PE_Bar == true
            DrawPE_Bar(taskParam, taskData, i-1) 
         end
-        PredictionSpot(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window, t + 0.01);
@@ -115,11 +115,13 @@ for i=1:taskData.trial
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i), taskData.rawPredErr(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     %if i > 1 && taskParam.gParam.PE_Bar == true
       
-    DrawPE_Bar(taskParam, taskData, i) 
+    
     %end
     % Show outcome.
-    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
     PredictionSpot(taskParam)  
+    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
+
+    DrawPE_Bar(taskParam, taskData, i) 
     %PredictionSpot(taskParam) 
     % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
     % centered around the outcome
