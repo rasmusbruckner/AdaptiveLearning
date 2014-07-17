@@ -19,13 +19,13 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Dresden'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
-PE_Bar = true; % Use a prediction error bar?
-sendTrigger = false; % Do you want to send triggers?
+PE_Bar = false; % Use a prediction error bar?
+sendTrigger = true; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
 trials = 80; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
@@ -142,7 +142,7 @@ screensizePart = (screensize(3:4));
 fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
-[ window, windowRect ] = Screen('OpenWindow', 0, [64 64 64], []);
+[ window, windowRect ] = Screen('OpenWindow', 0, [0 0 0], []);  % [64 64 64]
 
 fGParam = 'gParam';
 fRunVola = 'runVola';
@@ -163,7 +163,7 @@ gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTr
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.
+fOutcSize = 'outcSize'; outcSize = 20; % Black bar. Number must be equal.
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
 

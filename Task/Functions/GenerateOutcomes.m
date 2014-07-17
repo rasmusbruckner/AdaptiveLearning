@@ -65,17 +65,19 @@ for i = 1:trials
         TAC(i)=TAC(i-1)+1;
         s=max([s-1, 0]);
     end
-    %outcome(i) = 90
-    outcome(i)=round(normrnd(mean, sig));
-    distMean(i)=mean;
+    outcome(i) = 90
+%     outcome(i)=round(normrnd(mean, sig));
+%     distMean(i)=mean;
     
     % BoatType
-    r = rand(1);
-    if r <= 0.5
-        boatType(i) = 1;
-    else
-        boatType(i) = 2;
-    end
+%     r = rand(1);
+%     if r <= 0.5
+%         boatType(i) = 1;
+%     else
+%         boatType(i) = 2;
+%     end
+
+    boatType(i) = 1;
     
     %CatchTrial
     if rand(1) <= 0.05
