@@ -7,7 +7,9 @@ function DrawOutcome(taskParam, outcome)
 % Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],OutcSpot, taskParam.circle.outcSize, 30, [], []) %605 335 835 565
 %         
 
- 
+
+
+
 xPredS = ((taskParam.circle.rotationRad-5) * sin(outcome*taskParam.circle.unit));
 yPredS = ((taskParam.circle.rotationRad-5) * (-cos(outcome*taskParam.circle.unit)));
 

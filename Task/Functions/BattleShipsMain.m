@@ -43,9 +43,9 @@ for i=1:taskData.trial
     
     while 1
         
-        if taskData.catchTrial(i) == 1 && taskData.cp(i) == 0 &&(isequal(condition,'main') || isequal(condition,'practice'))
-            DrawNeedle(taskParam, taskData.distMean(i))
-        end
+       % if taskData.catchTrial(i) == 1 && taskData.cp(i) == 0 &&(isequal(condition,'main') || isequal(condition,'practice'))
+        %    DrawNeedle(taskParam, taskData.distMean(i))
+        %end
         
         
         % Start trial - subject predicts boat.
@@ -118,6 +118,10 @@ for i=1:taskData.trial
     
     %end
     % Show outcome.
+    
+    Cannonball(taskParam, taskData, i)
+    
+    DrawCircle(taskParam)
     PredictionSpot(taskParam)  
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
 
@@ -162,14 +166,14 @@ for i=1:taskData.trial
     
     % Trigger: outcome.
     Tevent = 2;
-    Screen('Flip', taskParam.gParam.window, t + 1.1);
+    Screen('Flip', taskParam.gParam.window, t + 3);
     taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-    Screen('Flip', taskParam.gParam.window, t + 1.6, 1);
+    Screen('Flip', taskParam.gParam.window, t + 3.6, 1);
     
     % Show boat and calculate performance.       %TRIGGER
     DrawCircle(taskParam)
@@ -191,7 +195,7 @@ for i=1:taskData.trial
     % Trigger: boat.
     Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 2.6);
+    Screen('Flip', taskParam.gParam.window, t + 4.1);
     taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
     Screen('Close', ShipTxt);
@@ -200,7 +204,7 @@ for i=1:taskData.trial
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 3.1);
+    Screen('Flip', taskParam.gParam.window, t + 4.6);
     
     WaitSecs(1);
 end

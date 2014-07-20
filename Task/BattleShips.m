@@ -28,9 +28,9 @@ PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
-trials = 1; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
+trials = 10; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
 contTrials = 1; % Number of control trials. Für Pilot: 40 ~4 min
-vola = [.2 .7]; % Volatility of the environment.
+vola = [.7 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 20]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
@@ -166,6 +166,7 @@ gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTr
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
 fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red).
 fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.
+fCannonEnd = 'cannonEnd'; cannonEnd = 5
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
 
@@ -173,11 +174,14 @@ fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
 fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome.
 fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; % Size of Radar needle.
+fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2
 
 %Position of the spots and the boats.
 fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; % Prediction spot position.
 fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; % Outcome position.
+fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam]
 fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; % Radar needle position.
+
 fBoatRect = 'boatRect'; boatRect = [0 0 60 60]; % Boat position.
 
 % Center the objects.
@@ -185,6 +189,7 @@ fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect);
 fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);% Center the prediction spot.
 fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect); % Center the outcome.
 fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect); % Center the outcome.
+fCannonEndCent = 'cannonEndCent'; cannonEndCent = CenterRect(cannonEndRect, windowRect);
 fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar needle.
 
 % Rotation angle of prediction spot.
@@ -194,7 +199,7 @@ fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when predic
 
 % Circle parameters.
 fCircle = 'circle';
-circle = struct(fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
+circle = struct(fCannonEndCent, cannonEndCent, fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
     fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
