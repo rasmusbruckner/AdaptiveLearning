@@ -20,7 +20,7 @@ clear all
 %% Set general parameters.
 
 computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = false; % Run the intro with practice trials?
+runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
@@ -216,6 +216,8 @@ colors = struct(fGold, gold, fSilver, silver);
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');
 fLeftKey = 'leftKey'; leftKey = KbName('f');
+fRightArrow = 'rightArrow'; rightArrow = KbName('RightArrow');
+fLeftArrow = 'leftArrow'; leftArrow = KbName('LeftArrow');
 fRightSlowKey = 'rightSlowKey'; rightSlowKey = KbName('h');
 fLeftSlowKey = 'leftSlowKey'; leftSlowKey = KbName('g');
 fSpace = 'space'; space = KbName('Space');
@@ -236,7 +238,7 @@ elseif isequal(computer, 'Dresden_Rene')
 end
 
 fKeys = 'keys';
-keys = struct(fRightKey, rightKey, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
+keys = struct(fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.

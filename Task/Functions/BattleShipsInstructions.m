@@ -6,7 +6,13 @@ KbReleaseWait();
 needle = true;
 %% Instructions section.
 
-% Screen 1 with painting.
+% Endless loop for "go-back".
+screenIndex = 1;
+while 1 
+%     
+switch(screenIndex)
+    case 1 
+Screen 1 with painting.
 while 1
     
     Screen('TextFont', taskParam.gParam.window, 'Arial');
@@ -21,14 +27,15 @@ while 1
     Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     [~, ~, keyCode] = KbCheck;
-    if find(keyCode) == taskParam.keys.enter
+    if find(keyCode) == taskParam.keys.rightArrow
+        screenIndex = screenIndex + 1;
         break
     end
 end
 KbReleaseWait();
 
 % Screen 2.
-
+    case 2
 if isequal(taskParam.gParam.computer, 'Dresden')
     Screen('TextSize', taskParam.gParam.window, 25);
     txt=['Auf rauer See möchtest du möglichst viele Schiffe einer\n\n'...
@@ -49,13 +56,17 @@ else
          'Schiffsflotte aufhält.'];
 
 end
-
+   
+    
 DrawFormattedText(taskParam.gParam.window, taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-button = taskParam.keys.enter;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
+forward = taskParam.keys.rightArrow;
+backward = taskParam.keys.leftArrow;
+[taskParam, screenIndex] = ControlLoopInstrTxt(taskParam, txt, forward, backward, needle, screenIndex);
 KbReleaseWait();
+ 
 
 % Screen 3.
+    case 3
 if isequal(taskParam.gParam.computer, 'Dresden')
     txt=['Dein Abschussziel gibst du mit dem blauen Punkt an, den du\n\n'...
          'mit der rechten und linken Pfeiltaste steuerst.'...
@@ -73,8 +84,11 @@ else
          'LEERTASTE.'];
 end
 
-button = taskParam.keys.space;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
+
+    
+forward = taskParam.keys.rightArrow;
+backward = taskParam.keys.leftArrow;
+[taskParam, screenIndex ]= ControlLoopInstrTxt(taskParam, txt, forward, backward, needle, screenIndex);
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam);
 DrawCross(taskParam);
@@ -445,4 +459,7 @@ else
            'viele Schiffe\n\nabzuschießen.'];
 end
 BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
+end
+
+end
 end

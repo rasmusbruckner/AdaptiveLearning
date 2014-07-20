@@ -1,4 +1,4 @@
-function taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle)
+function [taskParam, screenIndex] = ControlLoopInstrTxt(taskParam, txt, forward, backward, needle, screenIndex)
 % This function instructs participants for the control condition.
 % The idea is that participants remember the last outcome and indicate
 % this by aiming at this point. This requires a learning rate = 1. We are
@@ -24,10 +24,10 @@ while 1
     DrawCircle(taskParam)
     DrawCross(taskParam)
     PredictionSpot(taskParam)
-    if button == taskParam.keys.enter
-        txtPressEnter='Weiter mit Enter';
-        DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    end
+%     if button == taskParam.keys.enter
+%         txtPressEnter='Weiter mit Enter';
+%         DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+%     end
     Screen('DrawingFinished', taskParam.gParam.window);
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window, t + 0.001);
@@ -47,9 +47,14 @@ while 1
             else
                 taskParam.circle.rotAngle = 360*taskParam.circle.unit;
             end
-        elseif keyCode(button)
+        elseif keyCode(forward)
+            screenIndex = screenIndex + 1;
             break;
+        elseif keyCode(backward)
+            screenIndex = screenIndex - 1;
+            break;    
         end
+        
     end
 end
 %Priority(9);
