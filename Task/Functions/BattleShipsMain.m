@@ -43,14 +43,20 @@ for i=1:taskData.trial
     
     while 1
         
-        if taskData.catchTrial(i) == 1
-            DrawNeedle(taskParam, taskData.distMean(i))
-        end
+       % if taskData.catchTrial(i) == 1 && taskData.cp(i) == 0 &&(isequal(condition,'main') || isequal(condition,'practice'))
+        %    DrawNeedle(taskParam, taskData.distMean(i))
+        %end
+        
         
         % Start trial - subject predicts boat.
         DrawCircle(taskParam)
         DrawCross(taskParam)
+        
         PredictionSpot(taskParam)
+
+        if i > 1 && taskParam.gParam.PE_Bar == true
+           DrawPE_Bar(taskParam, taskData, i-1) 
+        end
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window, t + 0.01);
@@ -61,16 +67,28 @@ for i=1:taskData.trial
         if keyIsDown
             if keyCode(taskParam.keys.rightKey)
                 if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit; %0.02
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.5*taskParam.circle.unit; %0.02
                 else
                     taskParam.circle.rotAngle = 0;
                 end
+            elseif keyCode(taskParam.keys.rightSlowKey)
+                if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
+                else
+                    taskParam.circle.rotAngle = 0;
+                end    
             elseif keyCode(taskParam.keys.leftKey)
                 if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 1*taskParam.circle.unit;
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.5*taskParam.circle.unit;
                 else
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
+            elseif keyCode(taskParam.keys.leftSlowKey)
+                if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
+                else
+                    taskParam.circle.rotAngle = 360*taskParam.circle.unit;
+                end    
             elseif keyCode(taskParam.keys.space)
                 taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 
@@ -93,15 +111,28 @@ for i=1:taskData.trial
     
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1)
     RT_Flip(i) = GetSecs-time;
+    % Calculate prediction error.
+    [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i), taskData.rawPredErr(i)] = Diff(taskData.outcome(i), taskData.pred(i));
+    %if i > 1 && taskParam.gParam.PE_Bar == true
+      
     
+    %end
     % Show outcome.
+    
+    Cannonball(taskParam, taskData, i)
+    
+    DrawCircle(taskParam)
+    PredictionSpot(taskParam)  
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
-    PredictionSpot(taskParam)
+
+    DrawPE_Bar(taskParam, taskData, i) 
+    %PredictionSpot(taskParam) 
+    % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
+    % centered around the outcome
+    
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     
-    % Calculate prediction error.
-    [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i)] = Diff(taskData.outcome(i), taskData.pred(i));
-    
+        
     if isequal(condition,'main') || isequal(condition,'practice')
         % Memory error = 999 because there is no memory error in this condition.
         taskData.memErr(i) = 999;
@@ -109,9 +140,11 @@ for i=1:taskData.trial
         taskData.memErrPlus(i) = 999;
         taskData.memErrMin(i) = 999;
     else
-        if i >= 2
+        if i > 1
             % Calculate memory error.
             [taskData.memErr(i), taskData.memErrNorm(i), taskData.memErrPlus(i), taskData.memErrMin(i)] = Diff(taskData.pred(i), taskData.outcome(i-1));
+        else
+            taskData.memErr(i) = 999;
         end
     end
     
@@ -126,33 +159,33 @@ for i=1:taskData.trial
         end
     end
     
-    if i >= 2
+    if i > 1
         % Calculate update.
         [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
     % Trigger: outcome.
     Tevent = 2;
-    Screen('Flip', taskParam.gParam.window, t + 1);
+    Screen('Flip', taskParam.gParam.window, t + 3);
     taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-    Screen('Flip', taskParam.gParam.window, t + 2, 1);
+    Screen('Flip', taskParam.gParam.window, t + 3.6, 1);
     
     % Show boat and calculate performance.       %TRIGGER
     DrawCircle(taskParam)
     if taskData.boatType(i) == 1
         ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
         if Subject.rew == '1' && taskData.hit(i) == 1
-            taskData.perf(i) = taskParam.gParam.rewMag; %0.2;
+            taskData.perf(i) = taskParam.gParam.rewMag;  
         end
     else
         ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
         if Subject.rew == '2' && taskData.hit(i) == 1
-            taskData.perf(i) = taskParam.gParam.rewMag;
+            taskData.perf(i) = taskParam.gParam.rewMag;  
         end
     end
     
@@ -162,7 +195,7 @@ for i=1:taskData.trial
     % Trigger: boat.
     Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 3);
+    Screen('Flip', taskParam.gParam.window, t + 4.1);
     taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
     Screen('Close', ShipTxt);
@@ -171,25 +204,8 @@ for i=1:taskData.trial
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 4);
+    Screen('Flip', taskParam.gParam.window, t + 4.6);
     
-%     taskData.trial(i) = i;
-%     taskData.age(i) = str2double(Subject.age);
-%     taskData.ID{i} = Subject.ID;
-%     taskData.sex{i} = Subject.sex;
-%     taskData.Date{i} = Subject.Date;
-%     taskData.cond{i} = condition;
-%     taskData.cBal{i} = Subject.cBal;
-%     taskData.rew{i} = Subject.rew;
-%     if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
-%         taskData.actRew(i) = 1;
-%     elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
-%         taskData.actRew(i) = 2;
-%     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
-%         taskData.actRew(i) = 1;    
-%     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
-%         taskData.actRew(i) = 2;
-%     end   
     WaitSecs(1);
 end
 
@@ -199,8 +215,14 @@ end
 % Compute max gain.
 if Subject.rew == '1'
     maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+    if isequal(condition, 'control') && taskData.boatType(1) == 1
+        maxMon = maxMon - taskParam.gParam.rewMag;
+    end
 elseif Subject.rew == '2'
     maxMon = (length(find(taskData.boatType == 2)) * taskParam.gParam.rewMag);
+    if isequal(condition, 'control') && taskData.boatType(1) == 2
+        maxMon = maxMon - taskParam.gParam.rewMag;
+    end
 end
 
 % Give performance feedback.

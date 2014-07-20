@@ -13,33 +13,41 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
+% Insgesamt hatte ich ~30 min und 8.60? dann  ~10 min Intro macht 40.  
+
 clear all
 
 %% Set general parameters.
 
 computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = false; % Run the intro with practice trials?
-runVola = true; % Do you want to run different volatility conditions?
+runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
-sendTrigger = true; % Do you want to send triggers?
-intTrials = 1; % Trials during the introduction (per condition).
-practTrials = 1; % Number of practice trials per condition.
-trials = 50; % Number of trials per (sigma-)condition.
-contTrials = 1; % Number of control trials.
-vola = [.2 .7]; % Volatility of the environment.
+PE_Bar = true; % Use a prediction error bar?
+sendTrigger = false; % Do you want to send triggers?
+intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
+trials = 10; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
+contTrials = 1; % Number of control trials. Für Pilot: 40 ~4 min
+vola = [.7 .7]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
-sigma = [10 15]; % SD's of distribution.
+sigma = [10 20]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
+Computer2 = true;
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden')
     savdir = 'C:\Users\TU-Dresden\Documents\MATLAB\AdaptiveLearning\DataDirectory';
-elseif isequal(computer, 'Humboldt')
-    savdir = 'D:\!EXP\AdaptiveLearning\DataDirectory';
+elseif isequal(computer, 'D_Pilot') && Computer2 == false
+    savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+elseif isequal(computer, 'D_Pilot') && Computer2 == true
+    savdir = '/Users/TUDresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+elseif isequal(computer, 'Dresden_Rene')
+    savdir = 'F:\dokumente\MATLAB\adaptive_learning\DataDirectory';
 end
 
 %% User Input.
@@ -99,6 +107,8 @@ elseif askSubjInfo == true
     fNameDataHVHS = sprintf('DataHVHS_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataPracticeLV = sprintf('DataPracticeLV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataPracticeHV = sprintf('DataPracticeHV_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataPracticeLVHS = sprintf('DataPracticeLVHS_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataPracticeHVLS = sprintf('DataPracticeHVLS_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlLV = sprintf('DataControlLV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlHV = sprintf('DataControlHV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataControlLVLS = sprintf('DataControlLVLS_%s', num2str(cell2mat((subjInfo(1)))));
@@ -137,6 +147,8 @@ fWindowRect = 'windowRect';
 
 fGParam = 'gParam';
 fRunVola = 'runVola';
+fRunSigma = 'runSigma';
+fPE_Bar = 'PE_Bar';
 fSendTrigger = 'sendTrigger';
 fComputer = 'computer';
 fTrials = 'trials';
@@ -145,32 +157,39 @@ fPractTrials = 'practTrials';
 fContTrials = 'contTrials';
 fSafe = 'safe';
 fRewMag = 'rewMag';
-gParam = struct(fRunVola, runVola, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
 
 %Radius of the spots.
 fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcSize = 'outcSize'; outcSize = 26; % Black bar. Number must be equal.
+fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red).
+fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.
+fCannonEnd = 'cannonEnd'; cannonEnd = 5
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
-fRotationRad = 'rotationRad'; rotationRad = 100; % Rotation Radius.
+fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
 
 %Diameter of the spots.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
 fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome.
 fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; % Size of Radar needle.
+fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2
 
 %Position of the spots and the boats.
 fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; % Prediction spot position.
 fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; % Outcome position.
+fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam]
 fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; % Radar needle position.
+
 fBoatRect = 'boatRect'; boatRect = [0 0 60 60]; % Boat position.
 
 % Center the objects.
 fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); % Center boat
 fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);% Center the prediction spot.
 fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect); % Center the outcome.
+fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect); % Center the outcome.
+fCannonEndCent = 'cannonEndCent'; cannonEndCent = CenterRect(cannonEndRect, windowRect);
 fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar needle.
 
 % Rotation angle of prediction spot.
@@ -180,7 +199,7 @@ fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when predic
 
 % Circle parameters.
 fCircle = 'circle';
-circle = struct(fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
+circle = struct(fCannonEndCent, cannonEndCent, fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
     fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
@@ -191,10 +210,14 @@ fSilver = 'silver'; silver = [160 160 160];
 fColors = 'colors';
 colors = struct(fGold, gold, fSilver, silver);
 
+% Cannon parameters.
+
 % Set key names.
 KbName('UnifyKeyNames')
-fRightKey = 'rightKey'; rightKey = KbName('RightArrow');
-fLeftKey = 'leftKey'; leftKey = KbName('LeftArrow');
+fRightKey = 'rightKey'; rightKey = KbName('j');
+fLeftKey = 'leftKey'; leftKey = KbName('f');
+fRightSlowKey = 'rightSlowKey'; rightSlowKey = KbName('h');
+fLeftSlowKey = 'leftSlowKey'; leftSlowKey = KbName('g');
 fSpace = 'space'; space = KbName('Space');
 fEnter = 'enter';
 fS = 's';
@@ -204,13 +227,16 @@ if isequal(computer, 'Macbook')
 elseif isequal(computer, 'Dresden')
     enter = 13;
     s = 83;
-elseif isequal(computer, 'Humboldt')
+elseif isequal(computer, 'D_Pilot')
+    enter = 40;
+    s = 22;
+elseif isequal(computer, 'Dresden_Rene')
     enter = 13;
-    s = 83;
+    s = 32;
 end
 
 fKeys = 'keys';
-keys = struct(fRightKey, rightKey, fLeftKey, leftKey, fSpace, space, fEnter, enter, fS, s);
+keys = struct(fRightKey, rightKey, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
@@ -333,24 +359,28 @@ else
         BattleShipsInstructions(taskParam, Subject);
         
         condition = 'practice';
-        if Subject.cBal == '1'
+        %if Subject.cBal == '1'
+            if runSigma == true
             VolaIndication(taskParam, txtLVHS, txtPressEnter)
             [taskDataPracticeLVHS, DataPracticeLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject);
             VolaIndication(taskParam, txtHVLS, txtPressEnter)
             [taskDataPracticeHVLS, DataPracticeHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject);
-        else
-            VolaIndication(taskParam, txtHighVola, txtPressEnter)
-            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), condition, Subject);
+            else
             VolaIndication(taskParam, txtLowVola, txtPressEnter)
-            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), condition, Subject);
-        end
+            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject);
+            VolaIndication(taskParam, txtHighVola, txtPressEnter)
+            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject);
+            end
+       % else
+        %Cbal2    
+       % end
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
         header = 'Anfang der Studie';
         if isequal(taskParam.gParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         else
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 20 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
+            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
         BigScreen(taskParam, txtPressEnter, header, txt)
     end
@@ -362,10 +392,10 @@ else
         if runSigma == true
             VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
             [taskDataLVLS, DataLVLS] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-            [taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-            VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-            [taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+            VolaIndication(taskParam, txtLVHS, txtPressEnter) % High sigma.
+            [taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
+            VolaIndication(taskParam, txtHVLS, txtPressEnter) % Low sigma.
+            [taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
             [taskDataHVHS, DataHVHS] = BattleShipsMain(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
         else
@@ -389,14 +419,14 @@ else
     condition = 'control';
     if Subject.cBal == '1'
         if runSigma == true
-            VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
-            [taskDataControlLVLS, DataControlLVLS] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+            VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
+            [taskDataControlLVHS, DataControlLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
             %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
             %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
             %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
-            [taskDataControlHVHS, DataControlHVHS] = BattleShipsMain(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
+            VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
+            [taskDataControlHVLS, DataControlHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
             %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
@@ -416,7 +446,7 @@ else
     
     % Compute total gain.
     if runSigma == true
-    totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVLS.accPerf(end) + DataControlHVHS.accPerf(end);
+    totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVHS.accPerf(end) + DataControlHVLS.accPerf(end);
     %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     else
     totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
@@ -447,12 +477,35 @@ else
     
     if askSubjInfo == true && runIntro == true
         
+        if runSigma == true
+        DataPracticeLVHS = catstruct(Subject, DataPracticeLVHS);
+        DataPracticeHVLS = catstruct(Subject, DataPracticeHVLS);
+        DataLVHS = catstruct(Subject, DataLVHS);
+        DataHVHS = catstruct(Subject, DataHVHS);
+        DataControlLVHS = catstruct(Subject, DataControlLVHS);
+        DataControlHVLS = catstruct(Subject, DataControlHVLS);
+%         DataLV = catstruct(Subject, DataLV);
+%         DataHV = catstruct(Subject, DataHV);
+%         DataControlLV = catstruct(Subject, DataControlLV);
+%         DataControlHV = catstruct(Subject, DataControlHV);
+        
+        assignin('base',['DataPracticeLVHS_' num2str(cell2mat((subjInfo(1))))],DataPracticeLVHS)
+        assignin('base',['DataPracticeHVLS_' num2str(cell2mat((subjInfo(1))))],DataPracticeHVLS)
+        assignin('base',['DataLVLS_' num2str(cell2mat((subjInfo(1))))],DataLVLS)
+        assignin('base',['DataHVLS_' num2str(cell2mat((subjInfo(1))))],DataHVLS)
+        assignin('base',['DataLVHS_' num2str(cell2mat((subjInfo(1))))],DataLVHS)
+        assignin('base',['DataHVHS_' num2str(cell2mat((subjInfo(1))))],DataHVHS)
+        assignin('base', ['DataControlLVHS_' num2str(cell2mat((subjInfo(1))))], DataControlLVHS)
+        assignin('base', ['DataControlHVLS_' num2str(cell2mat((subjInfo(1))))], DataControlHVLS)
+        save(fullfile(savdir,fName), fNameDataPracticeLVHS, fNameDataPracticeHVLS, fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVHS, fNameDataControlHVLS);
+
+        else
         DataPracticeLV = catstruct(Subject, DataPracticeLV);
         DataPracticeHV = catstruct(Subject, DataPracticeHV);
         DataLV = catstruct(Subject, DataLV);
         DataHV = catstruct(Subject, DataHV);
         DataControlLV = catstruct(Subject, DataControlLV);
-        DataControlHV = catstruct(Subject, DataControlHV);
+        DataControlHV = catstruct(Subject, DataControlHV);    
         
         assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
         assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
@@ -460,8 +513,9 @@ else
         assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
         assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
         assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+        %save(fullfile(savdir,fName), fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVLS, fNameDataControlHVHS);
         save(fullfile(savdir,fName),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
-        
+        end
     elseif askSubjInfo == true && runIntro == false
         
         if runSigma == true

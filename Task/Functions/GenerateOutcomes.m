@@ -65,6 +65,7 @@ for i = 1:trials
         TAC(i)=TAC(i-1)+1;
         s=max([s-1, 0]);
     end
+    %outcome(i) = 90
     outcome(i)=round(normrnd(mean, sig));
     distMean(i)=mean;
     
@@ -80,7 +81,7 @@ for i = 1:trials
     if rand(1) <= 0.05
         catchTrial(i) = 1;
     else
-        catchTrial(i) = 0;
+        catchTrial(i) = 1;
     end
 end
 
