@@ -1,5 +1,7 @@
-function BigScreen(taskParam, txtPressEnter, header, txt)
+function [fw, bw] = BigScreen(taskParam, txtPressEnter, header, txt)
 % This function draws background during the intro.
+fw = 0;
+bw = 0;
 
 while 1
     Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
@@ -26,7 +28,11 @@ while 1
     Screen('Flip', taskParam.gParam.window, time + 0.1);
     
     [ ~, ~, keyCode ] = KbCheck;
-    if find(keyCode)==taskParam.keys.enter% don't know why it does not understand return or enter?
+    if keyCode(taskParam.keys.enter)% don't know why it does not understand return or enter?
+        fw = 1;
+        break
+    elseif keyCode(taskParam.keys.delete)     
+        bw = 1;
         break
     end
 end

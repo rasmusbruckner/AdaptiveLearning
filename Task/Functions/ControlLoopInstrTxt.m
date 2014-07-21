@@ -1,4 +1,4 @@
-function [taskParam, screenIndex] = ControlLoopInstrTxt(taskParam, txt, forward, backward, needle, screenIndex)
+function [taskParam, fw, bw] = ControlLoopInstrTxt(taskParam, txt, needle, button)
 % This function instructs participants for the control condition.
 % The idea is that participants remember the last outcome and indicate
 % this by aiming at this point. This requires a learning rate = 1. We are
@@ -7,6 +7,9 @@ function [taskParam, screenIndex] = ControlLoopInstrTxt(taskParam, txt, forward,
 
 distMean = 238;
 %Priority(9);
+fw = 0; 
+bw = 0;
+
 while 1
    
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -47,12 +50,18 @@ while 1
             else
                 taskParam.circle.rotAngle = 360*taskParam.circle.unit;
             end
-        elseif keyCode(forward)
-            screenIndex = screenIndex + 1;
+        elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.enter)) || (isequal(button, 'space') && keyCode(taskParam.keys.space))
+            fw = 1;
             break;
-        elseif keyCode(backward)
-            screenIndex = screenIndex - 1;
-            break;    
+        elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.delete)) || (isequal(button, 'space') && keyCode(taskParam.keys.delete))
+            bw = 1;
+            break
+%         elseif isequal(button, 'space') && keyCode(taskParam.keys.space)
+%             fw = 1;    
+%             break;    
+%         elseif isequal(button, 'space') && keyCode(taskParam.keys.leftArrow)
+%             bw = 1;    
+%             break;        
         end
         
     end

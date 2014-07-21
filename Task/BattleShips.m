@@ -216,6 +216,7 @@ colors = struct(fGold, gold, fSilver, silver);
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');
 fLeftKey = 'leftKey'; leftKey = KbName('f');
+fDelete = 'delete'; delete = KbName('DELETE');
 fRightArrow = 'rightArrow'; rightArrow = KbName('RightArrow');
 fLeftArrow = 'leftArrow'; leftArrow = KbName('LeftArrow');
 fRightSlowKey = 'rightSlowKey'; rightSlowKey = KbName('h');
@@ -238,7 +239,7 @@ elseif isequal(computer, 'Dresden_Rene')
 end
 
 fKeys = 'keys';
-keys = struct(fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
+keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.

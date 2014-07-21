@@ -4,15 +4,21 @@ function BattleShipsInstructions(taskParam, subject)
 
 KbReleaseWait();
 needle = true;
+
+
 %% Instructions section.
 
 % Endless loop for "go-back".
 screenIndex = 1;
-while 1 
-%     
+while 1      
 switch(screenIndex)
     case 1 
-Screen 1 with painting.
+
+%------------------------
+%
+% Screen 1 with painting.
+%
+%------------------------
 while 1
     
     Screen('TextFont', taskParam.gParam.window, 'Arial');
@@ -27,14 +33,19 @@ while 1
     Screen('Flip', taskParam.gParam.window, t + 0.1);
     
     [~, ~, keyCode] = KbCheck;
-    if find(keyCode) == taskParam.keys.rightArrow
+    if find(keyCode) == taskParam.keys.enter
         screenIndex = screenIndex + 1;
         break
     end
 end
 KbReleaseWait();
 
-% Screen 2.
+%---------
+%
+% Screen 2 
+%
+%---------
+
     case 2
 if isequal(taskParam.gParam.computer, 'Dresden')
     Screen('TextSize', taskParam.gParam.window, 25);
@@ -59,13 +70,25 @@ end
    
     
 DrawFormattedText(taskParam.gParam.window, taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-forward = taskParam.keys.rightArrow;
-backward = taskParam.keys.leftArrow;
-[taskParam, screenIndex] = ControlLoopInstrTxt(taskParam, txt, forward, backward, needle, screenIndex);
+[taskParam, fw, bw] = ControlLoopInstrTxt(taskParam, txt, needle, 'arrow');
+
+KbReleaseWait();
+if fw == 1
+    screenIndex = screenIndex + 1;
+   
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+  
+end
+
 KbReleaseWait();
  
 
-% Screen 3.
+%---------
+%
+% Screen 3 
+%
+%---------
     case 3
 if isequal(taskParam.gParam.computer, 'Dresden')
     txt=['Dein Abschussziel gibst du mit dem blauen Punkt an, den du\n\n'...
@@ -85,19 +108,42 @@ else
 end
 
 
-    
-forward = taskParam.keys.rightArrow;
-backward = taskParam.keys.leftArrow;
-[taskParam, screenIndex ]= ControlLoopInstrTxt(taskParam, txt, forward, backward, needle, screenIndex);
+[taskParam, fw, bw] = ControlLoopInstrTxt(taskParam, txt, needle, 'space');
+KbReleaseWait();
+if fw == 1
+    screenIndex = screenIndex + 1;
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+    %break
+end
+
+KbReleaseWait();
+    case 4
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam);
 DrawCross(taskParam);
 Screen('DrawingFinished', taskParam.gParam.window);
 t = GetSecs; 
-Screen('Flip', taskParam.gParam.window, t + 0.1);
-WaitSecs(1);
+Screen('Flip', taskParam.gParam.window, t + 0.001);
 
-% Screen 4.
+if fw == 1
+    screenIndex = screenIndex + 1;
+    WaitSecs(1);
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+end
+
+KbReleaseWait();
+
+
+
+%---------
+%
+% Screen 5 
+%
+%---------
+    case 5
+
 while 1
     
     if isequal(taskParam.gParam.computer, 'Dresden')
@@ -129,16 +175,31 @@ while 1
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window, t + 0.1);
     
+    
+%     screenIndex = getScreenIndex(taskParam, screenIndex);
+%     break
     [ keyIsDown, ~, keyCode ] = KbCheck;
     if keyIsDown
-        if find(keyCode) == taskParam.keys.enter
+        if keyCode(taskParam.keys.enter)
+            screenIndex = screenIndex + 1;
+            break
+        elseif keyCode(taskParam.keys.delete)
+            screenIndex = screenIndex - 2;
             break
         end
     end
 end
+
+
 KbReleaseWait();
 
-% Screen 5.
+
+%---------
+%
+% Screen 6 
+%
+%---------
+    case 6
 while 1
     
     if subject.rew == '1'
@@ -182,15 +243,18 @@ while 1
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window, t + 0.1);
     
-    
-    [ ~, ~ , keyCode ] = KbCheck;
-    if find(keyCode)==taskParam.keys.enter
-        break
-    end
+    screenIndex = getScreenIndex(taskParam, screenIndex);
+    break
+
 end
 KbReleaseWait();
 
-% Screen 6.
+%---------
+%
+% Screen 7 
+%
+%---------
+    case 7
 while 1
     if isequal(taskParam.gParam.computer, 'D_Pilot')
         if subject.rew == '1'
@@ -226,14 +290,18 @@ while 1
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window, t + 0.1);
     
-    [~, ~, keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.keys.enter
-        break
-    end
+    screenIndex = getScreenIndex(taskParam, screenIndex);
+    break
+
 end
 KbReleaseWait();
 
-% Screen 7.
+%---------
+%
+% Screen 8 
+%
+%---------
+    case 8
 header = 'Wie der Radar funktioniert';
 if isequal(taskParam.gParam.computer, 'D_Pilot')
     txt = ['Der Radar zeigt dir die Position der Schiffsflotte leider '...
@@ -261,9 +329,19 @@ else
             'der Radarnadel sind zufällig und du\n\nkannst nicht perfekt '...
             'vorhersagen, wo sich ein Schiff aufhält.'];
 end
-BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
-
-% Screen 8.
+[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
+ 
+if fw == 1
+    screenIndex = screenIndex + 1;
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+end
+%---------
+%
+% Screen 9 
+%
+%---------
+    case 9
 header = 'Wie du einen Schuss abgibst';
 if isequal(taskParam.gParam.computer, 'D_Pilot')
     txt=['Mit LEERTASTE gibst du einen Schuss ab. Richte dich dabei '...
@@ -278,9 +356,20 @@ else
          'nach der\n\nRadarnadel. Beachte, dass dir der Radar durch '...
          'den Seegang nur\n\nungefähr angibt, wo die Schiffe sind.'];
 end
-BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
-
-% Screen 9.
+[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
+if fw == 1
+    screenIndex = screenIndex + 1;
+   
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+  
+end
+%---------
+%
+% Screen 10 
+%
+%---------
+    case 10
 header = 'Worauf du achten solltest';
 if isequal(taskParam.gParam.computer, 'D_Pilot')
     txt = ['Es ist wichtig, dass du während der Aufgabe '...
@@ -306,20 +395,39 @@ else
            '\n\n\ndu einen Schuss abgibst.\n\nIn der folgenden Übung '...
            'sollst du probieren, möglichst viele Schiffe zu treffen.'];
 end
-BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
+[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
+if fw == 1
+    screenIndex = screenIndex + 1;
+   
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+  
+end
 
-
+%---------
+%
+% Screen 11 
+%
+%---------
+    case 11
 distMean = 210;
 outcome = [225;216;223;211;199];
 boatType = [2 1 1 2 1];
 
 
-% Screen 10 (1st practice block).
-for i = 1:5%taskParam.gParam.intTrials
+
+for i = 1:1%taskParam.gParam.intTrials
     taskParam = ControlLoop(taskParam, distMean, outcome(i), boatType(i));
 end
+screenIndex = screenIndex + 1;
+%---------
+%
+% Screen 12 
+%
+%---------
+    case 12
 
-% Screen 11.
+
 header = 'Ende der ersten Übung';
 if isequal(taskParam.gParam.computer, 'D_Pilot')
     txt= ['Im nächsten Übungsdurchgang fahren die Schiffe ab und zu '...
@@ -352,8 +460,21 @@ else
           'wenig\n\nzu blinzeln.'];    
     end
 end
-BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
+[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt);
+if fw == 1
+    screenIndex = screenIndex + 1;
+   
+elseif bw == 1
+    screenIndex = screenIndex - 2;
+  
+end
 
+%---------
+%
+% Screen 13 
+%
+%---------
+   case 13 
 if subject.cBal == '1'
     
     % Screen 21.
@@ -437,6 +558,7 @@ elseif subject.cBal == '2'
         taskParam = ControlLoop(taskParam, distMean(i), outcome(i), boatType(i));
     end
 end
+    
 
 header = 'Ende der zweiten Übung';
 if isequal(taskParam.gParam.computer, 'D_Pilot')
@@ -458,7 +580,16 @@ else
            'selber herausfinden. Du solltest versuchen, möglichst '...
            'viele Schiffe\n\nabzuschießen.'];
 end
-BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
+[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt)
+if fw == 1
+     screenIndex = screenIndex + 1;
+   
+elseif bw == 1
+    screenIndex = screenIndex - 1;
+  
+end
+    case 14
+        break
 end
 
 end
