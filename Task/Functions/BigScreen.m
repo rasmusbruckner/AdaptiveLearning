@@ -1,4 +1,4 @@
-function [fw, bw] = BigScreen(taskParam, txtPressEnter, header, txt)
+function [fw, bw] = BigScreen(taskParam, txtPressEnter, header, txt, feedback)
 % This function draws background during the intro.
 fw = 0;
 bw = 0;
@@ -16,10 +16,10 @@ while 1
         DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
     end
         Screen('TextSize', taskParam.gParam.window, 30);
-   if isequal(taskParam.gParam.computer, 'Dresden')
-      DrawFormattedText(taskParam.gParam.window, txt, 50, taskParam.gParam.screensize(4)*0.2);
+   if feedback == true
+      DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center', [255 255 255], 80, [], [], 1);
    else
-      DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2);
+      DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2, [255 255 255], 80, [], [], 1);
    end
     
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);

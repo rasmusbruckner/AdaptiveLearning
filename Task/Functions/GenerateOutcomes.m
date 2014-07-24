@@ -81,7 +81,7 @@ for i = 1:trials
     if rand(1) <= 0.05
         catchTrial(i) = 1;
     else
-        catchTrial(i) = 1;
+        catchTrial(i) = 0;
     end
 end
 

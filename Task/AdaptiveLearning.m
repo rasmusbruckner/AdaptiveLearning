@@ -13,8 +13,6 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
-% Insgesamt hatte ich ~30 min und 8.60? dann  ~10 min Intro macht 40.  
-
 clear all
 
 %% Set general parameters.
@@ -23,19 +21,19 @@ computer = 'Macbook'; % On which computer do you run the task? Macbook or Humbol
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
-intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
-trials = 10; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
+intTrials = 10; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 10; % Number of practice trials per condition. Für Pilot: 20 
+trials = 40; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
 contTrials = 1; % Number of control trials. Für Pilot: 40 ~4 min
-vola = [.7 .7]; % Volatility of the environment.
+vola = [.4 .6 0]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
-sigma = [10 20]; % SD's of distribution.
+sigma = [10 15]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
-Computer2 = true;
+Computer2 = false;
 
 % Savedirectory.
 if isequal(computer, 'Macbook')
@@ -133,9 +131,9 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-%Screen('Preference', 'VisualDebugLevel', 3);
-%Screen('Preference', 'SuppressAllWarnings', 1);
-%Screen('Preference', 'SkipSyncTests', 2);
+Screen('Preference', 'VisualDebugLevel', 3);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
@@ -143,7 +141,53 @@ screensizePart = (screensize(3:4));
 fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
-[ window, windowRect ] = Screen('OpenWindow', 0, [64 64 64], []);
+[ window, windowRect ] = Screen('OpenWindow', 0, [64 64 64], []); %420 250 1020 650
+
+% Fieldnames.
+fID = 'ID'; ID = fID; % ID.
+fAge = 'age'; age = fAge; % Age.
+fSex = 'sex'; sex = fSex; % Sex.
+fRew = 'rew'; rew = fRew; %Rew.
+fActRew = 'actRew'; actRew = fActRew; % Actual Reward;
+fVolas = 'vola'; volas = fVolas; % Volatility.
+fSigmas = 'sigma'; sigmas = fSigmas; % Sigma.
+fDate = 'Date'; Date = fDate; % Date.
+fCond = 'cond'; cond = fCond; % Condition.
+fTrial = 'trial'; trial = fTrial; % Trial.
+fOutcome = 'outcome'; outcome = fOutcome; % Outcome.
+fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean.
+fCp = 'cp'; cp = fCp; % Change point.
+fTAC = 'TAC'; TAC = fTAC; % Trials after change-point.
+fBoatType = 'boatType'; boatType = fBoatType; % Boat type.
+fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial.
+fPredT = 'predT'; predT = fPredT; % Trigger: prediction.
+fOutT = 'outT'; outT = fOutT; % Trigger: outcome.
+fBoatT = 'boatT'; boatT = fBoatT; % Trigger: boat.
+fPred = 'pred';pred = fPred; % Prediction of participant.
+fPredErr = 'predErr'; predErr = fPredErr; % Prediction error.
+fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;% Regular prediction error.
+fPredErrPlus = 'predErrPlus'; predErrPlus = fPredErrPlus; %Prediction error plus 360 degrees.
+fPredErrMin = 'predErrMin'; predErrMin = fPredErrMin; % Prediction error minus 360 degrees.
+fRawPredErr = 'rawPredErr'; rawPredErr = fRawPredErr;
+fMemErr = 'memErr'; memErr = fMemErr;% Memory error.
+fMemErrNorm = 'memErrNorm'; memErrNorm = fMemErrNorm;% Regular memory error.
+fMemErrPlus = 'memErrPlus'; memErrPlus = fMemErrPlus; % Memory error plus 360 degrees.
+fMemErrMin = 'memErrMin'; memErrMin = fMemErrMin; % Memory error minus 360 degrees.
+fUP = 'UP'; UP = fUP; % Update of participant.
+fUPNorm = 'UPNorm'; UPNorm = fUPNorm;% Regular prediction error.
+fUPPlus = 'UPPlus'; UPPlus = fUPPlus; %Prediction error plus 360 degrees.
+fUPMin = 'UPMin'; UPMin = fUPMin;
+fHit = 'hit'; hit = fHit; % Hit.
+fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
+fPerf = 'perf'; perf = fPerf; % Performance.
+fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
+
+fFieldNames = 'fieldNames';
+fieldNames = struct(fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+    fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
+    fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
+    fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
+
 
 fGParam = 'gParam';
 fRunVola = 'runVola';
@@ -157,24 +201,24 @@ fPractTrials = 'practTrials';
 fContTrials = 'contTrials';
 fSafe = 'safe';
 fRewMag = 'rewMag';
-gParam = struct(fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+gParam = struct(fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
 
 %Radius of the spots.
-fPredSpotRad =  'predSpotRad'; predSpotRad = 15; % Prediction spot (red).
-fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red).
-fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.
-fCannonEnd = 'cannonEnd'; cannonEnd = 5
-fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle.
-fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius.
+fPredSpotRad =  'predSpotRad'; predSpotRad = 25; % Prediction spot (red). This is expressed in pixel, not in degrees!
+fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees!
+fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.This is expressed in pixel, not in degrees!
+fCannonEnd = 'cannonEnd'; cannonEnd = 5; %This is in pixel, not in degrees!
+fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle. This is expressed in pixel, not in degrees!
+fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius. This is expressed in pixel, not in degrees!
 
 %Diameter of the spots.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
 fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome.
 fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; % Size of Radar needle.
-fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2
+fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2;
 
 %Position of the spots and the boats.
 fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; % Prediction spot position.
@@ -212,6 +256,10 @@ colors = struct(fGold, gold, fSilver, silver);
 
 % Cannon parameters.
 
+
+
+
+
 % Set key names.
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');
@@ -241,50 +289,54 @@ end
 fKeys = 'keys';
 keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
-% Fieldnames.
-fID = 'ID'; ID = fID; % ID.
-fAge = 'age'; age = fAge; % Age.
-fSex = 'sex'; sex = fSex; % Sex.
-fRew = 'rew'; rew = fRew; %Rew.
-fActRew = 'actRew'; actRew = fActRew; % Actual Reward;
-fVolas = 'vola'; volas = fVolas; % Volatility.
-fSigmas = 'sigma'; sigmas = fSigmas; % Sigma.
-fDate = 'Date'; Date = fDate; % Date.
-fCond = 'cond'; cond = fCond; % Condition.
-fTrial = 'trial'; trial = fTrial; % Trial.
-fOutcome = 'outcome'; outcome = fOutcome; % Outcome.
-fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean.
-fCp = 'cp'; cp = fCp; % Change point.
-fTAC = 'TAC'; TAC = fTAC; % Trials after change-point.
-fBoatType = 'boatType'; boatType = fBoatType; % Boat type.
-fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial.
-fPredT = 'predT'; predT = fPredT; % Trigger: prediction.
-fOutT = 'outT'; outT = fOutT; % Trigger: outcome.
-fBoatT = 'boatT'; boatT = fBoatT; % Trigger: boat.
-fPred = 'pred';pred = fPred; % Prediction of participant.
-fPredErr = 'predErr'; predErr = fPredErr; % Prediction error.
-fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;% Regular prediction error.
-fPredErrPlus = 'predErrPlus'; predErrPlus = fPredErrPlus; %Prediction error plus 360 degrees.
-fPredErrMin = 'predErrMin'; predErrMin = fPredErrMin; % Prediction error minus 360 degrees.
-fMemErr = 'memErr'; memErr = fMemErr;% Memory error.
-fMemErrNorm = 'memErrNorm'; memErrNorm = fMemErrNorm;% Regular memory error.
-fMemErrPlus = 'memErrPlus'; memErrPlus = fMemErrPlus; % Memory error plus 360 degrees.
-fMemErrMin = 'memErrMin'; memErrMin = fMemErrMin; % Memory error minus 360 degrees.
-fUP = 'UP'; UP = fUP; % Update of participant.
-fUPNorm = 'UPNorm'; UPNorm = fUPNorm;% Regular prediction error.
-fUPPlus = 'UPPlus'; UPPlus = fUPPlus; %Prediction error plus 360 degrees.
-fUPMin = 'UPMin'; UPMin = fUPMin;
-fHit = 'hit'; hit = fHit; % Hit.
-fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
-fPerf = 'perf'; perf = fPerf; % Performance.
-fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
-fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
-    fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
-    fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
-    fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf);
+imageRect = [0 0 120 120];
+dstRect = CenterRect(imageRect, windowRect);
+[cannonPic, ~, alpha]  = imread('cannon.png');
+cannonPic(:,:,4) = alpha(:,:);
+Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+cannonTxt = Screen('MakeTexture', window, cannonPic);
+fCannonTxt = 'cannonTxt';
+fDstRect = 'dstRect';
 
+% -------------
+% Practice data
+% -------------
+
+% No vola.
+distMean = [233;233;233;233;233]; 
+outcome = [242;222;239;234;250];
+boatType = [2;1;1;2;1];
+pred = zeros(length(outcome),1);
+predErr = zeros(length(outcome),1);
+PredErrRaw = zeros(length(outcome),1);
+fPractDataNV = 'practDataNV';
+practDataNV = struct(fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
+
+% Low vola. 
+distMean = [239;239;239;239;239;239;239;100;100;100];
+outcome = [247;256;243;251;232;250;255;104;116;79];
+boatType = [1;2;1;2;2;1;2;1;1;2];
+pred = zeros(length(outcome),1);
+predErr = zeros(length(outcome),1);
+PredErrRaw = zeros(length(outcome),1);
+fCannonDev = 'CannonDev', CannonDev = zeros(length(outcome),1);
+fPractDataLV = 'practDataLV';
+practDataLV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
+
+% High vola.
+outcome = [6;13;26;35;53;39;55;65;293;278];
+distMean = [16;16;16;16;46;46;46;46;290;290];
+boatType = [1;1;2;1;2;1;2;1;2;2]; 
+pred = zeros(length(outcome),1);
+predErr = zeros(length(outcome),1);
+PredErrRaw = zeros(length(outcome),1);
+fCannonDev = 'CannonDev', CannonDev = zeros(length(outcome),1);
+fPractDataHV = 'practDataHV';
+practDataHV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
+    
+fPractData = 'practData';
+practData = struct(fPractDataNV, practDataNV, fPractDataLV, practDataLV, fPractDataHV, practDataHV);
 
 %% Trigger settings.
 
@@ -312,8 +364,8 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrig
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLVTrigger, blockLVTrigger, fBlockHVTrigger, blockHVTrigger,...
     fBlockControlTrigger, blockControlTrigger);
 
-fTxtLowVola = 'txtLowVola'; txtLowVola = 'Jetzt fahren die Schiffe selten weiter';
-fTxtHighVola = 'txtHighVola'; txtHighVola = 'Jetzt fahren die Schiffe häufiger weiter';
+fTxtLowVola = 'txtLowVola'; txtLowVola = 'Jetzt verändert sich das Ziel der Kanone selten';
+fTxtHighVola = 'txtHighVola'; txtHighVola = 'Jetzt verändert sich das Ziel der Kanone häufiger';
 fTxtPressEnter = 'txtPressEnter'; txtPressEnter = 'Weiter mit Enter';
 fTxtLVLS = 'txtLVLS'; txtLVLS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist schwach';
 fTxtHVLS = 'txtHVLS'; txtHVLS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist schwach';
@@ -325,13 +377,13 @@ fStrings = 'strings';
 strings = struct(fTxtLowVola, txtLowVola, fTxtHighVola, txtHighVola, fTxtLVLS, txtLVLS, fTxtHVLS, txtHVLS, fTxtLVHS, txtLVHS, fTxtHVHS, txtHVHS, fTxtPressEnter, txtPressEnter);
 
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers,...
-    fColors, colors, fStrings, strings);
+    fColors, colors, fStrings, strings, fCannonTxt, cannonTxt, fDstRect, dstRect);
 
 % If true you run through one main block which enables you to check timing
 % accuracy (see PTB output in command window).
 if test == true
     
-    [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), 'main', Subject); % Run task (low sigma).
+    [taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject); % Run task (low sigma).
     
     % Allow input again.
     ListenChar();
@@ -359,20 +411,20 @@ else
     if runIntro == true
         
         % Function for instructions.
-        BattleShipsInstructions(taskParam, Subject);
+        Instructions(taskParam, practData, Subject);
         
         condition = 'practice';
         %if Subject.cBal == '1'
             if runSigma == true
             VolaIndication(taskParam, txtLVHS, txtPressEnter)
-            [taskDataPracticeLVHS, DataPracticeLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject);
+            [taskDataPracticeLVHS, DataPracticeLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject);
             VolaIndication(taskParam, txtHVLS, txtPressEnter)
-            [taskDataPracticeHVLS, DataPracticeHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject);
+            [taskDataPracticeHVLS, DataPracticeHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject);
             else
             VolaIndication(taskParam, txtLowVola, txtPressEnter)
-            [taskDataPracticeLV, DataPracticeLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject);
+            [taskDataPracticeLV, DataPracticeLV] = Main(taskParam, vola(1), sigma(1), condition, Subject);
             VolaIndication(taskParam, txtHighVola, txtPressEnter)
-            [taskDataPracticeHV, DataPracticeHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject);
+            [taskDataPracticeHV, DataPracticeHV] = Main(taskParam, vola(2), sigma(1), condition, Subject);
             end
        % else
         %Cbal2    
@@ -385,7 +437,8 @@ else
         else
             txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Bord verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
         end
-        BigScreen(taskParam, txtPressEnter, header, txt)
+        feedback = 'false';
+        BigScreen(taskParam, txtPressEnter, header, txt, feedback)
     end
     
     % This functions runs the main task.
@@ -394,24 +447,24 @@ else
     if Subject.cBal == '1'
         if runSigma == true
             VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
-            [taskDataLVLS, DataLVLS] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+            [taskDataLVLS, DataLVLS] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtLVHS, txtPressEnter) % High sigma.
-            [taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
+            [taskDataLVHS, DataLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
             VolaIndication(taskParam, txtHVLS, txtPressEnter) % Low sigma.
-            [taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (low sigma).
+            [taskDataHVLS, DataHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
-            [taskDataHVHS, DataHVHS] = BattleShipsMain(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
+            [taskDataHVHS, DataHVHS] = Main(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
         else
             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+            [taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+            [taskDataHV, DataHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-        [taskDataHV, DataHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+        [taskDataHV, DataHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
         VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-        [taskDataLV, DataLV] = BattleShipsMain(taskParam, vola(1), simga(1), condition, Subject); % Run task (low sigma).
+        [taskDataLV, DataLV] = Main(taskParam, vola(1), simga(1), condition, Subject); % Run task (low sigma).
     end
     
     % Control trials: this task requires a learning rate = 1
@@ -423,28 +476,28 @@ else
     if Subject.cBal == '1'
         if runSigma == true
             VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-            [taskDataControlLVHS, DataControlLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+            [taskDataControlLVHS, DataControlLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
             %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
             %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
             %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-            [taskDataControlHVLS, DataControlHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+            [taskDataControlHVLS, DataControlHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
             %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
             %[taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
         else
             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+            [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
+            [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-        [taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+        [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), condition, Subject); %Run task (high sigma).
         VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-        [taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+        [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), condition, Subject); % Run task (low sigma).
     end
     
     % Compute total gain.

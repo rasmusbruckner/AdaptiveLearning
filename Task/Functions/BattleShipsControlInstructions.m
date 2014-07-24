@@ -16,14 +16,15 @@ txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
         'daraufhin genau\n\nauf diese Position steuern.'];    
 else
 txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
-        'die Position des Bootes merken\n\nund den blauen Punkt '...
+        'die Position der Kanonenkugel merken und den blauen Punkt '...
         'daraufhin genau auf diese Position steuern.'];    
 end
-BigScreen(taskParam, txtPressEnter, header, txt)
+feedback = false;
+BigScreen(taskParam, txtPressEnter, header, txt, feedback)
 
 % Screen 2.
 outcome = 238;
-txt = 'Merke dir jetzt die Position des Bootes...';
+txt = 'Merke dir jetzt die Position der Kanonenkugel...';
 
 while 1
     
@@ -59,8 +60,9 @@ else
 txt = ['...und steuere den blauen Punkt auf die Postition, die du '...
         'dir gemerkt\n\nhast. Drücke dann LEERTASTE.'];
 end
-needle = false;
-taskParam = ControlLoopInstrTxt(taskParam, txt, button, needle);
+cannon = false;
+distMean = 100
+[taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, 'space', distMean);
 time = GetSecs;
 
 % Show baseline 2.
@@ -74,13 +76,13 @@ Screen('Flip', taskParam.gParam.window, time + 0.1)
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
 DrawCircle(taskParam)
 if subject.rew == '1'
-    ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
+    RewardTxt = Reward(taskParam, 'gold');
 else
-    ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
+    RewardTxt = Reward(taskParam, 'silver');
 end
 Screen('DrawingFinished', taskParam.gParam.window);
 Screen('Flip', taskParam.gParam.window, time + 1.1);
-Screen('Close', ShipTxt);
+Screen('Close', RewardTxt);
 
 % Show baseline 3.
 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
@@ -96,25 +98,25 @@ header = 'Start der Gedächtnisaufgabe';
 if subject.rew == '1'
     if isequal(taskParam.gParam.computer, 'D_Pilot')
     txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
-        'die letzte Position des Bootes steuerst.\n\n\nWenn du dir '...
+        'die letzte Position des Kanonekugel steuerst.\nWenn du dir '...
         'die letzte Position richtig gemerkt hast, bekommst du...'...
-        '\n\nGoldenes Boot: 10 CENT\n\nSteine: Hier verdienst du '...
-        'leider nichts\n\n\nBitte vermeide Augenbewegungen und '...
+        'Goldenes Boot: 10 CENT Steine: Hier verdienst du '...
+        'leider nichts\nBitte vermeide Augenbewegungen und '...
         'blinzeln wieder so gut wie möglich'];
     elseif isequal(taskParam.gParam.computer, 'Dresden')
          txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
-        'die\n\nletzte Position des Bootes steuerst.\n\n\nWenn du dir '...
+        'die letzte Position des Bootes steuerst.\nWenn du dir '...
         'die letzte Position richtig gemerkt hast, bekommst du...'...
-        '\n\nGoldenes Boot: 10 CENT\n\nSteine: Hier verdienst du '...
-        'leider nichts\n\n\nBitte vermeide Augenbewegungen und '...
+        'Goldenes Boot: 10 CENTSteine: Hier verdienst du '...
+        'leider nichts\nBitte vermeide Augenbewegungen und '...
         'blinzeln\n\nwieder so gut wie möglich'];
     else
     txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
-        'die letzte Position\n\ndes Bootes steuerst.\n\n\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...\n\nGoldenes Boot: 10 CENT\n\nSteine: Hier verdienst du leider nichts\n\n\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich'];
+        'die letzte Position des Bootes steuerst.\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du... Goldenes Boot: 10 CENT Steine: Hier verdienst du leider nichts\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich'];
     end
 else
     txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
-        'die letzte Position\n\ndes Bootes steuerst.\n\n\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...\n\nSilbernes Boot: 10 CENT\n\nSand: Hier verdienst du leider nichts\n\n\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich.'];
+        'die letzte Position des Bootes steuerst.\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...Silbernes Boot: 10 CENT Sand: Hier verdienst du leider nichts\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich.'];
 end
-
-BigScreen(taskParam, txtPressEnter, header, txt)
+feedback = false
+BigScreen(taskParam, txtPressEnter, header, txt, feedback)
