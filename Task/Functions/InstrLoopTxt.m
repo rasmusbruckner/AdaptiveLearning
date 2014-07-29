@@ -19,14 +19,15 @@ pred = 0;
 predErr = 0;
 rawPredErr = 0;
 outcome = distMean;
-Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome)
+Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome);
 
 while 1
    
+   
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
    
-    if isequal(taskParam.gParam.computer, 'Dresden')
-    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05, [255 255 255]);
+    if isequal(taskParam.gParam.computer, 'D_Pilot')
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 105);
     else
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 85);
     
@@ -34,6 +35,11 @@ while 1
     
     if cannon == true
         Cannon(taskParam, distMean)
+    end
+    if i > 1 && taskParam.gParam.PE_Bar == true 
+        DrawPE_Bar(taskParam, Data, i-1) 
+    elseif i == 1 && taskParam.gParam.PE_Bar == true 
+        DrawPE_Bar(taskParam, Data, i-1) 
     end
     DrawCircle(taskParam)
     DrawCross(taskParam)

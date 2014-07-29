@@ -10,19 +10,23 @@ while 1
             % Screen 1.
             txtPressEnter = 'Weiter mit Enter';
             header = 'Kontrollaufgabe';
-            if isequal(taskParam.gParam.computer, 'D_Pilot')
-                txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
-                    'die Position des Bootes merken\n\nund den blauen Punkt '...
-                    'daraufhin genau auf diese Position steuern.'];
-            elseif isequal(taskParam.gParam.computer, 'Dresden')
-                txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
-                    'die\n\nPosition des Bootes merken und den blauen Punkt '...
-                    'daraufhin genau\n\nauf diese Position steuern.'];
-            else
+%             if isequal(taskParam.gParam.computer, 'D_Pilot')
+%                 txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
+%                     'die Position des Bootes merken\n\nund den blauen Punkt '...
+%                     'daraufhin genau auf diese Position steuern.'];
+%             elseif isequal(taskParam.gParam.computer, 'Dresden')
+%                 txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
+%                     'die\n\nPosition des Bootes merken und den blauen Punkt '...
+%                     'daraufhin genau\n\nauf diese Position steuern.'];
+%             else
                 txt = ['Zum Abschluss kommt eine Kontrollaufgabe. Hier sollst du den '...
                     'blauen Punkt immer auf die Stelle der zuletzt abgeschossenen '...
-                    'Kanonenkugel steuern.'];
-            end
+                    'Kanonenkugel steuern. Das heißt, immer genau auf das Ende des '...
+                    'schwarzen Balken.\n\n'...
+                    'Du kannst die Aufgabe jetzt erstmal üben. Wenn du den blauen Punkt zu '...
+                    'oft neben das Ende des schwarzen Balkens steuerst, muss die Übung '...
+                    'wiederholt werden.'];
+%             end
             feedback = false;
             %BigScreen(taskParam, txtPressEnter, header, txt, feedback)
             [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -31,23 +35,53 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
+         
+       case 2
+            condition = 'practice';
+            VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
+            KbReleaseWait();
+            [taskData, Data] = Main(taskParam, taskParam.gParam.vola(1), taskParam.gParam.sigma(1), condition, subject);
+
+
             
-            % Screen 3.
-        case 2
-            button = taskParam.keys.space;
-            if isequal(taskParam.gParam.computer, 'D_Pilot')
-                txt = ['...und steuere den blauen Punkt auf die Postition, die du '...
-                    'dir gemerkt hast. Drücke dann LEERTASTE.'];
-            elseif isequal(taskParam.gParam.computer, 'Dresden')
-                txt = ['...und steuere den blauen Punkt auf die Postition, die\n\ndu '...
-                    'dir gemerkt hast. Drücke dann LEERTASTE.'];
+        sumCannonDev = sum(taskData.memErr(2:end) >= 10)
+            if sumCannonDev >= 5
+                
+                header = 'Wiederholung der Übung';
+                txt = ['In der letzten Übung hast du dich zu häufig vom Ziel '...
+                    'der Kanone wegbewegt. Du kannst mehr Kugeln fangen, wenn du '...
+                    'immer auf dem Ziel der Kanone bleibst!\n\n'...
+                    'In der nächsten Runde kannst nochmal üben. '...
+                    'Wenn du noch Fragen hast, kannst du dich auch an den Versuchsleiter wenden.']
+                feedback = false
+                [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+                
+               
+                screenIndex = screenIndex;
+                % elseif bw == 1
+                %     screenIndex = screenIndex - 1;
+                %end
             else
+                screenIndex = screenIndex + 1;
+                
+            end
+            
+       
+        case 3
+            button = taskParam.keys.space;
+%             if isequal(taskParam.gParam.computer, 'D_Pilot')
+%                 txt = ['...und steuere den blauen Punkt auf die Postition, die du '...
+%                     'dir gemerkt hast. Drücke dann LEERTASTE.'];
+%             elseif isequal(taskParam.gParam.computer, 'Dresden')
+%                 txt = ['...und steuere den blauen Punkt auf die Postition, die\n\ndu '...
+%                     'dir gemerkt hast. Drücke dann LEERTASTE.'];
+%             else
                 txt = ['...und steuere den blauen Punkt auf die Postition, die du '...
                     'dir gemerkt\n\nhast. Drücke dann LEERTASTE.'];
-            end
+%             end
             cannon = false;
             distMean = 100
-            initPredErr = 10
+            predErr = 10
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, 'space', distMean);
             time = GetSecs;
             
@@ -112,7 +146,7 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-        case 3
+        case 4
             break
     end
     

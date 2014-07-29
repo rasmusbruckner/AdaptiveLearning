@@ -201,17 +201,17 @@ while 1
 
             while 1
                 
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    txt=['Der schwarze Balken zeigt dir dann die Position '...
-                        'des Schiffs an.\n\nWenn dein Punkt auf dem Schiff ist, '...
-                        'hast du es getroffen.'];
-                elseif isequal(taskParam.gParam.computer, 'D_Pilot')
-                    txt=['Der schwarze Balken zeigt dir dann die Position '...
-                        'des Schiffs an. Wenn dein Punkt auf dem\n\nSchiff ist, '...
-                        'hast du es getroffen.'];
-                else
+%                 if isequal(taskParam.gParam.computer, 'Dresden')
+%                     txt=['Der schwarze Balken zeigt dir dann die Position '...
+%                         'des Schiffs an.\n\nWenn dein Punkt auf dem Schiff ist, '...
+%                         'hast du es getroffen.'];
+%                 elseif isequal(taskParam.gParam.computer, 'D_Pilot')
+%                     txt=['Der schwarze Balken zeigt dir dann die Position '...
+%                         'des Schiffs an. Wenn dein Punkt auf dem\n\nSchiff ist, '...
+%                         'hast du es getroffen.'];
+%                 else
                     txt=['Du hast die Kanonenkugel abgefangen. Versuche die Kanonenkugel diesmal zu verpassen!'];
-                end
+%                 end
                 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
                 DrawCircle(taskParam);
                 DrawCross(taskParam);
@@ -222,8 +222,8 @@ while 1
                 DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9, [255 255 255]);
                 
                 
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                if isequal(taskParam.gParam.computer, 'D_Pilot')
+                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 100);
                 else
                     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
                 end
@@ -261,8 +261,8 @@ while 1
                 DrawPE_Bar(taskParam, Data, 1)
                 DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9, [255 255 255]);
                 
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                if isequal(taskParam.gParam.computer, 'D_Pilot')
+                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 105);
                 else
                     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
                 end
@@ -381,8 +381,8 @@ while 1
                 
                 
                 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                if isequal(taskParam.gParam.computer, 'D_Pilot')
+                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 100);
                 else
                     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
                 end
@@ -441,17 +441,17 @@ while 1
             
             while 1
                 
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    txt=['Der schwarze Balken zeigt dir dann die Position '...
-                        'des Schiffs an.\n\nWenn dein Punkt auf dem Schiff ist, '...
-                        'hast du es getroffen.'];
-                elseif isequal(taskParam.gParam.computer, 'D_Pilot')
-                    txt=['Der schwarze Balken zeigt dir dann die Position '...
-                        'des Schiffs an. Wenn dein Punkt auf dem\n\nSchiff ist, '...
-                        'hast du es getroffen.'];
-                else
+%                 if isequal(taskParam.gParam.computer, 'Dresden')
+%                     txt=['Der schwarze Balken zeigt dir dann die Position '...
+%                         'des Schiffs an.\n\nWenn dein Punkt auf dem Schiff ist, '...
+%                         'hast du es getroffen.'];
+%                 elseif isequal(taskParam.gParam.computer, 'D_Pilot')
+%                     txt=['Der schwarze Balken zeigt dir dann die Position '...
+%                         'des Schiffs an. Wenn dein Punkt auf dem\n\nSchiff ist, '...
+%                         'hast du es getroffen.'];
+%                 else
                     txt=['Du hast die Kanonenkugel abgefangen. Versuche die Kanonenkugel diesmal zu verpassen!'];
-                end
+%                 end
                 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
                 DrawCircle(taskParam);
                 DrawCross(taskParam);
@@ -462,8 +462,8 @@ while 1
                 DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9, [255 255 255]);
                 
                 
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                if isequal(taskParam.gParam.computer, 'D_Pilot')
+                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
                 else
                     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
                 end
@@ -706,8 +706,8 @@ while 1
                 DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9, [255 255 255]);
                 
                 
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                if isequal(taskParam.gParam.computer, 'D_Pilot')
+                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 100);
                 else
                     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
                 end
@@ -738,8 +738,8 @@ while 1
                 
                 
                 LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-                if isequal(taskParam.gParam.computer, 'Dresden')
-                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                if isequal(taskParam.gParam.computer, 'D_Pilot')
+                    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 100);
                 else
                     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 90);
                 end
@@ -779,11 +779,11 @@ while 1
             
         case 21
             txt=['Weil die Kanone schon sehr alt ist, sind die Schüsse ziemlich ungenau. '...
-                'Wenn du den blauen Punkt genau auf die Stelle steuerst, auf die die Kanone zielt, fängst du '...
-                'die meisten Kugeln. Durch die Ungenauigkeit der Kanone kann die '...
+                'Wenn du den blauen Punkt GENAU auf die Stelle steuerst, auf die die Kanone zielt, fängst du '...
+                'die MEISTEN Kugeln. Durch die Ungenauigkeit der Kanone kann die '...
                 'Kugel aber manchmal auch ein Stück neben die anvisierte Stelle fliegen, '...
                 'wodurch du sie dann verpasst.\n\n'...
-                'In der nächsten Übung sollst du mit der ungenauigkeit der Kanone erstmal vertraut werden. '...
+                'In der nächsten Übung sollst du mit der Ungenauigkeit der Kanone erstmal vertraut werden. '...
                 'Lasse den blauen Punkt bitte immer auf der anvisierten Stelle stehen. '...
                 'Wenn du deinen Punkt neben die anvisierte Stelle steuerst, wird die Übung wiederholt.'];
             
@@ -842,8 +842,8 @@ while 1
                     txt = ['Gut gemacht! In der letzten Übung hast du den blauen Punkt '...
                         'auf die Stelle gesteuert, auf die die Kanone gezielt hat und dadurch viele '...
                         'Kugeln gefangen. '...
-                        'In der nächsten Übung wird die Kanone ab und zu auf eine neue Stelle zielen. '...
-                        'Wenn du siehst, dass die Kanone auf eine neue Stelle zielt, solltest du den blauen Punkt '...
+                        'Zusätzlich zu der Ungenauigkeit der Kanone, wird die Kanone in der nächsten Übung ab '...
+                        'und zu auf eine neue Stelle zielen. Wenn du siehst, dass die Kanone auf eine neue Stelle zielt, solltest du den blauen Punkt '...
                         'auf das neue Ziel der Kanone steuern.\n\n'...
                         'Im ersten Block wird die Kanone nur selten auf eine neue Stelle zielen. '...
                         'Im zweiten Block ändert die Kanone ihr Ziel etwas häufiger. '...
@@ -1008,7 +1008,7 @@ while 1
                 txt = ['Ok, bis jetzt kanntest du das Ziel der Kanone und du konntest '...
                     'die meisten Kugeln abfangen. Im nächsten Übungsdurchgang wird die '...
                     'Kanone von Nebel verdeckt sein, so dass du sie nicht mehr sehen kannst. '...
-                    'Allerdings siehst du, wo die Kanonenkugeln landen.\n\n'...
+                    'Anstelle der Kanone siehst du ab jetzt ein Kreuz und auch wo die Kanonenkugeln landen.\n\n'...
                     'Um weiterhin viele Kanonenkugeln fangen zu können, musst du aufgrund der Landeposition '...
                     'einschätzen, auf welche Stelle die Kanone zielt und den blauen Punkt auf diese Position steuern. '...
                     'Wenn du denkst, dass die Kanone auf eine neue Stelle zielt, solltest du auch den blauen Punkt dort hin bewegen. '];

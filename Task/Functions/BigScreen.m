@@ -18,8 +18,8 @@ while 1
         Screen('TextSize', taskParam.gParam.window, 30);
    if feedback == true
       DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center', [255 255 255], 80, [], [], 1);
-   else
-      DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2, [255 255 255], 80, [], [], 1);
+   elseif feedback == false && isequal(taskParam.gParam.computer, 'D_Pilot')
+      DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2, [255 255 255], 100, [], [], 1);
    end
     
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);

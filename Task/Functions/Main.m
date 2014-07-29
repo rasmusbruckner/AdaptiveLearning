@@ -232,28 +232,45 @@ elseif Subject.rew == '2'
 end
 
 % Give performance feedback.
-while 1
+% while 1
     if isequal(condition, 'practice')
         txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
     else
         txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
     end
-    txtBreak = 'Ende des Blocks';
-    txtPressEnter = 'Weiter mit Enter';
-    Screen('TextSize', taskParam.gParam.window, 50);
-    DrawFormattedText(taskParam.gParam.window, txtBreak, 'center', taskParam.gParam.screensize(4)*0.3);
-    Screen('TextSize', taskParam.gParam.window, 30);
-    DrawFormattedText(taskParam.gParam.window, txtFeedback, 'center', 'center');
-    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    Screen('DrawingFinished', taskParam.gParam.window);
-    t = GetSecs;
-    Screen('Flip', taskParam.gParam.window, t + 0.1);
+     hits = sum(taskData.hit == 1)
+                goldBall = sum(taskData.boatType == 1)
+                goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag %sum(practData.boatType == 1)
+                silverBall = sum(taskData.boatType == 2)
+                silverHit = hits - goldHit;
+                
+                maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+                txt = sprintf(['Gefangene goldene Kugeln: %.0f von %.0f\n\n'...
+                               'Gefangene eiserne Kugeln: %.0f von %.0f\n\n'...
+                               'In diesem Block hättest du %.2f von '...
+                               'maximal %.2f Euro gewonnen'], goldHit, goldBall, silverHit, silverBall, taskData.accPerf(end), maxMon);
+                
+                header = 'Leistung';
+                feedback = true
+                [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+            
     
-    [~, ~, keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.keys.enter % don't know why it does not understand return or enter?
-        break
-    end
-end
+%     txtBreak = 'Ende des Blocks';
+%     txtPressEnter = 'Weiter mit Enter';
+%     Screen('TextSize', taskParam.gParam.window, 50);
+%     DrawFormattedText(taskParam.gParam.window, txtBreak, 'center', taskParam.gParam.screensize(4)*0.3);
+%     Screen('TextSize', taskParam.gParam.window, 30);
+%     DrawFormattedText(taskParam.gParam.window, txtFeedback, 'center', 'center');
+%     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+%     Screen('DrawingFinished', taskParam.gParam.window);
+%     t = GetSecs;
+%     Screen('Flip', taskParam.gParam.window, t + 0.1);
+%     
+%     [~, ~, keyCode ] = KbCheck;
+%     if find(keyCode) == taskParam.keys.enter % don't know why it does not understand return or enter?
+%         break
+%     end
+% end
 
 KbReleaseWait();
 

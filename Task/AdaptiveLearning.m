@@ -17,17 +17,17 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = true; % Run the intro with practice trials?
+computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
-intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
-trials = 1; % Number of trials per (sigma-)condition. Für Pilot: 80 //  ~6 min
-contTrials = 1; % Number of control trials. Für Pilot: 40 ~4 min
+intTrials = 10; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 10; % Number of practice trials per condition. Für Pilot: 20 
+trials = 1; % Number of trials per (sigma-)condition. Für Pilot: 120 //  ~6 min
+contTrials = 1; % Number of control trials. Für Pilot: 60 ~4 min
 vola = [.4 .6 0]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 15]; % SD's of distribution.
@@ -442,7 +442,7 @@ else
                    'goldenen Kugeln bekommst du nach der Studie '...
                    'ausgezahlt.\n\nViel Erfolg!'];
         end
-        feedback = 'false';
+        feedback = false;
         BigScreen(taskParam, txtPressEnter, header, txt, feedback)
     end
     
@@ -460,10 +460,10 @@ else
             VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
             [taskDataHVHS, DataHVHS] = Main(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
         else
-            VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            [taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataHV, DataHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+%             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+%             [taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+%             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+%             [taskDataHV, DataHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
