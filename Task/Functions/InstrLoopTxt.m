@@ -1,4 +1,4 @@
-function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button, distMean)
+function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button, distMean, Data)
 % This function instructs participants for the control condition.
 % The idea is that participants remember the last outcome and indicate
 % this by aiming at this point. This requires a learning rate = 1. We are
@@ -9,10 +9,18 @@ function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button
 % Idee: predError als input. Dann am Anfang zeigen, wobei in normaler
 % practice = 0 und in controlpractice = irgendwas
 %%
-
+if exist('Data')
+    
+    
+    i=1
+    fw = 0; 
+    bw = 0;
+    
+else 
 
 %distMean = 0;
 %Priority(9);
+i = 1
 fw = 0; 
 bw = 0;
 pred = 0;
@@ -20,7 +28,7 @@ predErr = 0;
 rawPredErr = 0;
 outcome = distMean;
 Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome);
-
+end
 while 1
    
    
@@ -36,14 +44,21 @@ while 1
     if cannon == true
         Cannon(taskParam, distMean)
     end
-    if i > 1 && taskParam.gParam.PE_Bar == true 
-        DrawPE_Bar(taskParam, Data, i-1) 
-    elseif i == 1 && taskParam.gParam.PE_Bar == true 
-        DrawPE_Bar(taskParam, Data, i-1) 
-    end
+%     if i > 1 && taskParam.gParam.PE_Bar == true 
+%         DrawPE_Bar(taskParam, Data, i-1) 
+%     elseif i == 1 && taskParam.gParam.PE_Bar == true 
+%         DrawPE_Bar(taskParam, Data, i-1) 
+%     end
     DrawCircle(taskParam)
-    DrawCross(taskParam)
     PredictionSpot(taskParam)
+    if taskParam.gParam.PE_Bar == true 
+        DrawPE_Bar(taskParam, Data, i) 
+    %elseif i == 1 && taskParam.gParam.PE_Bar == true 
+     %   DrawPE_Bar(taskParam, Data, i-1) 
+    end
+   
+    DrawCross(taskParam)
+    
     if isequal(button, 'arrow')
         txtPressEnter='Zurück mit Löschen - Weiter mit Enter';
         DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);

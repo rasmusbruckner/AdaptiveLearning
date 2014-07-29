@@ -1,120 +1,140 @@
 function InstructionsControl(taskParam, subject)
 % Function BattleShipsControlInstructions is an intro for the control session.
 
-KbReleaseWait();
 
 screenIndex = 1;
 while 1
     switch(screenIndex)
         case 1
-            % Screen 1.
+            
             txtPressEnter = 'Weiter mit Enter';
-            header = 'Kontrollaufgabe';
-%             if isequal(taskParam.gParam.computer, 'D_Pilot')
-%                 txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
-%                     'die Position des Bootes merken\n\nund den blauen Punkt '...
-%                     'daraufhin genau auf diese Position steuern.'];
-%             elseif isequal(taskParam.gParam.computer, 'Dresden')
-%                 txt = ['Zum Abschluss kommt eine Gedächtnisaufgabe. Hier sollst du dir '...
-%                     'die\n\nPosition des Bootes merken und den blauen Punkt '...
-%                     'daraufhin genau\n\nauf diese Position steuern.'];
-%             else
-                txt = ['Zum Abschluss kommt eine Kontrollaufgabe. Hier sollst du den '...
-                    'blauen Punkt immer auf die Stelle der zuletzt abgeschossenen '...
-                    'Kanonenkugel steuern. Das heißt, immer genau auf das Ende des '...
-                    'schwarzen Balken.\n\n'...
-                    'Du kannst die Aufgabe jetzt erstmal üben. Wenn du den blauen Punkt zu '...
-                    'oft neben das Ende des schwarzen Balkens steuerst, muss die Übung '...
-                    'wiederholt werden.'];
-%             end
+            header = 'Genauigkeitsaufgabe';
+            
+            txt = ['Zum Abschluss kommt eine Aufgabe um deine Genauigkeit zu untersuchen. Hier sollst du den '...
+                'blauen Punkt immer auf die Stelle der zuletzt abgeschossenen '...
+                'Kanonenkugel steuern. Das heißt, immer GENAU auf das Ende des '...
+                'schwarzen Balkens.\n\n'...
+                'Diesmal verdienst du 10 CENT, wenn dein blaue Punkt auf der Stelle der letzten Kanonenkugel war UND wenn diese Kugel eine goldene Kugel war. '...
+                'In allen anderen Fällen verdienst du wieder nichts. '...
+                'Du kannst die Aufgabe jetzt erstmal üben. Wenn du den blauen Punkt zu '...
+                'ungenau positionierst, muss die Übung '...
+                'wiederholt werden.'];
+            
             feedback = false;
-            %BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+            
             [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
             if fw == 1
                 screenIndex = screenIndex + 1;
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-         
-       case 2
-            condition = 'practice';
-            VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
-            KbReleaseWait();
-            [taskData, Data] = Main(taskParam, taskParam.gParam.vola(1), taskParam.gParam.sigma(1), condition, subject);
-
-
             
-        sumCannonDev = sum(taskData.memErr(2:end) >= 10)
+            
+            
+        case 2
+            txt = ['Steuere den blauen Punkt jetzt an das Ende des schwarzen Balkens, '...
+                'dass die Mitte des Punktes auf der Position der letzten Kanonenkugel ist.'];
+            predErr = 90
+            rawPredErr = 90
+            pred = 0
+            outcome = 90
+            distMean = 90
+            Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome);
+            
+            cannon = false
+            
+            [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, 'space', distMean, Data);
+            
+            if Data.predErr >= 9
+                
+                while 1
+                    
+                    txt=['Leider hast du die Kanonenkugel vefehlt. Versuche es noch einmal!'];
+                    
+                    LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
+                    DrawCircle(taskParam);
+                    DrawCross(taskParam);
+                    PredictionSpot(taskParam);
+                    
+                    DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+                    
+                    
+                    if isequal(taskParam.gParam.computer, 'Dresden')
+                        DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.05,taskParam.gParam.screensize(4)*0.05);
+                    else
+                        DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 80);
+                    end
+                    Screen('DrawingFinished', taskParam.gParam.window);
+                    t = GetSecs;
+                    Screen('Flip', taskParam.gParam.window, t + 0.1);
+                    
+                    
+                    [ keyIsDown, ~, keyCode ] = KbCheck;
+                    if keyIsDown
+                        if keyCode(taskParam.keys.enter)
+                            screenIndex = screenIndex;
+                            break
+                        elseif keyCode(taskParam.keys.delete)
+                            screenIndex = screenIndex;
+                            break
+                        end
+                    end
+                end
+                
+            else
+                screenIndex = screenIndex +1;
+            end
+            
+            
+        case 3
+            
+            
+            header = 'Kurze Übung';
+            
+            txt = ['Sehr gut! In der nächsten Übung kannst du jetzt kurz üben, '...
+                'den blauen Punkt so GENAU wie möglich auf die Position der letzten Kanonenkugel zu steuern. '...
+                'Wenn du zu häufig von der Position abweichst, wird die Übung wiederholt.'...
+                ];
+            
+            feedback = false;
+            [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+            if fw == 1
+                screenIndex = screenIndex + 1;
+            elseif bw == 1
+                screenIndex = screenIndex - 1;
+            end
+            
+        case 4
+            condition = 'practiceCont';
+            %VolaIndication(taskParam, taskParam.strings.txtLowVola, taskParam.strings.txtPressEnter)
+            %KbReleaseWait();
+            [taskData, Data] = Main(taskParam, taskParam.gParam.vola(1), taskParam.gParam.sigma(1), condition, subject);
+            
+            
+            
+            sumCannonDev = sum(taskData.memErr(2:end) >= 9)
             if sumCannonDev >= 5
                 
                 header = 'Wiederholung der Übung';
-                txt = ['In der letzten Übung hast du dich zu häufig vom Ziel '...
-                    'der Kanone wegbewegt. Du kannst mehr Kugeln fangen, wenn du '...
-                    'immer auf dem Ziel der Kanone bleibst!\n\n'...
-                    'In der nächsten Runde kannst nochmal üben. '...
+                txt = ['In der letzten Übung warst du zu ungenau. '...
+                    'Versuche noch einmal, mit der Mitte des Punktes '...
+                    'genau auf das Ende des schwarzen Balkens zu gehen!\n\n'...
                     'Wenn du noch Fragen hast, kannst du dich auch an den Versuchsleiter wenden.']
                 feedback = false
                 [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
                 
-               
-                screenIndex = screenIndex;
-                % elseif bw == 1
-                %     screenIndex = screenIndex - 1;
-                %end
+                
+                
+                
             else
                 screenIndex = screenIndex + 1;
                 
             end
             
-       
-        case 3
-            button = taskParam.keys.space;
-%             if isequal(taskParam.gParam.computer, 'D_Pilot')
-%                 txt = ['...und steuere den blauen Punkt auf die Postition, die du '...
-%                     'dir gemerkt hast. Drücke dann LEERTASTE.'];
-%             elseif isequal(taskParam.gParam.computer, 'Dresden')
-%                 txt = ['...und steuere den blauen Punkt auf die Postition, die\n\ndu '...
-%                     'dir gemerkt hast. Drücke dann LEERTASTE.'];
-%             else
-                txt = ['...und steuere den blauen Punkt auf die Postition, die du '...
-                    'dir gemerkt\n\nhast. Drücke dann LEERTASTE.'];
-%             end
-            cannon = false;
-            distMean = 100
-            predErr = 10
-            [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, 'space', distMean);
-            time = GetSecs;
             
-            % Show baseline 2.
-            LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-            DrawCross(taskParam)
-            DrawCircle(taskParam)
-            Screen('DrawingFinished', taskParam.gParam.window);
-            Screen('Flip', taskParam.gParam.window, time + 0.1)
+        case 5
             
-            % Show boat.
-            LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-            DrawCircle(taskParam)
-            if subject.rew == '1'
-                RewardTxt = Reward(taskParam, 'gold');
-            else
-                RewardTxt = Reward(taskParam, 'silver');
-            end
-            Screen('DrawingFinished', taskParam.gParam.window);
-            Screen('Flip', taskParam.gParam.window, time + 1.1);
-            Screen('Close', RewardTxt);
-            
-            % Show baseline 3.
-            LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-            DrawCircle(taskParam)
-            DrawCross(taskParam)
-            Screen('DrawingFinished', taskParam.gParam.window);
-            Screen('Flip', taskParam.gParam.window, time + 1.6);
-            WaitSecs(1);
-            
-            KbReleaseWait();
-            
-            header = 'Start der Kontrollaufgabe';
+            header = 'Start der Genauigkeitsaufgabe';
             if subject.rew == '1'
                 if isequal(taskParam.gParam.computer, 'D_Pilot')
                     txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
@@ -138,15 +158,16 @@ while 1
                 txt = ['Denke daran, dass du den blauen Punkt ab jetzt immer auf '...
                     'die letzte Position des Bootes steuerst.\nWenn du dir die letzte Position richtig gemerkt hast, bekommst du...Silbernes Boot: 10 CENT Sand: Hier verdienst du leider nichts\nBitte vermeide Augenbewegungen und blinzeln wieder so gut wie möglich.'];
             end
-            feedback = false
-            %BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+            feedback = false;
             [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
             if fw == 1
                 screenIndex = screenIndex + 1;
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-        case 4
+            
+            
+        case 6
             break
     end
     

@@ -10,6 +10,8 @@ if isequal(condition, 'main')
     trials = taskParam.gParam.trials;
 elseif isequal(condition, 'practice')
     trials = taskParam.gParam.practTrials;
+elseif isequal(condition, 'practiceCont')
+    trials = taskParam.gParam.practContTrials;
 elseif isequal(condition, 'control')
     trials = taskParam.gParam.contTrials;
 end
@@ -69,13 +71,6 @@ for i = 1:trials
     outcome(i)=round(normrnd(mean, sig));
     distMean(i)=mean;
     
-    % BoatType
-    r = rand(1);
-    if r <= 0.5
-        boatType(i) = 1;
-    else
-        boatType(i) = 2;
-    end
     
     %CatchTrial
     if rand(1) <= 0.05
@@ -85,6 +80,11 @@ for i = 1:trials
     end
 end
 
+    % Boat type.
+    if trials > 1
+    boatType = shuffle([zeros((trials/2),1); ones((trials/2),1)]);
+    else boatType = 1;
+    end
 %% Save data.
 taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...

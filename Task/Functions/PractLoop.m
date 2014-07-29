@@ -1,4 +1,3 @@
-%function [taskParam] = PractLoop(taskParam, distMean, outcome, boatType, cannon, trials)
 function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon)
 
 % This function is called when participants move their spot in the
@@ -15,11 +14,11 @@ while 1
     
      if isequal(practData.rew{i}, '1') && practData.boatType(i) == 1
         practData.actRew(i) = 1;
-    elseif isequal(practData.rew{i}, '1') && practData.boatType(i) == 2
+    elseif isequal(practData.rew{i}, '1') && practData.boatType(i) == 0
         practData.actRew(i) = 2;
     elseif isequal(practData.rew{i}, '2') && practData.boatType(i) == 1
         practData.actRew(i) = 2;    
-    elseif isequal(practData.rew{i}, '2') && practData.boatType(i) == 2
+    elseif isequal(practData.rew{i}, '2') && practData.boatType(i) == 0
         practData.actRew(i) = 1;
     end   
     if cannon == true
@@ -114,7 +113,7 @@ if practData.boatType(i) == 1
     if subject.rew == '1' && practData.hit(i) == 1
          practData.perf(i) = taskParam.gParam.rewMag;  
     end
-elseif practData.boatType(i) == 2
+elseif practData.boatType(i) == 0
     RewardTxt = Reward(taskParam, 'silver');
    if subject.rew == '2' && practData.hit(i) == 1
          practData.perf(i) = taskParam.gParam.rewMag;  

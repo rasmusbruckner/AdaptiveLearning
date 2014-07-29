@@ -38,11 +38,11 @@ for i=1:taskData.trial
     taskData.rew{i} = Subject.rew;
     if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
         taskData.actRew(i) = 1;
-    elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
+    elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 0
         taskData.actRew(i) = 2;
     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
         taskData.actRew(i) = 2;    
-    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
+    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 0
         taskData.actRew(i) = 1;
     end   
     
@@ -159,7 +159,7 @@ for i=1:taskData.trial
         if taskData.predErr(i) <= 9
             taskData.hit(i) = 1;
         end
-    elseif isequal(condition,'control')
+    elseif isequal(condition,'control') || isequal(condition,'practiceCont')
         if taskData.memErr(i) <= 9
             taskData.hit(i) = 1;
         end
@@ -225,7 +225,7 @@ if Subject.rew == '1'
         maxMon = maxMon - taskParam.gParam.rewMag;
     end
 elseif Subject.rew == '2'
-    maxMon = (length(find(taskData.boatType == 2)) * taskParam.gParam.rewMag);
+    maxMon = (length(find(taskData.boatType == 0)) * taskParam.gParam.rewMag);
     if isequal(condition, 'control') && taskData.boatType(1) == 2
         maxMon = maxMon - taskParam.gParam.rewMag;
     end
@@ -241,7 +241,7 @@ end
      hits = sum(taskData.hit == 1)
                 goldBall = sum(taskData.boatType == 1)
                 goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag %sum(practData.boatType == 1)
-                silverBall = sum(taskData.boatType == 2)
+                silverBall = sum(taskData.boatType == 0)
                 silverHit = hits - goldHit;
                 
                 maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
