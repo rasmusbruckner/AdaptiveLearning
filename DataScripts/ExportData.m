@@ -8,14 +8,14 @@ clear all
 %% Which subjects and variables do you want to load?
 
 % Use {'all'} for all subjects or give IDs like {'001' '002'}.
-subject = {'rene'}; %'test' 'test2'
+subject = {'all'}; %'test' 'test2'
 variable = {'ID', 'sex', 'age', 'cBal', 'rew', 'sigma', 'cond', 'vola',...
     'trial', 'cp', 'TAC', 'catchTrial', 'boatType', 'actRew' 'outcome',...
     'distMean', 'pred', 'predErr', 'memErr', 'hit', 'UP', 'perf',...
     'accPerf', 'predT', 'outT', 'boatT'};
 
 if isequal(subject,{'all'})
-    subjectFile= dir(fullfile('AdaptiveLearning/DataDirectory/*.mat'));
+    subjectFile= dir(fullfile('F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory\\*.mat'));
     DataLoad = cell(numel(subjectFile),1);
     for i = 1:length(subjectFile)
         DataLoad{i} = subjectFile(i).name; % Full data files to load.
@@ -26,10 +26,10 @@ else
     DataLoad = cell(numel(subject),1);
     for j = 1:length(subject)
         
-        DataLoad{j,1} = dir(fullfile(sprintf('AdaptiveLearning/DataDirectory/*%s.mat', num2str(cell2mat((subject(j)))))));
+        DataLoad{j,1} = dir(fullfile(sprintf('F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory\\*%s.mat', num2str(cell2mat((subject(j)))))));
         DataLoad{j,1} = DataLoad{j,1}.name;
         %DataLoad{j,1} = sprintf('BattleShips_%s.mat',...
-         %   num2str(cell2mat((subject(j))))); % Full data files to load.
+        %   num2str(cell2mat((subject(j))))); % Full data files to load.
     end
 end
 
@@ -42,7 +42,7 @@ end
 %% Export selected data.
 
 % Filename for csv file.
-DATA = fopen('AdaptiveLearning/DataDirectory/DATA.csv', 'w');
+DATA = fopen('F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory\\DATA.csv', 'w');
 
 % Raw names of structs.
 name = cell(1,length(subject));%cell(6,length(subject));
@@ -79,7 +79,11 @@ for a = 1:length(allData)
                 elseif isequal(type, 'double')
                     val = num2str(val);
                 end
-                fprintf(DATA, '%s\t', val);
+                if x < (length(variable))
+                    fprintf(DATA, '%s\t', val);
+                else
+                    fprintf(DATA, '%s', val);
+                end
             end
             fprintf(DATA, '\n');
         end
