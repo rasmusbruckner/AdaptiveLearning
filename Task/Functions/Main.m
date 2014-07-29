@@ -60,7 +60,7 @@ for i=1:taskData.trial
         
         PredictionSpot(taskParam)
 
-        if i > 1 && taskParam.gParam.PE_Bar == true
+        if i > 1 && taskParam.gParam.PE_Bar == true 
            DrawPE_Bar(taskParam, taskData, i-1) 
         end
         Screen('DrawingFinished', taskParam.gParam.window);

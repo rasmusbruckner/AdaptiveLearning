@@ -63,9 +63,6 @@ while 1
                 'den blauen (schnell) und grünen (langsam) Tasten auf dem Kreis '...
                 'zu bewegen.'];
             
-            % end
-            
-            
             distMean = 0;
             outcome = 0;
             
@@ -79,19 +76,15 @@ while 1
             end
             
             KbReleaseWait();
-            
-            
+
             %---------
             % Screen 3
             %---------
         case 3
-            
-            
+
             txt=['Steuere den blauen Punkt jetzt auf die Stelle, worauf die '...
                 'Kanone zielt und drücke LEERTASTE.'];
-            
-            
-            
+
             distMean = 290;
             outcome = 290;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, 'space', distMean);
@@ -99,8 +92,7 @@ while 1
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
             KbReleaseWait();
-            
-            
+
             if Data.predErr >= 9
                 
                 while 1
