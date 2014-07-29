@@ -39,13 +39,13 @@ Computer2 = false;
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden')
-    savdir = 'C:\Users\TU-Dresden\Documents\MATLAB\AdaptiveLearning\DataDirectory';
+    savdir = 'C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory';
 elseif isequal(computer, 'D_Pilot') && Computer2 == false
     savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'D_Pilot') && Computer2 == true
     savdir = '/Users/TUDresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden_Rene')
-    savdir = 'F:\dokumente\MATLAB\adaptive_learning\DataDirectory';
+    savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
 end
 
 %% User Input.
