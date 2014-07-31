@@ -17,15 +17,15 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-runIntro = true; % Run the intro with practice trials?
+computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
 trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
 practContTrials = 1;
 contTrials = 1; % Number of control trials. Für Pilot: 60 
