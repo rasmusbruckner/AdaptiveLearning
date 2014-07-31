@@ -12,7 +12,7 @@ function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button
 if exist('Data')
     
     
-    i=1
+    i=1;
     fw = 0; 
     bw = 0;
     
@@ -20,7 +20,7 @@ else
 
 %distMean = 0;
 %Priority(9);
-i = 1
+i = 1;
 fw = 0; 
 bw = 0;
 pred = 0;

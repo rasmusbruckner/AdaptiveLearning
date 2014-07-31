@@ -17,18 +17,18 @@ clear all
 
 %% Set general parameters.
 
-computer = 'D_Pilot'; % On which computer do you run the task? Macbook or Humboldt?
+computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
-trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 //  ~6 min
+practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
+trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
 practContTrials = 1;
-contTrials = 1; % Number of control trials. Für Pilot: 60 ~4 min
+contTrials = 1; % Number of control trials. Für Pilot: 60 
 vola = [.3 .7 0]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 15]; % SD's of distribution.
@@ -232,7 +232,7 @@ fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2;
 %Position of the spots and the boats.
 fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; % Prediction spot position.
 fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; % Outcome position.
-fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam]
+fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
 fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; % Radar needle position.
 
 fBoatRect = 'boatRect'; boatRect = [0 0 60 60]; % Boat position.
@@ -329,7 +329,7 @@ boatType = [1;2;1;2;2;1;2;1;1;2];
 pred = zeros(length(outcome),1);
 predErr = zeros(length(outcome),1);
 PredErrRaw = zeros(length(outcome),1);
-fCannonDev = 'CannonDev', CannonDev = zeros(length(outcome),1);
+fCannonDev = 'CannonDev'; CannonDev = zeros(length(outcome),1);
 fPractDataLV = 'practDataLV';
 practDataLV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
 
@@ -340,7 +340,7 @@ boatType = [1;1;2;1;2;1;2;1;2;2];
 pred = zeros(length(outcome),1);
 predErr = zeros(length(outcome),1);
 PredErrRaw = zeros(length(outcome),1);
-fCannonDev = 'CannonDev', CannonDev = zeros(length(outcome),1);
+fCannonDev = 'CannonDev'; CannonDev = zeros(length(outcome),1);
 fPractDataHV = 'practDataHV';
 practDataHV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
     

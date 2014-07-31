@@ -18,7 +18,7 @@ while 1
         Screen('TextSize', taskParam.gParam.window, 30);
    if feedback == true
       DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center', [255 255 255], 80, [], [], 1);
-   elseif feedback == false && isequal(taskParam.gParam.computer, 'D_Pilot')
+   elseif feedback == false && (isequal(taskParam.gParam.computer, 'D_Pilot') || isequal(taskParam.gParam.computer, 'Macbook'))
       DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2, [255 255 255], 100, [], [], 1);
    end
     
@@ -37,7 +37,7 @@ while 1
     end
 end
 
-KbReleaseWait()
+KbReleaseWait();
 
 
 end

@@ -71,7 +71,7 @@ while 1
     end
 end
 [practData.predErr(i), ~, ~, ~, practData.rawPredErr(i)] = Diff(practData.outcome(i), practData.pred(i));
-[practData.cannonDev(i), ~, ~, ~, ~] = Diff(practData.distMean(i), practData.pred(i))
+[practData.cannonDev(i), ~, ~, ~, ~] = Diff(practData.distMean(i), practData.pred(i));
 
 
 background = false;

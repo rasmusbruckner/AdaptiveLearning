@@ -27,7 +27,7 @@ while 1
             KbReleaseWait();   
         case 2                                                              % Intro about idea
             Screen('TextSize', taskParam.gParam.window, 30);                % and keyboard.
-            txt=['Eine Kanone zielt auf eine Stelle des weißen'...
+            txt=['Eine Kanone zielt auf eine Stelle des weißen '...
                 'Kreises. Mit dem blauen Punkt kannst du die '...
                 'Kanonenkugel abfangen und verhindern, dass der '...
                 'Kreis getroffen wird.\n\nProbiere den blauen Punkt '...
@@ -47,9 +47,8 @@ while 1
             end
             KbReleaseWait(); 
         case 3                                                              % Hands-on intro 
-            txt=['Steuere den blauen Punkt jetzt auf die Stelle, '...       % about how
-                                                                            % to catch the 
-                'worauf die Kanone zielt und drücke LEERTASTE.'];           % ball.
+            txt=['Steuere den blauen Punkt jetzt auf die Stelle, '...       % about how to                                                               
+                'worauf die Kanone zielt und drücke LEERTASTE.'];           % catch the ball.
             distMean = 290;
             outcome = 290;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
@@ -89,10 +88,10 @@ while 1
                     [ keyIsDown, ~, keyCode ] = KbCheck;
                     if keyIsDown
                         if keyCode(taskParam.keys.enter)
-                            screenIndex = screenIndex;
+                            %screenIndex = screenIndex;
                             break
                         elseif keyCode(taskParam.keys.delete)
-                            screenIndex = screenIndex;
+                            %screenIndex = screenIndex;
                             break
                         end
                     end
@@ -184,10 +183,10 @@ while 1
                     [ keyIsDown, ~, keyCode ] = KbCheck;
                     if keyIsDown
                         if keyCode(taskParam.keys.enter)
-                            screenIndex = screenIndex;
+                            %screenIndex = screenIndex;
                             break
                         elseif keyCode(taskParam.keys.delete)
-                            screenIndex = screenIndex;
+                           % screenIndex = screenIndex;
                             break
                         end
                     end
@@ -252,7 +251,7 @@ while 1
                 'golden oder aus Eisen ist, probierst du am besten, '...
                 'alle Kugeln zu fangen.'];
             header = 'Die Kanonenkugeln';
-            feedback = false
+            feedback = false;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt, feedback);
             if fw == 1
@@ -261,7 +260,7 @@ while 1
                 screenIndex = screenIndex - 1;
             end
         case 7                                                              % Try to 
-            txt=['Versuche die Kanonenkugel jetzt wieder zu fangen.'];      % miss the ball.
+            txt='Versuche die Kanonenkugel jetzt wieder zu fangen.';      % miss the ball.
             distMean = 290;
             outcome = 290;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
@@ -301,10 +300,10 @@ while 1
                     [ keyIsDown, ~, keyCode ] = KbCheck;
                     if keyIsDown
                         if keyCode(taskParam.keys.enter)
-                            screenIndex = screenIndex;
+                            %screenIndex = screenIndex;
                             break
                         elseif keyCode(taskParam.keys.delete)
-                            screenIndex = screenIndex;
+                            %screenIndex = screenIndex;
                             break
                         end
                     end
@@ -315,7 +314,7 @@ while 1
             KbReleaseWait();
         case 8                                                              % Rewrard.
             while 1
-                txt=['Da du die eine goldene Kanonenkugel gefangen '
+                txt=['Weil du eine goldene Kanonenkugel gefangen '...
                     'hast, hättest du jetzt 10 CENT verdient.'];
                 LineAndBack(taskParam.gParam.window,...
                     taskParam.gParam.screensize)
@@ -335,7 +334,7 @@ while 1
                 DrawPE_Bar(taskParam, Data, 1)
                 DrawOutcome(taskParam, outcome);
                 if subject.rew == '1'
-                    Reward(taskParam, 'gold')
+                    Reward(taskParam, 'gold');
                 else
                     DrawBoat(taskParam, taskParam.colors.silver)
                 end
@@ -434,7 +433,7 @@ while 1
                 DrawPE_Bar(taskParam, Data, 1)
                 DrawOutcome(taskParam, outcome);
                 if subject.rew == '1'
-                    Reward(taskParam, 'gold')
+                    Reward(taskParam, 'gold');
                 else
                     DrawBoat(taskParam, taskParam.colors.silver)
                 end
@@ -449,7 +448,7 @@ while 1
             end
             KbReleaseWait();
         case 13                                                             % Try to 
-            txt=['Versuche die Kanonenkugel jetzt wieder zu fangen.'];      % catch the ball.
+            txt='Versuche die Kanonenkugel jetzt wieder zu fangen.';        % catch the ball.
             distMean = 190;
             outcome = 190;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
@@ -542,8 +541,8 @@ while 1
                 DrawPE_Bar(taskParam, Data, 1)
                 DrawOutcome(taskParam, outcome);
                 if subject.rew == '1'
-                    color = 'gold';
-                    Reward(taskParam, 'silver')
+                    %color = 'gold';
+                    Reward(taskParam, 'silver');
                 else
                     DrawBoat(taskParam, taskParam.colors.silver)
                 end
@@ -654,7 +653,7 @@ while 1
                 DrawPE_Bar(taskParam, Data, 1)
                 DrawOutcome(taskParam, outcome);
                 if subject.rew == '1'
-                    Reward(taskParam, 'silver')
+                    Reward(taskParam, 'silver');
                 else
                     DrawBoat(taskParam, taskParam.colors.silver)
                 end
@@ -694,11 +693,11 @@ while 1
             if subject.cBal == '1'
                 [taskParam, practData] = PractLoop(taskParam,...
                     subject, taskParam.gParam.vola(3),...
-                    taskParam.gParam.sigma(1), cannon)
-                hits = sum(practData.hit == 1)
-                goldBall = sum(practData.boatType == 1)
-                goldHit = practData.accPerf(end)/taskParam.gParam.rewMag 
-                silverBall = sum(practData.boatType == 0)
+                    taskParam.gParam.sigma(1), cannon);
+                hits = sum(practData.hit == 1);
+                goldBall = sum(practData.boatType == 1);
+                goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
+                silverBall = sum(practData.boatType == 0);
                 silverHit = hits - goldHit;
                 maxMon = (length(find(practData.boatType == 1))...
                     * taskParam.gParam.rewMag);
@@ -709,20 +708,20 @@ while 1
                     goldBall, silverHit, silverBall,...
                     practData.accPerf(end), maxMon);
                 header = 'Leistung';
-                feedback = true
+                feedback = true;
                 [fw, bw] = BigScreen(taskParam,...
                     taskParam.strings.txtPressEnter, header, txt,feedback);
-                sumCannonDev = sum(practData.cannonDev >= 5)
-                if sumCannonDev >= 5
+                sumCannonDev = sum(practData.cannonDev >= 5);
+                if sumCannonDev >= 4
                     header = 'Wiederholung der Übung';
                     txt = ['In der letzten Übung hast du dich zu '...
-                        'häufig vom Ziel der Kanone wegbewegt. Du '
+                        'häufig vom Ziel der Kanone wegbewegt. Du '...
                         'kannst mehr Kugeln fangen, wenn du '...
                         'immer auf dem Ziel der Kanone bleibst!\n\n'...
                         'In der nächsten Runde kannst du nochmal üben. '...
                         'Wenn du noch Fragen hast, kannst du dich auch '...
-                        'an den Versuchsleiter wenden.']
-                    feedback = false
+                        'an den Versuchsleiter wenden.'];
+                    feedback = false;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,...
                         feedback);
@@ -730,7 +729,7 @@ while 1
                 else
                     header = 'Zweite Übung';
                     txt = ['Gut gemacht! In der letzten Übung hast '...
-                        'du den blauen Punkt auf die Stelle gesteuert, '
+                        'du den blauen Punkt auf die Stelle gesteuert, '...
                         'auf die die Kanone gezielt hat und dadurch '...
                         'viele Kugeln gefangen. Zusätzlich zu der '...
                         'Ungenauigkeit der Kanone, wird die Kanone '...
@@ -744,8 +743,8 @@ while 1
                         'die Kanone ihr Ziel etwas häufiger. '...
                         'Wenn du deinen Punkt zu oft neben die '...
                         'anvisierte Stelle steuerst, muss die Übung '...
-                        'wiederholt werden.']
-                    feedback = false
+                        'wiederholt werden.'];
+                    feedback = false;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,...
                         feedback);
@@ -759,10 +758,10 @@ while 1
             [taskParam, practData] = PractLoop(taskParam, subject,...
                 taskParam.gParam.vola(1), taskParam.gParam.sigma(1),...
                 cannon);
-            hits = sum(practData.hit == 1)
-            goldBall = sum(practData.boatType == 1)
-            goldHit = practData.accPerf(end)/taskParam.gParam.rewMag 
-            silverBall = sum(practData.boatType == 0)
+            hits = sum(practData.hit == 1);
+            goldBall = sum(practData.boatType == 1);
+            goldHit = practData.accPerf(end)/taskParam.gParam.rewMag; 
+            silverBall = sum(practData.boatType == 0);
             silverHit = hits - goldHit;
             maxMon = (length(find(practData.boatType == 1))...
                 * taskParam.gParam.rewMag);
@@ -772,11 +771,11 @@ while 1
                 'maximal %.2f Euro gewonnen'], goldHit, goldBall,...
                 silverHit, silverBall, practData.accPerf(end), maxMon);
             header = 'Leistung';
-            feedback = true
+            feedback = true;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt, feedback);
-            sumCannonDev = sum(practData.cannonDev >= 5)
-            if sumCannonDev >= 5
+            sumCannonDev = sum(practData.cannonDev >= 5);
+            if sumCannonDev >= 4
                 
                 header = 'Wiederholung der Übung';
                 txt = ['In der letzten Übung hast du dich zu häufig '...
@@ -784,12 +783,12 @@ while 1
                     'mehr Kugeln fangen, wenn du immer auf dem Ziel '...
                     'der Kanone bleibst!\n\nIn der nächsten Runde '...
                     'kannst nochmal üben. Wenn du noch Fragen hast, '...
-                    'kannst du dich auch an den Versuchsleiter wenden.']
-                feedback = false
+                    'kannst du dich auch an den Versuchsleiter wenden.'];
+                feedback = false;
                 [fw, bw] = BigScreen(taskParam,...
                     taskParam.strings.txtPressEnter, header, txt,...
                     feedback);
-                screenIndex = screenIndex;
+                %screenIndex = screenIndex;
             else
                 screenIndex = screenIndex + 1; 
             end
@@ -825,10 +824,10 @@ while 1
             [taskParam, practData] = PractLoop(taskParam, subject,...
                 taskParam.gParam.vola(2), taskParam.gParam.sigma(1),...
                 cannon);
-            hits = sum(practData.hit == 1)
-            goldBall = sum(practData.boatType == 1)
-            goldHit = practData.accPerf(end)/taskParam.gParam.rewMag
-            silverBall = sum(practData.boatType == 0)
+            hits = sum(practData.hit == 1);
+            goldBall = sum(practData.boatType == 1);
+            goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
+            silverBall = sum(practData.boatType == 0);
             silverHit = hits - goldHit;
             maxMon = (length(find(practData.boatType == 1))...
                 * taskParam.gParam.rewMag);
@@ -838,11 +837,11 @@ while 1
                 'maximal %.2f Euro gewonnen'], goldHit, goldBall,...
                 silverHit, silverBall, practData.accPerf(end), maxMon);
             header = 'Leistung';
-            feedback = true
+            feedback = true;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt, feedback);
-            sumCannonDev = sum(practData.cannonDev >= 5)
-            if sumCannonDev >= 5  
+            sumCannonDev = sum(practData.cannonDev >= 5);
+            if sumCannonDev >= 4
                 header = 'Wiederholung der Übung';
                 txt = ['In der letzten Übung hast du dich zu häufig '...
                     'vom Ziel der Kanone wegbewegt. Du kannst mehr '...
@@ -850,11 +849,11 @@ while 1
                     'Kanone bleibst!\n\n'...
                     'In der nächsten Runde kannst nochmal üben. '...
                     'Wenn du noch Fragen hast, kannst du dich '...
-                    'auch an den Versuchsleiter wenden.']
-                feedback = false
+                    'auch an den Versuchsleiter wenden.'];
+                feedback = false;
                 [fw, bw] = BigScreen(taskParam,...
                     taskParam.strings.txtPressEnter, header, txt,feedback);
-                screenIndex = screenIndex;
+                %screenIndex = screenIndex;
             else
                 screenIndex = screenIndex + 1;
             end 
