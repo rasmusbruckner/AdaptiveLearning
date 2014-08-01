@@ -17,11 +17,13 @@ clear all
 
 %% Set general parameters.
 
-computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+% computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
+
+[computer, Computer2] = identifyPC; % On which computer do you run the task?
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 20; % Trials during the introduction (per condition). Für Pilot: 10 
@@ -34,7 +36,8 @@ safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 15]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
-Computer2 = false;
+
+% Computer2 = false;
 
 
 % Check number of trials in each condition.
