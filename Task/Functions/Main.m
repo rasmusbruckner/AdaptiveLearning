@@ -1,6 +1,12 @@
-function [taskData, Data] = BattleShipsMain(taskParam, vola, sigma, condition, Subject)
+function [taskData, Data] = Main(taskParam, vola, sigma, condition, Subject)
 % This function acutally runs the task. You can specify "main",
 % "practice" or "control". This loop is optimized for triggering accuracy.
+
+
+
+%%%
+% Check Feedback!
+%%%
 
 KbReleaseWait();
 
@@ -32,20 +38,20 @@ for i=1:taskData.trial
     taskData.rew{i} = Subject.rew;
     if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
         taskData.actRew(i) = 1;
-    elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 2
+    elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 0
         taskData.actRew(i) = 2;
     elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
         taskData.actRew(i) = 2;    
-    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 2
+    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 0
         taskData.actRew(i) = 1;
     end   
     
     
     while 1
         
-       % if taskData.catchTrial(i) == 1 && taskData.cp(i) == 0 &&(isequal(condition,'main') || isequal(condition,'practice'))
-        %    DrawNeedle(taskParam, taskData.distMean(i))
-        %end
+       if taskData.catchTrial(i) == 1 && taskData.cp(i) == 0 &&(isequal(condition,'main') || isequal(condition,'practice'))
+           Cannon(taskParam, taskData.distMean(i))
+       end
         
         
         % Start trial - subject predicts boat.
@@ -54,7 +60,7 @@ for i=1:taskData.trial
         
         PredictionSpot(taskParam)
 
-        if i > 1 && taskParam.gParam.PE_Bar == true
+        if i > 1 && taskParam.gParam.PE_Bar == true 
            DrawPE_Bar(taskParam, taskData, i-1) 
         end
         Screen('DrawingFinished', taskParam.gParam.window);
@@ -67,7 +73,7 @@ for i=1:taskData.trial
         if keyIsDown
             if keyCode(taskParam.keys.rightKey)
                 if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.5*taskParam.circle.unit; %0.02
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; %0.02
                 else
                     taskParam.circle.rotAngle = 0;
                 end
@@ -79,7 +85,7 @@ for i=1:taskData.trial
                 end    
             elseif keyCode(taskParam.keys.leftKey)
                 if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.5*taskParam.circle.unit;
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
                 else
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
@@ -108,9 +114,9 @@ for i=1:taskData.trial
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-    
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1)
     RT_Flip(i) = GetSecs-time;
+    
     % Calculate prediction error.
     [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i), taskData.rawPredErr(i)] = Diff(taskData.outcome(i), taskData.pred(i));
     %if i > 1 && taskParam.gParam.PE_Bar == true
@@ -118,13 +124,13 @@ for i=1:taskData.trial
     
     %end
     % Show outcome.
-    
-    Cannonball(taskParam, taskData, i)
+    %background = false
+    %Cannonball(taskParam, taskData.distMean(i), taskData.outcome(i), background)
+    %Cannonball(taskParam, distMean, outcome, background)
     
     DrawCircle(taskParam)
     PredictionSpot(taskParam)  
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
-
     DrawPE_Bar(taskParam, taskData, i) 
     %PredictionSpot(taskParam) 
     % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
@@ -150,11 +156,11 @@ for i=1:taskData.trial
     
     % Calculate hits
     if isequal(condition,'main') || isequal(condition,'practice')
-        if taskData.predErr(i) <= taskParam.circle.outcSize/2%13
+        if taskData.predErr(i) <= 9
             taskData.hit(i) = 1;
         end
-    elseif isequal(condition,'control')
-        if taskData.memErr(i) <= taskParam.circle.outcSize/2%13;
+    elseif isequal(condition,'control') || isequal(condition,'practiceCont')
+        if taskData.memErr(i) <= 9
             taskData.hit(i) = 1;
         end
     end
@@ -166,24 +172,24 @@ for i=1:taskData.trial
     
     % Trigger: outcome.
     Tevent = 2;
-    Screen('Flip', taskParam.gParam.window, t + 3);
+    Screen('Flip', taskParam.gParam.window, t + 0.5);
     taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-    Screen('Flip', taskParam.gParam.window, t + 3.6, 1);
+    Screen('Flip', taskParam.gParam.window, t + 1.1, 1);
     
     % Show boat and calculate performance.       %TRIGGER
     DrawCircle(taskParam)
     if taskData.boatType(i) == 1
-        ShipTxt = DrawBoat(taskParam, taskParam.colors.gold);
+        RewardTxt = Reward(taskParam, 'gold');
         if Subject.rew == '1' && taskData.hit(i) == 1
             taskData.perf(i) = taskParam.gParam.rewMag;  
         end
     else
-        ShipTxt = DrawBoat(taskParam, taskParam.colors.silver);
+        RewardTxt = Reward(taskParam, 'silver');
         if Subject.rew == '2' && taskData.hit(i) == 1
             taskData.perf(i) = taskParam.gParam.rewMag;  
         end
@@ -195,16 +201,16 @@ for i=1:taskData.trial
     % Trigger: boat.
     Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 4.1);
+    Screen('Flip', taskParam.gParam.window, t + 2.1);
     taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
-    Screen('Close', ShipTxt);
+    Screen('Close', RewardTxt);
     
     % Show baseline 3.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 4.6);
+    Screen('Flip', taskParam.gParam.window, t + 2.6);
     
     WaitSecs(1);
 end
@@ -219,35 +225,52 @@ if Subject.rew == '1'
         maxMon = maxMon - taskParam.gParam.rewMag;
     end
 elseif Subject.rew == '2'
-    maxMon = (length(find(taskData.boatType == 2)) * taskParam.gParam.rewMag);
+    maxMon = (length(find(taskData.boatType == 0)) * taskParam.gParam.rewMag);
     if isequal(condition, 'control') && taskData.boatType(1) == 2
         maxMon = maxMon - taskParam.gParam.rewMag;
     end
 end
 
 % Give performance feedback.
-while 1
+% while 1
     if isequal(condition, 'practice')
         txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
     else
         txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
     end
-    txtBreak = 'Ende des Blocks';
-    txtPressEnter = 'Weiter mit Enter';
-    Screen('TextSize', taskParam.gParam.window, 50);
-    DrawFormattedText(taskParam.gParam.window, txtBreak, 'center', taskParam.gParam.screensize(4)*0.3);
-    Screen('TextSize', taskParam.gParam.window, 30);
-    DrawFormattedText(taskParam.gParam.window, txtFeedback, 'center', 'center');
-    DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
-    Screen('DrawingFinished', taskParam.gParam.window);
-    t = GetSecs;
-    Screen('Flip', taskParam.gParam.window, t + 0.1);
+     hits = sum(taskData.hit == 1)
+                goldBall = sum(taskData.boatType == 1)
+                goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag %sum(practData.boatType == 1)
+                silverBall = sum(taskData.boatType == 0)
+                silverHit = hits - goldHit;
+                
+                maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+                txt = sprintf(['Gefangene goldene Kugeln: %.0f von %.0f\n\n'...
+                               'Gefangene eiserne Kugeln: %.0f von %.0f\n\n'...
+                               'In diesem Block hättest du %.2f von '...
+                               'maximal %.2f Euro gewonnen'], goldHit, goldBall, silverHit, silverBall, taskData.accPerf(end), maxMon);
+                
+                header = 'Leistung';
+                feedback = true
+                [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+            
     
-    [~, ~, keyCode ] = KbCheck;
-    if find(keyCode) == taskParam.keys.enter % don't know why it does not understand return or enter?
-        break
-    end
-end
+%     txtBreak = 'Ende des Blocks';
+%     txtPressEnter = 'Weiter mit Enter';
+%     Screen('TextSize', taskParam.gParam.window, 50);
+%     DrawFormattedText(taskParam.gParam.window, txtBreak, 'center', taskParam.gParam.screensize(4)*0.3);
+%     Screen('TextSize', taskParam.gParam.window, 30);
+%     DrawFormattedText(taskParam.gParam.window, txtFeedback, 'center', 'center');
+%     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+%     Screen('DrawingFinished', taskParam.gParam.window);
+%     t = GetSecs;
+%     Screen('Flip', taskParam.gParam.window, t + 0.1);
+%     
+%     [~, ~, keyCode ] = KbCheck;
+%     if find(keyCode) == taskParam.keys.enter % don't know why it does not understand return or enter?
+%         break
+%     end
+% end
 
 KbReleaseWait();
 

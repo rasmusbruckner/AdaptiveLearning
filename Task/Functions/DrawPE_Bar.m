@@ -1,17 +1,31 @@
-function DrawPE_Bar(taskParam, taskData, trial)
+function DrawPE_Bar(taskParam, Data, trial)
+%function DrawPE_Bar(taskParam, rawPredErr, outcome, pred, predErr)
 % This function draws the prediction error bar.
 
 rotRad = taskParam.circle.rotationRad-1;
 zero = taskParam.gParam.zero;
-if taskData.rawPredErr(trial) >= 0 && taskData.rawPredErr(trial) <= 180
-    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],taskData.pred(trial), taskData.predErr(trial), 8, [], []) %115
-elseif taskData.rawPredErr(trial) > 180 && taskData.rawPredErr(trial)
-    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],taskData.outcome(trial), taskData.predErr(trial), 8, [], []) %115
-elseif taskData.rawPredErr(trial) <= 0 && taskData.rawPredErr(trial) >= -180
-    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],taskData.outcome(trial), taskData.predErr(trial), 8, [], []) %115
-elseif taskData.rawPredErr(trial) < -180
-    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],taskData.pred(trial), taskData.predErr(trial), 8, [], []) %115
+if Data.rawPredErr(trial) >= 0 && Data.rawPredErr(trial) <= 180
+    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],Data.pred(trial), Data.predErr(trial), 8, [], []) %115
+elseif Data.rawPredErr(trial) > 180 && Data.rawPredErr(trial)
+    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],Data.outcome(trial), Data.predErr(trial), 8, [], []) %115
+elseif Data.rawPredErr(trial) <= 0 && Data.rawPredErr(trial) >= -180
+    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],Data.outcome(trial), Data.predErr(trial), 8, [], []) %115
+elseif Data.rawPredErr(trial) < -180
+    Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],Data.pred(trial), Data.predErr(trial), 8, [], []) %115
 end
 
 end
 
+% rotRad = taskParam.circle.rotationRad-1;
+% zero = taskParam.gParam.zero;
+% if rawPredErr >= 0 && rawPredErr <= 180
+%     Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],pred, predErr, 8, [], []) %115
+% elseif rawPredErr > 180 && rawPredErr
+%     Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],outcome, predErr, 8, [], []) %115
+% elseif rawPredErr <= 0 && rawPredErr >= -180
+%     Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],outcome, predErr, 8, [], []) %115
+% elseif rawPredErr < -180
+%     Screen('FrameArc',taskParam.gParam.window,[0 0 0],[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], pred, predErr, 8, [], []) %115
+% end
+% 
+% end

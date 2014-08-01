@@ -1,4 +1,4 @@
-function [screenIndex] = getScreenIndex(taskParam, screenIndex)
+function [screenIndex] = GetScreenIndex(taskParam, screenIndex)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -12,6 +12,5 @@ function [screenIndex] = getScreenIndex(taskParam, screenIndex)
             %break
         end
     end
-
 end
 
