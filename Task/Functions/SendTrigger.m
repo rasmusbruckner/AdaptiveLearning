@@ -21,17 +21,17 @@ if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequa
     
     % second digit
     if trial == 1 % only vola
-        if isequal(condition, 'main') && vola == .2 % Low vola = 0
+        if isequal(condition, 'main') && vola == .3 % Low vola = 0
             digit2 = 5;
         elseif isequal(condition, 'main') && vola == .7 % High vola = 3
             digit2 = 6;
-        elseif isequal(condition, 'control') && vola == .2 % High vola = 3
+        elseif isequal(condition, 'control') && vola == .3 % High vola = 3
             digit2 = 7;
         elseif isequal(condition, 'control') && vola == .7 % High vola = 3
             digit2 = 8;    
         end
     else % vola + cp
-        if vola == .2 && taskData.cp(trial) == 1 % Low vola + cp = 0
+        if vola == .3 && taskData.cp(trial) == 1 % Low vola + cp = 0
             digit2 = 0;
         elseif vola == .2 && taskData.cp(trial) == 0 % Low vola + no cp = 1
             digit2 = 1;

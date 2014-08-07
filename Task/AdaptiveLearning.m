@@ -20,7 +20,7 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
@@ -28,12 +28,12 @@ PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 2; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 2; % Number of practice trials per condition. Für Pilot: 20 
-trials = 2;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
+trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
 practContTrials = 2;
 contTrials = 2; % Number of control trials. Für Pilot: 60 
 vola = [.3 .7 0]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
-sigma = [10 15]; % SD's of distribution.
+sigma = [8 12]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
 
@@ -475,7 +475,7 @@ else
             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
             [taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataHV, DataHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+            [taskDataHV, DataHV] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
