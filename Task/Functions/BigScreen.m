@@ -16,11 +16,13 @@ while 1
         DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
     end
         Screen('TextSize', taskParam.gParam.window, 30);
-   if feedback == true
-      DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center', [255 255 255], 80, [], [], 1);
-   elseif feedback == false && (isequal(taskParam.gParam.computer, 'D_Pilot') || isequal(taskParam.gParam.computer, 'Macbook'))
-      DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2, [255 255 255], 100, [], [], 1);
-   end
+  % if feedback == true
+      %DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center', [255 255 255], 80, [], [], 1);
+   %elseif feedback == false && (isequal(taskParam.gParam.computer, 'D_Pilot') || isequal(taskParam.gParam.computer, 'Macbook'))
+   sentenceLength = 55 % Dresde Pilot 100   
+   
+   DrawFormattedText(taskParam.gParam.window, txt, taskParam.gParam.screensize(4)*0.2, taskParam.gParam.screensize(4)*0.2, [255 255 255], sentenceLength, [], [], 1);
+   %end
     
     DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
     Screen('DrawingFinished', taskParam.gParam.window);
