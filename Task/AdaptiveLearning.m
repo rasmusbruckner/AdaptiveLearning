@@ -13,6 +13,8 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
+
+% No point in subject name!
 clear all
 
 %% Set general parameters.
@@ -23,7 +25,7 @@ clear all
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = true; % Do you want to send triggers?
 intTrials = 20; % Trials during the introduction (per condition). Für Pilot: 10 
