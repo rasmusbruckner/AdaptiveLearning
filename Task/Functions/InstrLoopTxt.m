@@ -11,7 +11,6 @@ function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button
 %%
 if exist('Data')
     
-    
     i=1;
     fw = 0; 
     bw = 0;
@@ -30,7 +29,6 @@ outcome = distMean;
 Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome);
 end
 while 1
-   
    
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
    

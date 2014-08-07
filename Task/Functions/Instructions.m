@@ -334,7 +334,7 @@ while 1
                 DrawPE_Bar(taskParam, Data, 1)
                 DrawOutcome(taskParam, outcome);
                 if subject.rew == '1'
-                    Reward(taskParam, 'gold');
+                    RewardTxt = Reward(taskParam, 'gold');
                 else
                     DrawBoat(taskParam, taskParam.colors.silver)
                 end
@@ -347,6 +347,7 @@ while 1
                 screenIndex = GetScreenIndex(taskParam, screenIndex);
                 break   
             end
+            Screen('Close', RewardTxt)
             KbReleaseWait();
         case 9                                                              % Try to 
             txt=['Veruche die Kanonenkugel bei nächsten Schuss '...         % miss the ball.
@@ -909,4 +910,5 @@ while 1
             break
     end
 end
+
 end

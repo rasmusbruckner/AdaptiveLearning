@@ -24,5 +24,6 @@ function DrawNeedle(taskParam, distMean)
 % Screen('BlendFunction', taskParam.gParam.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 % cannonTxt = Screen('MakeTexture', taskParam.gParam.window, cannonPic);
 Screen('DrawTexture', taskParam.gParam.window, taskParam.cannonTxt,[], taskParam.dstRect, distMean, [], [0], [0 0 0], [], []);  %Boat
+%Screen('Close', CannonTxt);
 end
 

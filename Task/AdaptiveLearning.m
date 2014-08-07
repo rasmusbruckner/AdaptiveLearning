@@ -21,14 +21,14 @@ computer = 'Macbook'; % On which computer do you run the task? Macbook or Humbol
 runIntro = true; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
 sendTrigger = false; % Do you want to send triggers?
-intTrials = 20; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 120;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
-practContTrials = 10;
-contTrials = 60; % Number of control trials. Für Pilot: 60 
+intTrials = 2; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 2; % Number of practice trials per condition. Für Pilot: 20 
+trials = 2;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
+practContTrials = 2;
+contTrials = 2; % Number of control trials. Für Pilot: 60 
 vola = [.3 .7 0]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [10 15]; % SD's of distribution.
@@ -139,9 +139,9 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-Screen('Preference', 'VisualDebugLevel', 3);
-Screen('Preference', 'SuppressAllWarnings', 1);
-Screen('Preference', 'SkipSyncTests', 2);
+%Screen('Preference', 'VisualDebugLevel', 3);
+%Screen('Preference', 'SuppressAllWarnings', 1);
+%Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
