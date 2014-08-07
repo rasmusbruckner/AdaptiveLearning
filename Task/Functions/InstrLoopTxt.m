@@ -31,13 +31,13 @@ end
 while 1
    
     LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-   
-    if isequal(taskParam.gParam.computer, 'D_Pilot')
-    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 105);
-    else
-    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 85);
+   sentenceLength = 55
+   % if isequal(taskParam.gParam.computer, 'D_Pilot')
+    DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
+   % else
+    %DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 85);
     
-    end
+    %end
     
     if cannon == true
         Cannon(taskParam, distMean)

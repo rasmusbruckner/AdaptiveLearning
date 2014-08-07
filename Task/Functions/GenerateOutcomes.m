@@ -82,7 +82,7 @@ end
 
     % Boat type.
     if trials > 1
-    boatType = shuffle([zeros((trials/2),1); ones((trials/2),1)]);
+    boatType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
     else boatType = 1;
     end
 %% Save data.

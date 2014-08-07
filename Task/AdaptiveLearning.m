@@ -13,6 +13,8 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
+
+% No point in subject name!
 clear all
 
 %% Set general parameters.
@@ -25,12 +27,21 @@ runVola = true; % Do you want to run different volatility conditions?
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = true; % Use a prediction error bar?
+%<<<<<<< HEAD
 sendTrigger = false; % Do you want to send triggers?
 intTrials = 2; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 2; % Number of practice trials per condition. Für Pilot: 20 
 trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // 
 practContTrials = 2;
 contTrials = 2; % Number of control trials. Für Pilot: 60 
+
+sendTrigger = true; % Do you want to send triggers?
+intTrials = 20; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
+trials = 150;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+practContTrials = 10;
+contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
+>>>>>>> 60601960d96a8b8d9e1d08d2eac9ee7e286e10af
 vola = [.3 .7 0]; % Volatility of the environment.
 safe = 3; % How many guaranteed trials without change-points.
 sigma = [8 12]; % SD's of distribution.
