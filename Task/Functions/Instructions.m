@@ -346,7 +346,7 @@ while 1
                 Screen('DrawingFinished', taskParam.gParam.window, [], []);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
-                screenIndex = GetScreenIndex(taskParam, screenIndex);
+                screenIndex = ScreenIndex(taskParam, screenIndex);
                 break   
             end
             Screen('Close', RewardTxt)
@@ -446,7 +446,7 @@ while 1
                 Screen('DrawingFinished', taskParam.gParam.window, [], []);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
-                screenIndex = GetScreenIndex(taskParam, screenIndex);
+                screenIndex = ScreenIndex(taskParam, screenIndex);
                 break 
             end
             KbReleaseWait();
@@ -556,7 +556,7 @@ while 1
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
                 
-                screenIndex = GetScreenIndex(taskParam, screenIndex);
+                screenIndex = ScreenIndex(taskParam, screenIndex);
                 break
             end
             KbReleaseWait();
@@ -666,7 +666,7 @@ while 1
                 Screen('DrawingFinished', taskParam.gParam.window, [], []);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
-                screenIndex = GetScreenIndex(taskParam, screenIndex);
+                screenIndex = ScreenIndex(taskParam, screenIndex);
                 break
             end
             KbReleaseWait();
