@@ -129,10 +129,11 @@ for i=1:taskData.trial
     %Cannonball(taskParam, distMean, outcome, background)
     
     DrawCircle(taskParam)
+    %Shield(taskParam, taskData.pred(i))
     PredictionSpot(taskParam)  
-    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
     DrawPE_Bar(taskParam, taskData, i) 
-    %PredictionSpot(taskParam) 
+    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
+%PredictionSpot(taskParam) 
     % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
     % centered around the outcome
     
@@ -156,11 +157,11 @@ for i=1:taskData.trial
     
     % Calculate hits
     if isequal(condition,'main') || isequal(condition,'practice')
-        if taskData.predErr(i) <= 9
+        if taskData.predErr(i) <= taskData.allASS(i)
             taskData.hit(i) = 1;
         end
     elseif isequal(condition,'control') || isequal(condition,'practiceCont')
-        if taskData.memErr(i) <= 9
+        if taskData.memErr(i) <= 5
             taskData.hit(i) = 1;
         end
     end
@@ -181,36 +182,55 @@ for i=1:taskData.trial
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 1.1, 1);
     
-    % Show boat and calculate performance.       %TRIGGER
+    
     DrawCircle(taskParam)
-    if taskData.boatType(i) == 1
-        RewardTxt = Reward(taskParam, 'gold');
-        if Subject.rew == '1' && taskData.hit(i) == 1
-            taskData.perf(i) = taskParam.gParam.rewMag;  
-        end
-    else
-        RewardTxt = Reward(taskParam, 'silver');
-        if Subject.rew == '2' && taskData.hit(i) == 1
-            taskData.perf(i) = taskParam.gParam.rewMag;  
-        end
-    end
+    %PredictionSpot(taskParam)  
+    Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.boatType(i))
+    DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
+    %DrawPE_Bar(taskParam, taskData, i) 
+    %PredictionSpot(taskParam) 
+    % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
+    % centered around the outcome
     
-    % Calculate accumulated performance.
-    taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
-    
-    % Trigger: boat.
-    Tevent = 3;
-    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2.1);
-    taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
-    %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
-    Screen('Close', RewardTxt);
-    
+
     % Show baseline 3.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 2.6);
+    
+%     % Show boat and calculate performance.       %TRIGGER
+%     DrawCircle(taskParam)
+%     if taskData.boatType(i) == 1
+%         RewardTxt = Reward(taskParam, 'gold');
+%         if Subject.rew == '1' && taskData.hit(i) == 1
+%             taskData.perf(i) = taskParam.gParam.rewMag;  
+%         end
+%     else
+%         RewardTxt = Reward(taskParam, 'silver');
+%         if Subject.rew == '2' && taskData.hit(i) == 1
+%             taskData.perf(i) = taskParam.gParam.rewMag;  
+%         end
+%     end
+%     
+%     % Calculate accumulated performance.
+%     taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
+%     
+%     % Trigger: boat.
+%     Tevent = 3;
+%     Screen('DrawingFinished', taskParam.gParam.window);
+%     Screen('Flip', taskParam.gParam.window, t + 3.6);
+%     taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
+%     %taskData.boatT(i) = SendTrigger(taskParam, taskData, Subject, condition, vola, i, Tevent);
+%     Screen('Close', RewardTxt);
+%     
+%     % Show baseline 3.
+%     DrawCross(taskParam)
+%     DrawCircle(taskParam)
+%     Screen('DrawingFinished', taskParam.gParam.window);
+%     Screen('Flip', taskParam.gParam.window, t + 4.1);
     
     WaitSecs(1);
 end

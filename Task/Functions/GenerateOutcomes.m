@@ -56,7 +56,14 @@ accPerf = zeros(trials, 1); % Accumulated performance.
 %% generateOutcomes (by Matt Nassar)
 
 %rand('RNG', sum(clock));
+ASS=nan;
 
+% Angular shield size:
+UorExp=0
+mu=20;
+minASS = 10;
+maxASS=180;
+allASS = zeros(trials,1);
 for i = 1:trials
     if (rand < vola && s==0) || i == 1;
         mean=round(rand(1).*359); % Outcome expressed in degrees.
@@ -78,15 +85,44 @@ for i = 1:trials
     else
         catchTrial(i) = 0;
     end
+    
+    
+
+    while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
+    ASS=exprnd(mu);
+    end
+    allASS(i)=ASS;
 end
 
+
+
+%%%%%%%%
+% % Angular shield size:
+% UorExp=0
+% mu=20;
+% minASS = 10;
+% maxASS=180;
+% allASS = zeros(trials,1);
+
+% for i = 1:trials
+% 
+% ASS=nan;
+% 
+% while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
+% ASS=exprnd(mu);
+% end
+% allASS(i)=ASS;
+% 
+% end
+
+%%%%%%%%%%%%%
     % Boat type.
     if trials > 1
     boatType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
     else boatType = 1;
     end
 %% Save data.
-taskData = struct(fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
+taskData = struct(fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
     fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.predT, predT,...
     fieldNames.outT, outT, fieldNames.boatT, boatT, fieldNames.pred, pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...

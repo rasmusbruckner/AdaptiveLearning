@@ -22,7 +22,7 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
@@ -154,7 +154,7 @@ screensizePart = (screensize(3:4));
 fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
-[ window, windowRect ] = Screen('OpenWindow', 0, [64 64 64], []); %420 250 1020 650
+[ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []); %420 250 1020 650  64 64 64
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
@@ -168,6 +168,7 @@ fDate = 'Date'; Date = fDate; % Date.
 fCond = 'cond'; cond = fCond; % Condition.
 fTrial = 'trial'; trial = fTrial; % Trial.
 fOutcome = 'outcome'; outcome = fOutcome; % Outcome.
+fAllASS = 'allASS'; allASS = fAllASS;
 fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean.
 fCp = 'cp'; cp = fCp; % Change point.
 fTAC = 'TAC'; TAC = fTAC; % Trials after change-point.
@@ -196,7 +197,7 @@ fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct(fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
@@ -221,9 +222,10 @@ gParam = struct(fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runS
 %% Circle parameters.
 
 %Radius of the spots.
-fPredSpotRad =  'predSpotRad'; predSpotRad = 25; % Prediction spot (red). This is expressed in pixel, not in degrees!
+fPredSpotRad =  'predSpotRad'; predSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees! it used to be 25
 fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees!
-fOutcSize = 'outcSize'; outcSize = 6; % Black bar. Number must be equal.This is expressed in pixel, not in degrees!
+fShieldAngle = 'shieldAngle'; shieldAngle = 30; %Shield Angle.
+fOutcSize = 'outcSize'; outcSize = 10; % Black bar. Number must be equal.This is expressed in pixel, not in degrees!
 fCannonEnd = 'cannonEnd'; cannonEnd = 5; %This is in pixel, not in degrees!
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle. This is expressed in pixel, not in degrees!
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius. This is expressed in pixel, not in degrees!
@@ -257,7 +259,7 @@ fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when predic
 
 % Circle parameters.
 fCircle = 'circle';
-circle = struct(fCannonEndCent, cannonEndCent, fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
+circle = struct(fShieldAngle, shieldAngle, fCannonEndCent, cannonEndCent, fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad, predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad, rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
     outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect, fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
     fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect, predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
