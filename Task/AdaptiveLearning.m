@@ -23,6 +23,7 @@ clear all
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
 runIntro = false; % Run the intro with practice trials?
+version = 'oddball'; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
@@ -33,9 +34,9 @@ practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
 trials = 150;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 10;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
-vola = [.3 .7 0]; % Volatility of the environment.
-safe = 3; % How many guaranteed trials without change-points.
-sigma = [8 12]; % SD's of distribution.
+vola = [.4 .7 0]; % Volatility of the environment.
+safe = 4; % How many guaranteed trials without change-points.
+sigma = [10 12]; % SD's of distribution.
 rewMag = 0.1; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
 
@@ -58,6 +59,8 @@ elseif isequal(computer, 'D_Pilot') && Computer2 == false
 elseif isequal(computer, 'D_Pilot') && Computer2 == true
     savdir = '/Users/TUDresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'Dresden_Rene')
+    savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
+elseif isequal(computer, 'Matt')
     savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
 end
 
@@ -422,6 +425,13 @@ else
     txtLVHS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist stark';
     txtHVHS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist stark';
     KbReleaseWait();
+    
+    if isequal(version, 'oddball')
+        condition = 'main';
+        [OddBallData, OddballData] = Oddball(taskParam, vola(1), sigma(1), condition, Subject);
+    end
+    
+    [taskDataLVLS, DataLVLS] = Main(taskParam, vola(1), sigma(1), condition, Subject);
     
     % Run intro with practice trials if true.
     if runIntro == true

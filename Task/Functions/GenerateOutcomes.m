@@ -55,12 +55,13 @@ accPerf = zeros(trials, 1); % Accumulated performance.
 
 %% generateOutcomes (by Matt Nassar)
 
+
 %rand('RNG', sum(clock));
-ASS=nan;
+
 
 % Angular shield size:
 UorExp=0
-mu=20;
+mu=10;
 minASS = 10;
 maxASS=180;
 allASS = zeros(trials,1);
@@ -75,7 +76,9 @@ for i = 1:trials
         s=max([s-1, 0]);
     end
     %outcome(i) = 90
-    outcome(i)=round(normrnd(mean, sig));
+    
+    outcome(i)=round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), sig, 1)));
+    %outcome(i)=round(normrnd(mean, sig));
     distMean(i)=mean;
     
     
@@ -85,8 +88,7 @@ for i = 1:trials
     else
         catchTrial(i) = 0;
     end
-    
-    
+    ASS=nan;
 
     while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
     ASS=exprnd(mu);
@@ -97,7 +99,7 @@ end
 
 
 %%%%%%%%
-% % Angular shield size:
+% Angular shield size:
 % UorExp=0
 % mu=20;
 % minASS = 10;
