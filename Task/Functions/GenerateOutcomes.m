@@ -65,6 +65,8 @@ mu=10;
 minASS = 10;
 maxASS=180;
 allASS = zeros(trials,1);
+
+if taskParam.gParam.oddball == false
 for i = 1:trials
     if (rand < vola && s==0) || i == 1;
         mean=round(rand(1).*359); % Outcome expressed in degrees.
@@ -80,7 +82,7 @@ for i = 1:trials
     outcome(i)=round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), sig, 1)));
     %outcome(i)=round(normrnd(mean, sig));
     distMean(i)=mean;
-    
+    oddBall(i) = nan
     
     %CatchTrial
     if rand(1) <= 0.05
@@ -97,6 +99,48 @@ for i = 1:trials
 end
 
 
+else
+  
+distMean=nan(trials,1);
+oddBall=false(trials,1);
+outcome=nan(trials,1);
+
+
+for i =1:trials;
+    if i == 1
+        muRad_offset=unifrnd(-pi, pi);
+    else
+        muRad_offset= deg2rad(distMean(i-1)-180)+circ_vmrnd(0, taskParam.gParam.driftConc, 1);
+    end
+        muRad_offset=circ_dist(muRad_offset, 0);
+        distMean(i)=rad2deg(muRad_offset)+180;
+
+
+    if rand<taskParam.gParam.oddballProb
+        outcome(i)=round(rand.*359);
+        oddBall(i)=true;
+    else
+    outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), taskParam.gParam.driftConc, 1))+180)
+    end
+    TAC(i)=nan;
+    cp(i) = nan;
+    
+    
+    ASS=nan;
+
+    while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
+    ASS=exprnd(mu);
+    end
+    allASS(i)=ASS;
+end
+
+
+
+
+    
+    
+    
+end
 
 %%%%%%%%
 % Angular shield size:
