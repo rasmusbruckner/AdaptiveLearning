@@ -1,9 +1,9 @@
-function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon)
+function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon, condition)
 
 % This function is called when participants move their spot in the
 % instructions.
 
-condition = 'practice';
+%condition = 'practice';
 practData = GenerateOutcomes(taskParam, vola, sigma, condition);
 
 %Priority(9);
@@ -75,7 +75,14 @@ end
 
 
 background = false;
+%Cannonball(taskParam, practData.distMean(i), practData.distMean(i), background)
+
+if practData.oddBall(i) == false
 Cannonball(taskParam, practData.distMean(i), practData.outcome(i), background)
+else
+    WaitSecs(0.5)
+end
+
 t = GetSecs;
 % % Show baseline 1.
 % DrawCircle(taskParam);
@@ -90,31 +97,79 @@ if cannon == true
 end
 PredictionSpot(taskParam);
 DrawOutcome(taskParam, practData.outcome(i));
+
+%DrawOutcome(taskParam, practData.outcome(i));
 %(taskParam, practData.rawPredErr(i), practData.outcome(i), practData.pred(i), practData.predErr(i))
 DrawPE_Bar(taskParam, practData, i)
 Screen('DrawingFinished', taskParam.gParam.window);
-if practData.predErr(i) <= 9
+if practData.predErr(i) <= practData.allASS(i)
      practData.hit(i) = 1;
 end
 
-Screen('Flip', taskParam.gParam.window, t + 0.01);
+if practData.oddBall(i) == false
+Screen('Flip', taskParam.gParam.window, t + 0.1);
+else
+   Screen('Flip', taskParam.gParam.window, t + 0.6);
+end
+
 
 % Show baseline 2.
 DrawCircle(taskParam);
-if cannon == true
-    Cannon(taskParam, practData.distMean(i))
-end
+% if cannon == true
+%     Cannon(taskParam, practData.distMean(i))
+% end
+DrawCross(taskParam)
 Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, t + 0.51);
+
+if practData.oddBall(i) == false
+Screen('Flip', taskParam.gParam.window, t + 0.6);
+else
+   Screen('Flip', taskParam.gParam.window, t + 1.1);
+end
+
+
+DrawCircle(taskParam)
+    %PredictionSpot(taskParam)  
+    Shield(taskParam, practData.allASS(i), practData.pred(i), practData.boatType(i))
+    Cannon(taskParam, practData.distMean(i))
+    DrawOutcome(taskParam, practData.outcome(i)) %%TRIGGER
+
+    %DrawOutcome(taskParam, practData.distMean(i)) %%TRIGGER
+    %DrawPE_Bar(taskParam, taskData, i) 
+    %PredictionSpot(taskParam) 
+    % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
+    % centered around the outcome
+    
+    Screen('DrawingFinished', taskParam.gParam.window, 1);
+    
+    
+    if practData.oddBall(i) == false
+        Screen('Flip', taskParam.gParam.window, t + 1.6);
+    else
+        Screen('Flip', taskParam.gParam.window, t + 2.1);
+    end
+    
+    
+    % Show baseline 3.
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window);
+    if practData.oddBall(i) == false
+        Screen('Flip', taskParam.gParam.window, t + 2.1);
+    else
+        Screen('Flip', taskParam.gParam.window, t + 2.6);
+    end
+    
+   
 
 % Show boat.
 if practData.boatType(i) == 1
-    RewardTxt = Reward(taskParam, 'gold');
+    %RewardTxt = Reward(taskParam, 'gold');
     if subject.rew == '1' && practData.hit(i) == 1
          practData.perf(i) = taskParam.gParam.rewMag;  
     end
 elseif practData.boatType(i) == 0
-    RewardTxt = Reward(taskParam, 'silver');
+   % RewardTxt = Reward(taskParam, 'silver');
    if subject.rew == '2' && practData.hit(i) == 1
          practData.perf(i) = taskParam.gParam.rewMag;  
     end
@@ -122,17 +177,17 @@ end
 
 % Calculate accumulated performance.
 practData.accPerf(i) = sum(practData.perf);% + taskData.perf(i);
-
-DrawCircle(taskParam)
-Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, t + 1.51);
-Screen('Close', RewardTxt);
-
-% Show baseline 3.
-DrawCircle(taskParam)
-DrawCross(taskParam)
-Screen('DrawingFinished', taskParam.gParam.window);
-Screen('Flip', taskParam.gParam.window, t + 2.01);
+% 
+% DrawCircle(taskParam)
+% Screen('DrawingFinished', taskParam.gParam.window);
+% Screen('Flip', taskParam.gParam.window, t + 1.51);
+%Screen('Close', RewardTxt);
+% 
+% % Show baseline 3.
+% DrawCircle(taskParam)
+% DrawCross(taskParam)
+% Screen('DrawingFinished', taskParam.gParam.window);
+% Screen('Flip', taskParam.gParam.window, t + 2.01);
 WaitSecs(1);
 
 KbReleaseWait();

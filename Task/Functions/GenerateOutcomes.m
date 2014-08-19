@@ -8,8 +8,10 @@ function taskData = GenerateOutcomes(taskParam, vola, sig, condition)
 
 if isequal(condition, 'main')
     trials = taskParam.gParam.trials;
-elseif isequal(condition, 'practice')
+elseif isequal(condition, 'practice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
     trials = taskParam.gParam.practTrials;
+elseif isequal(condition, 'shield')
+    trials = taskParam.gParam.shieldTrials;
 elseif isequal(condition, 'practiceCont')
     trials = taskParam.gParam.practContTrials;
 elseif isequal(condition, 'control')
@@ -82,7 +84,7 @@ for i = 1:trials
     outcome(i)=round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), sig, 1)));
     %outcome(i)=round(normrnd(mean, sig));
     distMean(i)=mean;
-    oddBall(i) = nan
+    oddBall(i) = nan;
     
     %CatchTrial
     if rand(1) <= 0.05
@@ -104,23 +106,33 @@ else
 distMean=nan(trials,1);
 oddBall=false(trials,1);
 outcome=nan(trials,1);
+if isequal(condition, 'shield')
+    driftConc = taskParam.gParam.driftConc(2);
+else
+    driftConc = taskParam.gParam.driftConc(1);
+end
 
 
 for i =1:trials;
+    
     if i == 1
         muRad_offset=unifrnd(-pi, pi);
     else
-        muRad_offset= deg2rad(distMean(i-1)-180)+circ_vmrnd(0, taskParam.gParam.driftConc, 1);
+        muRad_offset= deg2rad(distMean(i-1)-180)+circ_vmrnd(0, driftConc, 1);
     end
         muRad_offset=circ_dist(muRad_offset, 0);
         distMean(i)=rad2deg(muRad_offset)+180;
 
-
-    if rand<taskParam.gParam.oddballProb
+    if isequal(condition, 'practiceNoOddball') || isequal(condition, 'shield')
+        oddballProb = taskParam.gParam.oddballProb(2);
+    elseif isequal(condition, 'practiceOddball') || isequal(condition, 'practice') || isequal(condition, 'main') 
+        oddballProb = taskParam.gParam.oddballProb(1);
+    end
+    if rand<oddballProb
         outcome(i)=round(rand.*359);
         oddBall(i)=true;
     else
-    outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), taskParam.gParam.driftConc, 1))+180)
+    outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), sig, 1))+180); %taskParam.gParam.driftConc
     end
     TAC(i)=nan;
     cp(i) = nan;
@@ -168,7 +180,7 @@ end
     else boatType = 1;
     end
 %% Save data.
-taskData = struct(fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
+taskData = struct(fieldNames.oddBall, oddBall, fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
     fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.predT, predT,...
     fieldNames.outT, outT, fieldNames.boatT, boatT, fieldNames.pred, pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...

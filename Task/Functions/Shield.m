@@ -2,9 +2,9 @@ function Shield(taskParam, allASS, pred, color)
 % This function draws the position of the outcome (the black bar).
 
 if color == 1
-    shieldColor = [255 215 0];
+    shieldColor = [0 0 255];
 elseif color == 0
-    shieldColor = [132 132 132];
+    shieldColor = [0 255 0];
 end
 
 rotRad = taskParam.circle.rotationRad + 10;

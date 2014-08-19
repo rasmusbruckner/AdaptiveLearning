@@ -22,25 +22,25 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = false; % Run the intro with practice trials?
+runIntro = true; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = false; % Do you want some basic demographic subject variables?
-PE_Bar = true; % Use a prediction error bar?
+PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
 sendTrigger = false; % Do you want to send triggers?
-intTrials = 20; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
+trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 10;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.3 .7 0]; % Volatility of the environment.
 safe = 4; % How many guaranteed trials without change-points.
-sigma = [10 12]; % SD's of distribution.
-rewMag = 0.1; % Reward magnitude.
-driftConc = 30; % Concentration of the drift. 10
-oddballProb = .15; % Oddball probability. .15
+sigma = [10 12 99999999]; % SD's of distribution.
+rewMag = 0.2; % Reward magnitude.
+driftConc = [30 99999999]; % Concentration of the drift. 10
+oddballProb = [.15 0]; % Oddball probability. .15
 test = false; % Test triggering timing accuracy (see PTB output CW).
 debug = false; 
 % Computer2 = false;
@@ -176,6 +176,7 @@ fActRew = 'actRew'; actRew = fActRew; % Actual Reward;
 fVolas = 'vola'; volas = fVolas; % Volatility.
 fSigmas = 'sigma'; sigmas = fSigmas; % Sigma.
 fOddball = 'oddball';
+fOddBall = 'oddBall'; oddBall = fOddBall;
 fDate = 'Date'; Date = fDate; % Date.
 fCond = 'cond'; cond = fCond; % Condition.
 fTrial = 'trial'; trial = fTrial; % Trial.
@@ -209,7 +210,7 @@ fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fOddball, oddball, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct(fOddBall, oddBall, fOddball, oddball, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
@@ -221,16 +222,22 @@ fRunSigma = 'runSigma';
 fPE_Bar = 'PE_Bar';
 fSendTrigger = 'sendTrigger';
 fDriftConc = 'driftConc';
-fOddballProb = 'oddballProb'
+fOddballProb = 'oddballProb';
 fComputer = 'computer';
 fTrials = 'trials';
 fPractContTrials = 'practContTrials';
-fIntTrials = 'intTrials';
+fShieldTrials = 'shieldTrials';
 fPractTrials = 'practTrials';
 fContTrials = 'contTrials';
 fSafe = 'safe';
 fRewMag = 'rewMag';
-gParam = struct(fOddball, oddball, fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractContTrials, practContTrials, fIntTrials, intTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+fSentenceLength = 'sentenceLength';
+if isequal(computer, 'Dresden')
+    sentenceLength = 55;
+else
+    sentenceLength = 85;
+end
+gParam = struct(fSentenceLength, sentenceLength, fOddball, oddball, fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractContTrials, practContTrials, fShieldTrials, shieldTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
@@ -437,14 +444,14 @@ else
     txtHVHS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist stark';
     KbReleaseWait();
     
-    if oddball == true
-        condition = 'main';
+    %if oddball == true
+        %condition = 'main';
        % [OddBallData, OddballData] = Oddball(taskParam, vola(1), sigma(1), condition, Subject);
-        [taskDataOddball, DataOdball] = Main(taskParam, vola(1), sigma(1), condition, Subject);
+        %[taskDataOddball, DataOdball] = Main(taskParam, vola(1), sigma(1), condition, Subject);
 
-    end
+    %end
     
-    [taskDataLVLS, DataLVLS] = Main(taskParam, vola(1), sigma(1), condition, Subject);
+%    [taskDataLVLS, DataLVLS] = Main(taskParam, vola(1), sigma(1), condition, Subject);
     
     % Run intro with practice trials if true.
     if runIntro == true
@@ -460,10 +467,10 @@ else
             VolaIndication(taskParam, txtHVLS, txtPressEnter)
             [taskDataPracticeHVLS, DataPracticeHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject);
             else
-            VolaIndication(taskParam, txtLowVola, txtPressEnter)
-            [taskDataPracticeLV, DataPracticeLV] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-            VolaIndication(taskParam, txtHighVola, txtPressEnter)
-            [taskDataPracticeHV, DataPracticeHV] = Main(taskParam, vola(2), sigma(1), condition, Subject);
+            %VolaIndication(taskParam, txtLowVola, txtPressEnter)
+            [taskDataPracticeLV, DataPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+            %VolaIndication(taskParam, txtHighVola, txtPressEnter)
+            %[taskDataPracticeHV, DataPracticeHV] = Main(taskParam, vola(2), sigma(1), condition, Subject);
             end
        % else
         %Cbal2    

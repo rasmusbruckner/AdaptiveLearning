@@ -30,8 +30,8 @@ Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPre
 end
 while 1
    
-    LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
-   sentenceLength = 55
+    LineAndBack(taskParam)
+   sentenceLength = taskParam.gParam.sentenceLength;
    % if isequal(taskParam.gParam.computer, 'D_Pilot')
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
    % else
@@ -97,7 +97,8 @@ while 1
             fw = 1;
             Data.pred = (taskParam.circle.rotAngle / taskParam.circle.unit);
             break;
-        elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.delete)) || (isequal(button, 'space') && keyCode(taskParam.keys.delete))
+           
+            elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.delete)) || (isequal(button, 'space') && keyCode(taskParam.keys.delete))
             bw = 1;
             break
             end

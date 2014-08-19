@@ -21,7 +21,7 @@ TargetSpotStart = taskParam.circle.outcCentSpotRect;
 TargetDist = TargetSpotEnd - TargetSpotStart;  
 
 % Position at which cannonball starts to fly.  
-BallStart = TargetSpotStart + TargetDist/5;
+BallStart = TargetSpotStart + TargetDist/4;
 
 % Difference between start and end point.
 OutcSpotDiff = OutcSpot - BallStart; 
@@ -34,7 +34,7 @@ OutcSpotAct = BallStart;
 
 for i = 1:nFrames
     if background == true
-    LineAndBack(taskParam.gParam.window, taskParam.gParam.screensize)
+    LineAndBack(taskParam)
     end
     OutcSpotAct = OutcSpotAct + Step;
     DrawCircle(taskParam)
