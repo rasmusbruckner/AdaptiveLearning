@@ -26,11 +26,11 @@ runIntro = false; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
 sendTrigger = false; % Do you want to send triggers?
-shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10 
+shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
 trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 1;
@@ -66,7 +66,7 @@ elseif isequal(computer, 'Dresden_Rene')
 elseif isequal(computer, 'Matt')
     savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
 elseif isequal(computer, 'Brown')
-    savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
+    savdir = 'C:\Users\lncc\Dropbox\HeliEEG';
 end
 
 %% User Input.
@@ -154,9 +154,9 @@ ListenChar(2);
 HideCursor;
 
 % Suppress warnings.
-%Screen('Preference', 'VisualDebugLevel', 3);
-%Screen('Preference', 'SuppressAllWarnings', 1);
-%Screen('Preference', 'SkipSyncTests', 2);
+Screen('Preference', 'VisualDebugLevel', 3);
+Screen('Preference', 'SuppressAllWarnings', 1);
+Screen('Preference', 'SkipSyncTests', 2);
 
 % Open a new window.
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
@@ -165,7 +165,7 @@ fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
 if debug == true
-    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [420 250 1020 650]); %420 250 1020 650  64 64 64
+    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [1 1 1440 900]); %420 250 1020 650  64 64 64
 else
     [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []); %420 250 1020 650  64 64 64
 end
@@ -239,7 +239,7 @@ fSentenceLength = 'sentenceLength';
 if isequal(computer, 'Dresden')
     sentenceLength = 55;
 elseif isequal(computer, 'Brown')
-    sentenceLength = 85;
+    sentenceLength = 75;
 else
     sentenceLength = 85;
 end
@@ -326,7 +326,7 @@ elseif isequal(computer, 'Dresden_Rene')
     s = 32;
 elseif isequal(computer, 'Brown')
     enter = 13;
-    s = 32;    
+    s = 83;    
 end
 
 fKeys = 'keys';
@@ -534,7 +534,7 @@ else
             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
             %[taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+        %    [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
             
         end
     else
@@ -544,7 +544,7 @@ else
         [taskDataLV, DataLV] = Main(taskParam, vola(1), simga(1), condition, Subject); % Run task (low sigma).
     end
     
-    if runIntro == true
+    %if runIntro == true
     Instructions(taskParam, 'Main', Subject);
     
    
@@ -560,18 +560,18 @@ else
                    'at a location on the circle. On all trials the cannon will '...
                    'fire a ball somewhere near the point of aim. '...
                    'Most of the time the cannon will remain aimed at the same location, '...
-                   'occasionally the cannon will be reaimed. Like in the previous '...
+                   'but occasionally the cannon will be reaimed. Like in the previous '...
                    'block you will not see the cannon, but still have to infer its '...
                    'aim in order to catch balls and earn money.'];
       
       feedback = false;
       BigScreen(taskParam, txtPressEnter, header, txt, feedback)
-    else
+    %else
       VolaIndication(taskParam, IndicateCP, txtPressEnter)
   
         
         
-    end
+    %end
       KbReleaseWait();
       condition = 'main';
       type = 'Main';
@@ -628,7 +628,7 @@ else
         %txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
         
         header = 'End of task!';
-        txt = sprintf('Thank you for participating\n\n\nYou earned %.2f $', totWin);
+        txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
         
         Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
         Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
