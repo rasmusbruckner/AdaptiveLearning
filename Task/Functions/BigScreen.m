@@ -11,9 +11,9 @@ while 1
     
     Screen('TextSize', taskParam.gParam.window, 50);
     if isequal(taskParam.gParam.computer, 'Dresden')
-        DrawFormattedText(taskParam.gParam.window, header, 'center', 50);
+        DrawFormattedText(taskParam.gParam.window, header, 'center', 50, [255 255 255]);
     else
-        DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
+        DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1, [255 255 255]);
     end
         Screen('TextSize', taskParam.gParam.window, 30);
    

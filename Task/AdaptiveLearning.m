@@ -26,18 +26,18 @@ runIntro = true; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
 sendTrigger = false; % Do you want to send triggers?
 shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
 trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
-practContTrials = 10;
+practContTrials = 1;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.3 .7 0]; % Volatility of the environment.
 safe = 4; % How many guaranteed trials without change-points.
-sigma = [10 12 99999999]; % SD's of distribution.
+sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
 rewMag = 0.2; % Reward magnitude.
 driftConc = [30 99999999]; % Concentration of the drift. 10
 oddballProb = [.15 0]; % Oddball probability. .15
@@ -116,6 +116,8 @@ elseif askSubjInfo == true
     
     % Filenames.
     fName = sprintf('ADL_%s_%s.mat', rewName ,num2str(cell2mat((subjInfo(1)))));
+    fNameDataOddball = sprintf('DataOddball_%s', num2str(cell2mat((subjInfo(1)))));
+    fNameDataCP = sprintf('DataCP_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataLV = sprintf('DataLV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataHV = sprintf('DataHV_%s', num2str(cell2mat((subjInfo(1)))));
     fNameDataLVLS = sprintf('DataLVLS_%s', num2str(cell2mat((subjInfo(1)))));
@@ -401,9 +403,11 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrig
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLVTrigger, blockLVTrigger, fBlockHVTrigger, blockHVTrigger,...
     fBlockControlTrigger, blockControlTrigger);
 
+IndicateOddball = 'Oddball Task'
+IndicateCP = 'Change Point Task'
 fTxtLowVola = 'txtLowVola'; txtLowVola = 'Jetzt verändert sich das Ziel der Kanone selten';
 fTxtHighVola = 'txtHighVola'; txtHighVola = 'Jetzt verändert sich das Ziel der Kanone häufiger';
-fTxtPressEnter = 'txtPressEnter'; txtPressEnter = 'Weiter mit Enter - zurück mit Löschen';
+fTxtPressEnter = 'txtPressEnter'; txtPressEnter = 'Delete to go back - Enter to continue';
 fTxtLVLS = 'txtLVLS'; txtLVLS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist schwach';
 fTxtHVLS = 'txtHVLS'; txtHVLS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist schwach';
 fTxtLVHS = 'txtLVHS'; txtLVHS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist stark';
@@ -457,9 +461,9 @@ else
     if runIntro == true
         
         % Function for instructions.
-        Instructions(taskParam, Subject);
+        Instructions(taskParam, 'Oddball', Subject);
         
-        condition = 'practice';
+        condition = 'practiceOddball';
         %if Subject.cBal == '1'
             if runSigma == true
             VolaIndication(taskParam, txtLVHS, txtPressEnter)
@@ -477,24 +481,41 @@ else
        % end
         
         % End of practice blocks. This part makes sure that you start your EEG setup!
-        header = 'Anfang der Studie';
-        if isequal(taskParam.gParam.computer, 'Humboldt')
-            txt = 'Zur Erinnerung:\n\nWenn du ein goldenes Schiff triffst, verdienst du 10 CENT.\n\nBei einem Schiff mit Steinen an Board verdienst du NICHTS.\n\n\n\n\n\nBitte achte auch wieder auf Blinzler und deine Augenbewegungen.\n\n\nViel Erfolg!';
-        else
+       
+        
+        
+        if taskParam.gParam.oddball == false                        
+         header = 'Anfang der Studie';
             txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                    'zusammengefasst fängst du also die meisten '...
                    'Kugeln, wenn du den blauen Punkt auf die Stelle bewegst, auf die '...
                    'die Kanone zielt. Weil du die Kanonen nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
                    'goldenen Kugeln bekommst du nach der Studie '...
                    'ausgezahlt.\n\nViel Erfolg!'];
+        elseif taskParam.gParam.oddball == true
+         header = 'Real Task!';
+        txt = ['This is the beginning of the real task. During '...
+                   'this block you will earn real money for your performance. '...
+                   'The trials will be exactly the same as those in the '...
+                   'previous practice block. On each trial a cannon will aim '...
+                   'at a location on the circle. On most trials the cannon will '...
+                   'fire a ball somewhere near the point of aim. '...
+                   'However, on a few trials a ball will be shot from a different '...
+                   'cannon that is equally likely to hit any location on the circle. Like in the previous '...
+                   'block you will not see the cannon, but still have to infer its '...
+                   'aim in order to catch balls and earn money.'];
         end
         feedback = false;
         BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+    else
+        VolaIndication(taskParam, IndicateOddball, txtPressEnter)
+    
+        
     end
     
     % This functions runs the main task.
-    condition = 'main';
-    
+    condition = 'oddball';
+    type = 'Oddball';
     if Subject.cBal == '1'
         if runSigma == true
             VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
@@ -506,10 +527,11 @@ else
             VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
             [taskDataHVHS, DataHVHS] = Main(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
         else
-            VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            [taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataHV, DataHV] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
+            %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+            %[taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+            %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+            [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+            
         end
     else
         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
@@ -518,50 +540,91 @@ else
         [taskDataLV, DataLV] = Main(taskParam, vola(1), simga(1), condition, Subject); % Run task (low sigma).
     end
     
-    % Control trials: this task requires a learning rate = 1
-    InstructionsControl(taskParam, Subject) % Run instructions.
+    if runIntro == true
+    Instructions(taskParam, 'Main', Subject);
+    
+   
+    
+    
+    condition = 'practice';
+    [taskDataPracticeMain, DataPracticeMain] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+    header = 'Real Task!';
+        txt = ['This is the beginning of the real task. During '...
+                   'this block you will earn real money for your performance. '...
+                   'The trials will be exactly the same as those in the '...
+                   'previous practice block. On each trial a cannon will aim '...
+                   'at a location on the circle. On all trials the cannon will '...
+                   'fire a ball somewhere near the point of aim. '...
+                   'Most of the time the cannon will remain aimed at the same location, '...
+                   'occasionally the cannon will be reaimed. Like in the previous '...
+                   'block you will not see the cannon, but still have to infer its '...
+                   'aim in order to catch balls and earn money.'];
+      
+      feedback = false;
+      BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+    else
+      VolaIndication(taskParam, IndicateCP, txtPressEnter)
+  
+        
+        
+    end
+      KbReleaseWait();
+      condition = 'main';
+      type = 'Main';
+      [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+
+      
+      
+      % Control trials: this task requires a learning rate = 1
+    %InstructionsControl(taskParam, Subject) % Run instructions.
     KbReleaseWait();
     
-    % This function runs the control trials
-    condition = 'control';
-    if Subject.cBal == '1'
-        if runSigma == true
-            VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-            [taskDataControlLVHS, DataControlLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
-            %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-            %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-            %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-            %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-            [taskDataControlHVLS, DataControlHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-            %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-            %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            %[taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
-        else
-            VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
-        end
-    else
-        VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-        [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), condition, Subject); %Run task (high sigma).
-        VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-        [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-    end
-    
+%     % This function runs the control trials
+%     condition = 'control';
+%     if Subject.cBal == '1'
+%         if runSigma == true
+%             VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
+%             [taskDataControlLVHS, DataControlLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+%             %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
+%             %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+%             %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
+%             %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+%             VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
+%             [taskDataControlHVLS, DataControlHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+%             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+%             %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+%             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+%             %[taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+%         else
+%             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+%             [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+%             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+%             [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
+%         end
+%     else
+%         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+%         [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+%         VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+%         [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+%     end
+%     
     % Compute total gain.
     if runSigma == true
-    totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVHS.accPerf(end) + DataControlHVLS.accPerf(end);
+
+    %totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVHS.accPerf(end) + DataControlHVLS.accPerf(end);
     %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     else
-    totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
+        totWin = DataOddball.accPerf(end) + DataCP.accPerf(end);
+
+        %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     end
     
     while 1
-        header = 'Ende der Aufgabe!';
-        txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
+        %header = 'Ende der Aufgabe!';
+        %txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
+        
+        header = 'End of task!';
+        txt = sprintf('Thank you for participating\n\n\nYou earned %.2f $', totWin);
         
         Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
         Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
@@ -582,7 +645,14 @@ else
     
     %% Save data.
     
-    if askSubjInfo == true && runIntro == true
+    if askSubjInfo == true && oddball == true
+        DataOddball = catstruct(Subject, DataOddball);
+        DataCP = catstruct(Subject, DataCP);
+        assignin('base',['DataOddball_' num2str(cell2mat((subjInfo(1))))],DataOddball)
+        assignin('base',['DataCP_' num2str(cell2mat((subjInfo(1))))],DataCP)
+        save(fullfile(savdir,fName),fNameDataOddball, fNameDataCP);
+        
+    elseif askSubjInfo == true && runIntro == true
         
         if runSigma == true
         DataPracticeLVHS = catstruct(Subject, DataPracticeLVHS);

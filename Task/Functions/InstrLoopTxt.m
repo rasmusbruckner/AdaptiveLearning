@@ -59,7 +59,7 @@ while 1
     
     if isequal(button, 'arrow')
         txtPressEnter='Zurück mit Löschen - Weiter mit Enter';
-        DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+        DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter ,'center',taskParam.gParam.screensize(4)*0.9);
     end
     Screen('DrawingFinished', taskParam.gParam.window);
     t = GetSecs;

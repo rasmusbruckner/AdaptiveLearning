@@ -6,7 +6,7 @@ function taskData = GenerateOutcomes(taskParam, vola, sig, condition)
 % 
 %   This function uses code from Matt Nassar (Brown University). Thanks Matt!
 
-if isequal(condition, 'main')
+if isequal(condition, 'main') || isequal(condition, 'oddball')
     trials = taskParam.gParam.trials;
 elseif isequal(condition, 'practice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
     trials = taskParam.gParam.practTrials;
@@ -68,7 +68,7 @@ minASS = 10;
 maxASS=180;
 allASS = zeros(trials,1);
 
-if taskParam.gParam.oddball == false
+if isequal(condition, 'main') || isequal(condition, 'practice') || isequal(condition, 'shield')%taskParam.gParam.oddball == false || isequal(type, 'Main')
 for i = 1:trials
     if (rand < vola && s==0) || i == 1;
         mean=round(rand(1).*359); % Outcome expressed in degrees.
@@ -87,7 +87,7 @@ for i = 1:trials
     oddBall(i) = nan;
     
     %CatchTrial
-    if rand(1) <= 0.05
+    if rand(1) <= 0.00
         catchTrial(i) = 1;
     else
         catchTrial(i) = 0;
@@ -101,7 +101,7 @@ for i = 1:trials
 end
 
 
-else
+elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
   
 distMean=nan(trials,1);
 oddBall=false(trials,1);
@@ -125,7 +125,7 @@ for i =1:trials;
 
     if isequal(condition, 'practiceNoOddball') || isequal(condition, 'shield')
         oddballProb = taskParam.gParam.oddballProb(2);
-    elseif isequal(condition, 'practiceOddball') || isequal(condition, 'practice') || isequal(condition, 'main') 
+    elseif isequal(condition, 'practiceOddball') || isequal(condition, 'practice') || isequal(condition, 'main') || isequal(condition, 'oddball') 
         oddballProb = taskParam.gParam.oddballProb(1);
     end
     if rand<oddballProb

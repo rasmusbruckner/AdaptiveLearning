@@ -16,7 +16,14 @@ KbReleaseWait();
 %end
 
 %% generateOutcomes
+if isequal(condition, 'practiceOddball')
+     taskData = load('OddballInvisible');
+     taskData = taskData.taskData;
+     trial = taskParam.gParam.practTrials;
+else
 taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
+trial = taskData.trial;
+end
 
 % For trigger testing.
 RT_Flip = zeros(taskData.trial, 1);
@@ -26,7 +33,7 @@ RT_Flip = zeros(taskData.trial, 1);
 % Enable real-time mode.
 % Priority(9); 
 
-for i=1:taskData.trial
+for i=1:trial
     
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
@@ -60,8 +67,9 @@ for i=1:taskData.trial
         
         PredictionSpot(taskParam)
 
-        if i > 1 && taskParam.gParam.PE_Bar == true 
-           DrawPE_Bar(taskParam, taskData, i-1) 
+        if i > 1 %&& taskParam.gParam.PE_Bar == true 
+           TickMark(taskParam, taskData.outcome(i-1))
+            %DrawPE_Bar(taskParam, taskData, i-1) 
         end
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
@@ -156,15 +164,32 @@ for i=1:taskData.trial
     end
     
     % Calculate hits
-    if isequal(condition,'main') || isequal(condition,'practice')
-        if taskData.predErr(i) <= taskData.allASS(i)
+    if isequal(condition,'main') || isequal(condition,'practice') || isequal(condition, 'practiceOddball') || isequal(condition, 'oddball')
+        if taskData.predErr(i) <= taskData.allASS(i)/2
             taskData.hit(i) = 1;
+            %taskData.perf(i) = taskParam.gParam.rewMag; 
         end
     elseif isequal(condition,'control') || isequal(condition,'practiceCont')
         if taskData.memErr(i) <= 5
             taskData.hit(i) = 1;
         end
     end
+    
+% Show boat and calculate performance.       %TRIGGER
+%     DrawCircle(taskParam)
+     if taskData.boatType(i) == 1
+%         
+         if Subject.rew == '1' && taskData.hit(i) == 1
+             taskData.perf(i) = taskParam.gParam.rewMag;  
+         end
+     end
+%     
+%     % Calculate accumulated performance.
+%     taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
+%     
+    
+    %Calculate accumulated performance.
+    taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
     
     if i > 1
         % Calculate update.
@@ -238,51 +263,66 @@ end
 % Disable real-time mode.
 % Priority(0);
 
-% Compute max gain.
-if Subject.rew == '1'
-    maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
-    if isequal(condition, 'control') && taskData.boatType(1) == 1
-        maxMon = maxMon - taskParam.gParam.rewMag;
-    end
-elseif Subject.rew == '2'
-    maxMon = (length(find(taskData.boatType == 0)) * taskParam.gParam.rewMag);
-    if isequal(condition, 'control') && taskData.boatType(1) == 2
-        maxMon = maxMon - taskParam.gParam.rewMag;
-    end
-end
+% % Compute max gain.
+% if Subject.rew == '1'
+%     maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+%     if isequal(condition, 'control') && taskData.boatType(1) == 1
+%         maxMon = maxMon - taskParam.gParam.rewMag;
+%     end
+% elseif Subject.rew == '2'
+%     maxMon = (length(find(taskData.boatType == 0)) * taskParam.gParam.rewMag);
+%     if isequal(condition, 'control') && taskData.boatType(1) == 2
+%         maxMon = maxMon - taskParam.gParam.rewMag;
+%     end
+% end
 
 % Give performance feedback.
 % while 1
-    if isequal(condition, 'practice')
-        txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
-    else
-        txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
-    end
-     hits = sum(taskData.hit == 1)
-                goldBall = sum(taskData.boatType == 1)
-                goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag %sum(practData.boatType == 1)
-                silverBall = sum(taskData.boatType == 0)
-                silverHit = hits - goldHit;
-                maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
-                
+%     if isequal(condition, 'practice')
+%         txtFeedback = sprintf('In diesem Block hättest du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
+%     else
+%         txtFeedback = sprintf('In diesem Block hast du %.2f von %.2f Euro gewonnen', taskData.accPerf(end), maxMon);
+%     end
+%      hits = sum(taskData.hit == 1)
+%                 goldBall = sum(taskData.boatType == 1)
+%                 goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag %sum(practData.boatType == 1)
+%                 silverBall = sum(taskData.boatType == 0)
+%                 silverHit = hits - goldHit;
+%                 maxMon = (length(find(taskData.boatType == 1)) * taskParam.gParam.rewMag);
+%                 
+                    hits = sum(taskData.hit == 1);
+                    goldBall = sum(taskData.boatType == 1);
+                    goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag;
+                    silverBall = sum(taskData.boatType == 0);
+                    silverHit = hits - goldHit;
+                    maxMon = (length(find(taskData.boatType == 1))...
+                        * taskParam.gParam.rewMag);
                 if taskParam.gParam.oddball == false
                                 header = 'Leistung';
 
                     txt = sprintf(['Gefangene blaue Kugeln: %.0f von '...
                     '%.0f\n\nGefangene grüne Kugeln: %.0f von '...
-                    '%.0f\n\n In diesem Block hättest du %.2f von '...
+                    '%.0f\n\n In diesem Block hast du %.2f von '...
                     'maximal %.2f Euro gewonnen'], goldHit,...
                     goldBall, silverHit, silverBall,...
                     practData.accPerf(end), maxMon);
                 elseif taskParam.gParam.oddball == true
                     header = 'Performance';
-
+                    if isequal(condition, 'practiceOddball')
                     txt = sprintf(['Blue shield catches: %.0f of '...
                     '%.0f\n\nGreen shield catches: %.0f of '...
-                    '%.0f\n\n In diesem Block hättest du %.2f von '...
-                    'maximal %.2f Euro gewonnen'], goldHit,...
+                    '%.0f\n\nIn this block you would have earned %.2f of '...
+                    'possible %.2f $.'], goldHit,...
                     goldBall, silverHit, silverBall,...
                     taskData.accPerf(end), maxMon);
+                    else
+                    txt = sprintf(['Blue shield catches: %.0f of '...
+                    '%.0f\n\nGreen shield catches: %.0f of '...
+                    '%.0f\n\nIn this block you have earned %.2f of '...
+                    'possible %.2f $.'], goldHit,...
+                    goldBall, silverHit, silverBall,...
+                    taskData.accPerf(end), maxMon);    
+                    end
                 end
                 
 %                 %txt = sprintf(['Gefangene goldene Kugeln: %.0f von %.0f\n\n'...
@@ -320,7 +360,7 @@ sigma = repmat(sigma, length(taskData.trial),1);
 %% Save data.
 
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...

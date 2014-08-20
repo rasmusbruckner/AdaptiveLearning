@@ -1,13 +1,20 @@
-function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon, condition)
+function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon, condition, LoadData)
 
 % This function is called when participants move their spot in the
 % instructions.
 
-%condition = 'practice';
-practData = GenerateOutcomes(taskParam, vola, sigma, condition);
 
+if nargin == 7 && isequal(LoadData, 'NoNoise')
+    practData = load('OddballNoNoise');
+    practData = practData.practData;
+elseif nargin == 7 && isequal(LoadData, 'Noise') 
+    practData = load('OddballNoise');
+    practData = practData.practData;
+else
+practData = GenerateOutcomes(taskParam, vola, sigma, condition);    
+end
 %Priority(9);
-for i = 1:practData.trial
+for i = 1:taskParam.gParam.practTrials
     
     
 while 1
@@ -26,8 +33,9 @@ while 1
     end
     DrawCircle(taskParam);
     PredictionSpot(taskParam);
-    if i > 1 && taskParam.gParam.PE_Bar == true
-        DrawPE_Bar(taskParam, practData, i-1) 
+    if i > 1 %&& taskParam.gParam.PE_Bar == true
+        %DrawPE_Bar(taskParam, practData, i-1) 
+        TickMark(taskParam, practData.outcome(i-1))
     end
     DrawCross(taskParam);
     
@@ -76,11 +84,10 @@ end
 
 background = false;
 %Cannonball(taskParam, practData.distMean(i), practData.distMean(i), background)
-
-if practData.oddBall(i) == false
-Cannonball(taskParam, practData.distMean(i), practData.outcome(i), background)
-else
+if (isequal(condition, 'practiceOddball') && practData.oddBall(i) == true)
     WaitSecs(0.5)
+elseif isequal(condition, 'shield') || isequal(condition, 'practice') || isequal(condition, 'practiceOddball') || isequal(condition, 'practiceNoOddball')
+    Cannonball(taskParam, practData.distMean(i), practData.outcome(i), background)    
 end
 
 t = GetSecs;
@@ -102,7 +109,7 @@ DrawOutcome(taskParam, practData.outcome(i));
 %(taskParam, practData.rawPredErr(i), practData.outcome(i), practData.pred(i), practData.predErr(i))
 DrawPE_Bar(taskParam, practData, i)
 Screen('DrawingFinished', taskParam.gParam.window);
-if practData.predErr(i) <= practData.allASS(i)
+if practData.predErr(i) <= practData.allASS(i)/2
      practData.hit(i) = 1;
 end
 
