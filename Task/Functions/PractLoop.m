@@ -7,19 +7,22 @@ function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, can
 if nargin == 7 && isequal(LoadData, 'NoNoise')
     practData = load('OddballNoNoise');
     practData = practData.practData;
+    trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'Noise') 
     practData = load('OddballNoise');
     practData = practData.practData;
+    trials = taskParam.gParam.practTrials;
 else
-practData = GenerateOutcomes(taskParam, vola, sigma, condition);    
+practData = GenerateOutcomes(taskParam, vola, sigma, condition); 
+trials = practData.trial;
 end
 %Priority(9);
-for i = 1:taskParam.gParam.practTrials
+for i = 1:trials
     
     
 while 1
     
-     if isequal(practData.rew{i}, '1') && practData.boatType(i) == 1
+    if isequal(practData.rew{i}, '1') && practData.boatType(i) == 1
         practData.actRew(i) = 1;
     elseif isequal(practData.rew{i}, '1') && practData.boatType(i) == 0
         practData.actRew(i) = 2;

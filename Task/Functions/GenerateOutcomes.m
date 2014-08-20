@@ -143,7 +143,7 @@ for i =1:trials;
     while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
     ASS=exprnd(mu);
     end
-    allASS(i)=ASS;
+    allASS(i)=ASS.*2;
 end
 
 

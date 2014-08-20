@@ -13,5 +13,5 @@ accPerf = zeros(length(subject),1);
 for i = 1:length(subBlocks)
     accPerf(i) = subBlocks{i}.accPerf(end);
 end
-totPerf = sprintf('"%s" wins: %2.1f Euro.', ID, sum(accPerf));
+totPerf = sprintf('"%s" won: %2.1f $.', ID, sum(accPerf));
 end

@@ -22,7 +22,7 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
@@ -30,9 +30,9 @@ askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
 sendTrigger = false; % Do you want to send triggers?
-shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
-trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
+trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 1;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.3 .7 0]; % Volatility of the environment.
@@ -64,6 +64,8 @@ elseif isequal(computer, 'D_Pilot') && Computer2 == true
 elseif isequal(computer, 'Dresden_Rene')
     savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
 elseif isequal(computer, 'Matt')
+    savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
+elseif isequal(computer, 'Brown')
     savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
 end
 
@@ -236,6 +238,8 @@ fRewMag = 'rewMag';
 fSentenceLength = 'sentenceLength';
 if isequal(computer, 'Dresden')
     sentenceLength = 55;
+elseif isequal(computer, 'Brown')
+    sentenceLength = 85;
 else
     sentenceLength = 85;
 end
@@ -296,9 +300,6 @@ colors = struct(fGold, gold, fSilver, silver);
 % Cannon parameters.
 
 
-
-
-
 % Set key names.
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');
@@ -323,6 +324,9 @@ elseif isequal(computer, 'D_Pilot')
 elseif isequal(computer, 'Dresden_Rene')
     enter = 13;
     s = 32;
+elseif isequal(computer, 'Brown')
+    enter = 13;
+    s = 32;    
 end
 
 fKeys = 'keys';
@@ -403,8 +407,8 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrig
     fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger, fBlockLVTrigger, blockLVTrigger, fBlockHVTrigger, blockHVTrigger,...
     fBlockControlTrigger, blockControlTrigger);
 
-IndicateOddball = 'Oddball Task'
-IndicateCP = 'Change Point Task'
+IndicateOddball = 'Oddball Task';
+IndicateCP = 'Change Point Task';
 fTxtLowVola = 'txtLowVola'; txtLowVola = 'Jetzt verändert sich das Ziel der Kanone selten';
 fTxtHighVola = 'txtHighVola'; txtHighVola = 'Jetzt verändert sich das Ziel der Kanone häufiger';
 fTxtPressEnter = 'txtPressEnter'; txtPressEnter = 'Delete to go back - Enter to continue';

@@ -24,8 +24,12 @@ elseif strcmp(sid, '.139DEA01CE83.8888888600000000.8888888600000000.888888860000
     computer = 'Dresden';
 elseif strcmp(sid, '.F5B0D5445F09.8888888600000000.88A8B78070C3.8888888600000000.8888888600000000')
     computer = 'Dresden_Rene';
-else
+elseif strcmp(sid, '.0928C78F12F8')
     computer = 'Macbook';
+elseif strcmp(sid, '??')
+    computer = 'Matt';
+else
+    computer = 'Brown';
 end
 
 
