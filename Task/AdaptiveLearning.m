@@ -32,7 +32,7 @@ catchTrials = false;
 sendTrigger = false; % Do you want to send triggers?
 shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+trials = 20;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 1;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.3 .7 0]; % Volatility of the environment.
@@ -165,7 +165,7 @@ fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
 if debug == true
-    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [1 1 1440 900]); %420 250 1020 650  64 64 64
+    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [420 250 1020 650]); %420 250 1020 650  64 64 64
 else
     [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []); %420 250 1020 650  64 64 64
 end
@@ -544,7 +544,7 @@ else
         [taskDataLV, DataLV] = Main(taskParam, vola(1), simga(1), condition, Subject); % Run task (low sigma).
     end
     
-    %if runIntro == true
+    if runIntro == true
     Instructions(taskParam, 'Main', Subject);
     
    
@@ -566,12 +566,12 @@ else
       
       feedback = false;
       BigScreen(taskParam, txtPressEnter, header, txt, feedback)
-    %else
+    else
       VolaIndication(taskParam, IndicateCP, txtPressEnter)
   
         
         
-    %end
+    end
       KbReleaseWait();
       condition = 'main';
       type = 'Main';
