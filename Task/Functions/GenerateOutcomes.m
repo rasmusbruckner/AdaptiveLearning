@@ -112,6 +112,7 @@ else
     driftConc = taskParam.gParam.driftConc(1);
 end
 
+s = 0;
 
 for i =1:trials;
     
@@ -128,13 +129,21 @@ for i =1:trials;
     elseif isequal(condition, 'practiceOddball') || isequal(condition, 'practice') || isequal(condition, 'main') || isequal(condition, 'oddball') 
         oddballProb = taskParam.gParam.oddballProb(1);
     end
-    if rand<oddballProb
+    
+    if rand<oddballProb && s==0
         outcome(i)=round(rand.*359);
         oddBall(i)=true;
+        TAC(i)=0; %TAC(i)=1;
+        s=taskParam.gParam.safe;
     else
-    outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), sig, 1))+180); %taskParam.gParam.driftConc
+        if i==1
+            TAC(i)=nan;
+        else
+            TAC(i)=TAC(i-1)+1;
+        end
+        outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), sig, 1))+180); %taskParam.gParam.driftConc
+        s=max([s-1, 0]);
     end
-    TAC(i)=nan;
     cp(i) = nan;
     
     
