@@ -74,7 +74,10 @@ for i=1:trial
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window, t + 0.01);
+        %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
         
+        SendTrigger(taskParam, taskData, Subject, condition, vola, i, 1); % this is the trial onset trigger
+
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
         
@@ -108,8 +111,7 @@ for i=1:trial
                 
                 % Trigger: prediction.
                 Tevent = 1;
-                taskData.predT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
-                taskData.predT(i)
+                %taskData.predT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
                 time = GetSecs;
                 
                 break
@@ -124,6 +126,9 @@ for i=1:trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
+    SendTrigger(taskParam, taskData, Subject, condition, vola, i, 2); % this is the prediction / fixation 1 trigger
+
+    %io64(ioObject,taskParam.triggers.port,2) % this is the prediction and the onset of the first baseline
     RT_Flip(i) = GetSecs-time;
     
     % Calculate prediction error.
@@ -200,14 +205,20 @@ for i=1:trial
     % Trigger: outcome.
     Tevent = 2;
     Screen('Flip', taskParam.gParam.window, t + 0.6);
-    taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
+    SendTrigger(taskParam, taskData, Subject, condition, vola, i, 3); % this is the PE
+
+    %io64(ioObject,taskParam.triggers.port,3) % this is the presentation of the outcome
+    %taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
     
     % Show baseline 2.
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 1.1, 1);
-    
+    SendTrigger(taskParam, taskData, Subject, condition, vola, i, 4); % this is the 2nd fixation
+
+    %io64(ioObject,taskParam.triggers.port,4) % this is the prediction and the onset of the first baseline
+
     
     DrawCircle(taskParam)
     %PredictionSpot(taskParam)  
@@ -221,7 +232,11 @@ for i=1:trial
     Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2.1);
-    taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
+    SendTrigger(taskParam, taskData, Subject, condition, vola, i, 5); % this is the shield trigger
+
+    %io64(ioObject,taskParam.triggers.port,5) % this is the prediction and the onset of the first baseline
+
+    %taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
 
 
     % Show baseline 3.
@@ -229,6 +244,8 @@ for i=1:trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 2.6);
+    SendTrigger(taskParam, taskData, Subject, condition, vola, i, 6); % this is fixation 3
+
     
 %     % Show boat and calculate performance.       %TRIGGER
 %     DrawCircle(taskParam)
@@ -262,6 +279,9 @@ for i=1:trial
 %     Screen('Flip', taskParam.gParam.window, t + 4.1);
     
     WaitSecs(1);
+    
+    SendTrigger(taskParam, taskData, Subject, condition, vola, i, 16); % this is the trial summary trigger
+
 end
 
 % Disable real-time mode.
