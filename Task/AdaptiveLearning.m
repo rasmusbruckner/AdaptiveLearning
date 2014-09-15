@@ -23,14 +23,14 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
-sendTrigger = false; % Do you want to send triggers?
+sendTrigger = true; % Do you want to send triggers?
 shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
 trials = 6;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150

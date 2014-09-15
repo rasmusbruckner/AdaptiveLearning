@@ -218,8 +218,11 @@ for i=1:trial
     % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
     % centered around the outcome
     
+    Tevent = 3;
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2.1);
+    taskData.boatT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
+
 
     % Show baseline 3.
     DrawCross(taskParam)

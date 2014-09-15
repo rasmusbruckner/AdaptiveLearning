@@ -100,14 +100,14 @@ if taskParam.gParam.oddball == false
     end
     
 elseif taskParam.gParam.oddball == true
-    
-    if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequal(condition, 'oddball'))
+     ioObject = io64;
+     status = io64(ioObject);
+     
+    if taskParam.gParam.sendTrigger == true && trial > 1 && (isequal(condition, 'main') || isequal(condition, 'oddball')) 
         
-        ioObject = io64;
-        status = io64(ioObject);
+       
         
         %first digit
-        
         if isequal(condition, 'oddball')
             digit1 = 1;
         elseif isequal(condition, 'main')
@@ -116,10 +116,14 @@ elseif taskParam.gParam.oddball == true
         
         
         % second digit
-        if taskData.cp(trial) == 1
-            digit2 = 0;
-        elseif taskData.cp(trial) == 0
+        if isequal(condition, 'main') && taskData.cp(trial) == 1
+             digit2 = 1;
+        elseif isequal(condition, 'oddball') && taskData.oddBall(trial) == 1
             digit2 = 1;
+        elseif isequal(condition, 'main') && taskData.cp(trial) == 0
+            digit2 = 0;
+        elseif isequal(condition, 'oddball') && taskData.oddBall(trial) == 0
+            digit2 = 0;
         end
         
         
@@ -128,6 +132,7 @@ elseif taskParam.gParam.oddball == true
         
         
         % For all predictions: last actRew (1/2)
+      
         if taskData.actRew(trial-1) == 1 && Tevent == 1
             digit3 = 0;
         elseif taskData.actRew(trial-1) == 2 && Tevent == 1
