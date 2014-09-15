@@ -107,8 +107,9 @@ while 1
 
 end
 
-[Data.predErr, ~, ~, ~, Data.rawPredErr] = Diff(distMean, Data.pred);
+%[Data.predErr, ~, ~, ~, Data.rawPredErr] = Diff(distMean, Data.pred);
 
+Data.predErr = Diff(distMean, Data.pred);
 
 
 %%%%%%%%%

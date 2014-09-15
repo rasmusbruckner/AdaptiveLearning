@@ -127,7 +127,7 @@ for i=1:trial
     RT_Flip(i) = GetSecs-time;
     
     % Calculate prediction error.
-    [taskData.predErr(i), taskData.predErrNorm(i), taskData.predErrPlus(i), taskData.predErrMin(i), taskData.rawPredErr(i)] = Diff(taskData.outcome(i), taskData.pred(i));
+    taskData.predErr(i) = Diff(taskData.outcome(i), taskData.pred(i));
     %if i > 1 && taskParam.gParam.PE_Bar == true
       
     
@@ -158,7 +158,7 @@ for i=1:trial
     else
         if i > 1
             % Calculate memory error.
-            [taskData.memErr(i), taskData.memErrNorm(i), taskData.memErrPlus(i), taskData.memErrMin(i)] = Diff(taskData.pred(i), taskData.outcome(i-1));
+            taskData.memErr(i) = Diff(taskData.pred(i), taskData.outcome(i-1));
         else
             taskData.memErr(i) = 999;
         end
@@ -194,7 +194,7 @@ for i=1:trial
     
     if i > 1
         % Calculate update.
-        [taskData.UP(i), taskData.UPNorm(i), taskData.UPPlus(i), taskData.UPMin(i)] = Diff(taskData.pred(i), taskData.pred(i-1));
+        taskData.UP(i) = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
     % Trigger: outcome.

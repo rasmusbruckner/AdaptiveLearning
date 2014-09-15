@@ -1276,7 +1276,8 @@ while 1
                             'to land at any location on the circle. '...
                             'However, these trials will be quite rare so your '...
                             'best strategy is still to place the shield where '...
-                            'the cannon is aimed.'];
+                            'the cannon is aimed.\n\n'...
+                            'Press Enter to see an example of this.'];
                     end
                     feedback = false;
                     [fw, bw] = BigScreen(taskParam,...
@@ -1349,6 +1350,81 @@ while 1
                         taskParam.gParam.vola(1), taskParam.gParam.sigma(1),...
                         cannon, condition);
                 elseif taskParam.gParam.oddball == true
+                    
+                    
+                    
+                    
+                    
+                    KbReleaseWait();% Hands-on intro
+            
+                txt=['Move the orange spot to the part of the circle, '...       % about how to
+                    'where the cannon is aimed and press SPACE.'];
+                
+            
+            distMean = 290;
+            outcome = 170;
+            [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
+                txt, cannon, 'space', distMean);
+            %if fw == 1
+             %   screenIndex = screenIndex + 1;
+                %elseif bw == 1
+                %    screenIndex = screenIndex - 1;
+            %end
+                    
+                    
+                   KbReleaseWait();% Feedback that
+            LineAndBack(taskParam)                                      % ball was caught.
+            DrawCircle(taskParam);
+            DrawCross(taskParam);
+            PredictionSpot(taskParam);
+            DrawOutcome(taskParam, outcome);
+            Cannon(taskParam, distMean)
+            DrawPE_Bar(taskParam, Data, 1)
+            Screen('DrawingFinished', taskParam.gParam.window);
+            t = GetSecs;
+            Screen('Flip', taskParam.gParam.window, t + 0.1);
+            % Show baseline 1.
+            LineAndBack(taskParam)
+            DrawCross(taskParam)
+            DrawCircle(taskParam)
+            Screen('DrawingFinished', taskParam.gParam.window, 1);
+            Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
+            while 1
+                txt=['In this case the cannonball was shot from a different cannon that you cannot see. '...
+                        'Keep in mind that these trials will be quite rare so your best strategy is to '...
+                        'place your shield where the cannon that you can see is aimed. \n'...
+                        'Press enter to start the practice block.'];
+                LineAndBack(taskParam)
+                Cannon(taskParam, distMean)
+                DrawCircle(taskParam)
+                Shield(taskParam, 20, Data.pred, 1)
+                DrawOutcome(taskParam, outcome) %%TRIGGER
+                DrawFormattedText(taskParam.gParam.window,txt,...
+                    taskParam.gParam.screensize(3)*0.1,...
+                    taskParam.gParam.screensize(4)*0.05,...
+                    [255 255 255], sentenceLength);
+                DrawFormattedText(taskParam.gParam.window,...
+                    taskParam.strings.txtPressEnter,'center',...
+                    taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+                Screen('DrawingFinished', taskParam.gParam.window, 1);
+                Screen('Flip', taskParam.gParam.window, t + 1.6);
+                [ keyIsDown, ~, keyCode ] = KbCheck;
+                if keyIsDown
+                    if keyCode(taskParam.keys.enter)
+                        screenIndex = screenIndex + 1;
+                        break
+                    elseif keyCode(taskParam.keys.delete)
+                        screenIndex = screenIndex - 3; % go to case 2
+                        break
+                    end
+                end
+            end
+            KbReleaseWait(); 
+                    
+                    
+                    
+                    
+                    
                     condition = 'practiceOddball';
                     LoadData = 'NoNoise';
                     [taskParam, practData] = PractLoop(taskParam, subject,...
