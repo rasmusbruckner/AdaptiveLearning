@@ -23,17 +23,17 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
-sendTrigger = false; % Do you want to send triggers?
+sendTrigger = true; % Do you want to send triggers?
 shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 1;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.25 .7 0]; % Volatility of the environment.
@@ -43,7 +43,7 @@ rewMag = 0.2; % Reward magnitude.
 driftConc = [30 99999999]; % Concentration of the drift. 10
 oddballProb = [.25 0]; % Oddball probability. .15
 test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = false; 
+debug = true; 
 % Computer2 = false;
 
 
@@ -151,8 +151,8 @@ end
 %% Open window.
 
 % Prevent input.
-ListenChar(2);
-HideCursor;
+%ListenChar(2);
+%HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);
@@ -389,7 +389,12 @@ if sendTrigger == true
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
-fPort = 'port'; port = 53328; % LPT port
+%fPort = 'port'; port = 53328; % LPT port (Dresden)
+%LPT1address = hex2dec('E050'); %standard location of LPT1 port % copied from heliEEG_main
+
+fPort = 'port'; port = hex2dec('E050'); % LPT port
+
+
 fStartTrigger = 'startTrigger'; startTrigger = 7; % Start of the task.
 fTrialOnset = 'trialOnsetTrigger'; trialOnsetTrigger = 1; % Trial onset.
 fPredTrigger = 'predTrigger'; predTrigger = 2; % Prediction.

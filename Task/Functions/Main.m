@@ -109,6 +109,7 @@ for i=1:trial
                 % Trigger: prediction.
                 Tevent = 1;
                 taskData.predT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
+                taskData.predT(i)
                 time = GetSecs;
                 
                 break
@@ -122,7 +123,7 @@ for i=1:trial
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
-    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1)
+    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
     RT_Flip(i) = GetSecs-time;
     
     % Calculate prediction error.

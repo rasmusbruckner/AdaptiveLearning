@@ -7,8 +7,12 @@ function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Teve
 digit1 = 0;
 digit2 = 0;
 digit3 = 0;
+ioObject = io64;
+status = io64(ioObject);
 
-if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequal(condition, 'control'))
+if taskParam.gParam.oddball == false
+
+if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequal(condition, 'control')) 
     
     %first digit
     if trial > 1
@@ -96,9 +100,19 @@ else
     trigger = 0000;
 end
 
+elseif taskParam.gParam.oddball == true
+    
+    if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequal(condition, 'oddball')) 
+
+    end
+    
+end
+
 if taskParam.gParam.sendTrigger == true
-    outp(taskParam.triggers.port, trigger);
-    WaitSecs(1/taskParam.triggers.sampleRate);
-    outp(taskParam.triggers.port,0) % Set port to 0.
+%     outp(taskParam.triggers.port, trigger); This is the Dresden version
+%     WaitSecs(1/taskParam.triggers.sampleRate);
+%     outp(taskParam.triggers.port,0) % Set port to 0.
+
+io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
 end
 end
