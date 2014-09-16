@@ -27,7 +27,7 @@ runIntro = false; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
 sendTrigger = true; % Do you want to send triggers?
@@ -43,7 +43,7 @@ rewMag = 0.2; % Reward magnitude.
 driftConc = [30 99999999]; % Concentration of the drift. 10
 oddballProb = [.25 0]; % Oddball probability. .15
 test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = true; 
+debug = false; 
 % Computer2 = false;
 
 
@@ -179,8 +179,10 @@ fSex = 'sex'; sex = fSex; % Sex.
 fRew = 'rew'; rew = fRew; %Rew.
 fActRew = 'actRew'; actRew = fActRew; % Actual Reward;
 fVolas = 'vola'; volas = fVolas; % Volatility.
-fSigmas = 'sigma'; sigmas = fSigmas; % Sigma.
 fOddball = 'oddball';
+fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
+fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
+fSigmas = 'sigma'; sigmas = fSigmas; % Sigma.
 fOddBall = 'oddBall'; oddBall = fOddBall;
 fDate = 'Date'; Date = fDate; % Date.
 fCond = 'cond'; cond = fCond; % Condition.
@@ -194,7 +196,7 @@ fBoatType = 'boatType'; boatType = fBoatType; % Boat type.
 fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial.
 fPredT = 'predT'; predT = fPredT; % Trigger: prediction.
 fOutT = 'outT'; outT = fOutT; % Trigger: outcome.
-fBoatT = 'boatT'; boatT = fBoatT; % Trigger: boat.
+fTriggers = 'triggers'; triggers = fTriggers; % Trigger: boat.
 fPred = 'pred';pred = fPred; % Prediction of participant.
 fPredErr = 'predErr'; predErr = fPredErr; % Prediction error.
 fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;% Regular prediction error.
@@ -215,8 +217,8 @@ fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 fFieldNames = 'fieldNames';
-fieldNames = struct(fOddBall, oddBall, fOddball, oddball, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
-    fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fBoatT, boatT, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
+fieldNames = struct('hallo', 'hallo', fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+    fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
 

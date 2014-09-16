@@ -106,9 +106,9 @@ elseif taskParam.gParam.oddball == true
     if taskParam.gParam.sendTrigger == true && trial > 1 && (isequal(condition, 'main') || isequal(condition, 'oddball')) 
         
         if sum(Tevent == 1:7) == 1
-        keyboard    
+        
         digit3 = Tevent;    
-        trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3);
+        trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
         trigger = str2double(trigger);
             
         elseif Tevent == 16
@@ -137,14 +137,16 @@ elseif taskParam.gParam.oddball == true
             if taskData.actRew(trial) == 1
                 digit4 = 1;
             elseif taskData.actRew(trial) == 2
+                digit4 = 0;
             end
         end
          
         
-        
         if Tevent == 16
+        
+
         trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
-        trigger = str2double(trigger);
+        %trigger = str2double(trigger);
         trigger = base2dec(trigger, 2) + 100;
         end
         else

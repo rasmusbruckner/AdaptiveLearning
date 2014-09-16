@@ -76,7 +76,7 @@ for i=1:trial
         Screen('Flip', taskParam.gParam.window, t + 0.01);
         %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
        
-        SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
+        taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
 
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
@@ -110,7 +110,7 @@ for i=1:trial
                 taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 
                 % Trigger: prediction.
-                Tevent = 1;
+                
                 %taskData.predT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
                 time = GetSecs;
                 
@@ -126,7 +126,7 @@ for i=1:trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
-    SendTrigger(taskParam, taskData, condition, vola, i, 2); % this is the prediction / fixation 1 trigger
+    taskData.triggers(i,2) = SendTrigger(taskParam, taskData, condition, vola, i, 2); % this is the prediction / fixation 1 trigger
 
     %io64(ioObject,taskParam.triggers.port,2) % this is the prediction and the onset of the first baseline
     RT_Flip(i) = GetSecs-time;
@@ -203,9 +203,9 @@ for i=1:trial
     end
     
     % Trigger: outcome.
-    Tevent = 2;
+   
     Screen('Flip', taskParam.gParam.window, t + 0.6);
-    SendTrigger(taskParam, taskData, condition, vola, i, 3); % this is the PE
+    taskData.triggers(i,3) = SendTrigger(taskParam, taskData, condition, vola, i, 3); % this is the PE
 
     %io64(ioObject,taskParam.triggers.port,3) % this is the presentation of the outcome
     %taskData.outT(i) = SendTrigger(taskParam, taskData, condition, vola, i, Tevent);
@@ -215,7 +215,7 @@ for i=1:trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 1.1, 1);
-    SendTrigger(taskParam, taskData, condition, vola, i, 4); % this is the 2nd fixation
+    taskData.triggers(i,4) = SendTrigger(taskParam, taskData, condition, vola, i, 4); % this is the 2nd fixation
 
     %io64(ioObject,taskParam.triggers.port,4) % this is the prediction and the onset of the first baseline
 
@@ -229,10 +229,10 @@ for i=1:trial
     % DrawNeedle(taskParam, taskData.outcome(i)) % Test whether bar is
     % centered around the outcome
     
-    Tevent = 3;
+   
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2.1);
-    SendTrigger(taskParam, taskData, condition, vola, i, 5); % this is the shield trigger
+    taskData.triggers(i,5) = SendTrigger(taskParam, taskData, condition, vola, i, 5); % this is the shield trigger
 
     %io64(ioObject,taskParam.triggers.port,5) % this is the prediction and the onset of the first baseline
 
@@ -244,7 +244,7 @@ for i=1:trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 2.6);
-    SendTrigger(taskParam, taskData, condition, vola, i, 6); % this is fixation 3
+    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, vola, i, 6); % this is fixation 3
 
     
 %     % Show boat and calculate performance.       %TRIGGER
@@ -277,10 +277,10 @@ for i=1:trial
 %     DrawCircle(taskParam)
 %     Screen('DrawingFinished', taskParam.gParam.window);
 %     Screen('Flip', taskParam.gParam.window, t + 4.1);
-    
+      taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
+
     WaitSecs(1);
     
-    SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
 
 end
 
@@ -380,15 +380,16 @@ KbReleaseWait();
 
 vola = repmat(vola, length(taskData.trial),1);
 sigma = repmat(sigma, length(taskData.trial),1);
+oddballProb = repmat(taskParam.gParam.oddballProb(1), length(taskData.trial),1);
+driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
 
 %% Save data.
-
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
-    fieldNames.predT, taskData.predT, fieldNames.outT, taskData.outT, fieldNames.boatT, taskData.boatT, fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
+    fieldNames.predT, taskData.predT, fieldNames.outT, taskData.outT, fieldNames.triggers, taskData.triggers, fieldNames.pred, taskData.pred, fieldNames.predErr, taskData.predErr, fieldNames.predErrNorm, taskData.predErrNorm,...
     fieldNames.predErrPlus, taskData.predErrPlus, fieldNames.predErrMin, taskData.predErrMin,...
     fieldNames.memErr, taskData.memErr, fieldNames.memErrNorm, taskData.memErrNorm, fieldNames.memErrPlus, taskData.memErrPlus,...
     fieldNames.memErrMin, taskData.memErrMin, fieldNames.UP, taskData.UP,fieldNames.UPNorm, taskData.UPNorm,...
