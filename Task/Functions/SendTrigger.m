@@ -7,7 +7,7 @@ function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Teve
 digit1 = 0;
 digit2 = 0;
 digit3 = 0;
-
+digit4 = 0;
 
 if taskParam.gParam.oddball == false
     
@@ -106,10 +106,10 @@ elseif taskParam.gParam.oddball == true
     if taskParam.gParam.sendTrigger == true && trial > 1 && (isequal(condition, 'main') || isequal(condition, 'oddball')) 
         
         if sum(Tevent == 1:7) == 1
-            
+        keyboard    
         trigger = Tevent;    
             
-        elseif tevent == 16
+        elseif Tevent == 16
             
             if isequal(condition, 'oddball') && taskData.oddBall(trial) == 1
                 digit1 = 1;
@@ -124,26 +124,26 @@ elseif taskParam.gParam.oddball == true
                 digit1 = 0;
                 digit2 = 0;
             end
-            
+           
             if taskData.hit(trial) == 1
                 digit3 = 1;
             elseif taskData.hit(trial) == 0
                 digit3 = 0;
             end
             
+          
             if taskData.actRew(trial) == 1
                 digit4 = 1;
-            elseif taskData.actRew(trial) == 0
-                digit4 = 0;
+            elseif taskData.actRew(trial) == 2
             end
         end
          
         
         
-        
+        if Tevent == 16
         trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
         trigger = str2double(trigger);
-        
+        end
         else
         trigger = 0000;
    

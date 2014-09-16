@@ -43,7 +43,7 @@ rewMag = 0.2; % Reward magnitude.
 driftConc = [30 99999999]; % Concentration of the drift. 10
 oddballProb = [.25 0]; % Oddball probability. .15
 test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = false; 
+debug = true; 
 % Computer2 = false;
 
 

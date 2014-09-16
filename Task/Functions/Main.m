@@ -75,7 +75,7 @@ for i=1:trial
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window, t + 0.01);
         %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
-        
+       
         SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
 
         
