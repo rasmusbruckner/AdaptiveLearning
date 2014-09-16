@@ -11,7 +11,7 @@ digit4 = 0;
 
 if taskParam.gParam.oddball == false
     
-    if taskParam.gParam.sendTrigger == true && (isequal(condition, 'main') || isequal(condition, 'control'))
+    if  (isequal(condition, 'main') || isequal(condition, 'control'))% taskParam.gParam.sendTrigger == true &&
         
         %first digit
         if trial > 1
@@ -100,10 +100,13 @@ if taskParam.gParam.oddball == false
     end
     
 elseif taskParam.gParam.oddball == true
+     
+     if taskParam.gParam.sendTrigger == true 
      ioObject = io64;
      status = io64(ioObject);
+     end
      
-    if taskParam.gParam.sendTrigger == true && trial > 1 && (isequal(condition, 'main') || isequal(condition, 'oddball')) 
+    if  trial > 1 && (isequal(condition, 'main') || isequal(condition, 'oddball')) %taskParam.gParam.sendTrigger == true &&
         
         if sum(Tevent == 1:7) == 1
         

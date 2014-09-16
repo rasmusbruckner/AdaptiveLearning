@@ -30,7 +30,7 @@ runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
-sendTrigger = true; % Do you want to send triggers?
+sendTrigger = false; % Do you want to send triggers?
 shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
 trials = 6;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
@@ -387,7 +387,7 @@ practData = struct(fPractDataNV, practDataNV, fPractDataLV, practDataLV, fPractD
 %% Trigger settings.
 
 if sendTrigger == true
-    config_io;
+   config_io;             % IS THIS STILL NECESSARY?
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
