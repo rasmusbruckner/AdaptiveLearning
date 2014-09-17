@@ -277,9 +277,10 @@ for i=1:trial
 %     DrawCircle(taskParam)
 %     Screen('DrawingFinished', taskParam.gParam.window);
 %     Screen('Flip', taskParam.gParam.window, t + 4.1);
-      taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
-
-    WaitSecs(1);
+      
+    WaitSecs(.5);
+    taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
+    WaitSecs(.5);
     
 
 end

@@ -202,7 +202,7 @@ practData.accPerf(i) = sum(practData.perf);% + taskData.perf(i);
 % Screen('Flip', taskParam.gParam.window, t + 2.01);
 WaitSecs(1);
 
-KbReleaseWait();
+
 %Priority(0);
 
 %fieldNames = taskParam.fieldNames;

@@ -2,7 +2,6 @@ function Instructions(taskParam, type, subject)
 % BattleShipsInstructions runs the practice sessions.
 %   Depending on cBal you start with low or high volatility.
 
-KbReleaseWait();
 cannon = true;
 if isequal(type, 'Oddball')
     screenIndex = 1;
@@ -10,12 +9,9 @@ elseif (isequal(type, 'Main'))
     screenIndex = 25;
 end
 sentenceLength = taskParam.gParam.sentenceLength;
-
-
 while 1
     switch(screenIndex) % Endless loop for "go-back".
         case 1
-            KbReleaseWait();
             % Intro screen.
             while 1
                 Screen('TextFont', taskParam.gParam.window, 'Arial');
@@ -32,9 +28,8 @@ while 1
                     break
                 end
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 2
-            KbReleaseWait();% Intro about idea
             Screen('TextSize', taskParam.gParam.window, 30);                % and keyboard.
             if taskParam.gParam.oddball == false
                 txt=['Eine Kanone zielt auf eine Stelle des weißen '...
@@ -62,9 +57,9 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 1; % go to case 1
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 3
-            KbReleaseWait();% Hands-on intro
+            % Hands-on intro
             if taskParam.gParam.oddball == false
                 txt=['Steuere den orangenen Punkt jetzt auf die Stelle, '...       % about how to
                     'worauf die Kanone zielt und drücke LEERTASTE.'];
@@ -83,10 +78,8 @@ while 1
                 %    screenIndex = screenIndex - 1;
             end
         case 4
-            KbReleaseWait();
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
-            KbReleaseWait();
             if Data.predErr >= 9
                 %while 1
                 if taskParam.gParam.oddball == false
@@ -128,9 +121,9 @@ while 1
             else
                 screenIndex = screenIndex +1;
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 5
-            KbReleaseWait();% Feedback that
+            % Feedback that
             LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
@@ -184,9 +177,8 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 6
-            KbReleaseWait();
             if taskParam.gParam.oddball == false
                 txt=['Steuere den orangenen Punkt jetzt neben das Ziel der '...    % Try to
                     'Kanone, so dass du die Kanonenkugel verfehlst '...         % miss the ball.
@@ -197,21 +189,16 @@ while 1
                     ];
                 
             end
-            
-            
             distMean = 35;
             outcome = 35;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
                 cannon, 'space', distMean);
             if fw == 1
                 screenIndex = screenIndex + 1;
-                %elseif bw == 1
-                %    screenIndex = screenIndex - 1;
             end
             
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 7
-            KbReleaseWait();
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
             if Data.predErr <=9
@@ -233,17 +220,10 @@ while 1
                     DrawFormattedText(taskParam.gParam.window,...
                         taskParam.strings.txtPressEnter,'center',...
                         taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %if isequal(taskParam.gParam.computer, 'D_Pilot')
-                    %DrawFormattedText(taskParam.gParam.window,txt,...
-                    %  taskParam.gParam.screensize(3)*0.1,...
-                    %  taskParam.gParam.screensize(4)*0.05,...
-                    % [255 255 255], 100);
-                    % else
                     DrawFormattedText(taskParam.gParam.window,txt,...
                         taskParam.gParam.screensize(3)*0.1,...
                         taskParam.gParam.screensize(4)*0.05,...
                         [255 255 255], sentenceLength);
-                    %end
                     Screen('DrawingFinished', taskParam.gParam.window);
                     t = GetSecs;
                     Screen('Flip', taskParam.gParam.window, t + 0.1);
@@ -259,7 +239,6 @@ while 1
                     end
                 end
             else
-                %while 1
                 if taskParam.gParam.oddball == false
                     txt=['Der schwarze Balken zeigt dir '...
                         'wie weit die Kanonenkugel von deinem '...
@@ -276,43 +255,18 @@ while 1
                 DrawOutcome(taskParam, outcome);
                 Cannon(taskParam, distMean)
                 DrawPE_Bar(taskParam, Data, 1)
-                %DrawFormattedText(taskParam.gParam.window,...
-                %   taskParam.strings.txtPressEnter,'center',...
-                %  taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                
-                %DrawFormattedText(taskParam.gParam.window,txt,...
-                %taskParam.gParam.screensize(3)*0.1,...
-                %taskParam.gParam.screensize(4)*0.05,...
-                %[255 255 255], sentenceLength);
-                
                 Screen('DrawingFinished', taskParam.gParam.window);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
-                
-                %                     [ keyIsDown, ~, keyCode ] = KbCheck;
-                %                     if keyIsDown
-                %                         if keyCode(taskParam.keys.enter)
-                %                             screenIndex = screenIndex + 1;
-                %                             break
-                %                         elseif keyCode(taskParam.keys.delete)
-                %                             screenIndex = screenIndex - 1;
-                %                             break
-                %                         end
-                %                     end
-                %end
                 screenIndex = screenIndex + 1;
             end
             
         case 8
-            KbReleaseWait();
-            
             LineAndBack(taskParam)
             DrawCross(taskParam)
             DrawCircle(taskParam)
             Screen('DrawingFinished', taskParam.gParam.window, 1);
-            Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
-            
-            
+            Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
             while 1
                 if taskParam.gParam.oddball == false
                     txt=['...dein Schild. In '...
@@ -346,11 +300,8 @@ while 1
                     end
                 end
             end
-            
-            
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 9
-            KbReleaseWait();% Intro about
             if taskParam.gParam.oddball == false
                 txt=['Die Größe deines Schildes kann sich jedes Mal ändern. '...  % reward.
                     'Um einen Eindruck von verschiedenen Schildgrößen '...
@@ -377,7 +328,6 @@ while 1
                     'The location of the ball fired on the previous trial will be marked with a black line.'];
                 header = 'Your Shield';
             end
-            
             feedback = false;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -386,17 +336,16 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 7; % go to case 2
             end
+            WaitSecs(0.1);
             
-            %%%%%%%
         case 10
             condition = 'shield';
             
             PractLoop(taskParam, subject, taskParam.gParam.vola(3),taskParam.gParam.sigma(3), cannon, condition);
             screenIndex = screenIndex + 1;
             %%%%%%%
-            
+            WaitSecs(0.1);
         case 11
-            KbReleaseWait();
             % Intro about
             if taskParam.gParam.oddball == false
                 header = 'Trial Outcomes';
@@ -407,8 +356,6 @@ while 1
                 txt=  ['Now lets see what happens when you hit '...
                     'or miss the ball with a blue or green shield...'];
             end
-            
-            
             feedback = false;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -417,7 +364,7 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 2;
             end
-            
+            WaitSecs(0.1);
         case 12                                                              % Try to
             if taskParam.gParam.oddball == false
                 txt='Versuche die Kanonenkugel jetzt wieder zu fangen.';      % miss the ball.
@@ -428,17 +375,15 @@ while 1
             outcome = 290;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
                 cannon, 'space', distMean);
-            KbReleaseWait();
             if fw == 1
                 screenIndex = screenIndex + 1;
                 %elseif bw == 1
                 %   screenIndex = screenIndex - 2;
             end
-            
+            WaitSecs(0.1);
         case 13
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
-            KbReleaseWait();
             if Data.predErr >= 9
                 while 1
                     if taskParam.gParam.oddball == false
@@ -459,16 +404,10 @@ while 1
                     DrawFormattedText(taskParam.gParam.window,...
                         taskParam.strings.txtPressEnter,'center',...
                         taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    % if isequal(taskParam.gParam.computer, 'Dresden')
-                    %     DrawFormattedText(taskParam.gParam.window,txt,...
-                    %        taskParam.gParam.screensize(3)*0.05,...
-                    %       taskParam.gParam.screensize(4)*0.05);
-                    %else
                     DrawFormattedText(taskParam.gParam.window,txt,...
                         taskParam.gParam.screensize(3)*0.1,...
                         taskParam.gParam.screensize(4)*0.05,...
                         [255 255 255], sentenceLength);
-                    %end
                     Screen('DrawingFinished', taskParam.gParam.window);
                     t = GetSecs;
                     Screen('Flip', taskParam.gParam.window, t + 0.1);
@@ -485,25 +424,10 @@ while 1
                     end
                 end
             else
-                %while 1
-                %if keyIsDown
-                % if keyCode(taskParam.keys.enter)
                 screenIndex = screenIndex + 1;
-                % break
-                %elseif keyCode(taskParam.keys.delete)
-                %   screenIndex = screenIndex - 2;
-                %  break
-                %end
-                % end
-                
-                %  end
             end
-            
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 14                                                           % Rewrard.
-            
-            
-            
             LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
@@ -555,41 +479,8 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
-            %                     txt=['Weil du eine goldene Kanonenkugel gefangen '...
-            %                         'hast, hättest du jetzt 10 CENT verdient.'];
-            %                     LineAndBack(taskParam)
-            %                     %if isequal(taskParam.gParam.computer, 'D_Pilot')
-            %                     %DrawFormattedText(taskParam.gParam.window,txt,...
-            %                     %  taskParam.gParam.screensize(3)*0.1,...
-            %                     %taskParam.gParam.screensize(4)*0.05,...
-            %                     % [255 255 255], 100);
-            %                     % else
-            %                     DrawFormattedText(taskParam.gParam.window,txt,...
-            %                         taskParam.gParam.screensize(3)*0.1,...
-            %                         taskParam.gParam.screensize(4)*0.05,...
-            %                         [255 255 255], sentenceLength);
-            %                     % end
-            %                     DrawCircle(taskParam)
-            %                     PredictionSpot(taskParam);
-            %                     DrawPE_Bar(taskParam, Data, 1)
-            %                     DrawOutcome(taskParam, outcome);
-            %                     if subject.rew == '1'
-            %                         RewardTxt = Reward(taskParam, 'gold');
-            %                     else
-            %                         DrawBoat(taskParam, taskParam.colors.silver)
-            %                     end
-            %                     DrawFormattedText(taskParam.gParam.window,...
-            %                         taskParam.strings.txtPressEnter,'center',...
-            %                         taskParam.gParam.screensize(4)*0.9);
-            %                     Screen('DrawingFinished', taskParam.gParam.window, [], []);
-            %                     t = GetSecs;
-            %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-            %                     screenIndex = ScreenIndex(taskParam, screenIndex);
-            %                     break
-            %                 end
-            %                 Screen('Close', RewardTxt)
-            %                 KbReleaseWait();
+            WaitSecs(0.1);
+            
         case 15                                                             % Try to
             
             if taskParam.gParam.oddball == false
@@ -602,14 +493,6 @@ while 1
             outcome = 35;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
                 txt, cannon, 'space', distMean);
-            KbReleaseWait();
-            %if fw == 1
-            %  screenIndex = screenIndex + 1;
-            %elseif bw == 1
-            %screenIndex = screenIndex - 1;
-            %end
-            %KbReleaseWait();
-            % case 16
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
             if Data.predErr >= 9
@@ -617,7 +500,7 @@ while 1
             else
                 screenIndex = screenIndex + 1;
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 16
             while 1
                 if taskParam.gParam.oddball == false
@@ -637,17 +520,10 @@ while 1
                 DrawFormattedText(taskParam.gParam.window,...
                     taskParam.strings.txtPressEnter,'center',...
                     taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                %if isequal(taskParam.gParam.computer, 'D_Pilot')
-                %  DrawFormattedText(taskParam.gParam.window,txt,...
-                %taskParam.gParam.screensize(3)*0.1,...
-                % taskParam.gParam.screensize(4)*0.05,...
-                % [255 255 255], 80);
-                %  else
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
                     [255 255 255], sentenceLength);
-                %end
                 Screen('DrawingFinished', taskParam.gParam.window);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
@@ -662,10 +538,8 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 17
-            
-            
             LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
@@ -683,7 +557,6 @@ while 1
             Screen('DrawingFinished', taskParam.gParam.window, 1);
             Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
             while 1
-                
                 if taskParam.gParam.oddball == false
                     txt=['Weil du die Kanonenkugel verpasst hast, '...
                         'hättest du nichts verdient.'];
@@ -715,42 +588,7 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
-            
-            % No reward.
-            %                                 while 1
-            %                                     txt=['Weil du eine goldene Kugel verpasst hast, '...
-            %                                         'hättest du in diesem Fall NICHTS verdient.'];
-            %                                     LineAndBack(taskParam)
-            %                                     % if isequal(taskParam.gParam.computer, 'Dresden')
-            %                                     % DrawFormattedText(taskParam.gParam.window,txt,...
-            %                                     %  taskParam.gParam.screensize(3)*0.05,...
-            %                                     %  taskParam.gParam.screensize(4)*0.05);
-            %                                     %else
-            %                                     DrawFormattedText(taskParam.gParam.window,txt,...
-            %                                         taskParam.gParam.screensize(3)*0.1,...
-            %                                         taskParam.gParam.screensize(4)*0.05,...
-            %                                         [255 255 255], sentenceLength);
-            %                                     % end
-            %                                     DrawCircle(taskParam)
-            %                                     PredictionSpot(taskParam);
-            %                                     DrawPE_Bar(taskParam, Data, 1)
-            %                                     DrawOutcome(taskParam, outcome);
-            %                                     if subject.rew == '1'
-            %                                         Reward(taskParam, 'gold');
-            %                                     else
-            %                                         DrawBoat(taskParam, taskParam.colors.silver)
-            %                                     end
-            %                                     DrawFormattedText(taskParam.gParam.window,...
-            %                                         taskParam.strings.txtPressEnter,'center',...
-            %                                         taskParam.gParam.screensize(4)*0.9);
-            %                                     Screen('DrawingFinished', taskParam.gParam.window, [], []);
-            %                                     t = GetSecs;
-            %                                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-            %                                     screenIndex = ScreenIndex(taskParam, screenIndex);
-            %                                     break
-            %                                 end
-            %                                 KbReleaseWait();
+            WaitSecs(0.1);
         case 18                                                             % Try to
             if taskParam.gParam.oddball == false
                 txt='Versuche die Kanonenkugel jetzt wieder zu fangen.';        % catch the ball.
@@ -761,13 +599,12 @@ while 1
             outcome = 190;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
                 cannon, 'space', distMean);
-            KbReleaseWait();
             if fw == 1
                 screenIndex = screenIndex + 1;
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 19
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
@@ -776,19 +613,10 @@ while 1
             else
                 screenIndex = screenIndex + 1;
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
+            
         case 20
-            KbReleaseWait();% Feedback.
             while 1
-                %if isequal(taskParam.gParam.computer, 'Dresden')
-                %   txt=['Der schwarze Balken zeigt dir dann die '...
-                %      'Position des Schiffs an.\n\nWenn dein '...
-                %     'Punkt auf dem Schiff ist, hast du es getroffen.'];
-                %elseif isequal(taskParam.gParam.computer, 'D_Pilot')
-                %   txt=['Der schwarze Balken zeigt dir dann die '...
-                %      'Position des Schiffs an. Wenn dein Punkt auf '...
-                %     'dem\n\nSchiff ist, hast du es getroffen.'];
-                %else
                 if taskParam.gParam.oddball == false
                     txt=['Leider hast du die Kanonenkugel vefehlt. '...
                         'Versuche es noch einmal!'];
@@ -806,16 +634,10 @@ while 1
                 DrawFormattedText(taskParam.gParam.window,...
                     taskParam.strings.txtPressEnter,'center',...
                     taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                % if isequal(taskParam.gParam.computer, 'Dresden')
-                %   DrawFormattedText(taskParam.gParam.window,txt,...
-                %      taskParam.gParam.screensize(3)*0.05,...
-                %     taskParam.gParam.screensize(4)*0.05);
-                %else
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
                     [255 255 255], sentenceLength);
-                % end
                 Screen('DrawingFinished', taskParam.gParam.window);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
@@ -830,9 +652,8 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 21
-            
             LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
@@ -883,46 +704,7 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
-            
-            
-            % No reward.
-            %                                                 while 1
-            %                                                     txt=['Weil du eine eiserne Kanonenkugel gefangen hast, '...
-            %                                                         'hättest du NICHTS verdient.'];
-            %
-            %                                                     LineAndBack(taskParam)
-            %                                                     % if isequal(taskParam.gParam.computer, 'Dresden')
-            %                                                     %DrawFormattedText(taskParam.gParam.window,txt,...
-            %                                                     %   taskParam.gParam.screensize(3)*0.05,...
-            %                                                     %   taskParam.gParam.screensize(4)*0.05);
-            %                                                     % else
-            %                                                     DrawFormattedText(taskParam.gParam.window,txt,...
-            %                                                         taskParam.gParam.screensize(3)*0.1,...
-            %                                                         taskParam.gParam.screensize(4)*0.05,...
-            %                                                         [255 255 255], sentenceLength);
-            %                                                     %end
-            %                                                     DrawCircle(taskParam)
-            %                                                     PredictionSpot(taskParam);
-            %                                                     DrawPE_Bar(taskParam, Data, 1)
-            %                                                     DrawOutcome(taskParam, outcome);
-            %                                                     if subject.rew == '1'
-            %                                                         %color = 'gold';
-            %                                                         Reward(taskParam, 'silver');
-            %                                                     else
-            %                                                         DrawBoat(taskParam, taskParam.colors.silver)
-            %                                                     end
-            %                                                     DrawFormattedText(taskParam.gParam.window,...
-            %                                                         taskParam.strings.txtPressEnter,'center',...
-            %                                                         taskParam.gParam.screensize(4)*0.9);
-            %                                                     Screen('DrawingFinished', taskParam.gParam.window, [], []);
-            %                                                     t = GetSecs;
-            %                                                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-            %
-            %                                                     screenIndex = ScreenIndex(taskParam, screenIndex);
-            %                                                     break
-            %                                                 end
-            %                                                 KbReleaseWait();
+            WaitSecs(0.1);
         case 22                                                            % Try to
             if taskParam.gParam.oddball == false
                 txt=['Veruche die Kanonenkugel bei nächsten Schuss wieder '...  % miss the ball.
@@ -933,15 +715,7 @@ while 1
             distMean = 160;
             outcome = 160;
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
-                cannon, 'space', distMean);
-            KbReleaseWait();
-            %             if fw == 1
-            %                 screenIndex = screenIndex + 1;
-            %             elseif bw == 1
-            %                 screenIndex = screenIndex - 1;
-            %             end
-            %             KbReleaseWait();
-            %case 24                                                             % Simulate shoot.
+                cannon, 'space', distMean);                                                            % Simulate shoot.
             background = true;
             Cannonball(taskParam, distMean, outcome, background)
             if Data.predErr >= 9
@@ -949,7 +723,7 @@ while 1
             else
                 screenIndex = screenIndex + 1;
             end
-            KbReleaseWait();
+            WaitSecs(0.1);
         case 23                                                             % Feedback.
             while 1
                 if taskParam.gParam.oddball == false
@@ -969,17 +743,10 @@ while 1
                 DrawFormattedText(taskParam.gParam.window,...
                     taskParam.strings.txtPressEnter,'center',...
                     taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                % if isequal(taskParam.gParam.computer, 'D_Pilot')
-                %    DrawFormattedText(taskParam.gParam.window,txt,...
-                %       taskParam.gParam.screensize(3)*0.1,...
-                %      taskParam.gParam.screensize(4)*0.05,...
-                %     [255 255 255], 100);
-                %else
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
                     [255 255 255], sentenceLength);
-                %end
                 Screen('DrawingFinished', taskParam.gParam.window);
                 t = GetSecs;
                 Screen('Flip', taskParam.gParam.window, t + 0.1);
@@ -994,8 +761,8 @@ while 1
                     end
                 end
             end
+            WaitSecs(0.1);
         case 24
-            
             LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
@@ -1046,45 +813,7 @@ while 1
                     end
                 end
             end
-            KbReleaseWait();
-            
-            
-            
-            % No reward.
-            %             while 1
-            %                 txt=['Weil du die Kanonenkugel verpasst hast und '...
-            %                     'das Schild grün war, hättest du nichts verdient.'];
-            %                 LineAndBack(taskParam)
-            %                 % if isequal(taskParam.gParam.computer, 'D_Pilot')
-            %                 %  DrawFormattedText(taskParam.gParam.window,txt,...
-            %                 %   taskParam.gParam.screensize(3)*0.1,...
-            %                 %   taskParam.gParam.screensize(4)*0.05,...
-            %                 %   [255 255 255], 100);
-            %                 %  else
-            %                 DrawFormattedText(taskParam.gParam.window,txt,...
-            %                     taskParam.gParam.screensize(3)*0.1,...
-            %                     taskParam.gParam.screensize(4)*0.05,...
-            %                     [255 255 255], sentenceLength);
-            %                 %  end
-            %                 DrawCircle(taskParam)
-            %                 PredictionSpot(taskParam);
-            %                 DrawPE_Bar(taskParam, Data, 1)
-            %                 DrawOutcome(taskParam, outcome);
-            %                 if subject.rew == '1'
-            %                     Reward(taskParam, 'silver');
-            %                 else
-            %                     DrawBoat(taskParam, taskParam.colors.silver)
-            %                 end
-            %                 DrawFormattedText(taskParam.gParam.window,...
-            %                     taskParam.strings.txtPressEnter,'center',...
-            %                     taskParam.gParam.screensize(4)*0.9);
-            %                 Screen('DrawingFinished', taskParam.gParam.window, [], []);
-            %                 t = GetSecs;
-            %                 Screen('Flip', taskParam.gParam.window, t + 0.1);
-            %                 screenIndex = ScreenIndex(taskParam, screenIndex);
-            %                 break
-            %             end
-            %             KbReleaseWait();
+            WaitSecs(0.1);
         case 25                                                            % Introduce
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
@@ -1109,7 +838,6 @@ while 1
                         'stationary but instead move unpredictably.'...
                         ];
                 end
-                
                 feedback = false;
                 [fw, bw] = BigScreen(taskParam, ...
                     taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -1118,6 +846,7 @@ while 1
                 elseif bw == 1
                     screenIndex = screenIndex - 14;
                 end
+                WaitSecs(0.1);
             elseif isequal(type, 'Main')
                 if taskParam.gParam.oddball == false
                     header = 'Erste Übung';
@@ -1145,10 +874,9 @@ while 1
                     taskParam.strings.txtPressEnter, header, txt, feedback);
                 if fw == 1
                     screenIndex = screenIndex + 2;
-                    %elseif bw == 1
-                    %    screenIndex = screenIndex - 14;
                 end
             end
+            WaitSecs(0.1);
         case 26                                                             % Show performance
             
             %--------------
@@ -1205,12 +933,9 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-            
+            WaitSecs(0.1);
         case 27
-            
             if isequal(type, 'Oddball') && sumCannonDev >= 4
-                
-                
                 if taskParam.gParam.oddball == false
                     header = 'Wiederholung der Übung';
                     txt = ['In der letzten Übung hast du dich zu '...
@@ -1238,7 +963,6 @@ while 1
                 elseif bw == 1
                     screenIndex = screenIndex - 2;
                 end
-                %screenIndex = screenIndex;
             else
                 
                 %------------------
@@ -1331,7 +1055,7 @@ while 1
                     end
                 end
             end
-            %end
+            WaitSecs(0.1);
             
         case 28                                                           % Show performance.
             
@@ -1341,90 +1065,65 @@ while 1
             %
             %------------------
             
-            %VolaIndication(taskParam, taskParam.strings.txtLowVola,...
-            %taskParam.strings.txtPressEnter)
-            KbReleaseWait();
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
                     [taskParam, practData] = PractLoop(taskParam, subject,...
                         taskParam.gParam.vola(1), taskParam.gParam.sigma(1),...
                         cannon, condition);
                 elseif taskParam.gParam.oddball == true
+                    txt=['Move the orange spot to the part of the circle, '...       % about how to
+                        'where the cannon is aimed and press SPACE.'];
                     
-                    
-                    
-                    
-                    
-                    KbReleaseWait();% Hands-on intro
-            
-                txt=['Move the orange spot to the part of the circle, '...       % about how to
-                    'where the cannon is aimed and press SPACE.'];
-                
-            
-            distMean = 290;
-            outcome = 170;
-            [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
-                txt, cannon, 'space', distMean);
-            %if fw == 1
-             %   screenIndex = screenIndex + 1;
-                %elseif bw == 1
-                %    screenIndex = screenIndex - 1;
-            %end
-                    
-                    
-                   KbReleaseWait();% Feedback that
-            LineAndBack(taskParam)                                      % ball was caught.
-            DrawCircle(taskParam);
-            DrawCross(taskParam);
-            PredictionSpot(taskParam);
-            DrawOutcome(taskParam, outcome);
-            Cannon(taskParam, distMean)
-            DrawPE_Bar(taskParam, Data, 1)
-            Screen('DrawingFinished', taskParam.gParam.window);
-            t = GetSecs;
-            Screen('Flip', taskParam.gParam.window, t + 0.1);
-            % Show baseline 1.
-            LineAndBack(taskParam)
-            DrawCross(taskParam)
-            DrawCircle(taskParam)
-            Screen('DrawingFinished', taskParam.gParam.window, 1);
-            Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
-            while 1
-                txt=['In this case the cannonball was shot from a different cannon that you cannot see. '...
-                        'Keep in mind that these trials will be quite rare so your best strategy is to '...
-                        'place your shield where the cannon that you can see is aimed. \n'...
-                        'Press enter to start the practice block.'];
-                LineAndBack(taskParam)
-                Cannon(taskParam, distMean)
-                DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 1)
-                DrawOutcome(taskParam, outcome) %%TRIGGER
-                DrawFormattedText(taskParam.gParam.window,txt,...
-                    taskParam.gParam.screensize(3)*0.1,...
-                    taskParam.gParam.screensize(4)*0.05,...
-                    [255 255 255], sentenceLength);
-                DrawFormattedText(taskParam.gParam.window,...
-                    taskParam.strings.txtPressEnter,'center',...
-                    taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                Screen('DrawingFinished', taskParam.gParam.window, 1);
-                Screen('Flip', taskParam.gParam.window, t + 1.6);
-                [ keyIsDown, ~, keyCode ] = KbCheck;
-                if keyIsDown
-                    if keyCode(taskParam.keys.enter)
-                        screenIndex = screenIndex + 1;
-                        break
-                    elseif keyCode(taskParam.keys.delete)
-                        screenIndex = screenIndex - 3; % go to case 2
-                        break
+                    distMean = 290;
+                    outcome = 170;
+                    [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
+                        txt, cannon, 'space', distMean);
+                    LineAndBack(taskParam)                                      % ball was caught.
+                    DrawCircle(taskParam);
+                    DrawCross(taskParam);
+                    PredictionSpot(taskParam);
+                    DrawOutcome(taskParam, outcome);
+                    Cannon(taskParam, distMean)
+                    DrawPE_Bar(taskParam, Data, 1)
+                    Screen('DrawingFinished', taskParam.gParam.window);
+                    t = GetSecs;
+                    Screen('Flip', taskParam.gParam.window, t + 0.1);
+                    % Show baseline 1.
+                    LineAndBack(taskParam)
+                    DrawCross(taskParam)
+                    DrawCircle(taskParam)
+                    Screen('DrawingFinished', taskParam.gParam.window, 1);
+                    Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
+                    while 1
+                        txt=['In this case the cannonball was shot from a different cannon that you cannot see. '...
+                            'Keep in mind that these trials will be quite rare so your best strategy is to '...
+                            'place your shield where the cannon that you can see is aimed. \n'...
+                            'Press enter to start the practice block.'];
+                        LineAndBack(taskParam)
+                        Cannon(taskParam, distMean)
+                        DrawCircle(taskParam)
+                        Shield(taskParam, 20, Data.pred, 1)
+                        DrawOutcome(taskParam, outcome) %%TRIGGER
+                        DrawFormattedText(taskParam.gParam.window,txt,...
+                            taskParam.gParam.screensize(3)*0.1,...
+                            taskParam.gParam.screensize(4)*0.05,...
+                            [255 255 255], sentenceLength);
+                        DrawFormattedText(taskParam.gParam.window,...
+                            taskParam.strings.txtPressEnter,'center',...
+                            taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+                        Screen('DrawingFinished', taskParam.gParam.window, 1);
+                        Screen('Flip', taskParam.gParam.window, t + 1.6);
+                        [ keyIsDown, ~, keyCode ] = KbCheck;
+                        if keyIsDown
+                            if keyCode(taskParam.keys.enter)
+                                screenIndex = screenIndex + 1;
+                                break
+                            elseif keyCode(taskParam.keys.delete)
+                                screenIndex = screenIndex - 3; % go to case 2
+                                break
+                            end
+                        end
                     end
-                end
-            end
-            KbReleaseWait(); 
-                    
-                    
-                    
-                    
-                    
                     condition = 'practiceOddball';
                     LoadData = 'NoNoise';
                     [taskParam, practData] = PractLoop(taskParam, subject,...
@@ -1455,7 +1154,6 @@ while 1
                     practData.accPerf(end), maxMon);
             elseif taskParam.gParam.oddball == true
                 header = 'Performance';
-                
                 txt = sprintf(['Blue shield catches: %.0f of '...
                     '%.0f\n\nGreen shield catches: %.0f of '...
                     '%.0f\n\nIn this block you would have earned %.2f of '...
@@ -1472,7 +1170,7 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-            
+            WaitSecs(0.1);
         case 29
             sumCannonDev = sum(practData.cannonDev >= 5);
             if sumCannonDev >= 4
@@ -1517,7 +1215,6 @@ while 1
                         taskParam.strings.txtHVHS,...
                         taskParam.strings.txtPressEnter)
                 end
-                KbReleaseWait();
                 taskParam = PractLoop(taskParam, subject,...
                     distMean(i), outcome(i), boatType(i), cannon);
                 if taskParam.gParam.runVola == false
@@ -1532,6 +1229,7 @@ while 1
                 taskParam = PractLoop(taskParam,...
                     subject, distMean(i), outcome(i), boatType(i));
             end
+            WaitSecs(0.1);
         case 30
             
             % Introduce
@@ -1565,7 +1263,7 @@ while 1
                         'occasionally be shot by another randomly aimed cannon.'...
                         ];
                 end
-                feedback = false
+                feedback = false;
                 [fw, bw] = BigScreen(taskParam, ...
                     taskParam.strings.txtPressEnter, header, txt, feedback);
                 if fw == 1
@@ -1614,6 +1312,7 @@ while 1
                 end
                 
             end
+            WaitSecs(0.1);
         case 31
             % Show performance.
             
@@ -1623,9 +1322,7 @@ while 1
             %
             %------------------
             
-            %VolaIndication(taskParam, taskParam.strings.txtLowVola,...
-            %taskParam.strings.txtPressEnter)
-            KbReleaseWait();
+            
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
                     LoadOddballPracticeNoNoise = true;
@@ -1681,12 +1378,10 @@ while 1
             elseif bw == 1
                 screenIndex = screenIndex - 1;
             end
-            
+            WaitSecs(0.1);
         case 32
             sumCannonDev = sum(practData.cannonDev >= 5);
             if sumCannonDev >= 4
-                
-                
                 if taskParam.gParam.oddball == false
                     header = 'Wiederholung der Übung';
                     txt = ['In der letzten Übung hast du dich zu häufig '...
@@ -1727,7 +1422,6 @@ while 1
                         taskParam.strings.txtHVHS,...
                         taskParam.strings.txtPressEnter)
                 end
-                KbReleaseWait();
                 taskParam = PractLoop(taskParam, subject,...
                     distMean(i), outcome(i), boatType(i), cannon);
                 if taskParam.gParam.runVola == false
@@ -1742,6 +1436,7 @@ while 1
                 taskParam = PractLoop(taskParam,...
                     subject, distMean(i), outcome(i), boatType(i));
             end
+            WaitSecs(0.1);
         case 33                                                            % End of intro
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
@@ -1804,7 +1499,6 @@ while 1
                         'think the cannon is aimed.\n\n'...
                         'Since you will still see each ball shot from the cannon, '...
                         'you will be able to use the locations of past shots to inform your decision.'];
-                    
                 end
                 feedback = false;
                 [fw, bw] = BigScreen(taskParam,...
@@ -1816,7 +1510,7 @@ while 1
                     screenIndex = screenIndex - 3;
                 end
             end
-            
+            WaitSecs(0.1);
         case 34                                                             % Break out of loop.
             break
     end
