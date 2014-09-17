@@ -29,16 +29,16 @@ clear all
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
 runIntro = true; % Run the intro with practice trials?
-oddball = true; % Run oddball or perceptual version
+oddball = true; % Run oddball or Dresden version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
 sendTrigger = false; % Do you want to send triggers?
-shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20 
-trials = 6;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10 
+practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
+trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150 Brown: 200
 practContTrials = 1;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.25 .7 0]; % Volatility of the environment.
