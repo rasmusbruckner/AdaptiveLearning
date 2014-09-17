@@ -14,6 +14,11 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
+% TODO: build in rand in GenerateOutcomes
+% Replace kbReleaseWait by short break!
+
+
+
 
 % No point in subject name!
 clear all
@@ -23,7 +28,7 @@ clear all
 % computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
-runIntro = false; % Run the intro with practice trials?
+runIntro = true; % Run the intro with practice trials?
 oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
@@ -87,7 +92,7 @@ if askSubjInfo == false
     reward = '1';
     Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
-    prompt = {'ID:','Alter:', 'Geschlecht:', 'cBal', 'reward'};
+    prompt = {'ID:','Age:', 'Sex:', 'cBal', 'Reward'};
     name = 'SubjInfo';
     numlines = 1;
     defaultanswer = {'9999','99', 'm', '1', '1'};
@@ -95,18 +100,18 @@ elseif askSubjInfo == true
     subjInfo{6} = date;
     
     % Make sure you made no mistake
-    if subjInfo{3} ~= 'm' && subjInfo{3} ~= 'w'
-        msgbox('Geschlecht: "m" oder "w"?');
+    if subjInfo{3} ~= 'm' && subjInfo{3} ~= 'f'
+        msgbox('Sex: "m" or "f"?');
         return
     end
     
     if subjInfo{4} ~= '1' && subjInfo{4} ~= '2'
-        msgbox('cBal muss 1 oder 2 sein!');
+        msgbox('cBal: 1 or 2?');
         return
     end
     
     if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
-        msgbox('Reward muss 1 oder 2 sein!');
+        msgbox('Reward: 1 or 2?');
         return
     end
     
@@ -152,7 +157,7 @@ end
 
 % Prevent input.
 ListenChar(2);
-%HideCursor;
+HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);

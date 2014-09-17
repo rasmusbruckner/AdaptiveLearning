@@ -106,7 +106,7 @@ elseif taskParam.gParam.oddball == true
      status = io64(ioObject);
      end
      
-    if  trial > 1 && (isequal(condition, 'main') || isequal(condition, 'oddball')) %taskParam.gParam.sendTrigger == true &&
+    if  (isequal(condition, 'main') || isequal(condition, 'oddball')) %taskParam.gParam.sendTrigger == true &&
         
         if sum(Tevent == 1:7) == 1
         
@@ -114,7 +114,7 @@ elseif taskParam.gParam.oddball == true
         trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
         trigger = str2double(trigger);
             
-        elseif Tevent == 16
+        elseif trial > 1 && Tevent == 16
             
             if isequal(condition, 'oddball') && taskData.oddBall(trial) == 1
                 digit1 = 1;
@@ -142,10 +142,13 @@ elseif taskParam.gParam.oddball == true
             elseif taskData.actRew(trial) == 2
                 digit4 = 0;
             end
+            
+        else 
+           trigger = 255;
         end
          
         
-        if Tevent == 16
+        if Tevent == 16 && trial > 1
         
 
         trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
@@ -153,7 +156,7 @@ elseif taskParam.gParam.oddball == true
         trigger = base2dec(trigger, 2) + 100;
         end
         else
-        trigger = 0000;
+        trigger = 255;
    
         
     end
