@@ -38,7 +38,9 @@ while 1
     PredictionSpot(taskParam);
     if i > 1 %&& taskParam.gParam.PE_Bar == true
         %DrawPE_Bar(taskParam, practData, i-1) 
-        TickMark(taskParam, practData.outcome(i-1))
+        TickMark(taskParam, practData.outcome(i-1), 'outc')
+        TickMark(taskParam, practData.pred(i-1), 'pred')
+
     end
     DrawCross(taskParam);
     

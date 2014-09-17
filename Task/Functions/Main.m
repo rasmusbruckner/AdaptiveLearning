@@ -68,7 +68,8 @@ for i=1:trial
         PredictionSpot(taskParam)
 
         if i > 1 %&& taskParam.gParam.PE_Bar == true 
-           TickMark(taskParam, taskData.outcome(i-1))
+           TickMark(taskParam, taskData.outcome(i-1), 'outc')
+           TickMark(taskParam, taskData.pred(i-1), 'pred')
             %DrawPE_Bar(taskParam, taskData, i-1) 
         end
         Screen('DrawingFinished', taskParam.gParam.window);
@@ -144,6 +145,7 @@ for i=1:trial
     
     DrawCircle(taskParam)
     %Shield(taskParam, taskData.pred(i))
+
     PredictionSpot(taskParam)  
     DrawPE_Bar(taskParam, taskData, i) 
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
