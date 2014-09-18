@@ -68,7 +68,8 @@ for i=1:trial
         PredictionSpot(taskParam)
 
         if i > 1 %&& taskParam.gParam.PE_Bar == true 
-           TickMark(taskParam, taskData.outcome(i-1))
+           TickMark(taskParam, taskData.outcome(i-1), 'outc')
+           TickMark(taskParam, taskData.pred(i-1), 'pred')
             %DrawPE_Bar(taskParam, taskData, i-1) 
         end
         Screen('DrawingFinished', taskParam.gParam.window);
@@ -144,6 +145,7 @@ for i=1:trial
     
     DrawCircle(taskParam)
     %Shield(taskParam, taskData.pred(i))
+
     PredictionSpot(taskParam)  
     DrawPE_Bar(taskParam, taskData, i) 
     DrawOutcome(taskParam, taskData.outcome(i)) %%TRIGGER
@@ -277,9 +279,10 @@ for i=1:trial
 %     DrawCircle(taskParam)
 %     Screen('DrawingFinished', taskParam.gParam.window);
 %     Screen('Flip', taskParam.gParam.window, t + 4.1);
-      taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
-
-    WaitSecs(1);
+      
+    WaitSecs(.5);
+    taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
+    WaitSecs(.5);
     
 
 end

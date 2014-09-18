@@ -8,11 +8,10 @@ computer = 'Macbook';
 %% Which subjects and variables do you want to load?
 
 % Use {'all'} for all subjects or give IDs like {'001' '002'}.
-subject = {'matt1'}; %'test' 'test2'
-variable = {'ID', 'sex', 'age', 'cBal', 'rew', 'sigma', 'cond', 'vola',...
-    'trial', 'cp', 'oddBall', 'TAC', 'boatType', 'actRew' 'outcome',...
-    'distMean', 'pred', 'predErr', 'hit', 'UP', 'perf',...
-    'accPerf'};
+subject = {'p03'};% 'test' 'test2'
+variable = {'cond', 'oddBall' 'cp', 'hit', 'actRew', 'triggers'};
+     
+   
 
 if isequal(subject,{'all'})
     if isequal(computer, 'Dresden_Rene')
@@ -45,6 +44,9 @@ allData = cell(length(DataLoad));
 for i = 1:length(DataLoad)
     allData{i,1} = load(DataLoad{i});
 end
+
+allData{1}.DataCP_p03.triggers = allData{1}.DataCP_p03.triggers(:,7);
+allData{1}.DataOddball_p03.triggers = allData{1}.DataOddball_p03.triggers(:,7);
 
 %% Export selected data.
 
@@ -86,7 +88,7 @@ for a = 1:length(allData)
                 type = class(val);
                 if isequal(type, 'cell')
                     val = cell2mat(val);
-                elseif isequal(type, 'double')
+                elseif isequal(type, 'double') || isequal(type, 'logical')
                     val = num2str(val);
                 end
                 if x < (length(variable))

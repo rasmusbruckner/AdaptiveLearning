@@ -58,8 +58,10 @@ accPerf = zeros(trials, 1); % Accumulated performance.
 %% generateOutcomes (by Matt Nassar)
 
 
-%rand('RNG', sum(clock));
 
+%rng('shuffle')
+a = clock;
+rand('twister', a(6).*10000);
 
 % Angular shield size:
 UorExp=0

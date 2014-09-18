@@ -14,10 +14,10 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
-% TODO: build in rand in GenerateOutcomes
-% Replace kbReleaseWait by short break!
+% TODO: - test triggers
 
-
+%       - cBal and Reward
+%       - oddBall versus control
 
 
 % No point in subject name!
@@ -29,16 +29,16 @@ clear all
 
 [computer, Computer2] = identifyPC; % On which computer do you run the task?
 runIntro = true; % Run the intro with practice trials?
-oddball = true; % Run oddball or Dresden version
+oddball = true; % Run oddball or perceptual version
 runVola = true; % Do you want to run different volatility conditions? 
 runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
+askSubjInfo = false; % Do you want some basic demographic subject variables?
 PE_Bar = false; % Use a prediction error bar?
 catchTrials = false; 
-sendTrigger = false; % Do you want to send triggers?
+sendTrigger = true; % Do you want to send triggers?
 shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10 
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150 Brown: 200
+trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 practContTrials = 1;
 contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
 vola = [.25 .7 0]; % Volatility of the environment.
@@ -463,7 +463,7 @@ else
     txtHVLS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist schwach';
     txtLVHS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist stark';
     txtHVHS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist stark';
-    KbReleaseWait();
+    %KbReleaseWait();
     
     %if oddball == true
         %condition = 'main';
@@ -585,7 +585,7 @@ else
         
         
     end
-      KbReleaseWait();
+      WaitSecs(0.1);
       condition = 'main';
       type = 'Main';
       [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
@@ -594,7 +594,7 @@ else
       
       % Control trials: this task requires a learning rate = 1
     %InstructionsControl(taskParam, Subject) % Run instructions.
-    KbReleaseWait();
+    WaitSecs(0.1);
     
 %     % This function runs the control trials
 %     condition = 'control';

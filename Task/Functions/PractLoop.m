@@ -38,7 +38,9 @@ while 1
     PredictionSpot(taskParam);
     if i > 1 %&& taskParam.gParam.PE_Bar == true
         %DrawPE_Bar(taskParam, practData, i-1) 
-        TickMark(taskParam, practData.outcome(i-1))
+        TickMark(taskParam, practData.outcome(i-1), 'outc')
+        TickMark(taskParam, practData.pred(i-1), 'pred')
+
     end
     DrawCross(taskParam);
     
@@ -202,7 +204,7 @@ practData.accPerf(i) = sum(practData.perf);% + taskData.perf(i);
 % Screen('Flip', taskParam.gParam.window, t + 2.01);
 WaitSecs(1);
 
-KbReleaseWait();
+
 %Priority(0);
 
 %fieldNames = taskParam.fieldNames;
