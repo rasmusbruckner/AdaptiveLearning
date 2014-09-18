@@ -14,9 +14,9 @@
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
-% TODO: build in rand in GenerateOutcomes
+% TODO: - test triggers
 
-% ToDo: - cBal and Reward
+%       - cBal and Reward
 %       - oddBall versus control
 
 
