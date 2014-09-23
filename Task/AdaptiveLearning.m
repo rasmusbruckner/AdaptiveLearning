@@ -1,56 +1,60 @@
 
 %% Adaptive Learning Task - EEG
 %
-% BattleShips is an adaptive learning EEG task for investigating belief
-% updating in dynamical environments with systematic (vola)
-% and random changes (sigma).
+% Cannonball is an adaptive learning EEG task battery for investigating
+% belief updating in dynamical environments.
 %
-% Outcomes are presented on a circle which is expressed in 360 degrees.
+% There are three tasks: Change-Point Task
+%                        Oddball Task
+%                        Change-Point Control Task that requires LR = 1
 %
 % The function GenerateOutcomes generates outcomes that are centered
 % around the mean of a normal distribution (distMean) with
-% standard deviation = sigma
+% a cetain amount of variability.
 %
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
 
-% TODO: - test triggers
-
-%       - cBal and Reward
+% TODO:
+%       
+%       - Reward has to be calculated
 %       - oddBall versus control
+%       - check sigma vola driftConc - what is still used?
+% store shieldSize
+% daten generieren ohne aufgabe zu machen
 
 
-% No point in subject name!
 clear all
+
+% indentifies your machine
+[computer, Computer2] = identifyPC;
 
 %% Set general parameters.
 
-% computer = 'Macbook'; % On which computer do you run the task? Macbook or Humboldt?
-
-[computer, Computer2] = identifyPC; % On which computer do you run the task?
 runIntro = true; % Run the intro with practice trials?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 oddball = true; % Run oddball or perceptual version
-runVola = true; % Do you want to run different volatility conditions? 
-runSigma = false; % Do you want to run different sigma conditions?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
-PE_Bar = false; % Use a prediction error bar?
-catchTrials = false; 
-sendTrigger = true; % Do you want to send triggers?
-shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10 
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20 
-trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
-practContTrials = 1;
-contTrials = 80; % Number of control trials. Für Pilot: 60 EEG: 80
+sendTrigger = false; % Do you want to send triggers?
+shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10
+practTrials = 10; % Number of practice trials per condition. Für Pilot: 20
+trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 vola = [.25 .7 0]; % Volatility of the environment.
-safe = 3; % How many guaranteed trials without change-points.
-sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
-rewMag = 0.2; % Reward magnitude.
-driftConc = [30 99999999]; % Concentration of the drift. 10
 oddballProb = [.25 0]; % Oddball probability. .15
+sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
+driftConc = [30 99999999]; % Concentration of the drift. 10
+safe = 3; % How many guaranteed trials without change-points.
+rewMag = 0.2; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = false; 
-% Computer2 = false;
+debug = false; % Debug mode.
 
+% currently not in use:
+runVola = false; % Do you want to run different volatility conditions?
+runSigma = false; % Do you want to run different sigma conditions?
+catchTrials = false;
+PE_Bar = false; % Use a prediction error bar?
+contTrials = 1; % Number of control trials. Für Pilot: 60 EEG: 80
+practContTrials = 1;
+% Computer2 = false;
 
 % Check number of trials in each condition.
 if (practTrials > 1 && mod(practTrials, 2) == 1) || (trials > 1 && mod(trials, 2)) == 1 || (practContTrials > 1 && mod(practContTrials, 2) == 1) || (contTrials > 1 && mod(contTrials, 2) == 1)
@@ -88,7 +92,7 @@ if askSubjInfo == false
     ID = '999';
     age = '999';
     sex = 'm/w';
-    cBal = '1';
+    cBal = 1;
     reward = '1';
     Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
@@ -117,9 +121,9 @@ elseif askSubjInfo == true
     
     % Tranlate reward code in letter.
     if subjInfo{5} == '1'
+        rewName = 'B';
+    elseif subjInfo{5} == '2'
         rewName = 'G';
-    elseif subjInfo{5} ~= '2'
-        rewName = 'S';
     end
     
     % Filenames.
@@ -144,7 +148,7 @@ elseif askSubjInfo == true
     fNameDataControlHVHS = sprintf('DataControlHVHS_%s', num2str(cell2mat((subjInfo(1)))));
     
     % Struct with demographic subject variables.
-    Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex, subjInfo(3), fCBal, subjInfo(4), fRew, subjInfo(5), fDate, subjInfo(6));
+    Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex, subjInfo(3), fCBal, str2double(cell2mat(subjInfo(4))), fRew, str2double(cell2mat(subjInfo(5))), fDate, subjInfo(6));
     
     % Make sure that no ID is used twice.
     if exist(fName, 'file') == 2
@@ -157,7 +161,7 @@ end
 
 % Prevent input.
 ListenChar(2);
-HideCursor;
+%HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);
@@ -175,7 +179,6 @@ if debug == true
 else
     [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []); %420 250 1020 650  64 64 64
 end
-
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
@@ -305,9 +308,6 @@ fSilver = 'silver'; silver = [160 160 160];
 fColors = 'colors';
 colors = struct(fGold, gold, fSilver, silver);
 
-% Cannon parameters.
-
-
 % Set key names.
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');
@@ -334,7 +334,7 @@ elseif isequal(computer, 'Dresden_Rene')
     s = 32;
 elseif isequal(computer, 'Brown')
     enter = 13;
-    s = 83;    
+    s = 83;
 end
 
 fKeys = 'keys';
@@ -350,49 +350,51 @@ cannonTxt = Screen('MakeTexture', window, cannonPic);
 fCannonTxt = 'cannonTxt';
 fDstRect = 'dstRect';
 
-% -------------
-% Practice data
-% -------------
-
-% No vola.
-distMean = [233;233;233;233;233]; 
-outcome = [242;222;239;234;250];
-boatType = [2;1;1;2;1];
-pred = zeros(length(outcome),1);
-predErr = zeros(length(outcome),1);
-PredErrRaw = zeros(length(outcome),1);
-fPractDataNV = 'practDataNV';
-practDataNV = struct(fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
-
-% Low vola. 
-distMean = [239;239;239;239;239;239;239;100;100;100];
-outcome = [247;256;243;251;232;250;255;104;116;79];
-boatType = [1;2;1;2;2;1;2;1;1;2];
-pred = zeros(length(outcome),1);
-predErr = zeros(length(outcome),1);
-PredErrRaw = zeros(length(outcome),1);
-fCannonDev = 'CannonDev'; CannonDev = zeros(length(outcome),1);
-fPractDataLV = 'practDataLV';
-practDataLV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
-
-% High vola.
-outcome = [6;13;26;35;53;39;55;65;293;278];
-distMean = [16;16;16;16;46;46;46;46;290;290];
-boatType = [1;1;2;1;2;1;2;1;2;2]; 
-pred = zeros(length(outcome),1);
-predErr = zeros(length(outcome),1);
-PredErrRaw = zeros(length(outcome),1);
-fCannonDev = 'CannonDev'; CannonDev = zeros(length(outcome),1);
-fPractDataHV = 'practDataHV';
-practDataHV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
-    
-fPractData = 'practData';
-practData = struct(fPractDataNV, practDataNV, fPractDataLV, practDataLV, fPractDataHV, practDataHV);
+% % -------------
+% % Practice data
+% % -------------
+%
+% % No vola.
+% distMean = [233;233;233;233;233];
+% outcome = [242;222;239;234;250];
+% boatType = [2;1;1;2;1];
+% pred = zeros(length(outcome),1);
+% predErr = zeros(length(outcome),1);
+% PredErrRaw = zeros(length(outcome),1);
+% fPractDataNV = 'practDataNV';
+% practDataNV = struct(fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
+%
+% % Low vola.
+% distMean = [239;239;239;239;239;239;239;100;100;100];
+% outcome = [247;256;243;251;232;250;255;104;116;79];
+% boatType = [1;2;1;2;2;1;2;1;1;2];
+% pred = zeros(length(outcome),1);
+% predErr = zeros(length(outcome),1);
+% PredErrRaw = zeros(length(outcome),1);
+% fCannonDev = 'CannonDev'; CannonDev = zeros(length(outcome),1);
+% fPractDataLV = 'practDataLV';
+% practDataLV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
+%
+% % High vola.
+% outcome = [6;13;26;35;53;39;55;65;293;278];
+% distMean = [16;16;16;16;46;46;46;46;290;290];
+% boatType = [1;1;2;1;2;1;2;1;2;2];
+% pred = zeros(length(outcome),1);
+% predErr = zeros(length(outcome),1);
+% PredErrRaw = zeros(length(outcome),1);
+% fCannonDev = 'CannonDev'; CannonDev = zeros(length(outcome),1);
+% fPractDataHV = 'practDataHV';
+% practDataHV = struct(fCannonDev, CannonDev, fDistMean, distMean, fOutcome, outcome, fBoatType, boatType, fPred, pred, fPredErr, predErr, fRawPredErr, PredErrRaw);
+%
+% fPractData = 'practData';
+% practData = struct(fPractDataNV, practDataNV, fPractDataLV, practDataLV, fPractDataHV, practDataHV);
 
 %% Trigger settings.
 
+% should be adapted to current triggers settings!
+
 if sendTrigger == true
-   config_io;             % IS THIS STILL NECESSARY?
+    config_io;             % IS THIS STILL NECESSARY?
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
@@ -451,188 +453,154 @@ if test == true
 else
     %% Run task.
     
-    % Set port to 0.
-    %if taskParam.gParam.sendTrigger == true
-    %    lptwrite(taskParam.triggers.port,0);
-    %end
-    
-    % Set text parameters.
-    Screen('TextFont', taskParam.gParam.window, 'Arial');
-    Screen('TextSize', taskParam.gParam.window, 30);
-    txtLVLS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist schwach';
-    txtHVLS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist schwach';
-    txtLVHS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist stark';
-    txtHVHS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist stark';
-    %KbReleaseWait();
-    
-    %if oddball == true
-        %condition = 'main';
-        %[OddBallData, OddballData] = Oddball(taskParam, vola(1), sigma(1), condition, Subject);
-      %  [taskDataOddball, DataOdball] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-
-   % end
-    
-   % [taskDataLVLS, DataLVLS] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-    
     % Run intro with practice trials if true.
     if runIntro == true
-        
-        % Function for instructions.
-        Instructions(taskParam, 'Oddball', Subject);
-        
-        condition = 'practiceOddball';
-        if Subject.cBal == '1'
-            if runSigma == true
-            VolaIndication(taskParam, txtLVHS, txtPressEnter)
-            [taskDataPracticeLVHS, DataPracticeLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject);
-            VolaIndication(taskParam, txtHVLS, txtPressEnter)
-            [taskDataPracticeHVLS, DataPracticeHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject);
-            else
-            %VolaIndication(taskParam, txtLowVola, txtPressEnter)
-            [taskDataPracticeLV, DataPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-            %VolaIndication(taskParam, txtHighVola, txtPressEnter)
-            %[taskDataPracticeHV, DataPracticeHV] = Main(taskParam, vola(2), sigma(1), condition, Subject);
-            end
-        else
-        %Cbal2    
+        if Subject.cBal == 1
+            Instructions(taskParam, 'Oddball', Subject);
+            condition = 'practiceOddball';
+            [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+        elseif Subject.cBal == 2
+            Instructions(taskParam, 'Main', Subject);
+            condition = 'practice';
+            [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
         end
-        
-        % End of practice blocks. This part makes sure that you start your EEG setup!
-       
-        
-        
-        if taskParam.gParam.oddball == false                        
-         header = 'Anfang der Studie';
+        if taskParam.gParam.oddball == false
+            header = 'Anfang der Studie';
             txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
-                   'zusammengefasst fängst du also die meisten '...
-                   'Kugeln, wenn du den blauen Punkt auf die Stelle bewegst, auf die '...
-                   'die Kanone zielt. Weil du die Kanonen nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
-                   'goldenen Kugeln bekommst du nach der Studie '...
-                   'ausgezahlt.\n\nViel Erfolg!'];
+                'zusammengefasst fängst du also die meisten '...
+                'Kugeln, wenn du den blauen Punkt auf die Stelle bewegst, auf die '...
+                'die Kanone zielt. Weil du die Kanonen nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
+                'goldenen Kugeln bekommst du nach der Studie '...
+                'ausgezahlt.\n\nViel Erfolg!'];
         elseif taskParam.gParam.oddball == true
-         header = 'Real Task!';
-        txt = ['This is the beginning of the real task. During '...
-                   'this block you will earn real money for your performance. '...
-                   'The trials will be exactly the same as those in the '...
-                   'previous practice block. On each trial a cannon will aim '...
-                   'at a location on the circle. On most trials the cannon will '...
-                   'fire a ball somewhere near the point of aim. '...
-                   'However, on a few trials a ball will be shot from a different '...
-                   'cannon that is equally likely to hit any location on the circle. Like in the previous '...
-                   'block you will not see the cannon, but still have to infer its '...
-                   'aim in order to catch balls and earn money.'];
+            header = 'Real Task!';
+            if Subject.cBal == 1
+                txt = ['This is the beginning of the real task. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'previous practice block. On each trial a cannon will aim '...
+                    'at a location on the circle. On most trials the cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'However, on a few trials a ball will be shot from a different '...
+                    'cannon that is equally likely to hit any location on the circle. Like in the previous '...
+                    'block you will not see the cannon, but still have to infer its '...
+                    'aim in order to catch balls and earn money.'];
+            elseif Subject.cBal == 2
+                txt = ['This is the beginning of the real task. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'previous practice block. On each trial a cannon will aim '...
+                    'at a location on the circle. On all trials the cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'Most of the time the cannon will remain aimed at the same location, '...
+                    'but occasionally the cannon will be reaimed. Like in the previous '...
+                    'block you will not see the cannon, but still have to infer its '...
+                    'aim in order to catch balls and earn money.'];
+            end
         end
         feedback = false;
         BigScreen(taskParam, txtPressEnter, header, txt, feedback)
     else
+        Screen('TextSize', taskParam.gParam.window, 30);
+        Screen('TextFont', taskParam.gParam.window, 'Arial');
+
         VolaIndication(taskParam, IndicateOddball, txtPressEnter)
-    
-        
     end
     
-    % This functions runs the main task.
+    %% first block
+   
     condition = 'oddball';
     type = 'Oddball';
-    if Subject.cBal == '1'
-        if runSigma == true
-            VolaIndication(taskParam, txtLVLS, txtPressEnter) % Low sigma.
-            [taskDataLVLS, DataLVLS] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtLVHS, txtPressEnter) % High sigma.
-            [taskDataLVHS, DataLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (high sigma).
-            VolaIndication(taskParam, txtHVLS, txtPressEnter) % Low sigma.
-            [taskDataHVLS, DataHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (low sigma).
-            VolaIndication(taskParam, txtHVHS, txtPressEnter) % High sigma.
-            [taskDataHVHS, DataHVHS] = Main(taskParam, vola(2), sigma(2), condition, Subject); % Run task (high sigma).
-        else
-            %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-            %[taskDataLV, DataLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-            %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-            [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
-            
-        end
-    else
-        VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-        [taskDataHV, DataHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-        VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-        [taskDataLV, DataLV] = Main(taskParam, vola(1), simga(1), condition, Subject); % Run task (low sigma).
+    if Subject.cBal == 1
+        [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+    elseif Subject.cBal == 2;
+        condition = 'main';
+        type = 'Main';
+        [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
     end
+    
+    %% second intro
     
     if runIntro == true
-    Instructions(taskParam, 'Main', Subject);
-    
-   
-    
-    
-    condition = 'practice';
-    [taskDataPracticeMain, DataPracticeMain] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-    header = 'Real Task!';
+        if Subject.cBal == 1 
+            Instructions(taskParam, 'Main', Subject);
+        elseif Subject.cBal == 2
+            Instructions(taskParam, 'Oddball', Subject);
+        end
+        condition = 'practice';
+        [taskDataPracticeMain, DataPracticeMain] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+        header = 'Real Task!';
         txt = ['This is the beginning of the real task. During '...
-                   'this block you will earn real money for your performance. '...
-                   'The trials will be exactly the same as those in the '...
-                   'previous practice block. On each trial a cannon will aim '...
-                   'at a location on the circle. On all trials the cannon will '...
-                   'fire a ball somewhere near the point of aim. '...
-                   'Most of the time the cannon will remain aimed at the same location, '...
-                   'but occasionally the cannon will be reaimed. Like in the previous '...
-                   'block you will not see the cannon, but still have to infer its '...
-                   'aim in order to catch balls and earn money.'];
-      
-      feedback = false;
-      BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+            'this block you will earn real money for your performance. '...
+            'The trials will be exactly the same as those in the '...
+            'previous practice block. On each trial a cannon will aim '...
+            'at a location on the circle. On all trials the cannon will '...
+            'fire a ball somewhere near the point of aim. '...
+            'Most of the time the cannon will remain aimed at the same location, '...
+            'but occasionally the cannon will be reaimed. Like in the previous '...
+            'block you will not see the cannon, but still have to infer its '...
+            'aim in order to catch balls and earn money.'];
+        feedback = false;
+        BigScreen(taskParam, txtPressEnter, header, txt, feedback)
     else
-      VolaIndication(taskParam, IndicateCP, txtPressEnter)
-  
-        
-        
+        VolaIndication(taskParam, IndicateCP, txtPressEnter)
     end
-      WaitSecs(0.1);
-      condition = 'main';
-      type = 'Main';
-      [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
-
-      
-      
-      % Control trials: this task requires a learning rate = 1
-    %InstructionsControl(taskParam, Subject) % Run instructions.
     WaitSecs(0.1);
     
-%     % This function runs the control trials
-%     condition = 'control';
-%     if Subject.cBal == '1'
-%         if runSigma == true
-%             VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-%             [taskDataControlLVHS, DataControlLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
-%             %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-%             %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-%             %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
-%             %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
-%             VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
-%             [taskDataControlHVLS, DataControlHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
-%             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-%             %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-%             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-%             %[taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
-%         else
-%             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-%             [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
-%             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-%             [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
-%         end
-%     else
-%         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
-%         [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), condition, Subject); %Run task (high sigma).
-%         VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
-%         [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), condition, Subject); % Run task (low sigma).
-%     end
-%     
+%% second block
+
+if Subject.cBal == 1
+    condition = 'main';
+    [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+elseif Subject.cBal == 2
+    condition = 'oddball';
+    [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+end
+WaitSecs(0.1);
+
+
+
+    % Control trials: this task requires a learning rate = 1
+    %InstructionsControl(taskParam, Subject) % Run instructions.
+    
+    
+    %     % This function runs the control trials
+    %     condition = 'control';
+    %     if Subject.cBal == '1'
+    %         if runSigma == true
+    %             VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
+    %             [taskDataControlLVHS, DataControlLVHS] = Main(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+    %             %VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
+    %             %[taskDataHVLS, DataHVLS] = BattleShipsMain(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+    %             %VolaIndication(taskParam, txtLVHS, txtPressEnter) % Low sigma.
+    %             %[taskDataLVHS, DataLVHS] = BattleShipsMain(taskParam, vola(1), sigma(2), condition, Subject); % Run task (low sigma).
+    %             VolaIndication(taskParam, txtHVLS, txtPressEnter) % High sigma.
+    %             [taskDataControlHVLS, DataControlHVLS] = Main(taskParam, vola(2), sigma(1), condition, Subject); % Run task (high sigma).
+    %             %VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+    %             %[taskDataControlLV, DataControlLV] = BattleShipsMain(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+    %             %VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+    %             %[taskDataControlHV, DataControlHV] = BattleShipsMain(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+    %         else
+    %             VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+    %             [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (low sigma).
+    %             VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+    %             [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), sigma(1), condition, Subject); %Run task (high sigma).
+    %         end
+    %     else
+    %         VolaIndication(taskParam, txtHighVola, txtPressEnter) % High sigma.
+    %         [taskDataControlHV, DataControlHV] = Main(taskParam, vola(2), condition, Subject); %Run task (high sigma).
+    %         VolaIndication(taskParam, txtLowVola, txtPressEnter) % Low sigma.
+    %         [taskDataControlLV, DataControlLV] = Main(taskParam, vola(1), condition, Subject); % Run task (low sigma).
+    %     end
+    %
     % Compute total gain.
     if runSigma == true
-
-    %totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVHS.accPerf(end) + DataControlHVLS.accPerf(end);
-    %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
+        
+        %totWin = DataLVLS.accPerf(end) + DataHVLS.accPerf(end) + DataLVHS.accPerf(end) + DataHVHS.accPerf(end) + DataControlLVHS.accPerf(end) + DataControlHVLS.accPerf(end);
+        %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     else
         totWin = DataOddball.accPerf(end) + DataCP.accPerf(end);
-
+        
         %totWin = DataLV.accPerf(end) + DataHV.accPerf(end) + DataControlLV.accPerf(end) + DataControlHV.accPerf(end);
     end
     
@@ -672,72 +640,72 @@ else
     elseif askSubjInfo == true && runIntro == true
         
         if runSigma == true
-        DataPracticeLVHS = catstruct(Subject, DataPracticeLVHS);
-        DataPracticeHVLS = catstruct(Subject, DataPracticeHVLS);
-        DataLVHS = catstruct(Subject, DataLVHS);
-        DataHVHS = catstruct(Subject, DataHVHS);
-        DataControlLVHS = catstruct(Subject, DataControlLVHS);
-        DataControlHVLS = catstruct(Subject, DataControlHVLS);
-%         DataLV = catstruct(Subject, DataLV);
-%         DataHV = catstruct(Subject, DataHV);
-%         DataControlLV = catstruct(Subject, DataControlLV);
-%         DataControlHV = catstruct(Subject, DataControlHV);
-        
-        assignin('base',['DataPracticeLVHS_' num2str(cell2mat((subjInfo(1))))],DataPracticeLVHS)
-        assignin('base',['DataPracticeHVLS_' num2str(cell2mat((subjInfo(1))))],DataPracticeHVLS)
-        assignin('base',['DataLVLS_' num2str(cell2mat((subjInfo(1))))],DataLVLS)
-        assignin('base',['DataHVLS_' num2str(cell2mat((subjInfo(1))))],DataHVLS)
-        assignin('base',['DataLVHS_' num2str(cell2mat((subjInfo(1))))],DataLVHS)
-        assignin('base',['DataHVHS_' num2str(cell2mat((subjInfo(1))))],DataHVHS)
-        assignin('base', ['DataControlLVHS_' num2str(cell2mat((subjInfo(1))))], DataControlLVHS)
-        assignin('base', ['DataControlHVLS_' num2str(cell2mat((subjInfo(1))))], DataControlHVLS)
-        save(fullfile(savdir,fName), fNameDataPracticeLVHS, fNameDataPracticeHVLS, fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVHS, fNameDataControlHVLS);
-
+            DataPracticeLVHS = catstruct(Subject, DataPracticeLVHS);
+            DataPracticeHVLS = catstruct(Subject, DataPracticeHVLS);
+            DataLVHS = catstruct(Subject, DataLVHS);
+            DataHVHS = catstruct(Subject, DataHVHS);
+            DataControlLVHS = catstruct(Subject, DataControlLVHS);
+            DataControlHVLS = catstruct(Subject, DataControlHVLS);
+            %         DataLV = catstruct(Subject, DataLV);
+            %         DataHV = catstruct(Subject, DataHV);
+            %         DataControlLV = catstruct(Subject, DataControlLV);
+            %         DataControlHV = catstruct(Subject, DataControlHV);
+            
+            assignin('base',['DataPracticeLVHS_' num2str(cell2mat((subjInfo(1))))],DataPracticeLVHS)
+            assignin('base',['DataPracticeHVLS_' num2str(cell2mat((subjInfo(1))))],DataPracticeHVLS)
+            assignin('base',['DataLVLS_' num2str(cell2mat((subjInfo(1))))],DataLVLS)
+            assignin('base',['DataHVLS_' num2str(cell2mat((subjInfo(1))))],DataHVLS)
+            assignin('base',['DataLVHS_' num2str(cell2mat((subjInfo(1))))],DataLVHS)
+            assignin('base',['DataHVHS_' num2str(cell2mat((subjInfo(1))))],DataHVHS)
+            assignin('base', ['DataControlLVHS_' num2str(cell2mat((subjInfo(1))))], DataControlLVHS)
+            assignin('base', ['DataControlHVLS_' num2str(cell2mat((subjInfo(1))))], DataControlHVLS)
+            save(fullfile(savdir,fName), fNameDataPracticeLVHS, fNameDataPracticeHVLS, fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVHS, fNameDataControlHVLS);
+            
         else
-        DataPracticeLV = catstruct(Subject, DataPracticeLV);
-        DataPracticeHV = catstruct(Subject, DataPracticeHV);
-        DataLV = catstruct(Subject, DataLV);
-        DataHV = catstruct(Subject, DataHV);
-        DataControlLV = catstruct(Subject, DataControlLV);
-        DataControlHV = catstruct(Subject, DataControlHV);    
-        
-        assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
-        assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
-        assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
-        assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
-        assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
-        assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
-        %save(fullfile(savdir,fName), fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVLS, fNameDataControlHVHS);
-        save(fullfile(savdir,fName),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
+            DataPracticeLV = catstruct(Subject, DataPracticeLV);
+            DataPracticeHV = catstruct(Subject, DataPracticeHV);
+            DataLV = catstruct(Subject, DataLV);
+            DataHV = catstruct(Subject, DataHV);
+            DataControlLV = catstruct(Subject, DataControlLV);
+            DataControlHV = catstruct(Subject, DataControlHV);
+            
+            assignin('base',['DataPracticeLV_' num2str(cell2mat((subjInfo(1))))],DataPracticeLV)
+            assignin('base',['DataPracticeHV_' num2str(cell2mat((subjInfo(1))))],DataPracticeHV)
+            assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
+            assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
+            assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
+            assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+            %save(fullfile(savdir,fName), fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVLS, fNameDataControlHVHS);
+            save(fullfile(savdir,fName),fNameDataPracticeLV, fNameDataPracticeHV, fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
         end
     elseif askSubjInfo == true && runIntro == false
         
         if runSigma == true
-        DataLVLS = catstruct(Subject, DataLVLS);
-        DataHVLS = catstruct(Subject, DataHVLS);
-        DataLVHS = catstruct(Subject, DataLVHS);
-        DataHVHS = catstruct(Subject, DataHVHS);
-        DataControlLVLS = catstruct(Subject, DataControlLVLS);
-        DataControlHVHS = catstruct(Subject, DataControlHVHS);
-        assignin('base',['DataLVLS_' num2str(cell2mat((subjInfo(1))))],DataLVLS)
-        assignin('base',['DataHVLS_' num2str(cell2mat((subjInfo(1))))],DataHVLS)
-        assignin('base',['DataLVHS_' num2str(cell2mat((subjInfo(1))))],DataLVHS)
-        assignin('base',['DataHVHS_' num2str(cell2mat((subjInfo(1))))],DataHVHS)
-        assignin('base', ['DataControlLVLS_' num2str(cell2mat((subjInfo(1))))], DataControlLVLS)
-        assignin('base', ['DataControlHVHS_' num2str(cell2mat((subjInfo(1))))], DataControlHVHS)
-        save(fullfile(savdir,fName), fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVLS, fNameDataControlHVHS);
+            DataLVLS = catstruct(Subject, DataLVLS);
+            DataHVLS = catstruct(Subject, DataHVLS);
+            DataLVHS = catstruct(Subject, DataLVHS);
+            DataHVHS = catstruct(Subject, DataHVHS);
+            DataControlLVLS = catstruct(Subject, DataControlLVLS);
+            DataControlHVHS = catstruct(Subject, DataControlHVHS);
+            assignin('base',['DataLVLS_' num2str(cell2mat((subjInfo(1))))],DataLVLS)
+            assignin('base',['DataHVLS_' num2str(cell2mat((subjInfo(1))))],DataHVLS)
+            assignin('base',['DataLVHS_' num2str(cell2mat((subjInfo(1))))],DataLVHS)
+            assignin('base',['DataHVHS_' num2str(cell2mat((subjInfo(1))))],DataHVHS)
+            assignin('base', ['DataControlLVLS_' num2str(cell2mat((subjInfo(1))))], DataControlLVLS)
+            assignin('base', ['DataControlHVHS_' num2str(cell2mat((subjInfo(1))))], DataControlHVHS)
+            save(fullfile(savdir,fName), fNameDataLVLS, fNameDataHVLS, fNameDataLVHS, fNameDataHVHS, fNameDataControlLVLS, fNameDataControlHVHS);
         else
-        DataLV = catstruct(Subject, DataLV);
-        DataHV = catstruct(Subject, DataHV);
-        DataControlLV = catstruct(Subject, DataControlLV);
-        DataControlHV = catstruct(Subject, DataControlHV);
-        assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
-        assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
-        assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
-        assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
-        save(fullfile(savdir,fName), fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
+            DataLV = catstruct(Subject, DataLV);
+            DataHV = catstruct(Subject, DataHV);
+            DataControlLV = catstruct(Subject, DataControlLV);
+            DataControlHV = catstruct(Subject, DataControlHV);
+            assignin('base',['DataLV_' num2str(cell2mat((subjInfo(1))))],DataLV)
+            assignin('base',['DataHV_' num2str(cell2mat((subjInfo(1))))],DataHV)
+            assignin('base', ['DataControlLV_' num2str(cell2mat((subjInfo(1))))], DataControlLV)
+            assignin('base', ['DataControlHV_' num2str(cell2mat((subjInfo(1))))], DataControlHV)
+            save(fullfile(savdir,fName), fNameDataLV, fNameDataHV, fNameDataControlLV, fNameDataControlHV);
         end
-   end
+    end
     
     
     %% End of task.

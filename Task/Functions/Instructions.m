@@ -1,11 +1,15 @@
 function Instructions(taskParam, type, subject)
 % BattleShipsInstructions runs the practice sessions.
-%   Depending on cBal you start with low or high volatility.
+%   Depending on cBal you start with a different task.
 
 cannon = true;
-if isequal(type, 'Oddball')
+if isequal(type, 'Oddball') && subject.cBal == 1
     screenIndex = 1;
-elseif (isequal(type, 'Main'))
+elseif isequal(type, 'Oddball') && subject.cBal == 2
+        screenIndex = 25;
+elseif (isequal(type, 'Main')) && subject.cBal == 2
+    screenIndex = 1;
+elseif (isequal(type, 'Main')) && subject.cBal == 1
     screenIndex = 25;
 end
 sentenceLength = taskParam.gParam.sentenceLength;
@@ -155,7 +159,13 @@ while 1
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
                 DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 1)
+                
+                if subject.rew == 1
+                    Shield(taskParam, 20, Data.pred, 1)
+                elseif subject.rew == 2
+                    Shield(taskParam, 20, Data.pred, 0)
+                    
+                end
                 DrawOutcome(taskParam, outcome) %%TRIGGER
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
@@ -277,7 +287,11 @@ while 1
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
                 DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 1)
+                if subject.rew == 1
+                    Shield(taskParam, 20, Data.pred, 1)
+                elseif subject.rew == 2
+                    Shield(taskParam, 20, Data.pred, 0)
+                end
                 DrawOutcome(taskParam, outcome) %%TRIGGER
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
@@ -317,18 +331,27 @@ while 1
                     'das verdiente Geld tatsächlich ausgezahlt.'];
                 header = 'Das Schild';
             elseif taskParam.gParam.oddball == true
-                txt=   ['You can earn money by catching cannonballs in your '...  % reward.
-                    'shield. If the shield is blue you will earn 20 CENTS for '...
-                    'catching the ball. If the shield is green you will not earn anything. '...
+                header = 'Your Shield';
+                if subject.rew == 1
+                    colRew = 'blue';
+                    colNoRew = 'green';
+                elseif subject.rew == 2
+                    colRew = 'green';
+                    colNoRew = 'blue';
+                end
+                
+                txt = sprintf(['You can earn money by catching cannonballs in your '...  % reward.
+                    'shield. If the shield is %s you will earn 20 CENTS for '...
+                    'catching the ball. If the shield is %s you will not earn anything. '...
                     'On some trials the shield will be large and on some trials it will be small. '...
                     'You cannot know the SIZE or COLOR of the shield until the cannon is fired '...   % reward.
                     'so it is best to try to catch the ball on every trial.\n\n'...
                     'You will now have some practice to get a sense of how the color and size of '...
                     'the shield vary.\n\n'...
                     'The location of the ball fired on the previous trial will be marked with a black line.\n\n'...
-                    'Moreover, the location of the orange spot from the previous trial will be marked with an orange line.'];
-                header = 'Your Shield';
+                    'Moreover, the location of the orange spot from the previous trial will be marked with an orange line.'], colRew, colNoRew);
             end
+            
             feedback = false;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -350,12 +373,12 @@ while 1
             % Intro about
             if taskParam.gParam.oddball == false
                 header = 'Trial Outcomes';
-                txt=['Um dir genau zu zeigen, wann du Geld verdienst, '...
+                txt = ['Um dir genau zu zeigen, wann du Geld verdienst, '...
                     'spielen wir jetzt alle Möglichkeiten durch.'];
             elseif taskParam.gParam.oddball == true
                 header = 'Trial Outcomes';
-                txt=  ['Now lets see what happens when you hit '...
-                    'or miss the ball with a blue or green shield...'];
+                txt = sprintf(['Now lets see what happens when you hit '...
+                    'or miss the ball with a %s or %s shield...'], colRew, colNoRew);
             end
             feedback = false;
             [fw, bw] = BigScreen(taskParam,...
@@ -452,14 +475,18 @@ while 1
                         'hast und das Schild blau war, '...
                         'hättest du jetzt 20 CENT verdient.'];
                 elseif taskParam.gParam.oddball == true
-                    txt=['You caught the ball and the shield is blue. '...
-                        'So you would earn 20 CENTS.'];
+                    txt = sprintf(['You caught the ball and the shield is %s. '...
+                        'So you would earn 20 CENTS.'], colRew);
                 end
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
                 DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 1)
-                DrawOutcome(taskParam, outcome) %%TRIGGER
+                if subject.rew == 1
+                    Shield(taskParam, 20, Data.pred, 1)
+                elseif subject.rew == 2
+                    Shield(taskParam, 20, Data.pred, 0)        
+                end
+                    DrawOutcome(taskParam, outcome) %%TRIGGER
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
@@ -567,7 +594,11 @@ while 1
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
                 DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 1)
+                if subject.rew == 1
+                    Shield(taskParam, 20, Data.pred, 1)
+                elseif subject.rew == 2
+                    Shield(taskParam, 20, Data.pred, 0)        
+                end
                 DrawOutcome(taskParam, outcome) %%TRIGGER
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
@@ -677,13 +708,17 @@ while 1
                         'aber das Schild war grün. Daher hättest '...
                         'du nichts verdient.'];
                 elseif taskParam.gParam.oddball == true
-                    txt=['You caught the ball and your shield was green '...
-                        'so you would earn nothing.'];
+                    txt=sprintf(['You caught the ball and your shield was %s '...
+                        'so you would earn nothing.'], colNoRew);
                 end
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
                 DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 0)
+                if subject.rew == 1
+                    Shield(taskParam, 20, Data.pred, 0)
+                elseif subject.rew == 2
+                    Shield(taskParam, 20, Data.pred, 1)        
+                end
                 DrawOutcome(taskParam, outcome) %%TRIGGER
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
@@ -792,7 +827,11 @@ while 1
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
                 DrawCircle(taskParam)
-                Shield(taskParam, 20, Data.pred, 0)
+                if subject.rew == 1
+                    Shield(taskParam, 20, Data.pred, 0)
+                elseif subject.rew == 2
+                    Shield(taskParam, 20, Data.pred, 1)        
+                end
                 DrawOutcome(taskParam, outcome) %%TRIGGER
                 DrawFormattedText(taskParam.gParam.window,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
@@ -806,8 +845,13 @@ while 1
                 [ keyIsDown, ~, keyCode ] = KbCheck;
                 if keyIsDown
                     if keyCode(taskParam.keys.enter)
-                        screenIndex = screenIndex + 1;
-                        break
+                        if subject.cBal == 1
+                            screenIndex = screenIndex + 2;
+                            break
+                        elseif subject.cBal == 2
+                            screenIndex = screenIndex + 2;
+                            break
+                        end
                     elseif keyCode(taskParam.keys.delete)
                         screenIndex = screenIndex - 13;
                         break
@@ -815,7 +859,24 @@ while 1
                 end
             end
             WaitSecs(0.1);
-        case 25                                                            % Introduce
+            
+        case 25
+            if subject.cBal == 2 && isequal(type,'Main')
+                
+                screenIndex = screenIndex +1;
+                
+            else
+                header = 'Break';
+                txt = 'Now take a break\n\nTo continue press Enter';
+                feedback = true;
+                [fw, bw] = BigScreen(taskParam, ...
+                    taskParam.strings.txtPressEnter, header, txt, feedback);
+                if fw == 1
+                    screenIndex = screenIndex + 1;
+                end
+            end
+            WaitSecs(0.1);
+        case 26                                                         % Introduce
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
                     header = 'Erste Übung';
@@ -864,13 +925,20 @@ while 1
                         'anvisierten Stelle stehen. Wenn du deinen Punkt '...
                         'neben die anvisierte Stelle steuerst, wird die '...
                         'Übung wiederholt.'];
-                elseif taskParam.gParam.oddball == true
-                    header = 'Break';
-                    txt = ['Now take a break\n\nTo continue press Enter'...
-                        ];
+                elseif taskParam.gParam.oddball == true 
+                    %header = 'Break';
+                    %txt = 'Now take a break\n\nTo continue press Enter';
+                     header = 'First Practice';
+                     txt = ['You will now need to catch cannonballs shot '...
+                            'from a cannon. The cannon will usually remain aimed '...
+                            'at the same location. However, occasionally the cannon will be reaimed '...
+                            'to a completely different part of the circle.\n\n'...
+                            'To earn most money you should center your shield on the location '...
+                            'at which the cannon is aimed.'...
+                            ];
                 end
                 
-                feedback = true;
+                 feedback = false;
                 [fw, bw] = BigScreen(taskParam, ...
                     taskParam.strings.txtPressEnter, header, txt, feedback);
                 if fw == 1
@@ -878,7 +946,8 @@ while 1
                 end
             end
             WaitSecs(0.1);
-        case 26                                                             % Show performance
+        
+        case 27                                                          % Show performance
             
             %--------------
             %
@@ -916,26 +985,41 @@ while 1
                     goldBall, silverHit, silverBall,...
                     practData.accPerf(end), maxMon);
             elseif taskParam.gParam.oddball == true
-                header = 'Performance';
+%                 header = 'Performance';
+%                 if subject.rew == 1
+%                     colRewCap = 'Blue';
+%                     colNoRewCap = 'Green';
+%                 elseif subject.rew == 2
+%                     colRewCap = 'Green';
+%                     colNoRewCap = 'Blue';
+%                 end
+%                 txt = sprintf(['%s shield catches: %.0f of '...
+%                     '%.0f\n\n%s shield catches: %.0f of '...
+%                     '%.0f\n\nIn this block you would have earned %.2f of '...
+%                     'possible $ %.2f.'], colRewCap, goldHit,...
+%                     goldBall, colNoRewCap, silverHit, silverBall,...
+%                     practData.accPerf(end), maxMon);
                 
-                txt = sprintf(['Blue shield catches: %.0f of '...
-                    '%.0f\n\nGreen shield catches: %.0f of '...
-                    '%.0f\n\nIn this block you would have earned %.2f of '...
-                    'possible $ %.2f.'], goldHit,...
-                    goldBall, silverHit, silverBall,...
-                    practData.accPerf(end), maxMon);
+                [txt, header] = Feedback(practData, taskParam, subject, condition);
             end
             feedback = true;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt,feedback);
             sumCannonDev = sum(practData.cannonDev >= 5);
             if fw == 1
-                screenIndex = screenIndex + 1;
+                if taskParam.gParam.oddball == true && subject.cBal == 2
+                    screenIndex = screenIndex + 1;
+                else
+                    screenIndex = screenIndex + 1;
+                end 
             elseif bw == 1
-                screenIndex = screenIndex - 1;
+                    screenIndex = screenIndex - 1;
             end
             WaitSecs(0.1);
-        case 27
+        
+        
+            
+        case 28
             if isequal(type, 'Oddball') && sumCannonDev >= 4
                 if taskParam.gParam.oddball == false
                     header = 'Wiederholung der Übung';
@@ -1058,7 +1142,7 @@ while 1
             end
             WaitSecs(0.1);
             
-        case 28                                                           % Show performance.
+        case 29                                                           % Show performance.
             
             %------------------
             %
@@ -1103,7 +1187,11 @@ while 1
                         LineAndBack(taskParam)
                         Cannon(taskParam, distMean)
                         DrawCircle(taskParam)
-                        Shield(taskParam, 20, Data.pred, 1)
+                        if subject.rew == 1
+                            Shield(taskParam, 20, Data.pred, 1)
+                        elseif subject.rew == 2
+                            Shield(taskParam, 20, Data.pred, 0)        
+                        end
                         DrawOutcome(taskParam, outcome) %%TRIGGER
                         DrawFormattedText(taskParam.gParam.window,txt,...
                             taskParam.gParam.screensize(3)*0.1,...
@@ -1154,13 +1242,14 @@ while 1
                     goldBall, silverHit, silverBall,...
                     practData.accPerf(end), maxMon);
             elseif taskParam.gParam.oddball == true
-                header = 'Performance';
-                txt = sprintf(['Blue shield catches: %.0f of '...
-                    '%.0f\n\nGreen shield catches: %.0f of '...
-                    '%.0f\n\nIn this block you would have earned %.2f of '...
-                    'possible $ %.2f.'], goldHit,...
-                    goldBall, silverHit, silverBall,...
-                    practData.accPerf(end), maxMon);
+%                 header = 'Performance';
+%                 txt = sprintf(['%s shield catches: %.0f of '...
+%                     '%.0f\n\n%s shield catches: %.0f of '...
+%                     '%.0f\n\nIn this block you would have earned %.2f of '...
+%                     'possible $ %.2f.'], colRewCap, goldHit,...
+%                     goldBall, colNoRewCap, silverHit, silverBall,...
+%                     practData.accPerf(end), maxMon);
+            [txt, header] = Feedback(practData, taskParam, subject, condition);
             end
             feedback = true;
             [fw, bw] = BigScreen(taskParam,...
@@ -1172,7 +1261,7 @@ while 1
                 screenIndex = screenIndex - 1;
             end
             WaitSecs(0.1);
-        case 29
+        case 30
             sumCannonDev = sum(practData.cannonDev >= 5);
             if sumCannonDev >= 4
                 
@@ -1206,32 +1295,32 @@ while 1
             else
                 screenIndex = screenIndex + 1;
             end
-            if subject.cBal == '2'
-                if taskParam.gParam.runVola == false
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtHighVola,...
-                        taskParam.strings.txtPressEnter)
-                else
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtHVHS,...
-                        taskParam.strings.txtPressEnter)
-                end
-                taskParam = PractLoop(taskParam, subject,...
-                    distMean(i), outcome(i), boatType(i), cannon);
-                if taskParam.gParam.runVola == false
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtLowVola,...
-                        taskParam.strings.txtPressEnter)
-                else
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtLVLS,...
-                        taskParam.strings.txtPressEnter)
-                end
-                taskParam = PractLoop(taskParam,...
-                    subject, distMean(i), outcome(i), boatType(i));
-            end
+%             if subject.cBal == '2'
+%                 if taskParam.gParam.runVola == false
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtHighVola,...
+%                         taskParam.strings.txtPressEnter)
+%                 else
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtHVHS,...
+%                         taskParam.strings.txtPressEnter)
+%                 end
+%                 taskParam = PractLoop(taskParam, subject,...
+%                     distMean(i), outcome(i), boatType(i), cannon);
+%                 if taskParam.gParam.runVola == false
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtLowVola,...
+%                         taskParam.strings.txtPressEnter)
+%                 else
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtLVLS,...
+%                         taskParam.strings.txtPressEnter)
+%                 end
+%                 taskParam = PractLoop(taskParam,...
+%                     subject, distMean(i), outcome(i), boatType(i));
+%             end
             WaitSecs(0.1);
-        case 30
+        case 31
             
             % Introduce
             if isequal(type, 'Oddball')
@@ -1314,7 +1403,7 @@ while 1
                 
             end
             WaitSecs(0.1);
-        case 31
+        case 32
             % Show performance.
             
             %------------------
@@ -1361,14 +1450,16 @@ while 1
                     goldBall, silverHit, silverBall,...
                     practData.accPerf(end), maxMon);
             elseif taskParam.gParam.oddball == true
-                header = 'Performance';
-                
-                txt = sprintf(['Blue shield catches: %.0f of '...
-                    '%.0f\n\nGreen shield catches: %.0f of '...
-                    '%.0f\n\nIn this block you would have earned %.2f of '...
-                    'possible $ %.2f.'], goldHit,...
-                    goldBall, silverHit, silverBall,...
-                    practData.accPerf(end), maxMon);
+%                 header = 'Performance';
+%                 
+%                txt = sprintf(['%s shield catches: %.0f of '...
+%                     '%.0f\n\n%s shield catches: %.0f of '...
+%                     '%.0f\n\nIn this block you would have earned %.2f of '...
+%                     'possible $ %.2f.'], colRewCap, goldHit,...
+%                     goldBall, colNoRewCap, silverHit, silverBall,...
+%                     practData.accPerf(end), maxMon);
+            [txt, header] = Feedback(practData, taskParam, subject, condition);
+
             end
             feedback = true;
             [fw, bw] = BigScreen(taskParam,...
@@ -1380,7 +1471,7 @@ while 1
                 screenIndex = screenIndex - 1;
             end
             WaitSecs(0.1);
-        case 32
+        case 33
             sumCannonDev = sum(practData.cannonDev >= 5);
             if sumCannonDev >= 4
                 if taskParam.gParam.oddball == false
@@ -1413,32 +1504,32 @@ while 1
             else
                 screenIndex = screenIndex + 1;
             end
-            if subject.cBal == '2'
-                if taskParam.gParam.runVola == false
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtHighVola,...
-                        taskParam.strings.txtPressEnter)
-                else
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtHVHS,...
-                        taskParam.strings.txtPressEnter)
-                end
-                taskParam = PractLoop(taskParam, subject,...
-                    distMean(i), outcome(i), boatType(i), cannon);
-                if taskParam.gParam.runVola == false
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtLowVola,...
-                        taskParam.strings.txtPressEnter)
-                else
-                    VolaIndication(taskParam,...
-                        taskParam.strings.txtLVLS,...
-                        taskParam.strings.txtPressEnter)
-                end
-                taskParam = PractLoop(taskParam,...
-                    subject, distMean(i), outcome(i), boatType(i));
-            end
+%             if subject.cBal == '2'
+%                 if taskParam.gParam.runVola == false
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtHighVola,...
+%                         taskParam.strings.txtPressEnter)
+%                 else
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtHVHS,...
+%                         taskParam.strings.txtPressEnter)
+%                 end
+%                 taskParam = PractLoop(taskParam, subject,...
+%                     distMean(i), outcome(i), boatType(i), cannon);
+%                 if taskParam.gParam.runVola == false
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtLowVola,...
+%                         taskParam.strings.txtPressEnter)
+%                 else
+%                     VolaIndication(taskParam,...
+%                         taskParam.strings.txtLVLS,...
+%                         taskParam.strings.txtPressEnter)
+%                 end
+%                 taskParam = PractLoop(taskParam,...
+%                     subject, distMean(i), outcome(i), boatType(i));
+%             end
             WaitSecs(0.1);
-        case 33                                                            % End of intro
+        case 34                                                            % End of intro
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
                     header = 'Ende der zweiten Übung';
@@ -1512,7 +1603,7 @@ while 1
                 end
             end
             WaitSecs(0.1);
-        case 34                                                             % Break out of loop.
+        case 35                                                             % Break out of loop.
             break
     end
 end

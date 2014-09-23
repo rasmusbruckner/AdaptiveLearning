@@ -17,9 +17,14 @@ KbReleaseWait();
 
 %% generateOutcomes
 if isequal(condition, 'practiceOddball')
+    
      taskData = load('OddballInvisible');
      taskData = taskData.taskData;
+     clear taskData.cBal taskData.rew
+    
      trial = taskParam.gParam.practTrials;
+     taskData.cBal = nan(length(trial),1);
+     taskData.rew = nan(length(trial),1);
 else
 taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
 trial = taskData.trial;
@@ -34,22 +39,24 @@ RT_Flip = zeros(taskData.trial, 1);
 % Priority(9); 
 
 for i=1:trial
-    
+  
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
     taskData.ID{i} = Subject.ID;
     taskData.sex{i} = Subject.sex;
     taskData.Date{i} = Subject.Date;
     taskData.cond{i} = condition;
-    taskData.cBal{i} = Subject.cBal;
-    taskData.rew{i} = Subject.rew;
-    if isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 1
+    taskData.cBal(i) = Subject.cBal;
+    taskData.rew(i) = Subject.rew;
+    
+   
+    if taskData.rew(i) == 1 && taskData.boatType(i) == 1
         taskData.actRew(i) = 1;
-    elseif isequal(taskData.rew{i}, '1') && taskData.boatType(i) == 0
+    elseif taskData.rew(i) == 1 && taskData.boatType(i) == 0
         taskData.actRew(i) = 2;
-    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 1
+    elseif taskData.rew(i) == 2 && taskData.boatType(i) == 1
         taskData.actRew(i) = 2;    
-    elseif isequal(taskData.rew{i}, '2') && taskData.boatType(i) == 0
+    elseif taskData.rew(i) == 2 && taskData.boatType(i) == 0
         taskData.actRew(i) = 1;
     end   
     
@@ -185,12 +192,11 @@ for i=1:trial
     
 % Show boat and calculate performance.       %TRIGGER
 %     DrawCircle(taskParam)
-     if taskData.boatType(i) == 1
-%         
-         if Subject.rew == '1' && taskData.hit(i) == 1
-             taskData.perf(i) = taskParam.gParam.rewMag;  
-         end
-     end
+     
+    if taskData.actRew(i) == 1 && taskData.hit(i) == 1
+        taskData.perf(i) = taskParam.gParam.rewMag;
+    end
+
 %     
 %     % Calculate accumulated performance.
 %     taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
@@ -336,19 +342,23 @@ end
                 elseif taskParam.gParam.oddball == true
                     header = 'Performance';
                     if isequal(condition, 'practiceOddball')
-                    txt = sprintf(['Blue shield catches: %.0f of '...
-                    '%.0f\n\nGreen shield catches: %.0f of '...
-                    '%.0f\n\nIn this block you would have earned %.2f of '...
-                    'possible $ %.2f.'], goldHit,...
-                    goldBall, silverHit, silverBall,...
-                    taskData.accPerf(end), maxMon);
+%                     txt = sprintf(['%s shield catches: %.0f of '...
+%                     '%.0f\n\n%s shield catches: %.0f of '...
+%                     '%.0f\n\nIn this block you would have earned %.2f of '...
+%                     'possible $ %.2f.'], colRewCap, goldHit,...
+%                     goldBall, colNoRewCap, silverHit, silverBall,...
+%                     practData.accPerf(end), maxMon);
+                    [txt, header] = Feedback(taskData, taskParam, Subject, condition);
+
                     else
-                    txt = sprintf(['Blue shield catches: %.0f of '...
-                    '%.0f\n\nGreen shield catches: %.0f of '...
-                    '%.0f\n\nIn this block you have earned %.2f of '...
-                    'possible $ %.2f.'], goldHit,...
-                    goldBall, silverHit, silverBall,...
-                    taskData.accPerf(end), maxMon);    
+%                     txt = sprintf(['%s shield catches: %.0f of '...
+%                     '%.0f\n\n%s shield catches: %.0f of '...
+%                     '%.0f\n\nIn this block you earned %.2f of '...
+%                     'possible $ %.2f.'], colRewCap, goldHit,...
+%                     goldBall, colNoRewCap, silverHit, silverBall,...
+%                     practData.accPerf(end), maxMon);
+                    [txt, header] = Feedback(taskData, taskParam, Subject, condition);
+
                     end
                 end
                 

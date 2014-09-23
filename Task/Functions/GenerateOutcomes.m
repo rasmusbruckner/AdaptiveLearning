@@ -23,8 +23,8 @@ fieldNames = taskParam.fieldNames;
 ID = cell(trials, 1); % ID.
 age = zeros(trials, 1); % Age.
 sex = cell(trials, 1); % Sex.
-rew = cell(trials, 1); % Reward.
-actRew = zeros(trials,1); % Actual reward.
+rew = nans(trials, 1); % Reward.
+actRew = nans(trials,1); % Actual reward.
 Date = cell(trials, 1); % Date.
 cond = cell(trials, 1); % Condition.
 outcome=nan(trials, 1); % Outcome.
@@ -50,7 +50,7 @@ UPNorm = zeros(trials, 1);% Regular prediction error.
 UPPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
 UPMin = zeros(trials, 1); % Prediction error minus 360 degrees.
 hit = zeros(trials, 1); % Hit.
-cBal = cell(trials, 1); % Counterbalancing.
+cBal = nans(trials, 1); % Counterbalancing.
 s=taskParam.gParam.safe; % how many guaranteed trials before change-point.
 perf = zeros(trials, 1); % Performance.
 accPerf = zeros(trials, 1); % Accumulated performance.
@@ -64,8 +64,8 @@ a = clock;
 rand('twister', a(6).*10000);
 
 % Angular shield size:
-UorExp=0
-mu=10;
+UorExp=0;
+mu=15; % for CP = 15
 minASS = 10;
 maxASS=180;
 allASS = zeros(trials,1);
@@ -115,6 +115,7 @@ else
 end
 
 s = 0;
+mu=10; % for ODDBALL = 10
 
 for i =1:trials;
     

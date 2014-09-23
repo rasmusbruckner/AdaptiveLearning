@@ -21,16 +21,20 @@ for i = 1:trials
     
     
 while 1
-    
-    if isequal(practData.rew{i}, '1') && practData.boatType(i) == 1
+   
+  
+    if subject.rew == 1 && practData.boatType(i) == 1
         practData.actRew(i) = 1;
-    elseif isequal(practData.rew{i}, '1') && practData.boatType(i) == 0
+    elseif subject.rew == 1 && practData.boatType(i) == 0
         practData.actRew(i) = 2;
-    elseif isequal(practData.rew{i}, '2') && practData.boatType(i) == 1
+    elseif subject.rew == 2 && practData.boatType(i) == 1
         practData.actRew(i) = 2;    
-    elseif isequal(practData.rew{i}, '2') && practData.boatType(i) == 0
+    elseif subject.rew == 2 && practData.boatType(i) == 0
         practData.actRew(i) = 1;
-    end   
+    end 
+   
+    
+     
     if cannon == true
         Cannon(taskParam, practData.distMean(i))
     end
@@ -111,7 +115,7 @@ if cannon == true
 end
 PredictionSpot(taskParam);
 DrawOutcome(taskParam, practData.outcome(i));
-
+%keyboard
 %DrawOutcome(taskParam, practData.outcome(i));
 %(taskParam, practData.rawPredErr(i), practData.outcome(i), practData.pred(i), practData.predErr(i))
 DrawPE_Bar(taskParam, practData, i)
@@ -175,19 +179,23 @@ DrawCircle(taskParam)
     end
     
    
+if practData.actRew(i) == 1 && practData.hit(i) == 1
+    practData.perf(i) = taskParam.gParam.rewMag;
+end  
+    
 
-% Show boat.
-if practData.boatType(i) == 1
-    %RewardTxt = Reward(taskParam, 'gold');
-    if subject.rew == '1' && practData.hit(i) == 1
-         practData.perf(i) = taskParam.gParam.rewMag;  
-    end
-elseif practData.boatType(i) == 0
-   % RewardTxt = Reward(taskParam, 'silver');
-   if subject.rew == '2' && practData.hit(i) == 1
-         practData.perf(i) = taskParam.gParam.rewMag;  
-    end
-end
+% % Show boat.
+% if practData.boatType(i) == 1
+%     %RewardTxt = Reward(taskParam, 'gold');
+%     if subject.rew == 1 && practData.hit(i) == 1
+%          practData.perf(i) = taskParam.gParam.rewMag;  
+%     end
+% elseif practData.boatType(i) == 0
+%    % RewardTxt = Reward(taskParam, 'silver');
+%    if subject.rew == 2 && practData.hit(i) == 1
+%          practData.perf(i) = taskParam.gParam.rewMag;  
+%     end
+% end
 
 % Calculate accumulated performance.
 practData.accPerf(i) = sum(practData.perf);% + taskData.perf(i);
