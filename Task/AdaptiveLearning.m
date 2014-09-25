@@ -45,7 +45,7 @@ driftConc = [30 99999999]; % Concentration of the drift. 10
 safe = 3; % How many guaranteed trials without change-points.
 rewMag = 0.2; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = false; % Debug mode.
+debug = true; % Debug mode.
 
 % currently not in use:
 runVola = false; % Do you want to run different volatility conditions?
@@ -161,7 +161,7 @@ end
 
 % Prevent input.
 ListenChar(2);
-HideCursor;
+%HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);
@@ -224,8 +224,9 @@ fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
 fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
+
 fFieldNames = 'fieldNames';
-fieldNames = struct('hallo', 'hallo', fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct(fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
