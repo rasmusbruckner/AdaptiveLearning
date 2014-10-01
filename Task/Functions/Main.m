@@ -3,7 +3,6 @@ function [taskData, Data] = Main(taskParam, vola, sigma, condition, Subject)
 % "practice" or "control". This loop is optimized for triggering accuracy.
 
 
-
 %%%
 % Check Feedback!
 %%%
@@ -85,6 +84,10 @@ for i=1:trial
         %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
        
         taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
+        format shortg
+        c = clock;
+        timestampOnset(i,:) = fix(c)
+        format short
 
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
@@ -288,6 +291,10 @@ for i=1:trial
       
     WaitSecs(.5);
     taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
+    format shortg
+    c = clock;
+    timestampOffset(i,:) = fix(c);
+    format short
     WaitSecs(.5);
     
 
@@ -399,7 +406,7 @@ driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
 
 %% Save data.
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.timestampOnset, timestampOnset, fieldNames.timestampOffset, timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
