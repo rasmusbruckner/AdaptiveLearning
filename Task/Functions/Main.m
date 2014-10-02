@@ -13,7 +13,7 @@ KbReleaseWait();
 %if taskParam.gParam.sendTrigger == true
 %   lptwrite(taskParam.triggers.port,0);
 %end
-
+ref = taskParam.gParam.ref;
 %% generateOutcomes
 if isequal(condition, 'practiceOddball')
     
@@ -84,10 +84,10 @@ for i=1:trial
         %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
        
         taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
-        format shortg
-        c = clock;
-        timestampOnset(i,:) = fix(c)
-        format short
+        
+%         c = GetSecs - ref;
+        taskData.timestampOnset(i,:) = GetSecs - ref;
+       
 
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
@@ -138,7 +138,8 @@ for i=1:trial
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
     taskData.triggers(i,2) = SendTrigger(taskParam, taskData, condition, vola, i, 2); % this is the prediction / fixation 1 trigger
-
+    taskData.timestampPrediction(i,:) = GetSecs - ref;
+    
     %io64(ioObject,taskParam.triggers.port,2) % this is the prediction and the onset of the first baseline
     RT_Flip(i) = GetSecs-time;
     
@@ -291,10 +292,10 @@ for i=1:trial
       
     WaitSecs(.5);
     taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
-    format shortg
-    c = clock;
-    timestampOffset(i,:) = fix(c);
-    format short
+    
+    
+    taskData.timestampOffset(i,:) = GetSecs - ref;
+
     WaitSecs(.5);
     
 
@@ -406,7 +407,7 @@ driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
 
 %% Save data.
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.timestampOnset, timestampOnset, fieldNames.timestampOffset, timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.timestampOnset, taskData.timestampOnset, fieldNames.timestampPrediction, taskData.timestampPrediction, fieldNames.timestampOffset, taskData.timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...

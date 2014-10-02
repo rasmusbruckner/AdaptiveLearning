@@ -20,7 +20,7 @@
 %       - Reward has to be calculated
 %       - oddBall versus control
 %       - check sigma vola driftConc - what is still used?
-% store shieldSize
+% 
 % daten generieren ohne aufgabe zu machen
 
 
@@ -35,9 +35,9 @@ runIntro = true; % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 oddball = true; % Run oddball or perceptual version
 sendTrigger = true; % Do you want to send triggers?
-shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
-trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20
+trials = 2;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
 vola = [.25 .7 0]; % Volatility of the environment.
 oddballProb = [.25 0]; % Oddball probability. .15
 sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
@@ -45,7 +45,7 @@ driftConc = [30 99999999]; % Concentration of the drift. 10
 safe = 3; % How many guaranteed trials without change-points.
 rewMag = 0.2; % Reward magnitude.
 test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = true; % Debug mode.
+debug = false; % Debug mode.
 
 % currently not in use:
 runVola = false; % Do you want to run different volatility conditions?
@@ -161,7 +161,7 @@ end
 
 % Prevent input.
 ListenChar(2);
-%HideCursor;
+HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);
@@ -226,7 +226,7 @@ fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
 
 fFieldNames = 'fieldNames';
-fieldNames = struct('timestampOnset', 'timestampOnset', 'timestampOffset', 'timestampOffset', fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct('timestampOnset', 'timestampOnset', 'timestampPrediction', 'timestampPrediction', 'timestampOffset', 'timestampOffset', fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
@@ -255,7 +255,8 @@ elseif isequal(computer, 'Brown')
 else
     sentenceLength = 85;
 end
-gParam = struct(fSentenceLength, sentenceLength, fOddball, oddball, fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractContTrials, practContTrials, fShieldTrials, shieldTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+ref = GetSecs;
+gParam = struct('ref', ref, fSentenceLength, sentenceLength, fOddball, oddball, fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractContTrials, practContTrials, fShieldTrials, shieldTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.
