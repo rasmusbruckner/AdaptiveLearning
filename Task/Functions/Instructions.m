@@ -1005,7 +1005,7 @@ while 1
             feedback = true;
             [fw, bw] = BigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt,feedback);
-            sumCannonDev = sum(practData.cannonDev >= 5);
+            sumCannonDev = sum(practData.cannonDev >= 10);
             if fw == 1
                 if taskParam.gParam.oddball == true && subject.cBal == 2
                     screenIndex = screenIndex + 1;
@@ -1262,7 +1262,7 @@ while 1
             end
             WaitSecs(0.1);
         case 30
-            sumCannonDev = sum(practData.cannonDev >= 5);
+            sumCannonDev = sum(practData.cannonDev >= 10);
             if sumCannonDev >= 4
                 
                 header = 'Wiederholung der Übung';
@@ -1472,7 +1472,7 @@ while 1
             end
             WaitSecs(0.1);
         case 33
-            sumCannonDev = sum(practData.cannonDev >= 5);
+            sumCannonDev = sum(practData.cannonDev >= 10);
             if sumCannonDev >= 4
                 if taskParam.gParam.oddball == false
                     header = 'Wiederholung der Übung';
