@@ -57,9 +57,9 @@ accPerf = zeros(trials, 1); % Accumulated performance.
 timestampOnset = nan(trials,1);
 timestampPrediction = nan(trials,1);
 timestampOffset = nan(trials, 1);
+initiationRT = nan(trials,1);
+block = nan(trials,1);
 %% generateOutcomes (by Matt Nassar)
-
-
 
 %rng('shuffle')
 a = clock;
@@ -74,7 +74,19 @@ allASS = zeros(trials,1);
 
 if isequal(condition, 'main') || isequal(condition, 'practice') || isequal(condition, 'shield')%taskParam.gParam.oddball == false || isequal(type, 'Main')
 for i = 1:trials
-    if (rand < vola && s==0) || i == 1;
+    
+    % blocknumber
+    if i >= taskParam.gParam.blockIndices(1) && i <= taskParam.gParam.blockIndices(2) 
+            block(i) = 1;
+        elseif i >= taskParam.gParam.blockIndices(2) && i <= taskParam.gParam.blockIndices(3)
+            block(i) = 2;
+        elseif i >= taskParam.gParam.blockIndices(3) && i <= taskParam.gParam.blockIndices(4)
+            block(i) = 3;
+        elseif i >= taskParam.gParam.blockIndices(4)
+            block(i) = 4;
+    end 
+    
+    if (rand < vola && s==0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block!
         mean=round(rand(1).*359); % Outcome expressed in degrees.
         cp(i)=1;
         s=taskParam.gParam.safe;
@@ -119,9 +131,20 @@ end
 s = 0;
 mu=10; % for ODDBALL = 10
 
-for i =1:trials;
+for i =1:trials
+   
+        % blocknumber
+    if i >= taskParam.gParam.blockIndices(1) && i <= taskParam.gParam.blockIndices(2) 
+            block(i) = 1;
+        elseif i >= taskParam.gParam.blockIndices(2) && i <= taskParam.gParam.blockIndices(3)
+            block(i) = 2;
+        elseif i >= taskParam.gParam.blockIndices(3) && i <= taskParam.gParam.blockIndices(4)
+            block(i) = 3;
+        elseif i >= taskParam.gParam.blockIndices(4)
+            block(i) = 4;
+    end 
     
-    if i == 1
+    if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block 
         muRad_offset=unifrnd(-pi, pi);
     else
         muRad_offset= deg2rad(distMean(i-1)-180)+circ_vmrnd(0, driftConc, 1);
@@ -194,7 +217,7 @@ end
     else boatType = 1;
     end
 %% Save data.
-taskData = struct(fieldNames.timestampOnset, timestampOnset, fieldNames.timestampPrediction, timestampPrediction, fieldNames.timestampOffset, timestampOffset, fieldNames.oddBall, oddBall, fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
+taskData = struct(fieldNames.block, block, fieldNames.initiationRTs, initiationRT, fieldNames.timestampOnset, timestampOnset, fieldNames.timestampPrediction, timestampPrediction, fieldNames.timestampOffset, timestampOffset, fieldNames.oddBall, oddBall, fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
     fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.predT, predT,...
     fieldNames.outT, outT, fieldNames.triggers, triggers, fieldNames.pred, pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...

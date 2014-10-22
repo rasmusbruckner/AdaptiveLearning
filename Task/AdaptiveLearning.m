@@ -31,13 +31,14 @@ clear all
 
 %% Set general parameters.
 
-runIntro = true; % Run the intro with practice trials?
+runIntro = false; % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 oddball = true; % Run oddball or perceptual version
-sendTrigger = true; % Do you want to send triggers?
+sendTrigger = false; % Do you want to send triggers?
 shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10
 practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
-trials = 200;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+trials = 20;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+blockIndices = [1 5 10 15]; % When should new block begin?
 vola = [.25 .7 0]; % Volatility of the environment.
 oddballProb = [.25 0]; % Oddball probability. .15
 sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
@@ -224,9 +225,8 @@ fCBal = 'cBal'; cBal = fCBal; % Counterbalancing.
 fPerf = 'perf'; perf = fPerf; % Performance.
 fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance.
 
-
 fFieldNames = 'fieldNames';
-fieldNames = struct('timestampOnset', 'timestampOnset', 'timestampPrediction', 'timestampPrediction', 'timestampOffset', 'timestampOffset', fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
+fieldNames = struct('block', 'block','initiationRTs', 'initiationRTs','timestampOnset', 'timestampOnset', 'timestampPrediction', 'timestampPrediction', 'timestampOffset', 'timestampOffset', fOddBall, oddBall, fOddball, oddball, fOddballProb, oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID, fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate, Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial, fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr, predErr, fPredErrNorm, predErrNorm,...
     fPredErrPlus, predErrPlus, fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm, fMemErrPlus, memErrPlus,...
     fMemErrMin, memErrMin, fUP, UP, fUPNorm, UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal, fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
@@ -256,7 +256,7 @@ else
     sentenceLength = 85;
 end
 ref = GetSecs;
-gParam = struct('ref', ref, fSentenceLength, sentenceLength, fOddball, oddball, fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractContTrials, practContTrials, fShieldTrials, shieldTrials, fPractTrials, practTrials, fContTrials, contTrials,...
+gParam = struct('blockIndices', blockIndices, 'ref', ref, fSentenceLength, sentenceLength, fOddball, oddball, fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar, PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials, trials, fPractContTrials, practContTrials, fShieldTrials, shieldTrials, fPractTrials, practTrials, fContTrials, contTrials,...
     fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero, fWindow, window, fWindowRect, windowRect);
 
 %% Circle parameters.

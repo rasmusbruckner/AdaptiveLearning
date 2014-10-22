@@ -47,6 +47,30 @@ RT_Flip = zeros(taskData.trial, 1);
 % Priority(9); 
 
 for i=1:trial
+    
+    if i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1|| i == taskParam.gParam.blockIndices(4) + 1
+        
+        while 1
+        txt = 'Take a break!';
+        DrawFormattedText(taskParam.gParam.window, txt,...
+               'center', 'center', [255 255 255]);
+        
+        
+        DrawFormattedText(taskParam.gParam.window,...
+                taskParam.strings.txtPressEnter,'center',...
+                taskParam.gParam.screensize(4)*0.9);
+            Screen('Flip', taskParam.gParam.window);
+            [~, ~, keyCode] = KbCheck;
+            if find(keyCode) == taskParam.keys.enter
+                  
+                    break
+            end
+        end
+            
+            
+    end    
+    
+    initRT_Timestamp = GetSecs();
   
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
@@ -68,6 +92,10 @@ for i=1:trial
         taskData.actRew(i) = 1;
     end   
     
+    if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1
+        taskParam.circle.rotAngle =  taskParam.circle.initialRotAngle;
+    end
+    
     
     while 1
         
@@ -79,13 +107,12 @@ for i=1:trial
         % Start trial - subject predicts boat.
         DrawCircle(taskParam)
         DrawCross(taskParam)
-        
         PredictionSpot(taskParam)
 
-        if i > 1 %&& taskParam.gParam.PE_Bar == true 
+        
+        if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1  
            TickMark(taskParam, taskData.outcome(i-1), 'outc')
            TickMark(taskParam, taskData.pred(i-1), 'pred')
-            %DrawPE_Bar(taskParam, taskData, i-1) 
         end
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
@@ -97,7 +124,14 @@ for i=1:trial
 %         c = GetSecs - ref;
         taskData.timestampOnset(i,:) = GetSecs - ref;
        
-
+        %% get initiation RT
+        
+        [ keyIsDown, ~, keyCode ] = KbCheck;
+            if keyIsDown
+                if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
+                    taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;   
+                end
+            end
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
         
@@ -416,7 +450,7 @@ driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
 
 %% Save data.
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.timestampOnset, taskData.timestampOnset, fieldNames.timestampPrediction, taskData.timestampPrediction, fieldNames.timestampOffset, taskData.timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.block, taskData.block, fieldNames.initiationRTs, taskData.initiationRTs, fieldNames.timestampOnset, taskData.timestampOnset, fieldNames.timestampPrediction, taskData.timestampPrediction, fieldNames.timestampOffset, taskData.timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
