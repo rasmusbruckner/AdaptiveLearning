@@ -7,6 +7,15 @@ function [taskData, Data] = Main(taskParam, vola, sigma, condition, Subject)
 % Check Feedback!
 %%%
 
+%% Events
+% Trigger 1: Trial Onset (subject presses buttons to indicate prediction)
+% Trigger 2: Prediction/Fixation Cross 1: When subject presses Space until 500 mSec
+% Trigger 3: Outcome: 500 - 1000 mSec
+% Trigger 4: Fixation Cross 2: 1000 - 2000 mSec 
+% Trigger 5: Shield: 2000 - 2500 mSec 
+% Trigger 6: Fixation Cross 3: 2500 - 3500 mSec
+% Trigger 7: Trial Summary (no timing trigger)
+
 KbReleaseWait();
 
 % Set port to 0.
