@@ -33,6 +33,7 @@ if isequal(condition, 'practiceOddball')
      trial = taskParam.gParam.practTrials;
      taskData.cBal = nan(length(trial),1);
      taskData.rew = nan(length(trial),1);
+     taskData.block = ones(length(trial),1);
 else
 taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
 trial = taskData.trial;
@@ -446,7 +447,6 @@ vola = repmat(vola, length(taskData.trial),1);
 sigma = repmat(sigma, length(taskData.trial),1);
 oddballProb = repmat(taskParam.gParam.oddballProb(1), length(taskData.trial),1);
 driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
-
 
 %% Save data.
 fieldNames = taskParam.fieldNames;
