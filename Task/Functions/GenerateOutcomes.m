@@ -59,6 +59,7 @@ timestampPrediction = nan(trials,1);
 timestampOffset = nan(trials, 1);
 initiationRT = nan(trials,1);
 block = nan(trials,1);
+actJitter = nan(trials,1);
 %% generateOutcomes (by Matt Nassar)
 
 %rng('shuffle')
@@ -217,7 +218,7 @@ end
     else boatType = 1;
     end
 %% Save data.
-taskData = struct(fieldNames.block, block, fieldNames.initiationRTs, initiationRT, fieldNames.timestampOnset, timestampOnset, fieldNames.timestampPrediction, timestampPrediction, fieldNames.timestampOffset, timestampOffset, fieldNames.oddBall, oddBall, fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
+taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block, block, fieldNames.initiationRTs, initiationRT, fieldNames.timestampOnset, timestampOnset, fieldNames.timestampPrediction, timestampPrediction, fieldNames.timestampOffset, timestampOffset, fieldNames.oddBall, oddBall, fieldNames.allASS, allASS, fieldNames.ID, {ID}, fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew, actRew, fieldNames.sex, {sex}, fieldNames.cond, {cond}, fieldNames.trial, i,...
     fieldNames.outcome, outcome, fieldNames.distMean, distMean, fieldNames.cp, cp, fieldNames.cBal, {cBal},...
     fieldNames.TAC, TAC, fieldNames.boatType, boatType, fieldNames.catchTrial, catchTrial, fieldNames.predT, predT,...
     fieldNames.outT, outT, fieldNames.triggers, triggers, fieldNames.pred, pred, fieldNames.predErr, predErr, fieldNames.predErrNorm, predErrNorm, fieldNames.predErrPlus, predErrPlus,...

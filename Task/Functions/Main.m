@@ -117,9 +117,9 @@ for i=1:trial
         end
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
-        Screen('Flip', taskParam.gParam.window, t + 0.01);
+        %taskData.actJitter(i) = rand*taskParam.gParam.jitter;
+        Screen('Flip', taskParam.gParam.window, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter. 
         %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
-       
         taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
         
 %         c = GetSecs - ref;
@@ -127,14 +127,23 @@ for i=1:trial
        
         %% get initiation RT
         
-        [ keyIsDown, ~, keyCode ] = KbCheck;
-            if keyIsDown
-                if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
-                    taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;   
-                end
-            end
+%         [ keyIsDown, ~, keyCode ] = KbCheck;
+%             if keyIsDown && isnan(taskData.initiationRTs(i,:));
+%                 if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
+%                     taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;   
+%                     %keyboard
+%                 end
+%             end
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
+        
+%         if keyIsDown && isnan(taskData.initiationRTs(i,:));
+%                 if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
+%                     taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;   
+%                     %keyboard
+%                 end
+           
+        
         
         if keyIsDown
             if keyCode(taskParam.keys.rightKey)
@@ -450,7 +459,7 @@ driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
 
 %% Save data.
 fieldNames = taskParam.fieldNames;
-Data = struct(fieldNames.block, taskData.block, fieldNames.initiationRTs, taskData.initiationRTs, fieldNames.timestampOnset, taskData.timestampOnset, fieldNames.timestampPrediction, taskData.timestampPrediction, fieldNames.timestampOffset, taskData.timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
+Data = struct(fieldNames.actJitter, taskData.actJitter, fieldNames.block, taskData.block, fieldNames.initiationRTs, taskData.initiationRTs, fieldNames.timestampOnset, taskData.timestampOnset, fieldNames.timestampPrediction, taskData.timestampPrediction, fieldNames.timestampOffset, taskData.timestampOffset, fieldNames.allASS, taskData.allASS, fieldNames.driftConc, driftConc, fieldNames.oddballProb, oddballProb, fieldNames.oddBall, taskData.oddBall, fieldNames.ID, {taskData.ID}, fieldNames.age, taskData.age, fieldNames.rew, {taskData.rew}, fieldNames.actRew, taskData.actRew, fieldNames.sex, {taskData.sex},...
     fieldNames.cond, {taskData.cond}, fieldNames.cBal, {taskData.cBal}, fieldNames.trial, taskData.trial,...
     fieldNames.vola, vola, taskParam.fieldNames.sigma, sigma, fieldNames.outcome, taskData.outcome, fieldNames.distMean, taskData.distMean, fieldNames.cp, taskData.cp,...
     fieldNames.TAC, taskData.TAC, fieldNames.boatType, taskData.boatType, fieldNames.catchTrial, taskData.catchTrial, ...
