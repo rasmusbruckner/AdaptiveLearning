@@ -73,7 +73,7 @@ for i=1:trial
             
     end    
     
-    initRT_Timestamp = GetSecs();
+   
   
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
@@ -102,6 +102,7 @@ for i=1:trial
     taskData.actJitter(i) = rand*taskParam.gParam.jitter;
     WaitSecs(taskData.actJitter(i))
     %keyboard
+    initRT_Timestamp = GetSecs();
     
     while 1
         
