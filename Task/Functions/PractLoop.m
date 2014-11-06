@@ -18,7 +18,8 @@ trials = practData.trial;
 end
 %Priority(9);
 for i = 1:trials
-    
+
+WaitSecs(rand*taskParam.gParam.jitter);    
     
 while 1
    

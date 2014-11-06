@@ -31,13 +31,13 @@ clear all
 
 %% Set general parameters.
 
-runIntro = false; % Run the intro with practice trials?
+runIntro = true; % Run the intro with practice trials?
 askSubjInfo = true; % Do you want some basic demographic subject variables?
 oddball = true; % Run oddball or perceptual version
-sendTrigger = false; % Do you want to send triggers?
-shieldTrials = 4; % Trials during the introduction (per condition). Für Pilot: 10
-practTrials = 4; % Number of practice trials per condition. Für Pilot: 20
-trials = 10;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 150
+sendTrigger = true; % Do you want to send triggers?
+shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10
+practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
+trials = 240;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 .7 0]; % Volatility of the environment.
 oddballProb = [.25 0]; % Oddball probability. .15
@@ -163,7 +163,7 @@ end
 
 % Prevent input.
 ListenChar(2);
-%HideCursor;
+HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);

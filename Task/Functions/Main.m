@@ -31,9 +31,11 @@ if isequal(condition, 'practiceOddball')
      clear taskData.cBal taskData.rew
     
      trial = taskParam.gParam.practTrials;
-     taskData.cBal = nan(length(trial),1);
-     taskData.rew = nan(length(trial),1);
-     taskData.block = ones(length(trial),1);
+     taskData.cBal = nan(trial,1);
+     taskData.rew = nan(trial,1);
+     taskData.initiationRTs = nan(trial,1);
+     taskData.actJitter = nan(trial,1);
+     taskData.block = ones(trial,1);
 else
 taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
 trial = taskData.trial;
@@ -97,6 +99,9 @@ for i=1:trial
         taskParam.circle.rotAngle =  taskParam.circle.initialRotAngle;
     end
     
+    taskData.actJitter(i) = rand*taskParam.gParam.jitter;
+    WaitSecs(taskData.actJitter(i))
+    %keyboard
     
     while 1
         
@@ -117,7 +122,7 @@ for i=1:trial
         end
         Screen('DrawingFinished', taskParam.gParam.window);
         t = GetSecs;
-        %taskData.actJitter(i) = rand*taskParam.gParam.jitter;
+        
         Screen('Flip', taskParam.gParam.window, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter. 
         %io64(ioObject,taskParam.triggers.port,1) % this is the trial onset trigger
         taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
@@ -137,15 +142,12 @@ for i=1:trial
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
         
-%         if keyIsDown && isnan(taskData.initiationRTs(i,:));
-%                 if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
-%                     taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;   
-%                     %keyboard
-%                 end
-           
-        
-        
-        if keyIsDown
+        if keyIsDown && isnan(taskData.initiationRTs(i,:)); % initationRTs is nan before first button press: save time of button press. thereafter variable is not nan anymore and not resaved.
+            if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
+                taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;
+                %keyboard
+            end
+        elseif keyIsDown
             if keyCode(taskParam.keys.rightKey)
                 if taskParam.circle.rotAngle < 360*taskParam.circle.unit
                     taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; %0.02
@@ -157,7 +159,7 @@ for i=1:trial
                     taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
                 else
                     taskParam.circle.rotAngle = 0;
-                end    
+                end
             elseif keyCode(taskParam.keys.leftKey)
                 if taskParam.circle.rotAngle > 0*taskParam.circle.unit
                     taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
@@ -169,7 +171,7 @@ for i=1:trial
                     taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
                 else
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-                end    
+                end
             elseif keyCode(taskParam.keys.space)
                 taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 
