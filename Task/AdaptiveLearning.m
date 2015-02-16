@@ -22,7 +22,10 @@
 %       - check sigma vola driftConc - what is still used?
 % 
 % daten generieren ohne aufgabe zu machen
-
+%
+% allEEG version: same as frankLabEEG but with integrated Dresden control
+% task. If you choose oddball = true, then task is exactly the same as the 
+% Brown version.
 
 clear all
 
@@ -32,22 +35,22 @@ clear all
 %% Set general parameters.
 
 runIntro = true; % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
-oddball = true; % Run oddball or perceptual version
-sendTrigger = true; % Do you want to send triggers?
-shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
-trials = 240;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
+askSubjInfo = false; % Do you want some basic demographic subject variables?
+oddball = false; % Run oddball or perceptual version
+sendTrigger = false; % Do you want to send triggers?
+shieldTrials = 1; % Trials during the introduction (per condition). Für Pilot: 10
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20
+trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
 blockIndices = [1 60 120 180]; % When should new block begin?
-vola = [.25 .7 0]; % Volatility of the environment.
-oddballProb = [.25 0]; % Oddball probability. .15
-sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
-driftConc = [30 99999999]; % Concentration of the drift. 10
-safe = 3; % How many guaranteed trials without change-points.
-rewMag = 0.2; % Reward magnitude.
-jitter = 0.2; % Set jitter. 
-test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = false; % Debug mode.
+vola = [.25 .7 0]; % Hazard rate
+oddballProb = [.25 0]; % Oddball probability .15
+sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution
+driftConc = [30 99999999]; % Concentration of the drift 10
+safe = 3; % How many guaranteed trials without change-points
+rewMag = 0.2; % Reward magnitude
+jitter = 0.2; % Set jitter
+test = false; % Test triggering timing accuracy (see PTB output CW)
+debug = false; % Debug mode
 
 % currently not in use:
 runVola = false; % Do you want to run different volatility conditions?
@@ -95,7 +98,7 @@ if askSubjInfo == false
     age = '999';
     sex = 'm/w';
     cBal = 1;
-    reward = '1';
+    reward = 1;
     Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
     prompt = {'ID:','Age:', 'Sex:', 'cBal', 'Reward'};
@@ -162,8 +165,8 @@ end
 %% Open window.
 
 % Prevent input.
-ListenChar(2);
-HideCursor;
+%ListenChar(2);
+%HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);
@@ -343,7 +346,6 @@ end
 fKeys = 'keys';
 keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
-
 imageRect = [0 0 120 120];
 dstRect = CenterRect(imageRect, windowRect);
 [cannonPic, ~, alpha]  = imread('cannon.png');
@@ -454,6 +456,22 @@ if test == true
     Screen('CloseAll');
     
 else
+    
+    
+    
+    %%%%%%%%
+    %
+    %
+    % hier bin ich stehen geblieben 
+    % schauen, dass struktur so wenig wie möglich verändert wird 
+    % und, dass control aufgabe trotzdem gut reinpasst!
+    %
+    %
+    %%%%%%%%
+    
+    
+    
+    
     %% Run task.
     
     % Run intro with practice trials if true.
