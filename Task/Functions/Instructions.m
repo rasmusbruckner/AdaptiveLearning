@@ -1,6 +1,6 @@
 function Instructions(taskParam, type, subject)
 % BattleShipsInstructions runs the practice sessions.
-%   Order of tasks depends on cBal.
+%   Depending on cBal you start with a different task.
 
 cannon = true;
 if isequal(type, 'Oddball') && subject.cBal == 1
@@ -39,8 +39,9 @@ while 1
                 txt=['Eine Kanone zielt auf eine Stelle des weißen '...
                     'Kreises. Mit dem orangenen Punkt kannst du angeben, '...
                     'wo du dein Schild platzieren möchtest, um die '...
-                    'Kanonenkugel abzufangen. Grün ist für schnelle '...
-                    'Bewegungen und orange für langsame Bewegungen.'];
+                    'Kanonenkugel abzufangen.\nProbiere zunächst '...
+                    'den Punkt mit den grünen (schnell) und '...
+                    'gelben (langsam) Tasten auf dem Kreis zu bewegen.'];
             elseif taskParam.gParam.oddball == true
                 txt=['A cannon is aimed at the circle. Indicate where '...
                     'you would like to place your shield with the orange spot. '...
@@ -54,7 +55,8 @@ while 1
                 taskParam.strings.txtPressEnter,'center',...
                 taskParam.gParam.screensize(4)*0.9);
             [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
-                txt, cannon, 'arrow', distMean);            if fw == 1
+                txt, cannon, 'arrow', distMean);
+            if fw == 1
                 screenIndex = screenIndex + 1;
             elseif bw == 1
                 screenIndex = screenIndex - 1; % go to case 1
@@ -125,8 +127,8 @@ while 1
             end
             WaitSecs(0.1);
         case 5
-            % Feedback that ball was caught.
-            LineAndBack(taskParam)     
+            % Feedback that
+            LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
             PredictionSpot(taskParam);
@@ -144,8 +146,8 @@ while 1
             Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
             while 1
                 if taskParam.gParam.oddball == false
-                    txt=['Nachdem die Kanone geschossen hat, siehst du '...
-                        'dein Schild. In diesem Fall hast du hast die '...
+                    txt=['Wie du siehst, erscheint dein Schild nach dem '...
+                        'Schuss. In diesem Fall hast du hast die '...
                         'Kanonenkugel abgefangen. Beachte, dass mindestens '...
                         'die Hälfte der Kugel auf dem Schild sein muss, '...
                         'um als Treffer zu zählen.'];
@@ -188,12 +190,14 @@ while 1
             WaitSecs(0.1);
         case 6
             if taskParam.gParam.oddball == false
-                txt=['Steuere den orangenen Punkt jetzt neben das Ziel der '...    
-                    'Kanone, so dass du die Kanonenkugel verfehlst '...         
+                txt=['Steuere den orangenen Punkt jetzt neben das Ziel der '...    % Try to
+                    'Kanone, so dass du die Kanonenkugel verfehlst '...         % miss the ball.
                     'und drücke LEERTASTE.'];
             elseif taskParam.gParam.oddball == true
-                txt=['Now try to place the shield so that you miss the '...    
-                    'cannonball. Then hit SPACE. '];         
+                txt=['Now try to place the shield so that you miss the '...    % Try to
+                    'cannonball. Then hit space. '...         % miss the ball.
+                    ];
+                
             end
             distMean = 35;
             outcome = 35;
@@ -245,6 +249,15 @@ while 1
                     end
                 end
             else
+                if taskParam.gParam.oddball == false
+                    txt=['Der schwarze Balken zeigt dir '...
+                        'wie weit die Kanonenkugel von deinem '...
+                        'Punkt entfernt war. Daraufhin siehst du dann...'];
+                elseif taskParam.gParam.oddball == true
+                    txt=['Der schwarze Balken zeigt dir '...
+                        'wie weit die Kanonenkugel von deinem '...
+                        'Punkt entfernt war. Daraufhin siehst du dann...'];
+                end
                 LineAndBack(taskParam)
                 DrawCircle(taskParam);
                 DrawCross(taskParam);
@@ -266,7 +279,8 @@ while 1
             Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
             while 1
                 if taskParam.gParam.oddball == false
-                    txt=['In diesem Fall hast du die Kanonenkugel verpasst.'];
+                    txt=['...dein Schild. In '...
+                        'diesem Fall hast du die Kanonenkugel verpasst.'];
                 elseif taskParam.gParam.oddball == true
                     txt=['In this case you missed the cannonball.'];
                 end
@@ -303,27 +317,19 @@ while 1
             WaitSecs(0.1);
         case 9
             if taskParam.gParam.oddball == false
+                txt=['Die Größe deines Schildes kann sich jedes Mal ändern. '...  % reward.
+                    'Um einen Eindruck von verschiedenen Schildgrößen '...
+                    'zu bekommmen, sollst du im nächsten Durchgang einfach '...
+                    'versuchen, möglichst viele Kanonenkugeln zu fangen.\n\n'...
+                    'Dein Schild kann entweder grün oder blau sein. '...   % reward.
+                    'Wenn du die Kanonenkugel gefangen hast und das Schild '...
+                    'grün ist, bekommst du 20 CENT. Wenn das Schild blau '...
+                    'ist bekommst du leider NICHTS. '...
+                    'Beachte, dass du vorher nicht wissen kannst, '...
+                    'welche Farbe das Schild hat. '...
+                    'Am Ende der Studie bekommst du '...
+                    'das verdiente Geld tatsächlich ausgezahlt.'];
                 header = 'Das Schild';
-                if subject.rew == 1
-                    colRew = 'blau';
-                    colNoRew = 'grün';
-                elseif subject.rew == 2
-                    colRew = 'grün';
-                    colNoRew = 'blau';
-                end
-                txt = sprintf(['Du kannst Geld verdienen wenn du mit deinem '...
-                    'Schild Kanonenkugeln fängst. Wenn das Schild %s '...
-                    'ist, verdienst du 20 CENT wenn du die Kugel fängst. '...
-                    'Wenn das Schild %s ist, verdienst du nichts. '...
-                    'Die Größe des Schildes kann sich jedes Mal ändern. '...
-                    'Du kannst die GRÖßE und die FARBE des Schildes '...
-                    'nicht vorhersagen bis die Kanone geschossen hat. '... 
-                    'Darum ist es am besten wenn du versuchst jeden Ball '...
-                    'zu fangen.\n\n'...
-                    'Jetzt gibt es eine kurze Übung um dir dies zu zeigen.\n\n'...
-                    'Dabei ist die Position des vorherigen Balls mit einem schwarzen '...
-                    'Strich markiert. Die Position von deinem '...
-                    'Punkt ist mit einem orangefarbenen Strich markiert.'], colRew, colNoRew);
             elseif taskParam.gParam.oddball == true
                 header = 'Your Shield';
                 if subject.rew == 1
@@ -333,6 +339,7 @@ while 1
                     colRew = 'green';
                     colNoRew = 'blue';
                 end
+                
                 txt = sprintf(['You can earn money by catching cannonballs in your '...  % reward.
                     'shield. If the shield is %s you will earn 20 CENTS for '...
                     'catching the ball. If the shield is %s you will not earn anything. '...
@@ -344,25 +351,30 @@ while 1
                     'The location of the ball fired on the previous trial will be marked with a black line.\n\n'...
                     'Moreover, the location of the orange spot from the previous trial will be marked with an orange line.'], colRew, colNoRew);
             end
+            
             feedback = false;
             [fw, bw] = BigScreen(taskParam,...
-                taskParam.strings.txtPressEnter, header, txt, feedback);            if fw == 1
+                taskParam.strings.txtPressEnter, header, txt, feedback);
+            if fw == 1
                 screenIndex = screenIndex + 1;
             elseif bw == 1
                 screenIndex = screenIndex - 7; % go to case 2
             end
             WaitSecs(0.1);
+            
         case 10
-            % practice session
             condition = 'shield';
+            
             PractLoop(taskParam, subject, taskParam.gParam.vola(3),taskParam.gParam.sigma(3), cannon, condition);
             screenIndex = screenIndex + 1;
+            %%%%%%%
             WaitSecs(0.1);
         case 11
+            % Intro about
             if taskParam.gParam.oddball == false
-                header = 'Wann du Geld verdienst';
-                txt = sprintf(['Jetzt schauen wir uns an was passiert, '...
-                    'wenn die die Kugel fängst und das Schild %s oder %s ist...'], colRew, colNoRew);
+                header = 'Trial Outcomes';
+                txt = ['Um dir genau zu zeigen, wann du Geld verdienst, '...
+                    'spielen wir jetzt alle Möglichkeiten durch.'];
             elseif taskParam.gParam.oddball == true
                 header = 'Trial Outcomes';
                 txt = sprintf(['Now lets see what happens when you hit '...
@@ -377,9 +389,9 @@ while 1
                 screenIndex = screenIndex - 2;
             end
             WaitSecs(0.1);
-        case 12                                                             
+        case 12                                                              % Try to
             if taskParam.gParam.oddball == false
-                txt='Versuche die Kanonenkugel jetzt wieder zu fangen.';      
+                txt='Versuche die Kanonenkugel jetzt wieder zu fangen.';      % miss the ball.
             elseif taskParam.gParam.oddball == true
                 txt='Now try to catch the ball.';
             end
@@ -439,8 +451,8 @@ while 1
                 screenIndex = screenIndex + 1;
             end
             WaitSecs(0.1);
-        case 14                                                           
-            LineAndBack(taskParam)                                      
+        case 14                                                           % Rewrard.
+            LineAndBack(taskParam)                                      % ball was caught.
             DrawCircle(taskParam);
             DrawCross(taskParam);
             PredictionSpot(taskParam);
@@ -459,9 +471,9 @@ while 1
             while 1
                 
                 if taskParam.gParam.oddball == false
-                    txt = sprintf(['Weil du die Kanonenkugel gefangen '...
-                        'hast und das Schild %s war, '...
-                        'hättest du jetzt 20 CENT verdient.'], colRew);
+                    txt=['Weil du die Kanonenkugel gefangen '...
+                        'hast und das Schild blau war, '...
+                        'hättest du jetzt 20 CENT verdient.'];
                 elseif taskParam.gParam.oddball == true
                     txt = sprintf(['You caught the ball and the shield is %s. '...
                         'So you would earn 20 CENTS.'], colRew);
@@ -692,9 +704,9 @@ while 1
             Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
             while 1
                 if taskParam.gParam.oddball == false
-                    txt=sprintf(['Du hast die Kanonenkugel gefangen, '...
-                        'aber das Schild war %s. Daher hättest '...
-                        'du nichts verdient.'], colNoRew);
+                    txt=['Du hast die Kanonenkugel gefangen, '...
+                        'aber das Schild war grün. Daher hättest '...
+                        'du nichts verdient.'];
                 elseif taskParam.gParam.oddball == true
                     txt=sprintf(['You caught the ball and your shield was %s '...
                         'so you would earn nothing.'], colNoRew);
@@ -805,10 +817,12 @@ while 1
             Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
             while 1
                 if taskParam.gParam.oddball == false
-                    txt=['Du hast die Kanonenkugel verpasst. '...
-                        'Daher hättest du nichts verdient.'];
+                    txt=['Du hast die Kanonenkugel verpasst, '...
+                        'und das Schild war grün. Daher hättest '...
+                        'du nichts verdient.'];
                 elseif taskParam.gParam.oddball == true
-                    txt=['You missed the ball so you would earn nothing.'];
+                    txt=['You missed the ball so you would earn nothing.'...
+                        ];
                 end
                 LineAndBack(taskParam)
                 Cannon(taskParam, distMean)
@@ -845,9 +859,12 @@ while 1
                 end
             end
             WaitSecs(0.1);
+            
         case 25
             if subject.cBal == 2 && isequal(type,'Main')
+                
                 screenIndex = screenIndex +1;
+                
             else
                 header = 'Break';
                 txt = 'Now take a break\n\nTo continue press Enter';
@@ -859,18 +876,29 @@ while 1
                 end
             end
             WaitSecs(0.1);
-        case 26   
+        case 26                                                         % Introduce
             if isequal(type, 'Oddball')
                 if taskParam.gParam.oddball == false
                     header = 'Erste Übung';
-                    txt=['In dieser Übung sollst du versuchen möglichst '...
-                        'viele Kanonenkugeln zu fangen. Die Kanone bleibt '...
-                        'nicht stehen, sondern bewegt sich immer ein Stück weiter.'];
+                    txt=['Weil die Kanone schon sehr alt ist, sind die '...         % noise.
+                        'Schüsse ziemlich ungenau. Wenn du den orangenen Punkt '...
+                        'GENAU auf die Stelle steuerst, auf die die Kanone '...
+                        'zielt, fängst du die MEISTEN Kugeln. Durch die '...
+                        'Ungenauigkeit der Kanone kann die Kugel aber manchmal '...
+                        'auch ein Stück neben die anvisierte Stelle '...
+                        'fliegen, wodurch du sie dann verpasst.\n\n'...
+                        'In der nächsten Übung sollst du mit der '...
+                        'Ungenauigkeit der Kanone erstmal vertraut werden. '...
+                        'Lasse den orangenen Punkt bitte immer auf der '...
+                        'anvisierten Stelle stehen. Wenn du deinen Punkt '...
+                        'neben die anvisierte Stelle steuerst, wird die '...
+                        'Übung wiederholt.'];
                 elseif taskParam.gParam.oddball == true
                     header = 'First Practice';
                     txt = ['In this block of trials you will try to catch '...         % noise.
                         'balls shot from a cannon. The aim of the cannon will not be '...
-                        'stationary but instead move unpredictably.'];
+                        'stationary but instead move unpredictably.'...
+                        ];
                 end
                 feedback = false;
                 [fw, bw] = BigScreen(taskParam, ...
@@ -906,9 +934,11 @@ while 1
                             'at the same location. However, occasionally the cannon will be reaimed '...
                             'to a completely different part of the circle.\n\n'...
                             'To earn most money you should center your shield on the location '...
-                            'at which the cannon is aimed.'];
+                            'at which the cannon is aimed.'...
+                            ];
                 end
-                feedback = false;
+                
+                 feedback = false;
                 [fw, bw] = BigScreen(taskParam, ...
                     taskParam.strings.txtPressEnter, header, txt, feedback);
                 if fw == 1
@@ -916,8 +946,9 @@ while 1
                 end
             end
             WaitSecs(0.1);
+        
         case 27                                                          % Show performance
-            keyboard
+            
             %--------------
             %
             % Oddball

@@ -17,7 +17,7 @@ while 1
     end
         Screen('TextSize', taskParam.gParam.window, 30);
    
-   sentenceLength = taskParam.gParam.sentenceLength; % Dresde Pilot 100   
+   sentenceLength = taskParam.gParam.sentenceLength % Dresde Pilot 100   
 
    if feedback == true
       DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center', [255 255 255], sentenceLength, [], [], 1);
