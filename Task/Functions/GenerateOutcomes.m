@@ -6,16 +6,12 @@ function taskData = GenerateOutcomes(taskParam, vola, sig, condition)
 % 
 %   This function uses code from Matt Nassar (Brown University). Thanks Matt!
 
-if isequal(condition, 'main') || isequal(condition, 'oddball')
+if isequal(condition, 'main') || isequal(condition, 'oddball') || isequal(condition, 'control')
     trials = taskParam.gParam.trials;
-elseif isequal(condition, 'practice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
+elseif isequal(condition, 'practice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball') || isequal(condition, 'practiceCont')
     trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'shield')
     trials = taskParam.gParam.shieldTrials;
-elseif isequal(condition, 'practiceCont')
-    trials = taskParam.gParam.practContTrials;
-elseif isequal(condition, 'control')
-    trials = taskParam.gParam.contTrials;
 end
 
 % Preallocate variables.
@@ -51,7 +47,12 @@ UPPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
 UPMin = zeros(trials, 1); % Prediction error minus 360 degrees.
 hit = zeros(trials, 1); % Hit.
 cBal = nan(trials, 1); % Counterbalancing.
-s=taskParam.gParam.safe; % how many guaranteed trials before change-point.
+if isequal(condition,'shield')
+    s=taskParam.gParam.safe(2);
+else
+    s=taskParam.gParam.safe(1);
+end
+%s=taskParam.gParam.safe; % how many guaranteed trials before change-point.
 perf = zeros(trials, 1); % Performance.
 accPerf = zeros(trials, 1); % Accumulated performance.
 timestampOnset = nan(trials,1);
@@ -73,7 +74,7 @@ minASS = 10;
 maxASS=180;
 allASS = zeros(trials,1);
 
-if isequal(condition, 'main') || isequal(condition, 'practice') || isequal(condition, 'shield')%taskParam.gParam.oddball == false || isequal(type, 'Main')
+if isequal(condition, 'main') || isequal(condition, 'control') || isequal(condition, 'practiceCont') || isequal(condition, 'practice') || isequal(condition, 'shield')%taskParam.gParam.oddball == false || isequal(type, 'Main')
 for i = 1:trials
     
     % blocknumber
@@ -90,7 +91,12 @@ for i = 1:trials
     if (rand < vola && s==0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block!
         mean=round(rand(1).*359); % Outcome expressed in degrees.
         cp(i)=1;
-        s=taskParam.gParam.safe;
+        if isequal(condition,'shield')
+            s=taskParam.gParam.safe(2);
+        else
+            s=taskParam.gParam.safe(1);
+        end
+            
         TAC(i)=0; %TAC(i)=1;
     else
         TAC(i)=TAC(i-1)+1;
@@ -163,7 +169,7 @@ for i =1:trials
         outcome(i)=round(rand.*359);
         oddBall(i)=true;
         TAC(i)=0; %TAC(i)=1;
-        s=taskParam.gParam.safe;
+        s=taskParam.gParam.safe(1);
     else
         if i==1
             TAC(i)=nan;
@@ -184,12 +190,6 @@ for i =1:trials
     allASS(i)=ASS.*2;
 end
 
-
-
-
-    
-    
-    
 end
 
 %%%%%%%%
@@ -214,7 +214,7 @@ end
 %%%%%%%%%%%%%
     % Boat type.
     if trials > 1
-    boatType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
+        boatType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
     else boatType = 1;
     end
 %% Save data.

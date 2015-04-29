@@ -5,36 +5,45 @@ function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button
 % therefore able to dissociate sensory processes and more cognitive
 % processes, that is, learning and belief updating.
 
-%% 
+%%
 % Idee: predError als input. Dann am Anfang zeigen, wobei in normaler
 % practice = 0 und in controlpractice = irgendwas
 %%
-if exist('Data')
-    
+if exist('Data', 'var')
+
     i=1;
-    fw = 0; 
+    fw = 0;
     bw = 0;
     
-else 
-
-%distMean = 0;
-%Priority(9);
-i = 1;
-fw = 0; 
-bw = 0;
-pred = 0;
-predErr = 0;
-rawPredErr = 0;
-outcome = distMean;
-Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome);
+else
+    
+    %distMean = 0;
+    %Priority(9);
+    i = 1;
+    fw = 0;
+    bw = 0;
+    pred = 0;
+    predErr = 0;
+    memErr = 0;
+    rawPredErr = 0;
+    outcome = distMean;
+    tickMark = false;
+    Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome, 'tickMark', tickMark, 'memErr', memErr, 'distMean', distMean);
 end
+
+% if nargin == 6
+%     tickMark = true;
+% else
+%     tickMark = false;
+% end
+
 while 1
-   
+    
     LineAndBack(taskParam)
-   sentenceLength = taskParam.gParam.sentenceLength;
-   % if isequal(taskParam.gParam.computer, 'D_Pilot')
+    sentenceLength = taskParam.gParam.sentenceLength;
+    % if isequal(taskParam.gParam.computer, 'D_Pilot')
     DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
-   % else
+    % else
     %DrawFormattedText(taskParam.gParam.window,txt,taskParam.gParam.screensize(3)*0.1,taskParam.gParam.screensize(4)*0.05, [255 255 255], 85);
     
     %end
@@ -42,21 +51,27 @@ while 1
     if cannon == true
         Cannon(taskParam, distMean)
     end
-%     if i > 1 && taskParam.gParam.PE_Bar == true 
-%         DrawPE_Bar(taskParam, Data, i-1) 
-%     elseif i == 1 && taskParam.gParam.PE_Bar == true 
-%         DrawPE_Bar(taskParam, Data, i-1) 
-%     end
+    %     if i > 1 && taskParam.gParam.PE_Bar == true
+    %         DrawPE_Bar(taskParam, Data, i-1)
+    %     elseif i == 1 && taskParam.gParam.PE_Bar == true
+    %         DrawPE_Bar(taskParam, Data, i-1)
+    %     end
     DrawCircle(taskParam)
     PredictionSpot(taskParam)
-    if taskParam.gParam.PE_Bar == true 
-        DrawPE_Bar(taskParam, Data, i) 
-    %elseif i == 1 && taskParam.gParam.PE_Bar == true 
-     %   DrawPE_Bar(taskParam, Data, i-1) 
+    if taskParam.gParam.PE_Bar == true
+        DrawPE_Bar(taskParam, Data, i)
+        %elseif i == 1 && taskParam.gParam.PE_Bar == true
+        %   DrawPE_Bar(taskParam, Data, i-1)
     end
-   
-    DrawCross(taskParam)
     
+    if Data.tickMark == true
+        TickMark(taskParam, Data.outcome, 'outc')
+        TickMark(taskParam, Data.pred, 'pred')
+    end
+    DrawCross(taskParam)
+   
+    %Aim(taskParam, Data.distMean)
+
     if isequal(button, 'arrow')
         txtPressEnter='Zurück mit Löschen - Weiter mit Enter';
         DrawFormattedText(taskParam.gParam.window,taskParam.strings.txtPressEnter ,'center',taskParam.gParam.screensize(4)*0.9);
@@ -65,51 +80,50 @@ while 1
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window, t + 0.001);
     
-    
     [ keyIsDown, ~, keyCode ] = KbCheck;
-        
-        if keyIsDown
-            if keyCode(taskParam.keys.rightKey)
-                if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; %0.02
-                else
-                    taskParam.circle.rotAngle = 0;
-                end
-            elseif keyCode(taskParam.keys.rightSlowKey)
-                if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
-                else
-                    taskParam.circle.rotAngle = 0;
-                end    
-            elseif keyCode(taskParam.keys.leftKey)
-                if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
-                else
-                    taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-                end
-            elseif keyCode(taskParam.keys.leftSlowKey)
-                if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
-                else
-                    taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-                end    
+    
+    if keyIsDown
+        if keyCode(taskParam.keys.rightKey)
+            if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; %0.02
+            else
+                taskParam.circle.rotAngle = 0;
+            end
+        elseif keyCode(taskParam.keys.rightSlowKey)
+            if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
+            else
+                taskParam.circle.rotAngle = 0;
+            end
+        elseif keyCode(taskParam.keys.leftKey)
+            if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
+            else
+                taskParam.circle.rotAngle = 360*taskParam.circle.unit;
+            end
+        elseif keyCode(taskParam.keys.leftSlowKey)
+            if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
+            else
+                taskParam.circle.rotAngle = 360*taskParam.circle.unit;
+            end
         elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.enter)) || (isequal(button, 'space') && keyCode(taskParam.keys.space))
             fw = 1;
             Data.pred = (taskParam.circle.rotAngle / taskParam.circle.unit);
             break;
-           
-            elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.delete)) || (isequal(button, 'space') && keyCode(taskParam.keys.delete))
+            
+        elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.delete)) || (isequal(button, 'space') && keyCode(taskParam.keys.delete))
             bw = 1;
             break
-            end
         end
-%Priority(9);
-
+    end
+    %Priority(9);
+    
 end
 
 %[Data.predErr, ~, ~, ~, Data.rawPredErr] = Diff(distMean, Data.pred);
-
 Data.predErr = Diff(distMean, Data.pred);
+Data.memErr = Diff(Data.outcome, Data.pred);
 
 
 %%%%%%%%%

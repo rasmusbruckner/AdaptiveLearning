@@ -16,36 +16,47 @@
 % machine.
 
 % TODO:
-%       
+%       - in main beim letzten verpassen einbauen, dass wiederholt wird
+%       wenn proband kugel fängt!
+%       einstellen dass id immer gleich lang sein muss damit daten einlesen leichter wird
+%       - coverstory: aufsammeln? bisschen komisch wenn nur strich gezeigt
+%       wird
+%       - in practice control kriterium einbauen
+%       - ältere Siezen. Automatisch bei altersgruppencode einbauen
+%       - Translate everything
+%       - control both tasks
+%       - save data after each block. AND save an oddball == false anpassen
+%       - replace type with condition but first check whether this works
+
 %       - Reward has to be calculated
 %       - oddBall versus control
 %       - check sigma vola driftConc - what is still used?
-% 
+%
 % daten generieren ohne aufgabe zu machen
 
 
 clear all
 
-% indentifies your machine
+% indentifies your machine IF you have internet!
 [computer, Computer2] = identifyPC;
-
+computer = 'Macbook'
 %% Set general parameters.
 
 runIntro = true; % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
-oddball = true; % Run oddball or perceptual version
-sendTrigger = true; % Do you want to send triggers?
-shieldTrials = 6; % Trials during the introduction (per condition). Für Pilot: 10
-practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
-trials = 240;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
+askSubjInfo = false; % Do you want some basic demographic subject variables?
+oddball = false; % Run oddball or uncertainty version
+sendTrigger = false; % Do you want to send triggers?
+shieldTrials =1; % Trials during the introduction (per condition). Für Pilot: 10
+practTrials = 1; % Number of practice trials per condition. Für Pilot: 20
+trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
 blockIndices = [1 60 120 180]; % When should new block begin?
-vola = [.25 .7 0]; % Volatility of the environment.
+vola = [.25 1 0]; % Volatility of the environment.
 oddballProb = [.25 0]; % Oddball probability. .15
 sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
 driftConc = [30 99999999]; % Concentration of the drift. 10
-safe = 3; % How many guaranteed trials without change-points.
+safe = [3 0]; % How many guaranteed trials without change-points.
 rewMag = 0.2; % Reward magnitude.
-jitter = 0.2; % Set jitter. 
+jitter = 0.2; % Set jitter.
 test = false; % Test triggering timing accuracy (see PTB output CW).
 debug = false; % Debug mode.
 
@@ -94,8 +105,8 @@ if askSubjInfo == false
     ID = '999';
     age = '999';
     sex = 'm/w';
-    cBal = 1;
-    reward = '1';
+    cBal = 1; % change to 1 later!
+    reward = 1;
     Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
     prompt = {'ID:','Age:', 'Sex:', 'cBal', 'Reward'};
@@ -163,7 +174,7 @@ end
 
 % Prevent input.
 ListenChar(2);
-HideCursor;
+%HideCursor;
 
 % Suppress warnings.
 Screen('Preference', 'VisualDebugLevel', 3);
@@ -271,6 +282,8 @@ fCannonEnd = 'cannonEnd'; cannonEnd = 5; %This is in pixel, not in degrees!
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle. This is expressed in pixel, not in degrees!
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius. This is expressed in pixel, not in degrees!
 
+
+
 %Diameter of the spots.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
 fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome.
@@ -283,7 +296,7 @@ fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; % Outcome position.
 fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
 fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; % Radar needle position.
 
-fBoatRect = 'boatRect'; boatRect = [0 0 60 60]; % Boat position.
+fBoatRect = 'boatRect'; boatRect = [0 0 50 50]; % Boat position.
 
 % Center the objects.
 fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); % Center boat
@@ -323,6 +336,7 @@ fLeftSlowKey = 'leftSlowKey'; leftSlowKey = KbName('g');
 fSpace = 'space'; space = KbName('Space');
 fEnter = 'enter';
 fS = 's';
+
 if isequal(computer, 'Macbook')
     enter = 40;
     s = 22;
@@ -351,6 +365,15 @@ cannonPic(:,:,4) = alpha(:,:);
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 cannonTxt = Screen('MakeTexture', window, cannonPic);
 fCannonTxt = 'cannonTxt';
+fDstRect = 'dstRect';
+
+imageRect = [0 0 120 120];
+dstRect = CenterRect(imageRect, windowRect);
+[aimPic, ~, alpha]  = imread('arrow.png');
+aimPic(:,:,4) = alpha(:,:);
+Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+aimTxt = Screen('MakeTexture', window, aimPic);
+fAimTxt = 'aimTxt';
 fDstRect = 'dstRect';
 
 % % -------------
@@ -427,9 +450,15 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger, startTrig
 
 IndicateOddball = 'Oddball Task';
 IndicateCP = 'Change Point Task';
+IndicateControl = 'Control Task';
 fTxtLowVola = 'txtLowVola'; txtLowVola = 'Jetzt verändert sich das Ziel der Kanone selten';
 fTxtHighVola = 'txtHighVola'; txtHighVola = 'Jetzt verändert sich das Ziel der Kanone häufiger';
-fTxtPressEnter = 'txtPressEnter'; txtPressEnter = 'Delete to go back - Enter to continue';
+fTxtPressEnter = 'txtPressEnter';
+if oddball
+    txtPressEnter = 'Delete to go back - Enter to continue';
+else
+    txtPressEnter = 'Zurück mit Löschen - Weiter mit Enter';
+end
 fTxtLVLS = 'txtLVLS'; txtLVLS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist schwach';
 fTxtHVLS = 'txtHVLS'; txtHVLS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist schwach';
 fTxtLVHS = 'txtLVHS'; txtLVHS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist stark';
@@ -440,7 +469,7 @@ fStrings = 'strings';
 strings = struct(fTxtLowVola, txtLowVola, fTxtHighVola, txtHighVola, fTxtLVLS, txtLVLS, fTxtHVLS, txtHVLS, fTxtLVHS, txtLVHS, fTxtHVHS, txtHVHS, fTxtPressEnter, txtPressEnter);
 
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers,...
-    fColors, colors, fStrings, strings, fCannonTxt, cannonTxt, fDstRect, dstRect);
+    fColors, colors, fStrings, strings, fCannonTxt, cannonTxt, fAimTxt, aimTxt, fDstRect, dstRect);
 
 % If true you run through one main block which enables you to check timing
 % accuracy (see PTB output in command window).
@@ -458,23 +487,44 @@ else
     
     % Run intro with practice trials if true.
     if runIntro == true
-        if Subject.cBal == 1
-            Instructions(taskParam, 'Oddball', Subject);
-            condition = 'practiceOddball';
-            [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-        elseif Subject.cBal == 2
-            Instructions(taskParam, 'Main', Subject);
-            condition = 'practice';
-            [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+        if oddball
+            if Subject.cBal == 1
+                Instructions(taskParam, 'Oddball', Subject);
+                condition = 'practiceOddball';
+                [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+            elseif Subject.cBal == 2
+                Instructions(taskParam, 'Main', Subject);
+                condition = 'practice';
+                [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+            end
+        else
+            if Subject.cBal == 1
+                Instructions(taskParam, 'Practice', Subject);
+                condition = 'practiceCont';
+                [taskDataControlPractice, DataControlPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+            elseif Subject.cBal == 2
+                Instructions(taskParam, 'PracticeCont', Subject);
+                condition = 'practiceCont';
+                [taskDataControlPractice, DataControlPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
+            end
         end
         if taskParam.gParam.oddball == false
             header = 'Anfang der Studie';
-            txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
-                'zusammengefasst fängst du also die meisten '...
-                'Kugeln, wenn du den blauen Punkt auf die Stelle bewegst, auf die '...
-                'die Kanone zielt. Weil du die Kanonen nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
-                'goldenen Kugeln bekommst du nach der Studie '...
-                'ausgezahlt.\n\nViel Erfolg!'];
+            if Subject.cBal == 1
+                txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+                    'zusammengefasst fängst du also die meisten '...
+                    'Kugeln, wenn du den orangenen Punkt auf die Stelle bewegst, auf die '...
+                    'die Kanone zielt. Weil du die Kanone nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
+                    'Kugeln bekommst du nach der Studie '...
+                    'ausgezahlt.\n\nViel Erfolg!'];
+            elseif Subject.cBal == 2
+                txt = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst ist es deine '...
+                    'Aufgabe Kanonenkugeln aufzusammeln, indem du deinen orangenen Punkt zur Stelle der letzten Kanonenkugel steuerst, welche mit dem schwarzen Strich markiert ist. '...
+                    'Das Geld für die gesammelten '...
+                    'Kugeln bekommst du nach der Studie '...
+                    'ausgezahlt.\n\nViel Erfolg!'];
+            end
+            
         elseif taskParam.gParam.oddball == true
             header = 'Real Task!';
             if Subject.cBal == 1
@@ -502,67 +552,126 @@ else
             end
         end
         feedback = false;
-        BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+        BigScreen(taskParam, txtPressEnter, header, txt, feedback);
     else
         Screen('TextSize', taskParam.gParam.window, 30);
         Screen('TextFont', taskParam.gParam.window, 'Arial');
-
-        VolaIndication(taskParam, IndicateOddball, txtPressEnter)
+        if (oddball && Subject.cBal == 1)
+            VolaIndication(taskParam, IndicateOddball, txtPressEnter)
+        elseif (~oddball && Subject.cBal == 2)
+            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+        elseif oddball && Subject.cBal == 2 || (~oddball && Subject.cBal == 1)
+            VolaIndication(taskParam, IndicateCP, txtPressEnter)
+        end
     end
     
     %% first block
-   
-    condition = 'oddball';
-    type = 'Oddball';
+    
     if Subject.cBal == 1
+        if oddball
+            condition = 'oddball';
+            type = 'Oddball';
+        else
+            condition = 'main';
+        end
         [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
     elseif Subject.cBal == 2;
-        condition = 'main';
-        type = 'Main';
+        if oddball
+            condition = 'main';
+            type = 'Main';
+        else
+            condition = 'control';
+        end
         [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
     end
     
     %% second intro
     
     if runIntro == true
-        if Subject.cBal == 1 
-            Instructions(taskParam, 'Main', Subject);
-        elseif Subject.cBal == 2
+        if (oddball == true && Subject.cBal == 1) || (oddball == false && Subject.cBal == 2)
+            Instructions(taskParam, 'Practice', Subject);
+        elseif oddball == true && Subject.cBal == 2
             Instructions(taskParam, 'Oddball', Subject);
+        elseif oddball == false && Subject.cBal == 1
+            Instructions(taskParam, 'PracticeCont', Subject)
         end
         condition = 'practice';
         [taskDataPracticeMain, DataPracticeMain] = Main(taskParam, vola(3), sigma(1), condition, Subject);
         header = 'Real Task!';
-        txt = ['This is the beginning of the real task. During '...
-            'this block you will earn real money for your performance. '...
-            'The trials will be exactly the same as those in the '...
-            'previous practice block. On each trial a cannon will aim '...
-            'at a location on the circle. On all trials the cannon will '...
-            'fire a ball somewhere near the point of aim. '...
-            'Most of the time the cannon will remain aimed at the same location, '...
-            'but occasionally the cannon will be reaimed. Like in the previous '...
-            'block you will not see the cannon, but still have to infer its '...
-            'aim in order to catch balls and earn money.'];
+        if taskParam.gParam.oddball == false
+            header = 'Anfang der Studie';
+            if Subject.cBal == 1
+                txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+                    'zusammengefasst fängst du also die meisten '...
+                    'Kugeln, wenn du den orangenen Punkt auf die Stelle bewegst, auf die '...
+                    'die Kanone zielt. Weil du die Kanone nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
+                    'Kugeln bekommst du nach der Studie '...
+                    'ausgezahlt.\n\nViel Erfolg!'];
+            elseif Subject.cBal == 2
+                txt = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst ist es deine '...
+                    'Aufgabe Kanonenkugeln aufzusammeln, indem du deinen orangenen Punkt zur Stelle der letzten Kanonenkugel steuerst, welche mit dem schwarzen Strich markiert ist. '...
+                    'Das Geld für die gesammelten '...
+                    'Kugeln bekommst du nach der Studie '...
+                    'ausgezahlt.\n\nViel Erfolg!'];
+            end
+            
+        elseif taskParam.gParam.oddball == true
+            if Subject.cBal == 1
+                txt = ['This is the beginning of the real task. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'previous practice block. On each trial a cannon will aim '...
+                    'at a location on the circle. On all trials the cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'Most of the time the cannon will remain aimed at the same location, '...
+                    'but occasionally the cannon will be reaimed. Like in the previous '...
+                    'block you will not see the cannon, but still have to infer its '...
+                    'aim in order to catch balls and earn money.'];
+            elseif Subject.cBal == 2
+                txt = ['This is the beginning of the real task. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'previous practice block. On each trial a cannon will aim '...
+                    'at a location on the circle. On most trials the cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'However, on a few trials a ball will be shot from a different '...
+                    'cannon that is equally likely to hit any location on the circle. Like in the previous '...
+                    'block you will not see the cannon, but still have to infer its '...
+                    'aim in order to catch balls and earn money.'];
+            end
+        end
         feedback = false;
-        BigScreen(taskParam, txtPressEnter, header, txt, feedback)
+        BigScreen(taskParam, txtPressEnter, header, txt, feedback);
     else
-        VolaIndication(taskParam, IndicateCP, txtPressEnter)
+        if (oddball && Subject.cBal == 1) || (~oddball && Subject.cBal == 2)
+            VolaIndication(taskParam, IndicateCP, txtPressEnter)
+        elseif oddball && Subject.cBal == 2
+            VolaIndication(taskParam, IndicateOddball, txtPressEnter)
+        elseif (~oddball && Subject.cBal == 1)
+            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+        end
     end
     WaitSecs(0.1);
     
-%% second block
-
-if Subject.cBal == 1
-    condition = 'main';
-    [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
-elseif Subject.cBal == 2
-    condition = 'oddball';
-    [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
-end
-WaitSecs(0.1);
-
-
-
+    %% second block
+    
+    if Subject.cBal == 1
+        if oddball
+            condition = 'main';
+        else
+            condition = 'control';
+        end
+        [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+    elseif Subject.cBal == 2
+        if oddball
+            condition = 'oddball';
+        else
+            condition = 'main';
+            [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject); % Run task (high sigma).
+        end
+    end
+    WaitSecs(0.1);
+    
     % Control trials: this task requires a learning rate = 1
     %InstructionsControl(taskParam, Subject) % Run instructions.
     
@@ -610,10 +719,14 @@ WaitSecs(0.1);
     while 1
         %header = 'Ende der Aufgabe!';
         %txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nInsgesamt hast du %.2f Euro gewonnen', totWin);
-        
-        header = 'End of task!';
-        txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
-        
+        if oddball
+            header = 'End of task!';
+            txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
+        else
+            header = 'Ende der Aufgabe!';
+            txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nDu hast %.2f Euro verdient', totWin);
+            
+        end
         Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
         Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
         Screen('FillRect', taskParam.gParam.window, [0 25 51], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);

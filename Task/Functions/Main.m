@@ -2,7 +2,6 @@ function [taskData, Data] = Main(taskParam, vola, sigma, condition, Subject)
 % This function acutally runs the task. You can specify "main",
 % "practice" or "control". This loop is optimized for triggering accuracy.
 
-
 %%%
 % Check Feedback!
 %%%
@@ -22,23 +21,24 @@ KbReleaseWait();
 %if taskParam.gParam.sendTrigger == true
 %   lptwrite(taskParam.triggers.port,0);
 %end
+
 ref = taskParam.gParam.ref;
 %% generateOutcomes
 if isequal(condition, 'practiceOddball')
     
-     taskData = load('OddballInvisible');
-     taskData = taskData.taskData;
-     clear taskData.cBal taskData.rew
+    taskData = load('OddballInvisible');
+    taskData = taskData.taskData;
+    clear taskData.cBal taskData.rew
     
-     trial = taskParam.gParam.practTrials;
-     taskData.cBal = nan(trial,1);
-     taskData.rew = nan(trial,1);
-     taskData.initiationRTs = nan(trial,1);
-     taskData.actJitter = nan(trial,1);
-     taskData.block = ones(trial,1);
+    trial = taskParam.gParam.practTrials;
+    taskData.cBal = nan(trial,1);
+    taskData.rew = nan(trial,1);
+    taskData.initiationRTs = nan(trial,1);
+    taskData.actJitter = nan(trial,1);
+    taskData.block = ones(trial,1);
 else
-taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
-trial = taskData.trial;
+    taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
+    trial = taskData.trial;
 end
 
 % For trigger testing.
@@ -100,7 +100,7 @@ for i=1:trial
     end
     
     taskData.actJitter(i) = rand*taskParam.gParam.jitter;
-    WaitSecs(taskData.actJitter(i))
+    WaitSecs(taskData.actJitter(i));
     %keyboard
     initRT_Timestamp = GetSecs();
     
@@ -185,6 +185,7 @@ for i=1:trial
             end
         end
     end
+
     t = GetSecs;
     
     
@@ -395,14 +396,17 @@ end
                     maxMon = (length(find(taskData.boatType == 1))...
                         * taskParam.gParam.rewMag);
                 if taskParam.gParam.oddball == false
-                                header = 'Leistung';
-
-                    txt = sprintf(['Gefangene blaue Kugeln: %.0f von '...
-                    '%.0f\n\nGefangene grüne Kugeln: %.0f von '...
-                    '%.0f\n\n In diesem Block hast du %.2f von '...
-                    'maximal %.2f Euro gewonnen'], goldHit,...
-                    goldBall, silverHit, silverBall,...
-                    practData.accPerf(end), maxMon);
+                   [txt, header] = Feedback(taskData, taskParam, Subject, condition);
+            
+                    
+%                     header = 'Leistung';
+% 
+%                     txt = sprintf(['Gefangene blaue Kugeln: %.0f von '...
+%                     '%.0f\n\nGefangene grüne Kugeln: %.0f von '...
+%                     '%.0f\n\n In diesem Block hast du %.2f von '...
+%                     'maximal %.2f Euro gewonnen'], goldHit,...
+%                     goldBall, silverHit, silverBall,...
+%                     practData.accPerf(end), maxMon);
                 elseif taskParam.gParam.oddball == true
                     header = 'Performance';
                     if isequal(condition, 'practiceOddball')
@@ -432,7 +436,7 @@ end
 %                                'maximal %.2f Euro gewonnen'], goldHit, goldBall, silverHit, silverBall, taskData.accPerf(end), maxMon);
                 
                % header = 'Leistung';
-                feedback = true
+                feedback = true;
                 [fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
             
     

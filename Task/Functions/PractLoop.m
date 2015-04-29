@@ -3,7 +3,6 @@ function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, can
 % This function is called when participants move their spot in the
 % instructions.
 
-
 if nargin == 7 && isequal(LoadData, 'NoNoise')
     practData = load('OddballNoNoise');
     practData = practData.practData;
@@ -16,7 +15,7 @@ else
 practData = GenerateOutcomes(taskParam, vola, sigma, condition); 
 trials = practData.trial;
 end
-%Priority(9);
+
 for i = 1:trials
 
 WaitSecs(rand*taskParam.gParam.jitter);    
