@@ -36,6 +36,18 @@ if isequal(condition, 'practiceOddball')
     taskData.initiationRTs = nan(trial,1);
     taskData.actJitter = nan(trial,1);
     taskData.block = ones(trial,1);
+elseif isequal(condition, 'practiceCont')
+    
+    taskData = load('CPInvisible');
+    taskData = taskData.taskData;
+    clear taskData.cBal taskData.rew
+    
+    trial = taskParam.gParam.practTrials;
+    taskData.cBal = nan(trial,1);
+    taskData.rew = nan(trial,1);
+    taskData.initiationRTs = nan(trial,1);
+    taskData.actJitter = nan(trial,1);
+    taskData.block = ones(trial,1);
 else
     taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
     trial = taskData.trial;

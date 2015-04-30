@@ -2,52 +2,33 @@
 %% Adaptive Learning Task - EEG
 %
 % Cannonball is an adaptive learning EEG task battery for investigating
-% belief updating in dynamical environments.
-%
-% There are three tasks: Change-Point Task
-%                        Oddball Task
-%                        Change-Point Control Task that requires LR = 1
-%
-% The function GenerateOutcomes generates outcomes that are centered
-% around the mean of a normal distribution (distMean) with
-% a cetain amount of variability.
+% belief updating in dynamic environments.
 %
 % The code is optimized for EEG recordings but should be tested on every
 % machine.
-
-% TODO:
-%       - in main beim letzten verpassen einbauen, dass wiederholt wird
-%       wenn proband kugel fängt!
-%       einstellen dass id immer gleich lang sein muss damit daten einlesen leichter wird
-%       - coverstory: aufsammeln? bisschen komisch wenn nur strich gezeigt
-%       wird
-%       - in practice control kriterium einbauen
-%       - ältere Siezen. Automatisch bei altersgruppencode einbauen
-%       - Translate everything
-%       - control both tasks
-%       - save data after each block. AND save an oddball == false anpassen
-%       - replace type with condition but first check whether this works
-
-%       - Reward has to be calculated
-%       - oddBall versus control
-%       - check sigma vola driftConc - what is still used?
 %
-% daten generieren ohne aufgabe zu machen
-
-
+% TODO:
+%       - replace type with condition but first check whether this works
+%       - check sigma vola driftConc - what is still used?
+%       - cannonDev kriterien in control panel einbauen!
+%       - add deterministic trial for control task (maybe the same as in cp task?)
+%       - save data after each block. AND save an oddball == false anpassen
+%       - group in output file: when controlling for all the output stuff! 
+%       - ältere Siezen. Automatisch bei altersgruppencode einbauen
 clear all
 
 % indentifies your machine IF you have internet!
 [computer, Computer2] = identifyPC;
-computer = 'Macbook'
+%computer = 'Macbook'
 %% Set general parameters.
 
 runIntro = true; % Run the intro with practice trials?
-askSubjInfo = false; % Do you want some basic demographic subject variables?
+askSubjInfo = true; % Do you want some basic demographic subject variables?
 oddball = false; % Run oddball or uncertainty version
 sendTrigger = false; % Do you want to send triggers?
+randomize = true; % Chooses cBal and reward condition automatically
 shieldTrials =1; % Trials during the introduction (per condition). Für Pilot: 10
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20
+practTrials = 20; % Number of practice trials per condition. Für Pilot: 20
 trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment.
@@ -92,10 +73,12 @@ elseif isequal(computer, 'Brown')
     savdir = 'C:\Users\lncc\Dropbox\HeliEEG';
 end
 
+
 %% User Input.
 
 fID = 'ID';
 fAge = 'age';
+fGroup = 'group';
 fSex = 'sex';
 fCBal = 'cBal';
 fRew = 'rew';
@@ -103,39 +86,56 @@ fDate = 'Date';
 
 if askSubjInfo == false
     ID = '999';
-    age = '999';
+    age = '99';
+    group = '1';
     sex = 'm/w';
-    cBal = 1; % change to 1 later!
+    cBal = 1; % change to 1 later! why is this no string?
     reward = 1;
     Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
-    prompt = {'ID:','Age:', 'Sex:', 'cBal', 'Reward'};
+    prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
     name = 'SubjInfo';
     numlines = 1;
-    defaultanswer = {'9999','99', 'm', '1', '1'};
+    if randomize
+        cBal = num2str(round(unifrnd(1,2)));
+        reward = num2str(round(unifrnd(1,2)));
+        defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+    else
+        defaultanswer = {'9999','99', '1', 'm', '1', '1'};
+    end
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
-    subjInfo{6} = date;
+    subjInfo{7} = date;
     
     % Make sure you made no mistake
-    if subjInfo{3} ~= 'm' && subjInfo{3} ~= 'f'
+    if numel(subjInfo{1}) < 4 || numel(subjInfo{1}) >4
+        msgbox('ID: consists of four numbers!');
+        return
+    end
+  
+    if subjInfo{3} ~= '1' && subjInfo{3} ~= '2'
+        msgbox('Group: "1" or "2"?');
+        return
+    end
+    
+    if subjInfo{4} ~= 'm' && subjInfo{4} ~= 'f'
         msgbox('Sex: "m" or "f"?');
         return
     end
     
-    if subjInfo{4} ~= '1' && subjInfo{4} ~= '2'
+    if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
         msgbox('cBal: 1 or 2?');
         return
     end
     
-    if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
+    if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
         msgbox('Reward: 1 or 2?');
         return
     end
     
     % Tranlate reward code in letter.
-    if subjInfo{5} == '1'
+    if subjInfo{6} == '1'
         rewName = 'B';
-    elseif subjInfo{5} == '2'
+    elseif subjInfo{6} == '2'
         rewName = 'G';
     end
     
@@ -187,11 +187,11 @@ screensizePart = (screensize(3:4));
 fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
-if debug == true
-    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [420 250 1020 650]); %420 250 1020 650  64 64 64
-else
-    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []); %420 250 1020 650  64 64 64
-end
+    if debug == true
+        [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [420 250 1020 650]); %420 250 1020 650  64 64 64
+    else
+        [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []); %420 250 1020 650  64 64 64
+    end
 
 % Fieldnames.
 fID = 'ID'; ID = fID; % ID.
@@ -281,8 +281,6 @@ fOutcSize = 'outcSize'; outcSize = 10; % Black bar. Number must be equal.This is
 fCannonEnd = 'cannonEnd'; cannonEnd = 5; %This is in pixel, not in degrees!
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle. This is expressed in pixel, not in degrees!
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius. This is expressed in pixel, not in degrees!
-
-
 
 %Diameter of the spots.
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot.
@@ -471,6 +469,7 @@ strings = struct(fTxtLowVola, txtLowVola, fTxtHighVola, txtHighVola, fTxtLVLS, t
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys, fFieldNames, fieldNames, fTriggers, triggers,...
     fColors, colors, fStrings, strings, fCannonTxt, cannonTxt, fAimTxt, aimTxt, fDstRect, dstRect);
 
+
 % If true you run through one main block which enables you to check timing
 % accuracy (see PTB output in command window).
 if test == true
@@ -482,7 +481,7 @@ if test == true
     ShowCursor;
     Screen('CloseAll');
     
-else
+elseif ~test
     %% Run task.
     
     % Run intro with practice trials if true.
@@ -830,6 +829,10 @@ else
     ListenChar();
     ShowCursor;
     
-    % Close screen.
+     % Close screen.
     Screen('CloseAll');
+    
+   
+
 end
+

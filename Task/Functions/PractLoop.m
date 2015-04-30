@@ -11,6 +11,15 @@ elseif nargin == 7 && isequal(LoadData, 'Noise')
     practData = load('OddballNoise');
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
+elseif nargin == 7 && isequal(LoadData, 'CP_NoNoise')
+    practData = load('CP_NoNoise');
+    
+    practData = practData.practData;
+    trials = taskParam.gParam.practTrials;
+elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
+    practData = load('CP_Noise');
+    practData = practData.practData;
+    trials = taskParam.gParam.practTrials;
 else
 practData = GenerateOutcomes(taskParam, vola, sigma, condition); 
 trials = practData.trial;
@@ -92,6 +101,11 @@ end
 
 practData.predErr(i) = Diff(practData.outcome(i), practData.pred(i));
 practData.cannonDev(i) = Diff(practData.distMean(i), practData.pred(i));
+if i==1
+    practData.controlDev(i) = nan;
+else
+    practData.controlDev(i) = Diff(practData.outcome(i-1), practData.pred(i));
+end
 
 background = false;
 %Cannonball(taskParam, practData.distMean(i), practData.distMean(i), background)
