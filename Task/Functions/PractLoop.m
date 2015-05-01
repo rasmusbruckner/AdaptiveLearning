@@ -20,6 +20,10 @@ elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
     practData = load('CP_Noise');
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
+elseif nargin == 7 && isequal(LoadData, 'Control_Practice')
+    practData = load('Control_Practice');
+    practData = practData.practData;
+    trials = taskParam.gParam.practTrials;
 else
 practData = GenerateOutcomes(taskParam, vola, sigma, condition); 
 trials = practData.trial;

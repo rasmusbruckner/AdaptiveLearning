@@ -1112,7 +1112,7 @@ end
                     condition = 'practice';
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.vola(3),...
-                        taskParam.gParam.sigma(1), cannon, condition);
+                        taskParam.gParam.sigma(1), cannon, condition, 'Control_Practice');
                     
                     %                     hits = sum(practData.hit == 1);
                     %                     goldBall = sum(practData.boatType == 1);
@@ -1136,7 +1136,7 @@ end
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,feedback);
-                    sumCannonDev = sum(practData.cannonDev >= 10);
+                    sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
                     if fw == 1
                         if taskParam.gParam.oddball == true && subject.cBal == 2
                             screenIndex = screenIndex + 1;
@@ -2234,7 +2234,7 @@ end
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,feedback);
-                    sumCannonDev = sum(practData.cannonDev >= 10);
+                    sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
                     if fw == 1
                         if taskParam.gParam.oddball == true && subject.cBal == 2
                             screenIndex = screenIndex + 1;
@@ -2494,7 +2494,7 @@ end
                     end
                     WaitSecs(0.1);
                 case 30
-                    sumCannonDev = sum(practData.cannonDev >= 10);
+                    sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
                     if sumCannonDev >= 4
                         
                         header = 'Wiederholung der Übung';
@@ -2706,7 +2706,7 @@ end
                     end
                     WaitSecs(0.1);
                 case 33
-                    sumCannonDev = sum(practData.cannonDev >= 10);
+                    sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
                     if sumCannonDev >= 4
                         if taskParam.gParam.oddball == false
                             header = 'Wiederholung der Übung';

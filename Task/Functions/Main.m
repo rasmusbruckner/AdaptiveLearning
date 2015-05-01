@@ -37,7 +37,6 @@ if isequal(condition, 'practiceOddball')
     taskData.actJitter = nan(trial,1);
     taskData.block = ones(trial,1);
 elseif isequal(condition, 'practiceCont')
-    
     taskData = load('CPInvisible');
     taskData = taskData.taskData;
     clear taskData.cBal taskData.rew
