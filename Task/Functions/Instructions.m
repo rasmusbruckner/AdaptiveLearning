@@ -113,13 +113,19 @@ end
                 
                 case 1
                     
+%                     keyboard
                     while 1
                         WaitSecs(0.1);
                         Screen('TextFont', taskParam.gParam.window, 'Arial');
-                        Screen('TextSize', taskParam.gParam.window, 50);
+                        Screen('TextSize', taskParam.gParam.window, 30);
                         txt='Deine Aufgabe: Kanonenkugeln fangen';
                         DrawFormattedText(taskParam.gParam.window, txt,...
-                            'center', 100, [255 255 255]);
+                            'center', 100, [255 255 255], sentenceLength);
+                        
+%                          DrawFormattedText(taskParam.gParam.window,txt,...
+%                             taskParam.gParam.screensize(3)*0.1,...
+%                             taskParam.gParam.screensize(4)*0.05,...
+%                             [255 255 255], sentenceLength);
                         Screen('DrawingFinished', taskParam.gParam.window);
                         t = GetSecs;
                         Screen('Flip', taskParam.gParam.window, t + 0.1);

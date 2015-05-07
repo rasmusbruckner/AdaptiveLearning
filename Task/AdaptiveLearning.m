@@ -1,6 +1,7 @@
 %% Adaptive Learning Task - EEG
 %
 % TODO:
+%%       - für Dresden: richtige sentenceLength
 %       - task specific
 %           - followCannonInstructions
 %           - ältere Siezen. Automatisch bei altersgruppencode einbauen
@@ -46,12 +47,12 @@ runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = false;
+sendTrigger = true;
 randomize = false;
-shieldTrials = 1; % Für Pilot: 10
-practTrials = 2; % Für Pilot: 20
-trials = 4;% Für Pilot: 120 // EEG: 240
-controlTrials = 2; % Für Pilot: 60 EEG: 80
+shieldTrials = 6; % Für Pilot: 10
+practTrials = 20; % Für Pilot: 20
+trials = 240;% Für Pilot: 120 // EEG: 240
+controlTrials = 120; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment
 oddballProb = [.25 0]; % Oddball probability. .15
@@ -77,6 +78,7 @@ if isequal(computer, 'Macbook')
     cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     savdir = 'C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory';
+        cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
 elseif isequal(computer, 'D_Pilot') && Computer2 == false
     savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'D_Pilot') && Computer2 == true
@@ -387,9 +389,9 @@ if sendTrigger == true
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
-%fPort = 'port'; port = 53328; % LPT port (Dresden)
+fPort = 'port'; port = 53328; % LPT port (Dresden)
 %LPT1address = hex2dec('E050'); %standard location of LPT1 port % copied from heliEEG_main
-fPort = 'port'; port = hex2dec('E050'); % LPT port
+%fPort = 'port'; port = hex2dec('E050'); % LPT port
 fStartTrigger = 'startTrigger'; startTrigger = 7; % Start of the task.
 fTrialOnset = 'trialOnsetTrigger'; trialOnsetTrigger = 1; % Trial onset.
 fPredTrigger = 'predTrigger'; predTrigger = 2; % Prediction.
