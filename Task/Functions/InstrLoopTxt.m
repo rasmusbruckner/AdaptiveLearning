@@ -58,11 +58,11 @@ while 1
     %     end
     DrawCircle(taskParam)
     PredictionSpot(taskParam)
-    if taskParam.gParam.PE_Bar == true
-        DrawPE_Bar(taskParam, Data, i)
+    %if taskParam.gParam.PE_Bar == true
+        %DrawPE_Bar(taskParam, Data, i)
         %elseif i == 1 && taskParam.gParam.PE_Bar == true
         %   DrawPE_Bar(taskParam, Data, i-1)
-    end
+    %end
     
     if Data.tickMark == true
         TickMark(taskParam, Data.outcome, 'outc')
@@ -70,7 +70,7 @@ while 1
     end
     DrawCross(taskParam)
    
-    %Aim(taskParam, Data.distMean)
+    Aim(taskParam, Data.distMean)
 
     if isequal(button, 'arrow')
         txtPressEnter='Zurück mit Löschen - Weiter mit Enter';

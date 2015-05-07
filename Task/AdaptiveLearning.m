@@ -1,68 +1,80 @@
-
 %% Adaptive Learning Task - EEG
 %
-% Cannonball is an adaptive learning EEG task battery for investigating
-% belief updating in dynamic environments.
-%
-% The code is optimized for EEG recordings but should be tested on every
-% machine.
-%
 % TODO:
-%       - clean code:
-%           - replace type with condition but first check whether this
-%           works and maybe add deterministic trials for control in second
-%           practice
-%           - check sigma vola driftConc - what is still used?
 %       - task specific
-%           - group in output file: when controlling for all the output stuff!
+%           - followCannonInstructions
 %           - ältere Siezen. Automatisch bei altersgruppencode einbauen
+%           - catch trials in practice! i.e., generate new data
+%       - notes
 %           - don't mess up oddball task!
-%           - in output group is sex. adapt this...
+%           - Ben: wir brauchen 30 trials für averaging
+%           - trigger timing liste erstellen und paper lesen
+%           - triggers should be controlled
+%
+%       - condition:
+%%           - shield
+%%               - oddballPractice
+%%               - oddballPractice_NoOddball
+%%               - main
+%%               - mainPractice
+%%           - followOutcome
+%%          - followOutcomePractice
+%%          - followCannon
+%%          - followCannonPractice
+%
+%           - check whether conditions can further be reduced when I
+%           - load deterministic practice trials
+%
+%       - whichPractice:
+%           oddballPractice
+%           cpPractice
+%           followOutcomePractice
+%           followCannonPractice
+%
+%
+function AdaptiveLearning
+
 clear all
 
 % indentifies your machine. IF you have internet!
 [computer, Computer2] = identifyPC;
 %computer = 'Macbook'
+
 %% Set general parameters.
 
-runIntro = true; % Run the intro with practice trials?
-askSubjInfo = true; % Do you want some basic demographic subject variables?
-oddball = false; % Run oddball or uncertainty version
-sendTrigger = false; % Do you want to send triggers?
-randomize = true; % Chooses cBal and reward condition automatically
-shieldTrials =1; % Trials during the introduction (per condition). Für Pilot: 10
-practTrials = 1; % Number of practice trials per condition. Für Pilot: 20
-trials = 1;% Number of trials per (sigma-)condition. Für Pilot: 120 // EEG: 240
+runIntro = true;
+askSubjInfo = true;
+oddball = false;
+allThreeConditions = true;
+sendTrigger = false;
+randomize = false;
+shieldTrials = 1; % Für Pilot: 10
+practTrials = 2; % Für Pilot: 20
+trials = 4;% Für Pilot: 120 // EEG: 240
+controlTrials = 2; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
-vola = [.25 1 0]; % Volatility of the environment.
+vola = [.25 1 0]; % Volatility of the environment
 oddballProb = [.25 0]; % Oddball probability. .15
-sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution.
+sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution
 driftConc = [30 99999999]; % Concentration of the drift. 10
-safe = [3 0]; % How many guaranteed trials without change-points.
-rewMag = 0.2; % Reward magnitude.
-jitter = 0.2; % Set jitter.
+safe = [3 0];
+rewMag = 0.2;
+jitter = 0.2;
 catchTrialCriterion = 10;
-test = false; % Test triggering timing accuracy (see PTB output CW).
-debug = false; % Debug mode.
-
-% currently not in use:
-runVola = false; % Do you want to run different volatility conditions?
-runSigma = false; % Do you want to run different sigma conditions?
-catchTrials = false;
-PE_Bar = false; % Use a prediction error bar?
-contTrials = 1; % Number of control trials. Für Pilot: 60 EEG: 80
-practContTrials = 1;
-% Computer2 = false;
+test = false; % Test triggering timing accuracy (see PTB output CW)
+debug = false; % Debug mode
 
 % Check number of trials in each condition
-if (practTrials > 1 && mod(practTrials, 2) == 1) || (trials > 1 && mod(trials, 2)) == 1 || (practContTrials > 1 && mod(practContTrials, 2) == 1) || (contTrials > 1 && mod(contTrials, 2) == 1)
+if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
     msgbox('All trials must be even or equal to 1!');
-    break
+    return
+    %break
 end
 
 % Savedirectory
 if isequal(computer, 'Macbook')
     savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+    cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     savdir = 'C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory';
 elseif isequal(computer, 'D_Pilot') && Computer2 == false
@@ -126,9 +138,16 @@ elseif askSubjInfo == true
         return
     end
     
-    if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
-        msgbox('cBal: 1 or 2?');
-        return
+    if allThreeConditions
+        if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'
+            msgbox('cBal: 1, 2 or 3?');
+            return
+        end
+    elseif ~allThreeConditions
+        if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
+            msgbox('cBal: 1 or 2 ?');
+            return
+        end
     end
     
     if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
@@ -136,43 +155,32 @@ elseif askSubjInfo == true
         return
     end
     
-    % Tranlate reward code in letter
     if subjInfo{6} == '1'
         rewName = 'B';
     elseif subjInfo{6} == '2'
         rewName = 'G';
     end
     
-    % Filenames
-    fName = sprintf('ADL_%s_%s.mat', rewName ,num2str(cell2mat((subjInfo(1)))));
-    fNameDataOddball = sprintf('DataOddball_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataCP = sprintf('DataCP_%s', num2str(cell2mat((subjInfo(1)))));
-    fNameDataControl = sprintf('DataControl_%s', num2str(cell2mat((subjInfo(1)))));
-    
-    % Struct with demographic subject variables
     Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex,...
-        subjInfo(3), fGroup, subjInfo(4), fCBal, str2double(cell2mat(subjInfo(5))), fRew,...
+        subjInfo(4), fGroup, subjInfo(3), fCBal, str2double(cell2mat(subjInfo(5))), fRew,...
         str2double(cell2mat(subjInfo(6))), fDate, subjInfo(7));
     
-    % Make sure that no ID is used twice
-    if exist(fName, 'file') == 2
+    checkIdInData = dir(sprintf('*%s*', num2str(cell2mat((subjInfo(1))))));
+    fileNames = {checkIdInData.name};
+    
+    if  ~isempty(fileNames);
         msgbox('Diese ID wird bereits verwendet!');
         return
     end
 end
 
-%% Open window
-
-% Prevent input
 ListenChar(2);
 %HideCursor;
 
-% Suppress warnings
 Screen('Preference', 'VisualDebugLevel', 3);
 Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('Preference', 'SkipSyncTests', 2);
 
-% Open a new window
 fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
 screensizePart = (screensize(3:4));
 fZero = 'zero'; zero = screensizePart / 2;
@@ -184,49 +192,48 @@ else
     [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []);
 end
 
-% Fieldnames
-fID = 'ID'; ID = fID; % ID
-fAge = 'age'; age = fAge; % Age
-fSex = 'sex'; sex = fSex; % Sex
-fRew = 'rew'; rew = fRew; %Rew
-fActRew = 'actRew'; actRew = fActRew; % Actual Reward
-fVolas = 'vola'; volas = fVolas; % Volatility
+fID = 'ID'; ID = fID;
+fAge = 'age'; age = fAge;
+fSex = 'sex'; sex = fSex;
+fRew = 'rew'; rew = fRew;
+fActRew = 'actRew'; actRew = fActRew;
+fVolas = 'vola'; volas = fVolas;
 fOddball = 'oddball';
 fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
 fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
-fSigmas = 'sigma'; sigmas = fSigmas; % Sigma
+fSigmas = 'sigma'; sigmas = fSigmas;
 fOddBall = 'oddBall'; oddBall = fOddBall;
-fDate = 'Date'; Date = fDate; % Date
-fCond = 'cond'; cond = fCond; % Condition
-fTrial = 'trial'; trial = fTrial; % Trial
-fOutcome = 'outcome'; outcome = fOutcome; % Outcome
+fDate = 'Date'; Date = fDate;
+fCond = 'cond'; cond = fCond;
+fTrial = 'trial'; trial = fTrial;
+fOutcome = 'outcome'; outcome = fOutcome;
 fAllASS = 'allASS'; allASS = fAllASS;
-fDistMean = 'distMean'; distMean = fDistMean; % Distribution mean
-fCp = 'cp'; cp = fCp; % Change point
-fTAC = 'TAC'; TAC = fTAC; % Trials after change-point
-fBoatType = 'boatType'; boatType = fBoatType; % Boat type
-fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial; % Catch trial
-fPredT = 'predT'; predT = fPredT; % Trigger: prediction
-fOutT = 'outT'; outT = fOutT; % Trigger: outcome
-fTriggers = 'triggers'; triggers = fTriggers; % Trigger: boat
-fPred = 'pred';pred = fPred; % Prediction of participant
-fPredErr = 'predErr'; predErr = fPredErr; % Prediction error
-fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;% Regular prediction error
-fPredErrPlus = 'predErrPlus'; predErrPlus = fPredErrPlus; %Prediction error plus 360 degrees
-fPredErrMin = 'predErrMin'; predErrMin = fPredErrMin; % Prediction error minus 360 degrees
+fDistMean = 'distMean'; distMean = fDistMean;
+fCp = 'cp'; cp = fCp;
+fTAC = 'TAC'; TAC = fTAC;
+fBoatType = 'boatType'; boatType = fBoatType;
+fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial;
+fPredT = 'predT'; predT = fPredT;
+fOutT = 'outT'; outT = fOutT;
+fTriggers = 'triggers'; triggers = fTriggers;
+fPred = 'pred';pred = fPred;
+fPredErr = 'predErr'; predErr = fPredErr;
+fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;
+fPredErrPlus = 'predErrPlus'; predErrPlus = fPredErrPlus;
+fPredErrMin = 'predErrMin'; predErrMin = fPredErrMin;
 fRawPredErr = 'rawPredErr'; rawPredErr = fRawPredErr;
-fMemErr = 'memErr'; memErr = fMemErr;% Memory error
-fMemErrNorm = 'memErrNorm'; memErrNorm = fMemErrNorm;% Regular memory error
-fMemErrPlus = 'memErrPlus'; memErrPlus = fMemErrPlus; % Memory error plus 360 degrees
-fMemErrMin = 'memErrMin'; memErrMin = fMemErrMin; % Memory error minus 360 degrees
-fUP = 'UP'; UP = fUP; % Update of participant
-fUPNorm = 'UPNorm'; UPNorm = fUPNorm;% Regular prediction error
-fUPPlus = 'UPPlus'; UPPlus = fUPPlus; %Prediction error plus 360 degrees
+fMemErr = 'memErr'; memErr = fMemErr;
+fMemErrNorm = 'memErrNorm'; memErrNorm = fMemErrNorm;
+fMemErrPlus = 'memErrPlus'; memErrPlus = fMemErrPlus;
+fMemErrMin = 'memErrMin'; memErrMin = fMemErrMin;
+fUP = 'UP'; UP = fUP;
+fUPNorm = 'UPNorm'; UPNorm = fUPNorm;
+fUPPlus = 'UPPlus'; UPPlus = fUPPlus;
 fUPMin = 'UPMin'; UPMin = fUPMin;
-fHit = 'hit'; hit = fHit; % Hit
-fCBal = 'cBal'; cBal = fCBal; % Counterbalancing
-fPerf = 'perf'; perf = fPerf; % Performance
-fAccPerf = 'accPerf'; accPerf = fAccPerf; % Accumulated performance
+fHit = 'hit'; hit = fHit;
+fCBal = 'cBal'; cBal = fCBal;
+fPerf = 'perf'; perf = fPerf;
+fAccPerf = 'accPerf'; accPerf = fAccPerf;
 
 fFieldNames = 'fieldNames';
 fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
@@ -246,18 +253,14 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
 
 fOddball = 'oddball';
 fGParam = 'gParam';
-fRunVola = 'runVola';
-fRunSigma = 'runSigma';
-fPE_Bar = 'PE_Bar';
 fSendTrigger = 'sendTrigger';
 fDriftConc = 'driftConc';
 fOddballProb = 'oddballProb';
 fComputer = 'computer';
 fTrials = 'trials';
-fPractContTrials = 'practContTrials';
 fShieldTrials = 'shieldTrials';
 fPractTrials = 'practTrials';
-fContTrials = 'contTrials';
+fControlTrials = 'controlTrials';
 fSafe = 'safe';
 fRewMag = 'rewMag';
 fSentenceLength = 'sentenceLength';
@@ -269,20 +272,17 @@ else
     sentenceLength = 85;
 end
 ref = GetSecs;
-gParam = struct('jitter', jitter, 'blockIndices', blockIndices,...
-    'ref', ref, fSentenceLength, sentenceLength, fOddball, oddball,...
-    fDriftConc, driftConc, fOddballProb, oddballProb, fSigmas, sigma,...
-    fVolas, vola, fRunVola, runVola, fRunSigma, runSigma, fPE_Bar,...
-    PE_Bar, fSendTrigger, sendTrigger, fComputer, computer, fTrials,...
-    trials, fPractContTrials, practContTrials, fShieldTrials,...
-    shieldTrials, fPractTrials, practTrials, fContTrials, contTrials,...
-    fSafe, safe, fRewMag, rewMag, fScreensize, screensize, fZero, zero,...
-    fWindow, window, fWindowRect, windowRect, 'catchTrialCriterion',...
-    catchTrialCriterion);
+gParam = struct('jitter', jitter,'allThreeConditions', allThreeConditions,...
+    'blockIndices', blockIndices, 'ref', ref, fSentenceLength,...
+    sentenceLength, fOddball, oddball, fDriftConc, driftConc,...
+    fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola,...
+    fSendTrigger, sendTrigger, fComputer, computer, fTrials,...
+    trials, fShieldTrials, shieldTrials, fPractTrials, practTrials,...
+    fControlTrials, controlTrials,fSafe, safe, fRewMag, rewMag,...
+    fScreensize, screensize, fZero, zero,fWindow, window, fWindowRect,...
+    windowRect, 'catchTrialCriterion',catchTrialCriterion, 'askSubjInfo',...
+    askSubjInfo);
 
-%% Circle parameters
-
-%Radius of the spots
 fPredSpotRad =  'predSpotRad'; predSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees! it used to be 25
 fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees!
 fShieldAngle = 'shieldAngle'; shieldAngle = 30; %Shield Angle.
@@ -291,20 +291,17 @@ fCannonEnd = 'cannonEnd'; cannonEnd = 5; %This is in pixel, not in degrees!
 fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle. This is expressed in pixel, not in degrees!
 fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius. This is expressed in pixel, not in degrees!
 
-%Diameter of the spots
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot
 fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome
 fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; % Size of Radar needle
 fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2;
 
-%Position of the spots and the boats
 fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; % Prediction spot position
 fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; % Outcome position
 fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
 fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; % Radar needle position
 fBoatRect = 'boatRect'; boatRect = [0 0 50 50]; % Boat position
 
-% Center the objects
 fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); % Center boat
 fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);% Center the prediction spot
 fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect); % Center the outcome
@@ -312,12 +309,10 @@ fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, 
 fCannonEndCent = 'cannonEndCent'; cannonEndCent = CenterRect(cannonEndRect, windowRect);
 fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar needle
 
-% Rotation angle of prediction spot
 fUnit = 'unit'; unit = 2*pi/360; % This expresses the circle (2*pi) as a fraction of 360 degrees
 fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit; % The initial rotation angle (on top of circle)
 fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when prediction spot is moved
 
-% Circle parameters
 fCircle = 'circle';
 circle = struct(fShieldAngle, shieldAngle, fCannonEndCent,...
     cannonEndCent, fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad,...
@@ -329,13 +324,11 @@ circle = struct(fShieldAngle, shieldAngle, fCannonEndCent,...
     predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
 
-% Boat colors
 fGold = 'gold'; gold = [255 215 0];
 fSilver = 'silver'; silver = [160 160 160];
 fColors = 'colors';
 colors = struct(fGold, gold, fSilver, silver);
 
-% Set key names
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');
 fLeftKey = 'leftKey'; leftKey = KbName('f');
@@ -421,279 +414,278 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger,...
 IndicateOddball = 'Oddball Task';
 IndicateCP = 'Change Point Task';
 IndicateControl = 'Control Task';
-fTxtLowVola = 'txtLowVola'; txtLowVola = 'Jetzt verändert sich das Ziel der Kanone selten';
-fTxtHighVola = 'txtHighVola'; txtHighVola = 'Jetzt verändert sich das Ziel der Kanone häufiger';
 fTxtPressEnter = 'txtPressEnter';
 
 if oddball
+    header = 'Real Task!';
     txtPressEnter = 'Delete to go back - Enter to continue';
+    if Subject.cBal == 1
+        txtStartTask = ['This is the beginning of the real task. During '...
+            'this block you will earn real money for your performance. '...
+            'The trials will be exactly the same as those in the '...
+            'previous practice block. On each trial a cannon will aim '...
+            'at a location on the circle. On most trials the cannon will '...
+            'fire a ball somewhere near the point of aim. '...
+            'However, on a few trials a ball will be shot '...
+            'from a different cannon that is equally likely to '...
+            'hit any location on the circle. Like in the previous '...
+            'block you will not see the cannon, but still have to infer its '...
+            'aim in order to catch balls and earn money.'];
+    else
+        txtStartTask = ['This is the beginning of the real task. During '...
+            'this block you will earn real money for your performance. '...
+            'The trials will be exactly the same as those in the '...
+            'previous practice block. On each trial a cannon will aim '...
+            'at a location on the circle. On all trials the cannon will '...
+            'fire a ball somewhere near the point of aim. '...
+            'Most of the time the cannon will remain aimed at '...
+            'the same location, but occasionally the cannon '...
+            'will be reaimed. Like in the previous '...
+            'block you will not see the cannon, but still '...
+            'have to infer its aim in order to catch balls and earn money.'];
+    end
 else
     txtPressEnter = 'Zurück mit Löschen - Weiter mit Enter';
+    header = 'Anfang der Studie';
+    if Subject.cBal == 1
+        txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+            'zusammengefasst fängst du also die meisten '...
+            'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
+            'bewegst, auf die die Kanone zielt. Weil du die '...
+            'Kanone nicht mehr sehen kannst, musst du diese '...
+            'Stelle aufgrund der Position der letzten Kugeln '...
+            'einschätzen. Das Geld für die gefangenen '...
+            'Kugeln bekommst du nach der Studie '...
+            'ausgezahlt.\n\nViel Erfolg!'];
+    else
+        txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+            'zusammengefasst ist es deine Aufgabe Kanonenkugeln '...
+            'aufzusammeln, indem du deinen orangenen Punkt '...
+            'zur Stelle der letzten Kanonenkugel steuerst, '...
+            'welche mit dem schwarzen Strich markiert ist. '...
+            'Das Geld für die gesammelten '...
+            'Kugeln bekommst du nach der Studie '...
+            'ausgezahlt.\n\nViel Erfolg!'];
+    end
 end
 
-fTxtLVLS = 'txtLVLS'; txtLVLS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist schwach';
-fTxtHVLS = 'txtHVLS'; txtHVLS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist schwach';
-fTxtLVHS = 'txtLVHS'; txtLVHS = 'Jetzt fahren die Schiffe selten weiter\n\nund der Seegang ist stark';
-fTxtHVHS = 'txtHVHS'; txtHVHS = 'Jetzt fahren die Schiffe häufiger weiter\n\nund der Seegang ist stark';
-
 fStrings = 'strings';
-strings = struct(fTxtLowVola, txtLowVola, fTxtHighVola, txtHighVola,...
-    fTxtLVLS, txtLVLS, fTxtHVLS, txtHVLS, fTxtLVHS, txtLVHS, fTxtHVHS,...
-    txtHVHS, fTxtPressEnter, txtPressEnter);
+strings = struct(fTxtPressEnter, txtPressEnter);
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
     fFieldNames, fieldNames, fTriggers, triggers,...
     fColors, colors, fStrings, strings, fCannonTxt, cannonTxt, fAimTxt,...
     aimTxt, fDstRect, dstRect);
 
-% If true you run through one main block which enables you to check timing
-% accuracy (see PTB output in command window)
-if test == true
+
+
+if ~test && ~allThreeConditions
     
-    [taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject);
     
-%     ListenChar();
-%     ShowCursor;
-%     Screen('CloseAll');
-    
-elseif ~test
-    
-    if runIntro == true
-        if oddball
-            if Subject.cBal == 1
-                Instructions(taskParam, 'Oddball', Subject);
-                condition = 'practiceOddball';
-                [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-            elseif Subject.cBal == 2
-                Instructions(taskParam, 'Main', Subject);
-                condition = 'practice';
-                [taskDataOddballPractice, DataOddballPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-            end
-        else
-            if Subject.cBal == 1
-                Instructions(taskParam, 'Practice', Subject);
-                condition = 'practiceCont';
-                [taskDataControlPractice, DataControlPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-            elseif Subject.cBal == 2
-                Instructions(taskParam, 'PracticeCont', Subject);
-                condition = 'practiceCont';
-                [taskDataControlPractice, DataControlPracticeLV] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-            end
-        end
-        if taskParam.gParam.oddball == false
-            header = 'Anfang der Studie';
-            if Subject.cBal == 1
-                txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
-                    'zusammengefasst fängst du also die meisten '...
-                    'Kugeln, wenn du den orangenen Punkt auf die Stelle bewegst, auf die '...
-                    'die Kanone zielt. Weil du die Kanone nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
-                    'Kugeln bekommst du nach der Studie '...
-                    'ausgezahlt.\n\nViel Erfolg!'];
-            elseif Subject.cBal == 2
-                txt = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst ist es deine '...
-                    'Aufgabe Kanonenkugeln aufzusammeln, indem du deinen orangenen Punkt zur Stelle der letzten Kanonenkugel steuerst, welche mit dem schwarzen Strich markiert ist. '...
-                    'Das Geld für die gesammelten '...
-                    'Kugeln bekommst du nach der Studie '...
-                    'ausgezahlt.\n\nViel Erfolg!'];
-            end
-            
-        elseif taskParam.gParam.oddball == true
-            header = 'Real Task!';
-            if Subject.cBal == 1
-                txt = ['This is the beginning of the real task. During '...
-                    'this block you will earn real money for your performance. '...
-                    'The trials will be exactly the same as those in the '...
-                    'previous practice block. On each trial a cannon will aim '...
-                    'at a location on the circle. On most trials the cannon will '...
-                    'fire a ball somewhere near the point of aim. '...
-                    'However, on a few trials a ball will be shot from a different '...
-                    'cannon that is equally likely to hit any location on the circle. Like in the previous '...
-                    'block you will not see the cannon, but still have to infer its '...
-                    'aim in order to catch balls and earn money.'];
-            elseif Subject.cBal == 2
-                txt = ['This is the beginning of the real task. During '...
-                    'this block you will earn real money for your performance. '...
-                    'The trials will be exactly the same as those in the '...
-                    'previous practice block. On each trial a cannon will aim '...
-                    'at a location on the circle. On all trials the cannon will '...
-                    'fire a ball somewhere near the point of aim. '...
-                    'Most of the time the cannon will remain aimed at the same location, '...
-                    'but occasionally the cannon will be reaimed. Like in the previous '...
-                    'block you will not see the cannon, but still have to infer its '...
-                    'aim in order to catch balls and earn money.'];
-            end
-        end
-        feedback = false;
-        BigScreen(taskParam, txtPressEnter, header, txt, feedback);
-    else
-        Screen('TextSize', taskParam.gParam.window, 30);
-        Screen('TextFont', taskParam.gParam.window, 'Arial');
-        if (oddball && Subject.cBal == 1)
-            VolaIndication(taskParam, IndicateOddball, txtPressEnter)
-        elseif (~oddball && Subject.cBal == 2)
-            VolaIndication(taskParam, IndicateControl, txtPressEnter)
-        elseif oddball && Subject.cBal == 2 || (~oddball && Subject.cBal == 1)
-            VolaIndication(taskParam, IndicateCP, txtPressEnter)
-        end
-    end
-    
-    %% first block
-    
-    if Subject.cBal == 1
-        if oddball
-            condition = 'oddball';
-            type = 'Oddball';
-        else
-            condition = 'main';
-        end
-        [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-        DataCP = catstruct(Subject, DataCP);
-        assignin('base',['DataCP_' num2str(cell2mat((subjInfo(1))))],DataCP)
-        save(fullfile(savdir,fName),fNameDataCP);
-    elseif Subject.cBal == 2;
-        if oddball
-            condition = 'main';
-            type = 'Main';
-        else
-            condition = 'control';
-        end
-        [taskDataControl, DataControl] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-        DataControl = catstruct(Subject, DataControl);
-        assignin('base',['DataControl_' num2str(cell2mat((subjInfo(1))))],DataControl)
-        save(fullfile(savdir,fName),fNameDataControl);
-    end
-    
-    %% second intro
-    
-    if runIntro == true
-        if (oddball == true && Subject.cBal == 1) || (oddball == false && Subject.cBal == 2)
-            Instructions(taskParam, 'Practice', Subject);
-        elseif oddball == true && Subject.cBal == 2
-            Instructions(taskParam, 'Oddball', Subject);
-        elseif oddball == false && Subject.cBal == 1
-            Instructions(taskParam, 'PracticeCont', Subject)
-        end
-        condition = 'practice';
-        [taskDataPracticeMain, DataPracticeMain] = Main(taskParam, vola(3), sigma(1), condition, Subject);
-        header = 'Real Task!';
-        if taskParam.gParam.oddball == false
-            header = 'Anfang der Studie';
-            if Subject.cBal == 1
-                txt = ['Du hast die Übungsphase abgeschlossen. Kurz '...
-                    'zusammengefasst fängst du also die meisten '...
-                    'Kugeln, wenn du den orangenen Punkt auf die Stelle bewegst, auf die '...
-                    'die Kanone zielt. Weil du die Kanone nicht mehr sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die gefangenen '...
-                    'Kugeln bekommst du nach der Studie '...
-                    'ausgezahlt.\n\nViel Erfolg!'];
-            elseif Subject.cBal == 2
-                txt = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst ist es deine '...
-                    'Aufgabe Kanonenkugeln aufzusammeln, indem du deinen orangenen Punkt zur Stelle der letzten Kanonenkugel steuerst, welche mit dem schwarzen Strich markiert ist. '...
-                    'Das Geld für die gesammelten '...
-                    'Kugeln bekommst du nach der Studie '...
-                    'ausgezahlt.\n\nViel Erfolg!'];
-            end
-            
-        elseif taskParam.gParam.oddball == true
-            if Subject.cBal == 1
-                txt = ['This is the beginning of the real task. During '...
-                    'this block you will earn real money for your performance. '...
-                    'The trials will be exactly the same as those in the '...
-                    'previous practice block. On each trial a cannon will aim '...
-                    'at a location on the circle. On all trials the cannon will '...
-                    'fire a ball somewhere near the point of aim. '...
-                    'Most of the time the cannon will remain aimed at the same location, '...
-                    'but occasionally the cannon will be reaimed. Like in the previous '...
-                    'block you will not see the cannon, but still have to infer its '...
-                    'aim in order to catch balls and earn money.'];
-            elseif Subject.cBal == 2
-                txt = ['This is the beginning of the real task. During '...
-                    'this block you will earn real money for your performance. '...
-                    'The trials will be exactly the same as those in the '...
-                    'previous practice block. On each trial a cannon will aim '...
-                    'at a location on the circle. On most trials the cannon will '...
-                    'fire a ball somewhere near the point of aim. '...
-                    'However, on a few trials a ball will be shot from a different '...
-                    'cannon that is equally likely to hit any location on the circle. Like in the previous '...
-                    'block you will not see the cannon, but still have to infer its '...
-                    'aim in order to catch balls and earn money.'];
-            end
-        end
-        feedback = false;
-        BigScreen(taskParam, txtPressEnter, header, txt, feedback);
-    else
-        if (oddball && Subject.cBal == 1) || (~oddball && Subject.cBal == 2)
-            VolaIndication(taskParam, IndicateCP, txtPressEnter)
-        elseif oddball && Subject.cBal == 2
-            VolaIndication(taskParam, IndicateOddball, txtPressEnter)
-        elseif (~oddball && Subject.cBal == 1)
-            VolaIndication(taskParam, IndicateControl, txtPressEnter)
-        end
-    end
-    WaitSecs(0.1);
-    
-    %% second block
-    
-    if Subject.cBal == 1
-        if oddball
-            condition = 'main';
-        else
-            condition = 'control';
-        end
-        [taskDataControl, DataControl] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-        DataControl = catstruct(Subject, DataControl);
-        assignin('base',['DataControl_' num2str(cell2mat((subjInfo(1))))],DataControl)
-        save(fullfile(savdir,fName),fNameDataCP, fNameDataControl);
+    if oddball
         
-    elseif Subject.cBal == 2
-        if oddball
-            condition = 'oddball';
-        else
-            
-            condition = 'main';
-            [taskDataCP, DataCP] = Main(taskParam, vola(1), sigma(1), condition, Subject);
-            DataCP = catstruct(Subject, DataCP);
-            assignin('base',['DataCP_' num2str(cell2mat((subjInfo(1))))],DataCP)
-            save(fullfile(savdir,fName),fNameDataCP, fNameDataControl);
+        if Subject.cBal == 1
+            OddballCondition
+            MainCondition
+        elseif Subject.cBal == 2
+            MainCondition
+            OddballCondition
         end
+        
+    elseif ~oddball
+        
+        if Subject.cBal == 1
+            MainCondition;
+            FollowOutcomeCondition
+        elseif Subject.cBal == 2
+            FollowOutcomeCondition
+            MainCondition
+        end
+        
     end
-    WaitSecs(0.1);
     
     % Compute total gain
     if oddball
-        totWin = DataOddball.accPerf(end) + DataCP.accPerf(end);
+        totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
     else
-        totWin = DataControl.accPerf(end) + DataCP.accPerf(end);
+        totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end);
     end
     
-    while 1
+    EndOfTask
+    
+    
+    % If true you run through one main block which enables you to check timing
+    % accuracy (see PTB output in command window)
+elseif test && ~allThreeConditions
+    
+    [taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject);
+    
+elseif allThreeConditions
+    
+    if Subject.cBal == 1
         
-        if oddball
-            header = 'End of task!';
-            txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
-        else
-            header = 'Ende der Aufgabe!';
-            txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nDu hast %.2f Euro verdient', totWin);
-        end
-        Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
-        Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
-        Screen('FillRect', taskParam.gParam.window, [0 25 51], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
-        Screen('TextSize', taskParam.gParam.window, 50);
-        DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1);
-        Screen('TextSize', taskParam.gParam.window, 30);
-        DrawFormattedText(taskParam.gParam.window, txt, 'center', 'center');
-        Screen('DrawingFinished', taskParam.gParam.window, [], []);
-        time = GetSecs;
-        Screen('Flip', taskParam.gParam.window, time + 0.1);
+        MainCondition
+        FollowOutcomeCondition
+        FollowCannonCondition
         
-        [ keyIsDown, seconds, keyCode ] = KbCheck;
-        if find(keyCode) == taskParam.keys.s
-            break
-        end
+    elseif Subject.cBal == 2
+        
+        MainCondition
+        FollowCannonCondition
+        FollowOutcomeCondition
+        
+    elseif Subject.cBal == 3
+        
+        FollowOutcomeCondition
+        MainCondition
+        FollowCannonCondition
+        
+    elseif Subject.cBal == 4
+        
+        FollowCannonCondition
+        MainCondition
+        FollowOutcomeCondition
+        
+    elseif Subject.cBal == 5
+        
+        FollowOutcomeCondition
+        FollowCannonCondition
+        MainCondition
+        
+    elseif Subject.cBal == 6
+        
+        FollowCannonCondition
+        FollowOutcomeCondition
+        MainCondition
+        
     end
+    
+    totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
+        + DataFollowCannon.accPerf(end);
+    
+    EndOfTask
+    
 end
-
-%% End of task
 
 ListenChar();
 ShowCursor;
 Screen('CloseAll');
+
+
+    function OddballCondition
+        
+        condition = 'oddball';
+        [taskDataOddball, DataOddball] = Main(taskParam, vola(1), sigma(1), condition, Subject);
+        
+    end
+
+    function MainCondition
+        
+        if runIntro
+            txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+                'zusammengefasst fängst du also die meisten '...
+                'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
+                'bewegst, auf die die Kanone zielt. Weil du die '...
+                'Kanone nicht mehr sehen kannst, musst du diese '...
+                'Stelle aufgrund der Position der letzten Kugeln '...
+                'einschätzen. Das Geld für die gefangenen '...
+                'Kugeln bekommst du nach der Studie '...
+                'ausgezahlt.\n\nViel Erfolg!'];
+            Instructions(taskParam, 'mainPractice', Subject);
+            Main(taskParam, vola(3), sigma(1), 'mainPractice', Subject);
+            feedback = false;
+            BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+        else
+            Screen('TextSize', taskParam.gParam.window, 30);
+            Screen('TextFont', taskParam.gParam.window, 'Arial');
+            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+        end
+        [~, DataMain] = Main(taskParam, vola(1), sigma(1), 'main', Subject);
+        
+    end
+
+    function FollowOutcomeCondition
+        
+        if runIntro
+            txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+                'zusammengefasst ist es deine Aufgabe Kanonenkugeln '...
+                'aufzusammeln, indem du deinen orangenen Punkt '...
+                'zur Stelle der letzten Kanonenkugel steuerst, '...
+                'welche mit dem schwarzen Strich markiert ist. '...
+                'Das Geld für die gesammelten '...
+                'Kugeln bekommst du nach der Studie '...
+                'ausgezahlt.\n\nViel Erfolg!'];
+            Instructions(taskParam, 'followOutcomePractice', Subject)
+            Main(taskParam, vola(3),sigma(1), 'followOutcomePractice', Subject);
+            feedback = false;
+            BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+        else
+            Screen('TextSize', taskParam.gParam.window, 30);
+            Screen('TextFont', taskParam.gParam.window, 'Arial');
+            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+        end
+        [~, DataFollowOutcome] = Main(taskParam, vola(1), sigma(1), 'followOutcome', Subject);
+        
+    end
+
+    function FollowCannonCondition
+        
+        if runIntro
+            txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
+                'zusammengefasst fängst du also die meisten '...
+                'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
+                'bewegst, auf die die Kanone zielt (schwarze Nadel). '...
+                'Diesmal kannst du die Kanone sehen\n\nViel Erfolg!'];
+            Instructions(taskParam, 'followCannonPractice', Subject)
+            Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
+            feedback = false;
+            BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+        else
+            Screen('TextSize', taskParam.gParam.window, 30);
+            Screen('TextFont', taskParam.gParam.window, 'Arial');
+            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+        end
+        
+        [~, DataFollowCannon] = Main(taskParam, vola(1), sigma(1), 'followCannon', Subject);
+        
+    end
+
+    function EndOfTask
+        
+        while 1
+            
+            if oddball
+                header = 'End of task!';
+                txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
+            else
+                header = 'Ende der Aufgabe!';
+                txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nDu hast %.2f Euro verdient', totWin);
+            end
+            Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...
+                taskParam.gParam.screensize(4)*0.16,...
+                taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
+            Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...
+                taskParam.gParam.screensize(4)*0.8,...
+                taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
+            Screen('FillRect', taskParam.gParam.window, [0 25 51],...
+                [0, (taskParam.gParam.screensize(4)*0.16)+3,...
+                taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
+            Screen('TextSize', taskParam.gParam.window, 50);
+            DrawFormattedText(taskParam.gParam.window, header,...
+                'center', taskParam.gParam.screensize(4)*0.1);
+            Screen('TextSize', taskParam.gParam.window, 30);
+            DrawFormattedText(taskParam.gParam.window, txt,...
+                'center', 'center');
+            Screen('DrawingFinished', taskParam.gParam.window, [], []);
+            time = GetSecs;
+            Screen('Flip', taskParam.gParam.window, time + 0.1);
+            
+            [ keyIsDown, seconds, keyCode ] = KbCheck;
+            if find(keyCode) == taskParam.keys.s
+                break
+            end
+        end
+    end
+
+
+end
 

@@ -8,7 +8,7 @@ function DrawOutcome(taskParam, outcome)
 %         
 
 
-
+%keyboard
 
 xPredS = ((taskParam.circle.rotationRad-5) * sin(outcome*taskParam.circle.unit));
 yPredS = ((taskParam.circle.rotationRad-5) * (-cos(outcome*taskParam.circle.unit)));

@@ -1,14 +1,11 @@
 function Aim(taskParam, parameter)
-% This function draws the last position of the outcome (the black tick mark).
 
-% wegen rotAngle
-
-xAim = ((taskParam.circle.rotationRad-35) * sin(parameter*taskParam.circle.unit));
-yAim = ((taskParam.circle.rotationRad-35) * (-cos(parameter*taskParam.circle.unit)));
-
-AimPosition = OffsetRect(taskParam.circle.centBoatRect, xAim, yAim);
-
-Screen('DrawTexture',taskParam.gParam.window,taskParam.aimTxt, [], AimPosition,parameter, [], [0], [0 0 0], [], []) %605 335 835 565 taskParam.circle.outcSize
+xPredS = ((taskParam.circle.rotationRad-5) * sin(parameter*taskParam.circle.unit));
+yPredS = ((taskParam.circle.rotationRad-5) * (-cos(parameter*taskParam.circle.unit)));
+OutcSpot = OffsetRect(taskParam.circle.outcCentSpotRect, xPredS, yPredS);
+x = (OutcSpot(3)/2) + (OutcSpot(1)/2);
+y = (OutcSpot(4)/2) + (OutcSpot(2)/2);
+Screen('DrawLine', taskParam.gParam.window, [0 0 0], taskParam.gParam.zero(1), taskParam.gParam.zero(2), x, y, 2);
 
 end
 
