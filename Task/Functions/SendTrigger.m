@@ -17,7 +17,7 @@ if taskParam.gParam.oddball == false
         status = io64(ioObject);
     end
     
-    if  (isequal(condition, 'main') || isequal(condition, 'followOutcome')) %taskParam.gParam.sendTrigger == true &&
+    if  isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(condition, 'followCannon') 
         
         if sum(Tevent == 1:7) == 1
             
@@ -27,7 +27,13 @@ if taskParam.gParam.oddball == false
             
         elseif trial > 1 && Tevent == 16
             
-            if isequal(condition, 'followOutcome') && taskData.oddBall(trial) == 1
+            if isequal(condition, 'followCannon') && taskData.cp(trial) == 1
+                digit1 = 11;
+                digit2 = 1;
+            elseif isequal(condition, 'followCannon') && taskData.cp(trial) == 0
+                digit1 = 11;
+                digit2 = 0;
+            elseif isequal(condition, 'followOutcome') && taskData.oddBall(trial) == 1
                 digit1 = 1;
                 digit2 = 1;
             elseif isequal(condition, 'followOutcome') && taskData.oddBall(trial) == 0

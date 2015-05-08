@@ -1,7 +1,12 @@
 %% Adaptive Learning Task - EEG
 %
 % TODO:
-%%       - für Dresden: richtige sentenceLength
+%% morgen:
+  
+%%      - trigger für dritte Bedingung
+%%      - to understand triggers again. analyze data a bit!!
+%%      - grün blau stimmt nicht mehr. aber eh ersetzen!! und dann checken!!
+%- für Dresden: richtige sentenceLength
 %       - task specific
 %           - followCannonInstructions
 %           - ältere Siezen. Automatisch bei altersgruppencode einbauen
@@ -41,18 +46,18 @@ clear all
 [computer, Computer2] = identifyPC;
 %computer = 'Macbook'
 
-%% Set general parameters.
+%% Set general parameters
 
 runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = true;
-randomize = false;
-shieldTrials = 6; % Für Pilot: 10
-practTrials = 20; % Für Pilot: 20
-trials = 240;% Für Pilot: 120 // EEG: 240
-controlTrials = 120; % Für Pilot: 60 EEG: 80
+sendTrigger = false;
+randomize = true;
+shieldTrials = 1; % Für Pilot: 10
+practTrials = 1; % Für Pilot: 20
+trials = 2;% Für Pilot: 120 // EEG: 240
+controlTrials = 1; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment
 oddballProb = [.25 0]; % Oddball probability. .15
@@ -115,7 +120,15 @@ elseif askSubjInfo == true
     numlines = 1;
     
     if randomize
+        if allThreeConditions
+        cBal = num2str(round(unifrnd(1,6)));
+%         reward = num2str(round(unifrnd(1,2)));
+%         defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+        else
         cBal = num2str(round(unifrnd(1,2)));
+%         reward = num2str(round(unifrnd(1,2)));
+%         defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+        end
         reward = num2str(round(unifrnd(1,2)));
         defaultanswer = {'9999','99', '1', 'm', cBal, reward};
     else
@@ -141,8 +154,9 @@ elseif askSubjInfo == true
     end
     
     if allThreeConditions
-        if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'
-            msgbox('cBal: 1, 2 or 3?');
+        if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'...
+                && subjInfo{5} ~= '4' && subjInfo{5} ~= '5' && subjInfo{5} ~= '6'
+            msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
     elseif ~allThreeConditions
@@ -525,36 +539,42 @@ elseif allThreeConditions
     
     if Subject.cBal == 1
         
+        % läuft!
         MainCondition
         FollowOutcomeCondition
         FollowCannonCondition
         
     elseif Subject.cBal == 2
         
+        % läuft!
         MainCondition
         FollowCannonCondition
         FollowOutcomeCondition
         
     elseif Subject.cBal == 3
         
+        % läuft
         FollowOutcomeCondition
         MainCondition
         FollowCannonCondition
         
     elseif Subject.cBal == 4
         
+        % hier ändern
         FollowCannonCondition
         MainCondition
         FollowOutcomeCondition
         
     elseif Subject.cBal == 5
         
+        % hier ändern
         FollowOutcomeCondition
         FollowCannonCondition
         MainCondition
         
     elseif Subject.cBal == 6
         
+        % hier ändern
         FollowCannonCondition
         FollowOutcomeCondition
         MainCondition
@@ -638,7 +658,7 @@ Screen('CloseAll');
                 'bewegst, auf die die Kanone zielt (schwarze Nadel). '...
                 'Diesmal kannst du die Kanone sehen\n\nViel Erfolg!'];
             Instructions(taskParam, 'followCannonPractice', Subject)
-            Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
+            %Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         else
