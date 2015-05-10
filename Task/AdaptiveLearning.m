@@ -2,15 +2,18 @@
 %
 % TODO:
 %% morgen:
-  
+
+%%      - shield practice checken!!
+%%      - für Dresden: richtige sentenceLength
+%%      - catch trials in practice! i.e., generate new data
+%%      - google notes
+
+
+%% montag:  
 %%      - trigger für dritte Bedingung
 %%      - to understand triggers again. analyze data a bit!!
-%%      - grün blau stimmt nicht mehr. aber eh ersetzen!! und dann checken!!
-%- für Dresden: richtige sentenceLength
-%       - task specific
-%           - followCannonInstructions
-%           - ältere Siezen. Automatisch bei altersgruppencode einbauen
-%           - catch trials in practice! i.e., generate new data
+
+
 %       - notes
 %           - don't mess up oddball task!
 %           - Ben: wir brauchen 30 trials für averaging
@@ -130,7 +133,9 @@ elseif askSubjInfo == true
 %         defaultanswer = {'9999','99', '1', 'm', cBal, reward};
         end
         reward = num2str(round(unifrnd(1,2)));
-        defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+        group = num2str(round(unifrnd(1,2)));
+
+        defaultanswer = {'9999','99', group, 'm', cBal, reward};
     else
         defaultanswer = {'9999','99', '1', 'm', '1', '1'};
     end
