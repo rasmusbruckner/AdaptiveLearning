@@ -9,13 +9,13 @@ while 1
     Screen('FillRect', taskParam.gParam.window, [0, 25, 51], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
     
     
-    Screen('TextSize', taskParam.gParam.window, 50);
+    Screen('TextSize', taskParam.gParam.window, 30);
     if isequal(taskParam.gParam.computer, 'Dresden')
         DrawFormattedText(taskParam.gParam.window, header, 'center', 50, [255 255 255]);
     else
         DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1, [255 255 255]);
     end
-        Screen('TextSize', taskParam.gParam.window, 30);
+        Screen('TextSize', taskParam.gParam.window, 19);
    
    sentenceLength = taskParam.gParam.sentenceLength; % Dresde Pilot 100   
 

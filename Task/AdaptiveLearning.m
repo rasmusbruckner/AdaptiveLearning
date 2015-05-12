@@ -2,6 +2,7 @@
 %
 % TODO:
 %% morgen:
+%% graues schild zu dunkel?
 %%      - richtig gut checken!!! 
 %%      - daten laden für bedingungen (hab ich glaub ich)
 %%       - erinnerung dass EEG eingeschaltet werden muss
@@ -68,12 +69,12 @@ runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = false;
+sendTrigger = true;
 randomize = true;
 shieldTrials = 1; % Für Pilot: 10
-practTrials = 10; % Für Pilot: 20
-trials = 10;% Für Pilot: 120 // EEG: 240
-controlTrials = 10; % Für Pilot: 60 EEG: 80
+practTrials = 1; % Für Pilot: 20
+trials = 1;% Für Pilot: 120 // EEG: 240
+controlTrials = 1; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment
 oddballProb = [.25 0]; % Oddball probability. .15
@@ -190,9 +191,9 @@ elseif askSubjInfo == true
     end
     
     if subjInfo{6} == '1'
-        rewName = 'B';
-    elseif subjInfo{6} == '2'
         rewName = 'G';
+    elseif subjInfo{6} == '2'
+        rewName = 'S';
     end
     
     Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex,...
@@ -223,7 +224,7 @@ fWindowRect = 'windowRect';
 if debug == true
     [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [420 250 1020 650]);
 else
-    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []);
+    [ window, windowRect ] = Screen('OpenWindow', 0, [66 66 66], []);
 end
 
 startTime = GetSecs;
@@ -301,7 +302,7 @@ fSafe = 'safe';
 fRewMag = 'rewMag';
 fSentenceLength = 'sentenceLength';
 if isequal(computer, 'Dresden')
-    sentenceLength = 55;
+    sentenceLength = 70;
 elseif isequal(computer, 'Brown')
     sentenceLength = 75;
 else
