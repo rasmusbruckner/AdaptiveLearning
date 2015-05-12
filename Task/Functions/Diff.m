@@ -1,6 +1,4 @@
 function diff = Diff(parameter1, parameter2)
-%This function calculates some difference parameters.
-%
 %   Depending on the input you calculate prediction error, memory error
 %   or update.
 

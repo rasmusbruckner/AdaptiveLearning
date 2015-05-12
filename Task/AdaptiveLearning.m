@@ -2,17 +2,30 @@
 %
 % TODO:
 %% morgen:
+%%      - richtig gut checken!!! 
+%%      - daten laden für bedingungen (hab ich glaub ich)
+%%       - erinnerung dass EEG eingeschaltet werden muss
+%%       - sachen fett drucken (AUFGABE UND FARBE)
+%%       - zeitmesser einbauen
+%%
 
-%%      - shield practice checken!!
-%%      - für Dresden: richtige sentenceLength
-%%      - catch trials in practice! i.e., generate new data
-%%      - google notes
+%%        feedback für main checken!! (mit video!!)
+%%      - criterion anpaasen
+%%      - für Dresden: richtige sentenceLength / größe
+%%      - followOutcome: beachten dass erster trial nicht zählt (bei main ja auch nicht. also nicht schlimm)
+%%     - maxMon checken 
+%%      - bei followCannon: vor zweiter übung sagen, dass ball nicht
+%%      - mehr fliegt
+%%      - bei follow cannon kommt übung nicht!
 
 
 %% montag:  
 %%      - trigger für dritte Bedingung
 %%      - to understand triggers again. analyze data a bit!!
 
+%% später
+%%      - google notes
+%       - performance überprüfen (ob alles richtig rausgeschrieben wird) 
 
 %       - notes
 %           - don't mess up oddball task!
@@ -58,9 +71,9 @@ allThreeConditions = true;
 sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % Für Pilot: 10
-practTrials = 1; % Für Pilot: 20
-trials = 2;% Für Pilot: 120 // EEG: 240
-controlTrials = 1; % Für Pilot: 60 EEG: 80
+practTrials = 10; % Für Pilot: 20
+trials = 10;% Für Pilot: 120 // EEG: 240
+controlTrials = 10; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment
 oddballProb = [.25 0]; % Oddball probability. .15
@@ -69,7 +82,7 @@ driftConc = [30 99999999]; % Concentration of the drift. 10
 safe = [3 0];
 rewMag = 0.2;
 jitter = 0.2;
-catchTrialCriterion = 10;
+practiceTrialCriterion = 10;
 test = false; % Test triggering timing accuracy (see PTB output CW)
 debug = false; % Debug mode
 
@@ -301,7 +314,7 @@ gParam = struct('jitter', jitter,'allThreeConditions', allThreeConditions,...
     trials, fShieldTrials, shieldTrials, fPractTrials, practTrials,...
     fControlTrials, controlTrials,fSafe, safe, fRewMag, rewMag,...
     fScreensize, screensize, fZero, zero,fWindow, window, fWindowRect,...
-    windowRect, 'catchTrialCriterion',catchTrialCriterion, 'askSubjInfo',...
+    windowRect, 'practiceTrialCriterion',practiceTrialCriterion, 'askSubjInfo',...
     askSubjInfo);
 
 fPredSpotRad =  'predSpotRad'; predSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees! it used to be 25
@@ -633,6 +646,7 @@ Screen('CloseAll');
     function FollowOutcomeCondition
         
         if runIntro
+            
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                 'zusammengefasst ist es deine Aufgabe Kanonenkugeln '...
                 'aufzusammeln, indem du deinen orangenen Punkt '...
@@ -642,7 +656,7 @@ Screen('CloseAll');
                 'Kugeln bekommst du nach der Studie '...
                 'ausgezahlt.\n\nViel Erfolg!'];
             Instructions(taskParam, 'followOutcomePractice', Subject)
-            Main(taskParam, vola(3),sigma(1), 'followOutcomePractice', Subject);
+            %Main(taskParam, vola(3),sigma(1), 'followOutcomePractice', Subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         else
@@ -663,7 +677,7 @@ Screen('CloseAll');
                 'bewegst, auf die die Kanone zielt (schwarze Nadel). '...
                 'Diesmal kannst du die Kanone sehen\n\nViel Erfolg!'];
             Instructions(taskParam, 'followCannonPractice', Subject)
-            %Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
+            Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         else

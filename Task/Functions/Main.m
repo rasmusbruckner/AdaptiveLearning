@@ -27,7 +27,9 @@ if isequal(condition, 'oddballPractice')
     taskData.initiationRTs = nan(trial,1);
     taskData.actJitter = nan(trial,1);
     taskData.block = ones(trial,1);
-elseif isequal(condition, 'followOutcomePractice')
+elseif isequal(condition, 'followOutcomePractice')...
+        ||isequal(condition, 'mainPractice')...
+        ||isequal(condition, 'followCannonPractice') 
     taskData = load('CPInvisible');
     taskData = taskData.taskData;
     clear taskData.cBal taskData.rew

@@ -65,6 +65,7 @@ while 1
     %end
     
     if Data.tickMark == true
+    
         TickMark(taskParam, Data.outcome, 'outc')
         TickMark(taskParam, Data.pred, 'pred')
     end

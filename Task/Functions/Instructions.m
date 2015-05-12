@@ -123,27 +123,35 @@ end
                     
                 case 3
                     
-                    distMean = 290;
+                    [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex, true);
+                    WaitSecs(0.1);
+                    
+                case 4
+                    distMean = 290; % das nicht!!!!
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
-                            txt=['Steuere den orangenen Punkt jetzt auf die Stelle, '...
-                                'worauf die Kanone zielt und drücke LEERTASTE.'];
+                            txt=['Der schwarze Strich zeigt dir die Position der letzten Kugel. '...
+                                'Der orangene Strich zeigt dir die Position deines letzten Schildes. Steuere '...
+                                'den orangenen Punkt jetzt auf das Ziel '...
+                                'der Kanone und drücke LEERTASTE.'];
                         else
-                            txt=['Steuern Sie den orangenen Punkt jetzt bitten auf die Stelle, '...
-                                'worauf die Kanone zielt und drücken Sie LEERTASTE.'];
+                            txt=['Der schwarze Strich zeigt Ihnen die Position der letzten Kugel. '...
+                                'Der orangene Strich zeigt Ihnen die Position deines letzten Schildes. Steuern '...
+                                'Sie den orangenen Punkt bitte auf das Ziel '...
+                                'der Kanone und drücken Sie LEERTASTE.'];
                         end
                     elseif taskParam.gParam.oddball == true
                         txt=['Move the orange spot to the part of the circle, '...
                             'where the cannon is aimed and press SPACE.'];
                     end
-                    [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean);
-                    
-                case 4
-                    
-                    distMean = 290;
-                    screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+                    [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean, Data);
                     
                 case 5
+                    
+                    distMean = 290; %% das macht nichts
+                    screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+                    
+                case 6
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -167,7 +175,7 @@ end
                     win = true;
                     [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, txt, distMean, win);
                     
-                case 6
+                case 7
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -188,11 +196,11 @@ end
                     distMean = 35;
                     [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, txt, distMean);
                     
-                case 7
-                    
+                case 8
+                    Data.outcome = distMean;
                     [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
                     
-                case 8
+                case 9
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -207,7 +215,7 @@ end
                     win = true;
                     [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, txt, distMean, win);
                     
-                case 9
+                case 10
                     if isequal(subject.group, '1')
                         txt = sprintf(['Wenn du Kanonenkugeln fängst, '...
                             'kannst du Geld verdienen. Wenn das Schild '...
@@ -221,12 +229,7 @@ end
                             'Kanonenkugel zu fangen.\n\n'...
                             'Um einen Eindruck von der wechselnden Größe '...
                             'und Farbe des Schildes zu bekommen '...
-                            'kommt jetzt eine kurze Übung.\n\n'...
-                            'Die Position des letzten Balls wird dir '...
-                            'mit einem kleinen schwarzen Strich angezeigt.\n\n'...
-                            'Außerdem wird die Position deines '...
-                            'orangenen Punktes aus dem vorherigen Durchgang mit '...
-                            'einem orangenen Strich angezeigt.'], colRew, colNoRew);
+                            'kommt jetzt eine kurze Übung.\n\n'], colRew, colNoRew);
                     else
                         txt = sprintf(['Wenn Sie Kanonenkugeln fangen, '...
                             'können Sie Geld verdienen. Wenn das Schild '...
@@ -240,24 +243,19 @@ end
                             'Kanonenkugel zu fangen.\n\n'...
                             'Um einen Eindruck von der wechselnden Größe '...
                             'und Farbe des Schildes zu bekommen '...
-                            'kommt jetzt eine kurze Übung.\n\n'...
-                            'Die Position des letzten Balls wird Ihnen '...
-                            'mit einem kleinen schwarzen Strich angezeigt.\n\n'...
-                            'Außerdem wird die Position Ihres '...
-                            'orangenen Punktes aus dem vorherigen Durchgang mit '...
-                            'einem orangenen Strich angezeigt.'], colRew, colNoRew);
+                            'kommt jetzt eine kurze Übung.\n\n'], colRew, colNoRew);
                     end
                     [screenIndex, Data] = YourShield(screenIndex, Data, txt);
                     
-                case 10
-                    
-                    screenIndex = ShieldPractice(screenIndex);
-                    
                 case 11
+                    
+                    [screenIndex, Data] = ShieldPractice(screenIndex, whichPractice);
+                    
+                case 12
                     
                     screenIndex = TrialOutcomes(screenIndex);
                     
-                case 12
+                case 13
                     
                     distMean = 290;
                     if taskParam.gParam.oddball == false
@@ -269,13 +267,14 @@ end
                     elseif taskParam.gParam.oddball == true
                         txt='Now try to catch the ball.';
                     end
-                    [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean);
                     
-                case 13
-                    
-                    screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+                    [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean, Data);
                     
                 case 14
+                    
+                    [screenIndex, Data] = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+                    
+                case 15
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -295,7 +294,7 @@ end
                     win = true;
                     [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, txt, distMean, win);
                     
-                case 15
+                case 16
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -311,11 +310,12 @@ end
                     distMean = 35;
                     [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, txt, distMean);
                     
-                case 16
+                case 17
                     
+                    Data.outcome = distMean;
                     [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
                     
-                case 17
+                case 18
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -330,9 +330,10 @@ end
                         txt=['You missed the ball so you would earn nothing.'];
                     end
                     win = true;
+                    
                     [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, txt, distMean, win);
                     
-                case 18
+                case 19
                     
                     distMean = 190;
                     
@@ -347,13 +348,14 @@ end
                     elseif taskParam.gParam.oddball == true
                         txt='Now try to catch the ball.';
                     end
-                    [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean);
                     
-                case 19
+                    [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean, Data);
+                    
+                case 20
                     
                     screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
                     
-                case 20
+                case 21
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -374,12 +376,14 @@ end
                             'so you would earn nothing.'], colNoRew);
                     end
                     
+                    
                     win = false;
                     [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, txt, distMean, win);
                     
-                case 21
-                    
+                case 22
+                    Data.outcome = distMean;
                     distMean = 160;
+                    
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
                             
@@ -394,12 +398,13 @@ end
                     end
                     [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, txt, distMean);
                     
-                case 22
+                case 23
                     
                     distMean = 160;
+                    Data.outcome = distMean;
                     [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
                     
-                case 23
+                case 24
                     
                     if taskParam.gParam.oddball == false
                         if isequal(subject.group, '1')
@@ -416,7 +421,7 @@ end
                     win = false;
                     [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, txt, distMean, false);
                     
-                case 24
+                case 25
                     
                     if isequal(whichPractice, 'mainPractice') || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 4) || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 5) || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 6)
                         
@@ -531,8 +536,6 @@ end
                         cannon, condition, LoadData);
                     
                     [txt, header] = Feedback(practData, taskParam, subject, condition);
-                    
-                    
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -546,57 +549,11 @@ end
                     
                 case 3
                     
-                    sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
-                    if sumCannonDev >= 4
-                        
-                        header = 'Wiederholung der Übung';
-                        if taskParam.gParam.oddball == false
-                            if isequal(subject.group, '1')
-                                txt = ['In der letzten Übung hast du dich zu häufig '...
-                                    'vom Ziel der Kanone wegbewegt. Du kannst '...
-                                    'mehr Kugeln fangen, wenn du immer auf dem Ziel '...
-                                    'der Kanone bleibst!\n\nIn der nächsten Runde '...
-                                    'kannst nochmal üben. Wenn du noch Fragen hast, '...
-                                    'kannst du dich auch an den Versuchsleiter wenden.'];
-                            else
-                                txt = ['In der letzten Übung haben Sie sich zu häufig '...
-                                    'vom Ziel der Kanone wegbewegt. Sie können '...
-                                    'mehr Kugeln fangen, wenn Sie immer auf dem Ziel '...
-                                    'der Kanone bleiben!\n\nIn der nächsten Runde '...
-                                    'können Sie nochmal üben. Wenn Sie noch Fragen haben, '...
-                                    'können Sie sich auch an den Versuchsleiter wenden.'];
-                                
-                            end
-                        elseif taskParam.gParam.oddball == true
-                            header = 'Try it again!';
-                            txt = ['In that block your shield was not always placed '...
-                                'where the cannon was aiming. Remember: Placing your '...
-                                'shield where the cannon is aimed will be the best way '...
-                                'to earn money. '...
-                                'Now try again. '...
-                                ];
-                        end
-                        feedback = false;
-                        [fw, bw] = BigScreen(taskParam,...
-                            taskParam.strings.txtPressEnter, header, txt,...
-                            feedback);
-                        %                         if fw == 1
-                        %                             screenIndex = screenIndex - 1;
-                        %                         elseif bw == 1
-                        %                             screenIndex = screenIndex - 2;
-                        %                         end
-                    else
-                        screenIndex = screenIndex + 1;
-                    end
-                    
-                    WaitSecs(0.1);
-                    %screenIndex = 1;
+                    screenIndex = performanceCriterion(screenIndex, practData);
                     
                 case 4
                     
                     break
-                    
-                    
                     
             end
             
@@ -693,26 +650,19 @@ end
                     
                     
                     LoadData = 'CP_Noise';
-                    condition = 'mainPractice';
+                    if isequal(whichPractice, 'mainPractice')
+                        condition = 'mainPractice';
+                    elseif isequal(whichPractice, 'followCannonPractice')
+                        condition = 'followCannonPractice';
+                    elseif isequal(whichPractice, 'followOutcomePractice')
+                        condition = 'followOutcomePractice';
+                    end
                     [taskParam, practData] = PractLoop(taskParam, subject,...
                         taskParam.gParam.vola(1), taskParam.gParam.sigma(1),...
                         cannon, condition,LoadData);
                     
-                    hits = sum(practData.hit == 1);
-                    goldBall = sum(practData.boatType == 1);
-                    goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
-                    silverBall = sum(practData.boatType == 0);
-                    silverHit = hits - goldHit;
-                    maxMon = (length(find(practData.boatType == 1))...
-                        * taskParam.gParam.rewMag);
-                    if taskParam.gParam.oddball == false
-                        [txt, header] = Feedback(practData, taskParam, subject, condition);
-                        
-                    elseif taskParam.gParam.oddball == true
-                        
-                        [txt, header] = Feedback(practData, taskParam, subject, condition);
-                        
-                    end
+                    [txt, header] = Feedback(practData, taskParam, subject, condition);
+                    
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt, feedback);
@@ -726,52 +676,14 @@ end
                     
                 case 3
                     
-                    sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
-                    if sumCannonDev >= 4
-                        if taskParam.gParam.oddball == false
-                            if isequal(subject.group, '1')
-                                
-                                header = 'Wiederholung der Übung';
-                                txt = ['In der letzten Übung hast du dich zu häufig '...
-                                    'vom Ziel der Kanone wegbewegt. Du kannst '...
-                                    'mehr Kugeln fangen, wenn du immer auf dem Ziel '...
-                                    'der Kanone bleibst!\n\nIn der nächsten Runde '...
-                                    'kannst nochmal üben. Wenn du noch Fragen hast, '...
-                                    'kannst du dich auch an den Versuchsleiter wenden.'];
-                            else
-                                txt = ['In der letzten Übung haben Sie sich zu häufig '...
-                                    'vom Ziel der Kanone wegbewegt. Sie können '...
-                                    'mehr Kugeln fangen, wenn Sie immer auf dem Ziel '...
-                                    'der Kanone bleiben!\n\nIn der nächsten Runde '...
-                                    'können Sie nochmal üben. Wenn Sie noch Fragen haben, '...
-                                    'können Sie sich auch an den Versuchsleiter wenden.'];
-                            end
-                        elseif taskParam.gParam.oddball == true
-                            header = 'Try it again!';
-                            txt = ['In that block your shield was not always placed '...
-                                'where the cannon was aiming. Remember: Placing your '...
-                                'shield where the cannon is aimed will be the best way '...
-                                'to earn money. '...
-                                'Now try again. '];
-                        end
-                        feedback = false;
-                        [fw, bw] = BigScreen(taskParam,...
-                            taskParam.strings.txtPressEnter, header, txt,...
-                            feedback);
-                        if fw == 1
-                            screenIndex = screenIndex - 1;
-                        elseif bw == 1
-                            screenIndex = screenIndex - 2;
-                        end
-                    else
-                        screenIndex = screenIndex + 1;
-                    end
-                    
-                    WaitSecs(0.1);
+                    screenIndex = performanceCriterion(screenIndex, practData);
                     
                 case 4
                     
-                    if isequal(whichPractice, 'followCannonPractice') || isequal(whichPractice, 'followOutcomePractice')
+                    if isequal(whichPractice, 'followCannonPractice')
+                        FollowCannonJustInstructions
+                        
+                    elseif isequal(whichPractice, 'followOutcomePractice')
                         break
                     else
                         MainJustInstructions
@@ -785,8 +697,12 @@ end
     end
 
     function FollowCannonJustInstructions
-        
-        screenIndex = 1;
+        if subject.cBal == 1 || subject.cBal == 2 || subject.cBal == 3
+            screenIndex = 1;
+        else
+            screenIndex = 2;
+            
+        end
         while 1
             switch(screenIndex)
                 
@@ -798,20 +714,31 @@ end
                     
                 case 2
                     
-                    header = 'Erste Übung';
+                    if subject.cBal == 1 || subject.cBal == 2 || subject.cBal == 3
+                        header = 'Erste Übung';
+                    else
+                        header = 'Dritte Übung';
+                    end
+                    
+                    
+                    
                     if isequal(subject.group, '1')
                         
                         txt = ['In dieser Aufgabe sollst du wieder versuchen '...
                             'möglichst viele Kanonenkugeln zu fangen. Da du '...
                             'die Kanone jetzt die ganze Zeit siehst, '...
                             'steuerst du dein Schild am besten '...
-                            'genau auf das Ziel der Kanone (schwarze Nadel).'];
+                            'genau auf das Ziel der Kanone (schwarze Nadel).'...
+                            '\\Beachte allerdings, dass du jetzt nicht mehr '...
+                            'sehen kannst wie die Kanonenkugel fliegt.'];
                     else
                         txt = ['In dieser Aufgabe sollen Sie wieder versuchen '...
                             'möglichst viele Kanonenkugeln zu fangen. Da Sie '...
                             'die Kanone jetzt die ganze Zeit sehen, '...
                             'steuern Sie Ihr Schild am besten '...
-                            'genau auf das Ziel der Kanone (schwarze Nadel).'];
+                            'genau auf das Ziel der Kanone (schwarze Nadel).'...
+                            '\\Beachten Sie bitte, dass Sie jetzt nicht mehr '...
+                            'sehen können wie die Kanonenkugel fliegt.'];
                     end
                     
                     feedback = false;
@@ -926,8 +853,6 @@ end
         
     end
 
-%% das auf jeden fall bearbeiten
-%% rest wäre gut aber weniger wichtig!!
     function FollowOutcomeInstructions
         
         screenIndex = 1;
@@ -945,21 +870,15 @@ end
                     
                 case 3
                     
-                    
-                    %txt=['Nach dem Schuss erscheint dein Schild. '...
-                    % 'Das Schild kannst du benutzen um die Kanonenkugel einzusammeln. '];
-                    [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex);
-                    
+                    [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex, true);
                     
                 case 4
-                    distMean = 290;
-                    screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
                     
-                case 5
                     if isequal(subject.group, '1')
                         
-                        txt=['Bewege den orangenen Punkt zur Stelle der letzten Kanonenkugel '...
-                            '(schwarzer Strich) und drücke LEERTASTE um die Kugel aufzusammeln. '...
+                        txt=['Der schwarze Strich zeigt dir die Position der letzten Kugel. '...
+                            'Der orangene Strich zeigt dir die Position deines letzten Schildes. Bewege den orangenen Punkt zur Stelle der letzten Kanonenkugel '...
+                            'und drücke LEERTASTE um die Kugel aufzusammeln. '...
                             'Gleichzeitig schießt die Kanone dann eine neue Kugel ab.'];
                     else
                         txt=['Bewegen Sie den orangenen Punkt zur Stelle der letzten Kanonenkugel '...
@@ -970,7 +889,8 @@ end
                     Data.outcome = 290;
                     [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt);
                     
-                case 6
+                case 5
+                    
                     if isequal(subject.group, '1')
                         txt=['Sehr gut! Du hast die vorherige Kanonenkugel aufgesammelt. '...
                             'Wie du sehen kannst hat die Kanone auch eine neue Kugel abgeschossen, '...
@@ -981,11 +901,13 @@ end
                             'Wie Sie sehen können hat die Kanone auch eine neue Kugel abgeschossen, '...
                             'die Sie im nächsten Durchgang aufsammeln können.'];
                     end
+                    distMean = 35;
                     Data.distMean = 35;
                     Data.outcome = 35;
                     screenIndex = YouDidNotCollectTheCannonBall_TryAgain(screenIndex, Data, distMean, txt);
                     
-                case 7
+                case 6
+                    
                     if isequal(subject.group, '1')
                         txt=['Bewege den orangenen Punkt jetzt wieder zur Stelle der letzten Kanonenkugel '...
                             '(schwarzer Strich) und drücke LEERTASTE um die Kugel aufzusammeln.'];
@@ -993,12 +915,12 @@ end
                         txt=['Bewegen Sie den orangenen Punkt jetzt wieder zur Stelle der letzten Kanonenkugel '...
                             '(schwarzer Strich) und drücken Sie bitte LEERTASTE um die Kugel aufzusammeln.'];
                     end
-                    %txt = '??';
                     Data.distMean = 190;
                     Data.outcome = 35;
                     [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt);
                     
-                case 8
+                case 7
+                    
                     if isequal(subject.group, '1')
                         
                         txt=['Sehr gut! Du hast die vorherige Kanonenkugel wieder aufgesammelt.'];
@@ -1012,7 +934,8 @@ end
                     Data.outcome = 190;
                     screenIndex = YouDidNotCollectTheCannonBall_TryAgain(screenIndex, Data, distMean, txt);
                     
-                case 9
+                case 8
+                    
                     if isequal(subject.group, '1')
                         
                         txt = sprintf(['Wenn du Kanonenkugeln aufsammelst, '...
@@ -1026,12 +949,7 @@ end
                             'Daher versuchst du am besten jede Kanonenkugel '...
                             'aufzusammeln.\n\nUm einen Eindruck von der '...
                             'wechselnden Größe und Farbe des Schildes zu bekommen '...
-                            'kommt jetzt eine kurze Übung.\n\n'...
-                            'Die Position des letzten Balls wird dir wieder '...
-                            'mit einem kleinen schwarzen Strich angezeigt.\n\n'...
-                            'Außerdem wird die Position deines orangenen '...
-                            'Punktes aus dem vorherigen Durchgang wieder mit '...
-                            'einem orangenen Strich angezeigt.'], colRew, colNoRew);
+                            'kommt jetzt eine kurze Übung.'], colRew, colNoRew);
                         
                     else
                         
@@ -1046,124 +964,24 @@ end
                             'Daher versuchen Sie am besten jede Kanonenkugel '...
                             'aufzusammeln.\n\nUm einen Eindruck von der '...
                             'wechselnden Größe und Farbe des Schildes zu bekommen '...
-                            'kommt jetzt eine kurze Übung.\n\n'...
-                            'Die Position des letzten Balls wird Ihnen wieder '...
-                            'mit einem kleinen schwarzen Strich angezeigt.\n\n'...
-                            'Außerdem wird die Position Ihres orangenen '...
-                            'Punktes aus dem vorherigen Durchgang wieder mit '...
-                            'einem orangenen Strich angezeigt.'], colRew, colNoRew);
+                            'kommt jetzt eine kurze Übung.'], colRew, colNoRew);
                         
                     end
                     [screenIndex, Data] = YourShield(screenIndex, Data,txt);
                     
+                case 9
+                    
+                    screenIndex = ShieldPractice(screenIndex, whichPractice);
+                    
                 case 10
-                    
-                    screenIndex = ShieldPractice(screenIndex);
-                    
-                    %                     condition = 'shield';
-                    %                     PractLoop(taskParam, subject,...
-                    %                         taskParam.gParam.vola(2),taskParam.gParam.sigma(3), cannon, condition);
-                    %                     screenIndex = screenIndex + 1;
-                    %                     WaitSecs(0.1);
-                    
-                case 11
                     
                     screenIndex = TrialOutcomes(screenIndex);
                     
-                    %                     header = 'Gewinnmöglichkeiten';
-                    %                     txt = ['Um dir genau zu zeigen, wann du Geld verdienst, '...
-                    %                         'spielen wir jetzt alle Möglichkeiten durch.'];
-                    %
-                    %                     feedback = false;
-                    %                     [fw, bw] = BigScreen(taskParam,...
-                    %                         taskParam.strings.txtPressEnter, header, txt, feedback);
-                    %                     if fw == 1
-                    %                         screenIndex = screenIndex + 1;
-                    %                     elseif bw == 1
-                    %                         screenIndex = screenIndex - 2;
-                    %                     end
-                    %                     WaitSecs(0.1);
+                case 11
+                    
+                    [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex, false);
                     
                 case 12
-                    
-                    %distMean = 290;
-                    
-                    [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex);
-                    %txt=['Drücke LEERTASTE, damit die Kanone schießt.'];
-                    %
-                    %                     [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
-                    %                         txt, cannon, 'space', distMean);
-                    %                     if fw == 1
-                    %                         screenIndex = screenIndex + 1;
-                    %                     end
-                    
-                case 13
-                    
-                    
-                    distMean = 290;
-                    screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
-                    
-                    %                     Data.distMean = 35;
-                    %                     Data.outcome = 35;
-                    %                      screenIndex = YouDidNotCollectTheCannonBall_TryAgain(screenIndex, Data, distMean);
-                    %                     distMean = 290;
-                    %                     Data.outcome = 290;
-                    %                     if taskParam.gParam.oddball == false
-                    %                         txt=['Das Schild erscheint nach dem '...
-                    %                             'Schuss. In diesem Fall hast du die '...
-                    %                             'Kanonenkugel abgefangen. '...
-                    %                             'Wenn mindestens die Hälfte der Kugel auf dem Schild ist, '...
-                    %                             'zählt es als Treffer.'];
-                    %                     elseif taskParam.gParam.oddball == true
-                    %                         txt=['After the cannon is shot you will see the shield. '...
-                    %                             'In this case you caught the ball. If at least half '...
-                    %                             'of the ball overlaps with the shield then it is a "catch".'];
-                    %                     end
-                    %                     [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, txt, distMean);
-                    %
-                    
-                    %                     background = true;
-                    %                     Cannonball(taskParam, distMean, outcome, background)
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, outcome);
-                    %                     Cannon(taskParam, distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %
-                    %                     txt=['Nach dem Schuss erscheint dein Schild. '...
-                    %                         'Das Schild kannst du benutzen um die Kanonenkugel einzusammeln. '];
-                    %
-                    %                     LineAndBack(taskParam)
-                    %                     Cannon(taskParam, distMean)
-                    %                     DrawCircle(taskParam)
-                    %
-                    %                     if subject.rew == 1
-                    %                         Shield(taskParam, 20, Data.pred, 1)
-                    %                     elseif subject.rew == 2
-                    %                         Shield(taskParam, 20, Data.pred, 0)
-                    %
-                    %                     end
-                    %                     DrawOutcome(taskParam, outcome)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 2.1, 1);
-                    %                     WaitSecs(1);
-                    %                     screenIndex = screenIndex + 1;
-                    
-                case 14
                     
                     if isequal(subject.group, '1')
                         
@@ -1178,21 +996,7 @@ end
                     Data.outcome = 290;
                     [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt);
                     
-                    %                     txt= ['Versuche die letzte Kanonenkugel jetzt wieder '...
-                    %                         'aufzusammeln (angezeigt durch den schwarzen Strich).'];
-                    %
-                    %                     Data.distMean = 35;
-                    %                     Data.outcome = 290;
-                    %                     Data.tickMark = true;
-                    %
-                    %                     [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
-                    %                         cannon, 'space', Data.distMean, Data);
-                    %                     if fw == 1
-                    %                         screenIndex = screenIndex + 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 15
+                case 13
                     
                     if isequal(subject.group, '1')
                         
@@ -1211,52 +1015,8 @@ end
                     Data.outcome = 35;
                     screenIndex = YouDidNotCollectTheCannonBall_TryAgain(screenIndex, Data, distMean, txt);
                     
+                case 14
                     
-                    %                     Data.distMean = 35;
-                    %                     Data.outcome = 35;
-                    %                     background = true;
-                    %                     Cannonball(taskParam, Data.distMean, Data.outcome, background)
-                    %
-                    %                     if Data.memErr >= 9
-                    %                         while 1
-                    %
-                    %                             txt=['Leider hast du die Kanonenkugel vefehlt. '...
-                    %                                 'Versuche es noch einmal!'];
-                    %
-                    %                             LineAndBack(taskParam)
-                    %                             DrawCircle(taskParam);
-                    %                             DrawCross(taskParam);
-                    %                             PredictionSpot(taskParam);
-                    %                             DrawOutcome(taskParam, Data.outcome);
-                    %                             Cannon(taskParam, Data.distMean)
-                    %                             DrawFormattedText(taskParam.gParam.window,...
-                    %                                 taskParam.strings.txtPressEnter,'center',...
-                    %                                 taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                             DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                                 taskParam.gParam.screensize(3)*0.1,...
-                    %                                 taskParam.gParam.screensize(4)*0.05,...
-                    %                                 [255 255 255], sentenceLength);
-                    %                             Screen('DrawingFinished', taskParam.gParam.window);
-                    %                             t = GetSecs;
-                    %                             Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %
-                    %                             [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                             if keyIsDown
-                    %                                 if keyCode(taskParam.keys.enter)
-                    %                                     screenIndex = screenIndex - 1;
-                    %                                     break
-                    %                                 elseif keyCode(taskParam.keys.delete)
-                    %                                     screenIndex = screenIndex - 2;
-                    %                                     break
-                    %                                 end
-                    %                             end
-                    %                         end
-                    %                     else
-                    %                         screenIndex = screenIndex + 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 16
                     if isequal(subject.group, '1')
                         
                         
@@ -1270,265 +1030,14 @@ end
                     Data.outcome = 35;
                     [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt);
                     
-                    %distMean = 35;
-                    %[screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, txt, distMean);
+                case 15
                     
-                    
-                    %                     keyboard
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, Data.outcome);
-                    %                     Cannon(taskParam, Data.distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %                     while 1
-                    %
-                    %                         txt = sprintf(['Weil du die Kanonenkugel aufgesammelt '...
-                    %                             'hast und das Schild %s war, '...
-                    %                             'hättest du jetzt 20 CENT verdient.'], colRew);
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawCircle(taskParam)
-                    %                         if subject.rew == 1
-                    %                             Shield(taskParam, 20, Data.pred, 1)
-                    %                         elseif subject.rew == 2
-                    %                             Shield(taskParam, 20, Data.pred, 0)
-                    %                         end
-                    %                         DrawOutcome(taskParam, Data.outcome)
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                         Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex + 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 3;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 17
-                    
-                    %                     txt=['Versuche die Kanonenkugel bei nächsten Schuss '...
-                    %                         'zu verfehlen.'];
-                    %
-                    %                     Data.distMean = 190;
-                    %                     Data.outcome = 35;
-                    %                     [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
-                    %                         txt, cannon, 'space', Data.distMean, Data);
-                    %                     background = true;
                     Data.distMean = 190;
                     Data.outcome = 190;
-                    %                     Cannonball(taskParam, Data.distMean, Data.outcome, background)
                     win = true;
                     [screenIndex, Data] = YouCollectedTheCannonball_TryToMissIt(screenIndex, Data, win);
-                    %
-                    %                     if Data.memErr <= 9
-                    %
-                    %
-                    %
-                    %                     while 1
-                    %
-                    %                         txt=['Du hast die Kanonenkugel aufgesammelt. '...
-                    %                             'Versuche die Kanonenkugel diesmal extra nicht aufzusammeln!'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         DrawCircle(taskParam);
-                    %                         DrawCross(taskParam);
-                    %                         PredictionSpot(taskParam);
-                    %                         DrawOutcome(taskParam, Data.outcome);
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window);
-                    %                         t = GetSecs;
-                    %                         Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex - 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 5;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    %
-                    %
-                    %
-                    %                     else
-                    %
-                    %
-                    %
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, Data.outcome);
-                    %                     Cannon(taskParam, Data.distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %                     while 1
-                    %
-                    %                         txt=['Weil du die Kanonenkugel nicht aufgesammelt hast, '...
-                    %                             'hättest du nichts verdient.'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawCircle(taskParam)
-                    %                         if subject.rew == 1
-                    %                             Shield(taskParam, 20, Data.pred, 1)
-                    %                         elseif subject.rew == 2
-                    %                             Shield(taskParam, 20, Data.pred, 0)
-                    %                         end
-                    %                         DrawOutcome(taskParam, Data.outcome)
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                         Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex + 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 6;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    %
-                    %
-                    %                     end
-                    %                     WaitSecs(0.1);
                     
-                    %screenIndex = screenIndex + 1;
-                    
-                    %                     while 1
-                    %
-                    %                         txt=['Du hast die Kanonenkugel aufgesammelt. '...
-                    %                             'Versuche die Kanonenkugel diesmal extra nicht aufzusammeln!'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         DrawCircle(taskParam);
-                    %                         DrawCross(taskParam);
-                    %                         PredictionSpot(taskParam);
-                    %                         DrawOutcome(taskParam, Data.outcome);
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window);
-                    %                         t = GetSecs;
-                    %                         Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex - 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 5;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                    
-                    
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, Data.outcome);
-                    %                     Cannon(taskParam, Data.distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %                     while 1
-                    %
-                    %                         txt=['Weil du die Kanonenkugel nicht aufgesammelt hast, '...
-                    %                             'hättest du nichts verdient.'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawCircle(taskParam)
-                    %                         if subject.rew == 1
-                    %                             Shield(taskParam, 20, Data.pred, 1)
-                    %                         elseif subject.rew == 2
-                    %                             Shield(taskParam, 20, Data.pred, 0)
-                    %                         end
-                    %                         DrawOutcome(taskParam, Data.outcome)
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                         Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex + 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 6;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 18
+                case 16
                     
                     if isequal(subject.group, '1')
                         txt= ['Versuche die letzte Kanonenkugel jetzt wieder '...
@@ -1541,184 +1050,11 @@ end
                     Data.outcome = 190;
                     [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt);
                     
-                    
-                    %                     txt='Versuche die Kanonenkugel jetzt wieder aufzusammeln.';
-                    %
-                    %                     Data.distMean = 160;
-                    %                     Data.outcome = 190;
-                    %                     [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
-                    %                         cannon, 'space', Data.distMean, Data);
-                    %                     if fw == 1
-                    %                         screenIndex = screenIndex + 1;
-                    %                     elseif bw == 1
-                    %                         screenIndex = screenIndex - 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 19
-                    
+                case 17
                     
                     [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex, Data);
                     
-                    %                     background = true;
-                    %                     Data.distMean = 160;
-                    %                     Data.outcome = 160;
-                    %                     Cannonball(taskParam, Data.distMean, Data.outcome, background)
-                    %                     if Data.memErr <= 9
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, Data.outcome);
-                    %                     Cannon(taskParam, Data.distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     % Show baseline 1.
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %                     while 1
-                    %
-                    %                         txt=sprintf(['Du hast die Kanonenkugel aufgesammelt, '...
-                    %                             'aber das Schild war %s. Daher hättest '...
-                    %                             'du nichts verdient.'], colNoRew);
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawCircle(taskParam)
-                    %                         if subject.rew == 1
-                    %                             Shield(taskParam, 20, Data.pred, 0)
-                    %                         elseif subject.rew == 2
-                    %                             Shield(taskParam, 20, Data.pred, 1)
-                    %                         end
-                    %                         DrawOutcome(taskParam, Data.outcome)
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                         Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex + 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 10;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    %
-                    %
-                    %                         %screenIndex = screenIndex + 2;
-                    %                     else
-                    %
-                    %
-                    %
-                    %
-                    %                 %case 20
-                    %
-                    %                     while 1
-                    %
-                    %                         txt=['Leider hast du die Kanonenkugel nicht aufgesammelt. '...
-                    %                             'Versuche es noch einmal!'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         DrawCircle(taskParam);
-                    %                         DrawCross(taskParam);
-                    %                         PredictionSpot(taskParam);
-                    %                         DrawOutcome(taskParam, Data.outcome);
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window);
-                    %                         t = GetSecs;
-                    %                         Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex - 2;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 9;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    %
-                    %                      screenIndex = screenIndex + 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    %case 21
-                    
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, Data.outcome);
-                    %                     Cannon(taskParam, Data.distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     % Show baseline 1.
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %                     while 1
-                    %
-                    %                         txt=sprintf(['Du hast die Kanonenkugel aufgesammelt, '...
-                    %                             'aber das Schild war %s. Daher hättest '...
-                    %                             'du nichts verdient.'], colNoRew);
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawCircle(taskParam)
-                    %                         if subject.rew == 1
-                    %                             Shield(taskParam, 20, Data.pred, 0)
-                    %                         elseif subject.rew == 2
-                    %                             Shield(taskParam, 20, Data.pred, 1)
-                    %                         end
-                    %                         DrawOutcome(taskParam, Data.outcome)
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                         Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex + 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 10;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 20
+                case 18
                     
                     
                     if isequal(subject.group, '1')
@@ -1733,227 +1069,27 @@ end
                     Data.outcome = 160;
                     [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt);
                     
-                    %                     txt=['Veruche die Kanonenkugel bei nächsten Schuss wieder '...
-                    %                         'extra nicht aufzusammeln.'];
-                    %
-                    %                     Data.distMean = 10;
-                    %                     Data.outcome = 160;
-                    %                     [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
-                    %                         cannon, 'space', Data.distMean, Data);
-                    %                     Data.disMean = 10
-                    %                     Data.outcome = 10
-                    %                     background = true;
-                    %                     Cannonball(taskParam, Data.distMean, Data.outcome, background)
-                    %                     if Data.memErr >= 9
-                    %                         screenIndex = screenIndex + 2;
-                    %                     else
-                    %                         screenIndex = screenIndex + 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 21
+                case 19
                     
                     Data.distMean = 10;
                     Data.outcome = 10;
                     win = false;
                     [screenIndex, Data] = YouCollectedTheCannonball_TryToMissIt(screenIndex, Data, win);
-                    %
-                    %                     while 1
-                    %
-                    %                         txt=['Du hast die Kanonenkugel aufgesammelt. '...
-                    %                             'Versuche die Kanonenkugel diesmal zu verpassen!'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         DrawCircle(taskParam);
-                    %                         DrawCross(taskParam);
-                    %                         PredictionSpot(taskParam);
-                    %                         DrawOutcome(taskParam, Data.outcome);
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window);
-                    %                         t = GetSecs;
-                    %                         Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 screenIndex = screenIndex - 1;
-                    %                                 break
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 12;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
                     
-                    %                 case 22
-                    
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCircle(taskParam);
-                    %                     DrawCross(taskParam);
-                    %                     PredictionSpot(taskParam);
-                    %                     DrawOutcome(taskParam, Data.outcome);
-                    %                     Cannon(taskParam, Data.distMean)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window);
-                    %                     t = GetSecs;
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.1);
-                    %                     LineAndBack(taskParam)
-                    %                     DrawCross(taskParam)
-                    %                     DrawCircle(taskParam)
-                    %                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                     Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
-                    %                     while 1
-                    %
-                    %                         txt=['Weil du die Kanonenkugel nicht aufgesammelt hast, '...
-                    %                             'hättest du nichts verdient.'];
-                    %
-                    %                         LineAndBack(taskParam)
-                    %                         Cannon(taskParam, Data.distMean)
-                    %                         DrawCircle(taskParam)
-                    %                         if subject.rew == 1
-                    %                             Shield(taskParam, 20, Data.pred, 0)
-                    %                         elseif subject.rew == 2
-                    %                             Shield(taskParam, 20, Data.pred, 1)
-                    %                         end
-                    %                         DrawOutcome(taskParam, Data.outcome)
-                    %                         DrawFormattedText(taskParam.gParam.window,txt,...
-                    %                             taskParam.gParam.screensize(3)*0.1,...
-                    %                             taskParam.gParam.screensize(4)*0.05,...
-                    %                             [255 255 255], sentenceLength);
-                    %                         DrawFormattedText(taskParam.gParam.window,...
-                    %                             taskParam.strings.txtPressEnter,'center',...
-                    %                             taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-                    %                         Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    %                         Screen('Flip', taskParam.gParam.window, t + 1.6);
-                    %                         [ keyIsDown, ~, keyCode ] = KbCheck;
-                    %                         if keyIsDown
-                    %                             if keyCode(taskParam.keys.enter)
-                    %                                 %if subject.cBal == 1
-                    %                                     screenIndex = screenIndex + 1;
-                    %                                     break
-                    %                                 %elseif subject.cBal == 2
-                    %                                   %  screenIndex = screenIndex + 1;
-                    %                                  %   break
-                    %                                 %end
-                    %                             elseif keyCode(taskParam.keys.delete)
-                    %                                 screenIndex = screenIndex - 13;
-                    %                                 break
-                    %                             end
-                    %                         end
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 22
-                    
-                    %MainAndFollowCannon_CannonVisibleNoNoise
+                case 20
                     
                     MainAndFollowCannon_CannonVisibleNoise
                     
                     screenIndex = screenIndex + 1;
-                    %                     header = 'Erste Übung';
-                    %
-                    %                     txt=['In dieser Übung ist das Ziel so viele Kanonenkugeln wie möglich aufzusammeln. '...
-                    %                         'Du wirst feststellen, dass die Kanone relativ ungenau schießt, aber meistens auf die selbe Stelle zielt. '...
-                    %                         'Manchmal dreht sich die Kanone allerdings auch und zielt auf eine andere Stelle. '...
-                    %                         'Du verdienst am meisten, wenn du den organgenen Punkt GENAU '...
-                    %                         'auf den schwarzen Strich steuerst, weil du so sicher die Kugel aufsammelst. '...
-                    %                         '\n\nWenn du die Kugel zu oft nicht aufsammelst, '...
-                    %                         'wird die '...
-                    %                         'Übung wiederholt.'];
-                    %
-                    %                     feedback = false;
-                    %                     [fw, bw] = BigScreen(taskParam, ...
-                    %                         taskParam.strings.txtPressEnter, header, txt, feedback);
-                    %                     if fw == 1
-                    %                         screenIndex = screenIndex + 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
                     
-                    %                 case 23
-                    %
-                    %                     condition = 'followOutcomePractice';
-                    %                     [taskParam, practData] = PractLoop(taskParam,...
-                    %                         subject, taskParam.gParam.vola(3),...
-                    %                         taskParam.gParam.sigma(1), cannon, condition, 'Control_Practice');
-                    %                     [txt, header] = Feedback(practData, taskParam, subject, condition);
-                    %                     feedback = true;
-                    %                     [fw, bw] = BigScreen(taskParam,...
-                    %                         taskParam.strings.txtPressEnter, header, txt,feedback);
-                    %                     sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.catchTrialCriterion);
-                    %                     if fw == 1
-                    %                         if taskParam.gParam.oddball == true && subject.cBal == 2
-                    %                             screenIndex = screenIndex + 1;
-                    %                         else
-                    %                             screenIndex = screenIndex + 1;
-                    %                         end
-                    %                     elseif bw == 1
-                    %                         screenIndex = screenIndex - 1;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    %
-                    %                 case 24
-                    %
-                    %                     sumControlDev = sum(practData.controlDev >= 10);
-                    %                     if sumControlDev >= 4
-                    %
-                    %                         header = 'Wiederholung der Übung';
-                    %
-                    %                         txt = ['In der letzten Übung hast du dich zu häufig '...
-                    %                             'vom Ziel der Kanone wegbewegt. Du kannst '...
-                    %                             'mehr Kugeln fangen, wenn du immer auf dem Ziel '...
-                    %                             'der Kanone bleibst!\n\nIn der nächsten Runde '...
-                    %                             'kannst nochmal üben. Wenn du noch Fragen hast, '...
-                    %                             'kannst du dich auch an den Versuchsleiter wenden.'];
-                    %
-                    %                         feedback = false;
-                    %                         [fw, bw] = BigScreen(taskParam,...
-                    %                             taskParam.strings.txtPressEnter, header, txt,...
-                    %                             feedback);
-                    %                         if fw == 1
-                    %                             screenIndex = screenIndex - 1;
-                    %                         elseif bw == 1
-                    %                             screenIndex = screenIndex - 2;
-                    %                         end
-                    %                     else
-                    %                         screenIndex = screenIndex + 1;
-                    %                     end
-                    %
-                    %                     WaitSecs(0.1);
-                    
-                    %                 case 25
-                    %
-                    %                     header = 'Zweite Übung';
-                    %                     txt = ['In dieser Übung bleibt alles gleich außer, dass du die Kanone jetzt nicht mehr sehen kannst. '...
-                    %                         'Anstelle der Kanone siehst du ab jetzt ein '...
-                    %                         'Kreuz und auch wo die Kanonenkugeln landen.\n\n'...
-                    %                         'Um weiterhin Kanonenkugeln aufsammeln zu können, '...
-                    %                         'musst du deinen Punkt einfach nur zum schwarzen '...
-                    %                         'Strich steuern.'];
-                    %                     feedback = false;
-                    %                     [fw, bw] = BigScreen(taskParam,...
-                    %                         taskParam.strings.txtPressEnter, header, txt, feedback);
-                    %                     if fw == 1
-                    %                         screenIndex = screenIndex + 1;
-                    %
-                    %                     elseif bw == 1
-                    %                         screenIndex = screenIndex - 3;
-                    %                     end
-                    %                     WaitSecs(0.1);
-                    
-                case 23
+                case 21
                     
                     break
             end
         end
     end
 
-    function screenIndex = YourTaskScreen(txt, screenIndex)
+    function [screenIndex] = YourTaskScreen(txt, screenIndex)
         while 1
             Screen('TextFont', taskParam.gParam.window, 'Arial');
             Screen('TextSize', taskParam.gParam.window, 30);
@@ -1972,7 +1108,9 @@ end
         WaitSecs(0.1);
     end
 
-    function screenIndex = FirstCannonSlide(screenIndex)
+    function [screenIndex] = FirstCannonSlide(screenIndex)
+        
+        WaitSecs(0.1);
         if taskParam.gParam.oddball == false
             if isequal(whichPractice, 'mainPractice') || isequal(whichPractice, 'followCannonPractice')
                 if isequal(subject.group, '1')
@@ -2037,22 +1175,36 @@ end
         WaitSecs(0.1);
     end
 
-    function [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean)
+    function [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean, Data)
         
+        t = GetSecs;
+        LineAndBack(taskParam)
+        DrawCross(taskParam)
+        DrawCircle(taskParam)
+        Screen('DrawingFinished', taskParam.gParam.window, 1);
+        Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
+        WaitSecs(0.5)
+        
+        
+        Data.tickMark=true;
+        
+        %Data.outcome=320;
+        %Data.pred = 360;
+        Data.distMean=distMean
         [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
-            txt, cannon, 'space', distMean);
+            txt, cannon, 'space', distMean, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
         end
         WaitSecs(0.1);
     end
 
-    function screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean)
-        %distMean = 290;
+    function [screenIndex, Data] = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean)
         outcome = distMean;
+        Data.outcome = distMean;
         background = true;
         Cannonball(taskParam, distMean, outcome, background)
-        if isequal(whichPractice, 'mainPractice') && Data.predErr >= 9
+        if (isequal(whichPractice, 'mainPractice') && Data.predErr >= 9) || (isequal(whichPractice, 'followCannonPractice') && Data.predErr >= 9)
             %while 1
             if taskParam.gParam.oddball == false
                 if isequal(subject.group, '1')
@@ -2155,10 +1307,26 @@ end
 
     function [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, txt, distMean)
         
-        outcome = distMean;
         
+        t = GetSecs;
+        LineAndBack(taskParam)
+        DrawCross(taskParam)
+        DrawCircle(taskParam)
+        Screen('DrawingFinished', taskParam.gParam.window, 1);
+        Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
+        WaitSecs(0.5)
+        
+        
+        Data.tickMark=true;
+        
+        %Data.outcome=320;
+        %Data.pred = 360;
+        Data.distMean=distMean
+        
+        outcome = distMean;
+        Data.tickMark = true;
         [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt,...
-            cannon, 'space', distMean);
+            cannon, 'space', distMean, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
         end
@@ -2168,7 +1336,7 @@ end
 
     function [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean)
         
-        outcome = distMean;
+        outcome = Data.outcome;
         background = true;
         Cannonball(taskParam, distMean, outcome, background)
         
@@ -2250,8 +1418,6 @@ end
 
     function [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, txt, distMean, win)
         
-        
-        %distMean = 35;
         outcome = distMean;
         LineAndBack(taskParam)
         DrawCross(taskParam)
@@ -2356,16 +1522,22 @@ end
         
     end
 
-    function [screenIndex] = ShieldPractice(screenIndex)
+    function [screenIndex, Data] = ShieldPractice(screenIndex, whichPractice)
+        
         condition = 'shield';
-        PractLoop(taskParam, subject,...
-            taskParam.gParam.vola(3),...
+        if (isequal(whichPractice, 'mainPractice')) || (isequal(whichPractice, 'followCannonPractice'))
+            vola = taskParam.gParam.vola(3);
+        else
+            vola = taskParam.gParam.vola(2);
+        end
+        [taskParam, Data] = PractLoop(taskParam, subject,...
+            vola,...
             taskParam.gParam.sigma(3), cannon, condition);
         screenIndex = screenIndex + 1;
         WaitSecs(0.1);
     end
 
-    function screenIndex = TrialOutcomes(screenIndex)
+    function [screenIndex] = TrialOutcomes(screenIndex)
         if taskParam.gParam.oddball == false
             header = 'Gewinnmöglichkeiten';
             if isequal(subject.group, '1')
@@ -2392,22 +1564,51 @@ end
         WaitSecs(0.1);
     end
 
-    function [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex)
-        if isequal(subject.group, '1')
-            
-            txt=['Drücke LEERTASTE, damit die Kanone schießt.'];
+    function [screenIndex, Data] = PressSpaceToInitiateCannonShot(screenIndex, introduceNeedle)
+        if introduceNeedle
+            if isequal(subject.group, '1')
+                
+                txt=['Das Ziel der Kanone wird mit der '...
+                    'schwarzen Nadel angezeigt. Drücke LEERTASTE, '...
+                    'damit die Kanone schießt.'];
+            else
+                txt=['Das Ziel der Kanone wird mit der '...
+                    'schwarzen Nadel angezeigt. Drücke Sie bitte LEERTASTE, '...
+                    'damit die Kanone schießt.'];
+                
+            end
         else
-            txt=['Drücken Sie bitte LEERTASTE, damit die Kanone schießt.'];
-            
+            if isequal(subject.group, '1')
+                
+                txt=['Drücke LEERTASTE, '...
+                    'damit die Kanone schießt.'];
+            else
+                txt=['Drücke Sie bitte LEERTASTE, '...
+                    'damit die Kanone schießt.'];
+                
+            end
         end
         
         distMean = 290;
         outcome = 290;
         [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
             txt, cannon, 'space', distMean);
+        
         if fw == 1
+            
+            
+            
+            outcome = distMean;
+            background = true;
+            Cannonball(taskParam, distMean, outcome, background)
             screenIndex = screenIndex + 1;
+            
+            return
         end
+        WaitSecs(0.1);
+        
+        
+        
     end
 
     function [screenIndex, Data] = MoveSpotToLastOutcome(screenIndex, Data, txt)
@@ -2432,7 +1633,7 @@ end
         end
     end
 
-    function screenIndex = YouDidNotCollectTheCannonBall_TryAgain(screenIndex, Data, distMean, txt)
+    function [screenIndex] = YouDidNotCollectTheCannonBall_TryAgain(screenIndex, Data, distMean, txt)
         
         %Data.distMean = 35;
         %Data.outcome = 35;
@@ -2773,6 +1974,74 @@ end
             
             screenIndex = screenIndex + 1;
         end
+        WaitSecs(0.1);
+    end
+
+    function [screenIndex] = performanceCriterion(screenIndex, practData)
+        
+        if isequal(whichPractice, 'mainPractice') || isequal(whichPractice, 'followCannonPractice')
+            sumCannonDev = sum(practData.cannonDev >= taskParam.gParam.practiceTrialCriterion);
+        elseif isequal(whichPractice, 'followOutcomePractice')
+            sumCannonDev = sum(practData.controlDev >= taskParam.gParam.practiceTrialCriterion);
+        end
+        if sumCannonDev >= 4
+            if taskParam.gParam.oddball == false
+                
+                if isequal(whichPractice, 'mainPractice') || isequal(whichPractice, 'followCannonPractice')
+                    
+                    if isequal(subject.group, '1')
+                        
+                        header = 'Wiederholung der Übung';
+                        txt = ['In der letzten Übung hast du dich zu häufig '...
+                            'vom Ziel der Kanone wegbewegt. Du kannst '...
+                            'mehr Kugeln fangen, wenn du immer auf dem Ziel '...
+                            'der Kanone bleibst!\n\nIn der nächsten Runde '...
+                            'kannst nochmal üben. Wenn du noch Fragen hast, '...
+                            'kannst du dich auch an den Versuchsleiter wenden.'];
+                    else
+                        txt = ['In der letzten Übung haben Sie sich zu häufig '...
+                            'vom Ziel der Kanone wegbewegt. Sie können '...
+                            'mehr Kugeln fangen, wenn Sie immer auf dem Ziel '...
+                            'der Kanone bleiben!\n\nIn der nächsten Runde '...
+                            'können Sie nochmal üben. Wenn Sie noch Fragen haben, '...
+                            'können Sie sich auch an den Versuchsleiter wenden.'];
+                    end
+                elseif isequal(whichPractice, 'followOutcomePractice')
+                    if isequal(subject.group, '1')
+                        header = 'Wiederholung der Übung';
+                        txt = ['In der letzten Übung hast du die jeweils '...
+                            'letzte Kugel zu selten aufgesammelt.\n\nIn der nächsten Runde '...
+                            'kannst nochmal üben. Wenn du noch Fragen hast, '...
+                            'kannst du dich auch an den Versuchsleiter wenden.'];
+                    else
+                        txt = ['In der letzten Übung haben Sie die jeweils '...
+                            'letzte Kugel zu selten aufgesammelt.\n\nIn der nächsten Runde '...
+                            'können Sie nochmal üben. Wenn Sie noch Fragen haben, '...
+                            'können Sie sich auch an den Versuchsleiter wenden.'];
+                    end
+                end
+                
+            elseif taskParam.gParam.oddball == true
+                header = 'Try it again!';
+                txt = ['In that block your shield was not always placed '...
+                    'where the cannon was aiming. Remember: Placing your '...
+                    'shield where the cannon is aimed will be the best way '...
+                    'to earn money. '...
+                    'Now try again. '];
+            end
+            feedback = false;
+            [fw, bw] = BigScreen(taskParam,...
+                taskParam.strings.txtPressEnter, header, txt,...
+                feedback);
+            if fw == 1
+                screenIndex = screenIndex - 1;
+            elseif bw == 1
+                screenIndex = screenIndex - 2;
+            end
+        else
+            screenIndex = screenIndex + 1;
+        end
+        
         WaitSecs(0.1);
     end
 end
