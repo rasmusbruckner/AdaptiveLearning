@@ -1,6 +1,8 @@
 %% Adaptive Learning Task - EEG
 %
 % TODO:
+
+%% check jitter
 %% morgen:
 %% graues schild zu dunkel?
 %%      - richtig gut checken!!! 
@@ -65,7 +67,7 @@ clear all
 
 %% Set general parameters
 
-runIntro = true;
+runIntro = false;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
@@ -73,8 +75,8 @@ sendTrigger = true;
 randomize = true;
 shieldTrials = 1; % Für Pilot: 10
 practTrials = 1; % Für Pilot: 20
-trials = 1;% Für Pilot: 120 // EEG: 240
-controlTrials = 1; % Für Pilot: 60 EEG: 80
+trials = 10;% Für Pilot: 120 // EEG: 240
+controlTrials = 2; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment
 oddballProb = [.25 0]; % Oddball probability. .15
@@ -96,7 +98,7 @@ end
 
 % Savedirectory
 if isequal(computer, 'Macbook')
-    savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+   % savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
     cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     savdir = 'C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory';
@@ -482,7 +484,9 @@ if oddball
             'have to infer its aim in order to catch balls and earn money.'];
     end
 else
-    txtPressEnter = 'Zurück mit Löschen - Weiter mit Enter';
+    %txtPressEnter = 'Zurück mit Löschen - Weiter mit Enter';
+    txtPressEnter = 'Weiter mit Enter';
+
     header = 'Anfang der Studie';
     if Subject.cBal == 1
         txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
@@ -547,6 +551,8 @@ if ~test && ~allThreeConditions
         totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end);
     end
     
+    Screen('TextSize', taskParam.gParam.window, 19);
+    Screen('TextFont', taskParam.gParam.window, 'Arial');
     EndOfTask
     
     
@@ -604,6 +610,7 @@ elseif allThreeConditions
     
     totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
         + DataFollowCannon.accPerf(end);
+    
     
     EndOfTask
     
@@ -674,6 +681,7 @@ Screen('CloseAll');
     function FollowCannonCondition
         
         if runIntro
+           
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                 'zusammengefasst fängst du also die meisten '...
                 'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
@@ -696,7 +704,7 @@ Screen('CloseAll');
     function EndOfTask
         
         while 1
-            
+         
             if oddball
                 header = 'End of task!';
                 txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
@@ -713,14 +721,14 @@ Screen('CloseAll');
             Screen('FillRect', taskParam.gParam.window, [0 25 51],...
                 [0, (taskParam.gParam.screensize(4)*0.16)+3,...
                 taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
-            Screen('TextSize', taskParam.gParam.window, 50);
+            Screen('TextSize', taskParam.gParam.window, 30);
             DrawFormattedText(taskParam.gParam.window, header,...
                 'center', taskParam.gParam.screensize(4)*0.1);
-            Screen('TextSize', taskParam.gParam.window, 30);
+            Screen('TextSize', taskParam.gParam.window, 19);
             DrawFormattedText(taskParam.gParam.window, txt,...
                 'center', 'center');
             Screen('DrawingFinished', taskParam.gParam.window, [], []);
-            time = GetSecs;
+            %time = GetSecs;
             Screen('Flip', taskParam.gParam.window, time + 0.1);
             
             [ keyIsDown, seconds, keyCode ] = KbCheck;

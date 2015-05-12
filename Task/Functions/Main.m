@@ -57,8 +57,14 @@ for i=1:trial
     
     if i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1|| i == taskParam.gParam.blockIndices(4) + 1
         
+         Screen('TextSize', taskParam.gParam.window, 19);
+         Screen('TextFont', taskParam.gParam.window, 'Arial');
         while 1
-            txt = 'Take a break!';
+            if taskParam.gParam.oddball
+                txt = 'Take a break!';
+            else
+                txt = 'Kurze Pause!';
+            end
             DrawFormattedText(taskParam.gParam.window, txt,...
                 'center', 'center', [255 255 255]);
             
@@ -103,7 +109,9 @@ for i=1:trial
     taskData.actJitter(i) = rand*taskParam.gParam.jitter;
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
-    
+     
+    taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
+
     while 1
         
         DrawCircle(taskParam)
@@ -124,7 +132,7 @@ for i=1:trial
         
         Screen('Flip', taskParam.gParam.window, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
         
-        taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
+      % taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
         
         taskData.timestampOnset(i,:) = GetSecs - ref;
         

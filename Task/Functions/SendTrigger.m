@@ -10,11 +10,13 @@ digit3 = 0;
 digit4 = 0;
 
 if taskParam.gParam.oddball == false
-    
+   
     %% "Brown" trigger system
     if taskParam.gParam.sendTrigger == true
-        ioObject = io64;
-        status = io64(ioObject);
+        if taskParam.gParam.oddball
+            ioObject = io64;
+            status = io64(ioObject);
+        end
     end
     
     if  isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(condition, 'followCannon') 
@@ -80,11 +82,15 @@ if taskParam.gParam.oddball == false
     
 
 if taskParam.gParam.sendTrigger == true
+       
+    if taskParam.gParam.oddball
+        io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
+    else
         outp(taskParam.triggers.port, trigger); %This is the Dresden version
         WaitSecs(1/taskParam.triggers.sampleRate);
         outp(taskParam.triggers.port,0) % Set port to 0.
+    end
     
-    %io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
 end
 
 
@@ -180,8 +186,8 @@ end
 elseif taskParam.gParam.oddball == true
     
     if taskParam.gParam.sendTrigger == true
-        ioObject = io64;
-        status = io64(ioObject);
+        %ioObject = io64;
+        %status = io64(ioObject);
     end
     
     if  (isequal(condition, 'main') || isequal(condition, 'oddball')) %taskParam.gParam.sendTrigger == true &&
@@ -246,6 +252,6 @@ if taskParam.gParam.sendTrigger == true
     %     WaitSecs(1/taskParam.triggers.sampleRate);
     %     outp(taskParam.triggers.port,0) % Set port to 0.
     
-    io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
+    %io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
 end
 end
