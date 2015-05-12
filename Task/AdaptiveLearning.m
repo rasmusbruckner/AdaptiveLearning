@@ -226,6 +226,8 @@ else
     [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], []);
 end
 
+startTime = GetSecs;
+
 fID = 'ID'; ID = fID;
 fAge = 'age'; age = fAge;
 fSex = 'sex'; sex = fSex;
@@ -727,6 +729,7 @@ Screen('CloseAll');
         end
     end
 
+totalTime = (GetSecs - startTime)/60
 
 end
 
