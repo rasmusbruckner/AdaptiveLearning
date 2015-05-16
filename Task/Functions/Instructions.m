@@ -13,14 +13,6 @@ elseif subject.rew == 2
     colNoRew = 'gold';
 end
 
-
-if isequal(subject.group, '1')
-    DeineVersusIhre = 'Deine';
-else
-    DeineVersusIhre = 'Ihre';
-end
-
-
 DisplayPartOfTask
 
 if isequal(whichPractice, 'oddballPractice')...
@@ -67,30 +59,33 @@ end
                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 5)...
                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 4)...
                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 6)
-                txt='Herzlich Willkommen\n\nErster Teil...';
+                txt='Herzlich Willkommen\n\nErste Aufgabe...';
             elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 3)...
                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 4)...
                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 1)...
                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 6)...
                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 2)...
                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 5)
-                txt = 'Zweiter Teil...';
+                txt = 'Zweite Aufgabe...';
             elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 5)...
                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 6)...
                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 2)...
                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 4)...
                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 1)...
                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 3)
-                txt = 'Dritter Teil...';
+                txt = 'Dritte Aufgabe...';
             end
             
         end
         
         while 1
             
+            Screen('FillRect', taskParam.gParam.window, []);
             DrawFormattedText(taskParam.gParam.window, txt,...
-                'center', 100, [255 255 255]);
+                'center', 100, [0 0 0]);
             Screen('DrawingFinished', taskParam.gParam.window);
+            
+
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window, t + 0.1);
             [~, ~, keyCode] = KbCheck;
@@ -114,7 +109,7 @@ end
                 
                 case 1
                     
-                    txt = sprintf('%s Aufgabe: Kanonenkugeln fangen', DeineVersusIhre);
+                    txt = 'Kanonenkugeln Fangen';
                     screenIndex = YourTaskScreen(txt, screenIndex);
                     
                 case 2
@@ -709,7 +704,7 @@ end
                 
                 case 1
                     
-                    txt = 'Deine Aufgabe: Kanonenkugeln fangen';
+                    txt = 'Kanonenkugeln Fangen';
                     screenIndex = YourTaskScreen(txt, screenIndex);
                     
                 case 2
@@ -861,7 +856,7 @@ end
                 
                 case 1
                     
-                    txt = sprintf('%s Aufgabe: Kanonenkugeln einsammeln', DeineVersusIhre);
+                    txt = 'Kanonenkugeln Einsammeln';
                     screenIndex = YourTaskScreen(txt, screenIndex);
                     
                 case 2
@@ -1169,7 +1164,7 @@ end
             Screen('TextFont', taskParam.gParam.window, 'Arial');
             Screen('TextSize', taskParam.gParam.window, 30);
             DrawFormattedText(taskParam.gParam.window, txt,...
-                'center', 100, [255 255 255], sentenceLength);
+                'center', 100, [0 0 0], sentenceLength);
             Screen('DrawingFinished', taskParam.gParam.window);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window, t + 0.1);

@@ -37,6 +37,7 @@ end
 %     tickMark = false;
 % end
 
+
 while 1
     
     LineAndBack(taskParam)
@@ -49,6 +50,7 @@ while 1
     %end
     
     if cannon == true
+
         Cannon(taskParam, distMean)
     end
     %     if i > 1 && taskParam.gParam.PE_Bar == true

@@ -216,9 +216,6 @@ elseif askSubjInfo == true
     end
 end
 
-ListenChar(2);
-%HideCursor;
-
 Screen('Preference', 'VisualDebugLevel', 3);
 Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('Preference', 'SkipSyncTests', 2);
@@ -228,11 +225,8 @@ screensizePart = (screensize(3:4));
 fZero = 'zero'; zero = screensizePart / 2;
 fWindow = 'window';
 fWindowRect = 'windowRect';
-if debug == true
-    [ window, windowRect ] = Screen('OpenWindow', 0, [40 40 40], [420 250 1020 650]);
-else
-    [ window, windowRect ] = Screen('OpenWindow', 0, [66 66 66], []);
-end
+
+[window, windowRect, textures] = OpenWindow;
 
 startTime = GetSecs;
 
@@ -283,7 +277,7 @@ fFieldNames = 'fieldNames';
 fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
     'initiationRTs', 'initiationRTs','timestampOnset', 'timestampOnset',...
     'timestampPrediction', 'timestampPrediction', 'timestampOffset',...
-    'timestampOffset', fOddBall, oddBall, fOddball, oddball, fOddballProb,...
+    'timestampOffset', fOddBall, oddBall, 'oddball', oddball, 'oddballProb',...
     oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID,...
     fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate,...
     Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
@@ -293,7 +287,7 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
     fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm,...
     fMemErrPlus, memErrPlus,fMemErrMin, memErrMin, fUP, UP, fUPNorm,...
     UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal,...
-    fPerf, perf, fAccPerf, accPerf, fRawPredErr, rawPredErr);
+    fPerf, 'perf', 'accPerf', accPerf, fRawPredErr, rawPredErr);
 
 fOddball = 'oddball';
 fGParam = 'gParam';
@@ -405,23 +399,23 @@ end
 fKeys = 'keys';
 keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
-imageRect = [0 0 120 120];
-dstRect = CenterRect(imageRect, windowRect);
-[cannonPic, ~, alpha]  = imread('cannon.png');
-cannonPic(:,:,4) = alpha(:,:);
-Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-cannonTxt = Screen('MakeTexture', window, cannonPic);
-fCannonTxt = 'cannonTxt';
-fDstRect = 'dstRect';
-
-imageRect = [0 0 120 120];
-dstRect = CenterRect(imageRect, windowRect);
-[aimPic, ~, alpha]  = imread('arrow.png');
-aimPic(:,:,4) = alpha(:,:);
-Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-aimTxt = Screen('MakeTexture', window, aimPic);
-fAimTxt = 'aimTxt';
-fDstRect = 'dstRect';
+% imageRect = [0 0 120 120];
+% dstRect = CenterRect(imageRect, windowRect);
+% [cannonPic, ~, alpha]  = imread('cannon.png');
+% cannonPic(:,:,4) = alpha(:,:);
+% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+% cannonTxt = Screen('MakeTexture', window, cannonPic);
+% fCannonTxt = 'cannonTxt';
+% fDstRect = 'dstRect';
+% 
+% imageRect = [0 0 120 120];
+% dstRect = CenterRect(imageRect, windowRect);
+% [aimPic, ~, alpha]  = imread('arrow.png');
+% aimPic(:,:,4) = alpha(:,:);
+% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+% aimTxt = Screen('MakeTexture', window, aimPic);
+% fAimTxt = 'aimTxt';
+% fDstRect = 'dstRect';
 
 %% Trigger settings
 
@@ -519,8 +513,7 @@ fStrings = 'strings';
 strings = struct(fTxtPressEnter, txtPressEnter);
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
     fFieldNames, fieldNames, fTriggers, triggers,...
-    fColors, colors, fStrings, strings, fCannonTxt, cannonTxt, fAimTxt,...
-    aimTxt, fDstRect, dstRect);
+    fColors, colors, fStrings, strings, 'textures', textures);
 
 
 
@@ -571,44 +564,55 @@ elseif allThreeConditions
     
     if Subject.cBal == 1
         
-        % läuft!
         MainCondition
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowOutcomeCondition
+        CloseScreenAndOpenAgain
         FollowCannonCondition
         
     elseif Subject.cBal == 2
         
         % läuft!
         MainCondition
+        CloseScreenAndOpenAgain
         FollowCannonCondition
+        CloseScreenAndOpenAgain
         FollowOutcomeCondition
         
     elseif Subject.cBal == 3
         
         % läuft
         FollowOutcomeCondition
+        CloseScreenAndOpenAgain
         MainCondition
+        CloseScreenAndOpenAgain
         FollowCannonCondition
         
     elseif Subject.cBal == 4
         
         % hier ändern
         FollowCannonCondition
+        CloseScreenAndOpenAgain
         MainCondition
+        CloseScreenAndOpenAgain
         FollowOutcomeCondition
         
     elseif Subject.cBal == 5
         
         % hier ändern
         FollowOutcomeCondition
+        CloseScreenAndOpenAgain
         FollowCannonCondition
+        CloseScreenAndOpenAgain
         MainCondition
         
     elseif Subject.cBal == 6
         
         % hier ändern
         FollowCannonCondition
+        CloseScreenAndOpenAgain
         FollowOutcomeCondition
+        CloseScreenAndOpenAgain
         MainCondition
         
     end
@@ -703,6 +707,128 @@ Screen('CloseAll');
         end
         
         [~, DataFollowCannon] = Main(taskParam, vola(1), sigma(1), 'followCannon', Subject);
+        
+    end
+
+    function [window, windowRect, textures] = OpenWindow
+        
+        if debug == true
+            [ window, windowRect] = Screen('OpenWindow', 0, [66 66 66], [420 250 1020 650]);
+        else
+            [ window, windowRect ] = Screen('OpenWindow', 0, [66 66 66], []);% 66 66 66
+        end
+        
+        imageRect = [0 0 120 120];
+        dstRect = CenterRect(imageRect, windowRect);
+        [cannonPic, ~, alpha]  = imread('cannon.png');
+        cannonPic(:,:,4) = alpha(:,:);
+        Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        cannonTxt = Screen('MakeTexture', window, cannonPic);
+        fCannonTxt = 'cannonTxt';
+        fDstRect = 'dstRect';
+        
+        %imageRect = [0 0 120 120];
+        %dstRect = CenterRect(imageRect, windowRect);
+        [aimPic, ~, alpha]  = imread('arrow.png');
+        aimPic(:,:,4) = alpha(:,:);
+        %Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        aimTxt = Screen('MakeTexture', window, aimPic);
+        fAimTxt = 'aimTxt';
+        %fDstRect = 'dstRect';
+        textures = struct('cannonTxt', cannonTxt, 'aimTxt', aimTxt,...
+            'dstRect', dstRect);
+        
+        ListenChar(2);
+        %HideCursor;
+        
+    end
+
+    function window = CloseScreenAndOpenAgain
+        
+        
+            
+        
+        Screen('TextFont', taskParam.gParam.window, 'Arial');
+        Screen('TextSize', taskParam.gParam.window, 30);
+        
+        %if ~taskParam.gParam.allThreeConditions
+            
+            %if (isequal(whichPractice, 'mainPractice') && subject.cBal == 1) || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 2)
+                txt='Ende der Aufgabe!\n\nBitte auf den Versuchsleiter warten';
+            %else
+             %   txt = 'Zweiter Teil...';
+            %end
+            
+        %elseif taskParam.gParam.allThreeConditions
+            
+%             if (isequal(whichPractice, 'mainPractice') && subject.cBal == 1)...
+%                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 2)...
+%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 3)...
+%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 5)...
+%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 4)...
+%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 6)
+%                 txt='Herzlich Willkommen\n\nErste Aufgabe...';
+%             elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 3)...
+%                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 4)...
+%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 1)...
+%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 6)...
+%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 2)...
+%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 5)
+%                 txt = 'Zweite Aufgabe...';
+%             elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 5)...
+%                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 6)...
+%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 2)...
+%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 4)...
+%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 1)...
+%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 3)
+%                 txt = 'Dritte Aufgabe...';
+%             end
+            
+        %end
+        
+        while 1
+            
+            Screen('FillRect', taskParam.gParam.window, []);
+            DrawFormattedText(taskParam.gParam.window, txt,...
+                'center', 100, [0 0 0]);
+            Screen('DrawingFinished', taskParam.gParam.window);
+            
+
+            t = GetSecs;
+            Screen('Flip', taskParam.gParam.window, t + 0.1);
+            [~, ~, keyCode] = KbCheck;
+            
+            if find(keyCode) == taskParam.keys.s
+                break
+            end
+        end
+        
+        WaitSecs(1);
+    
+        ListenChar();
+        ShowCursor;
+        Screen('CloseAll');
+        disp('Press start to continue...')
+        WaitSecs(1);
+        
+        while 1
+            [ keyIsDown, ~, keyCode ] = KbCheck;
+            if keyIsDown
+                if keyCode(taskParam.keys.s)
+                    break
+                end
+            end
+        end
+%         reply = input('Press enter to continue...','s');
+%        if isempty(reply)
+%           reply = 'Y';
+%        else
+%          
+%        end  
+       
+%        if isequal(reply, 'Y');
+         window = OpenWindow;
+%        end
         
     end
 
