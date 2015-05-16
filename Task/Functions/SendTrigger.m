@@ -1,6 +1,9 @@
 function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Tevent)
 % This function sends the EEG triggers.
-%
+% 12.05.15: komische triggererfahrung: wenn man mit brown version triggert
+% kann man in while schleife triggern und es wird nur einer gesendet
+% bei dresden version (32 bit) wird die ganze zeit in der schleife gesendet
+% habe trigger jetzt aus der schleife genommen. woran liegt das?
 %   See triggerscheme for details
 
 % preallocats everytime NOT GOOD!!!!!!!!!!!!!!!! in script!

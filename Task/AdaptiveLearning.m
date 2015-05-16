@@ -2,6 +2,11 @@
 %
 % TODO:
 
+
+%%
+%% cBal 6: followOutcome nur eine Übung. Übung ohne Kanone fehlt!
+%%
+
 %% check jitter
 %% morgen:
 %% graues schild zu dunkel?
@@ -67,15 +72,15 @@ clear all
 
 %% Set general parameters
 
-runIntro = false;
+runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = true;
+sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % Für Pilot: 10
 practTrials = 1; % Für Pilot: 20
-trials = 10;% Für Pilot: 120 // EEG: 240
+trials = 1;% Für Pilot: 120 // EEG: 240
 controlTrials = 2; % Für Pilot: 60 EEG: 80
 blockIndices = [1 60 120 180]; % When should new block begin?
 vola = [.25 1 0]; % Volatility of the environment
@@ -666,7 +671,7 @@ Screen('CloseAll');
                 'Kugeln bekommst du nach der Studie '...
                 'ausgezahlt.\n\nViel Erfolg!'];
             Instructions(taskParam, 'followOutcomePractice', Subject)
-            %Main(taskParam, vola(3),sigma(1), 'followOutcomePractice', Subject);
+            Main(taskParam, vola(3),sigma(1), 'followOutcomePractice', Subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         else
@@ -686,7 +691,7 @@ Screen('CloseAll');
                 'zusammengefasst fängst du also die meisten '...
                 'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
                 'bewegst, auf die die Kanone zielt (schwarze Nadel). '...
-                'Diesmal kannst du die Kanone sehen\n\nViel Erfolg!'];
+                'Diesmal kannst du die Kanone sehen.\n\nViel Erfolg!'];
             Instructions(taskParam, 'followCannonPractice', Subject)
             Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
             feedback = false;
@@ -728,7 +733,7 @@ Screen('CloseAll');
             DrawFormattedText(taskParam.gParam.window, txt,...
                 'center', 'center');
             Screen('DrawingFinished', taskParam.gParam.window, [], []);
-            %time = GetSecs;
+            time = GetSecs;
             Screen('Flip', taskParam.gParam.window, time + 0.1);
             
             [ keyIsDown, seconds, keyCode ] = KbCheck;

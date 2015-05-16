@@ -15,8 +15,14 @@ while 1
     else
         DrawFormattedText(taskParam.gParam.window, header, 'center', taskParam.gParam.screensize(4)*0.1, [255 255 255]);
     end
-        Screen('TextSize', taskParam.gParam.window, 19);
    
+    if isequal(taskParam.gParam.computer, 'Dresden')
+        Screen('TextSize', taskParam.gParam.window, 19);
+    else
+        Screen('TextSize', taskParam.gParam.window, 30);
+    end
+        
+        
    sentenceLength = taskParam.gParam.sentenceLength; % Dresde Pilot 100   
 
    if feedback == true
