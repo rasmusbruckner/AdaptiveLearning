@@ -40,11 +40,14 @@ while 1
     Screen('Flip', taskParam.gParam.window, time + 0.1);
     
     [ ~, ~, keyCode ] = KbCheck;
-    if keyCode(taskParam.keys.enter)% don't know why it does not understand return or enter?
+    if keyCode(taskParam.keys.enter) && ~taskParam.unitTest% don't know why it does not understand return or enter?
         fw = 1;
         break
-    elseif keyCode(taskParam.keys.delete)     
+    elseif keyCode(taskParam.keys.delete) && ~taskParam.unitTest     
         bw = 1;
+        break
+    elseif taskParam.unitTest  
+        WaitSecs(1);
         break
     end
 end

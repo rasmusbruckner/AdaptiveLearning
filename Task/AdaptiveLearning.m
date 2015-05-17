@@ -1,15 +1,26 @@
-function AdaptiveLearning
+function [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(unitTest)
 
-clear all
+if nargin == 0
+    unitTest = false;
+end
+
+if ~unitTest
+    clear all
+    unitTest = false;
+end
+
 % indentifies your machine. IF you have internet!
-[computer, Computer2] = identifyPC;
-%computer = 'Macbook'
+%[computer, Computer2] = identifyPC;
+computer = 'Macbook'
+
+%% unit test:
+%
+% select acutal data and expectedSolution!
 
 
 %% TODO:
 
-% das wichtigste ist dass alle cBal bedingungen jeweils sinn machen!
-
+% sind catch trials in practice? irgendwo noch erwähnen
 
 
 %%       - sachen fett drucken (AUFGABE UND FARBE)
@@ -42,14 +53,14 @@ clear all
 %           followCannonPractice
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-runIntro = true;
+runIntro = false;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
 sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 6
-practTrials = 20; % 20
+practTrials = 1; % 20
 trials = 1; % 240
 controlTrials = 1; % 120 
 blockIndices = [1 60 120 180]; 
@@ -62,8 +73,7 @@ rewMag = 0.2;
 jitter = 0.2;
 practiceTrialCriterion = 10;
 test = false; 
-debug = false;
-OutputTest = true;
+debug = true;
 
 % Check number of trials in each condition
 if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
@@ -100,7 +110,7 @@ fRew = 'rew';
 fDate = 'Date';
 
 if askSubjInfo == false
-    ID = '999';
+    ID = '9999';
     age = '99';
     group = '1';
     sex = 'm/w';
@@ -394,8 +404,9 @@ triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger,...
     fBlockControlTrigger, blockControlTrigger);
 
 IndicateOddball = 'Oddball Task';
-IndicateCP = 'Change Point Task';
-IndicateControl = 'Control Task';
+IndicateMain = 'Change Point Task';
+IndicateFollowCannon = 'Follow Cannon Task';
+IndicateFollowOutcome = 'Follow Outcome Task';
 fTxtPressEnter = 'txtPressEnter';
 
 if oddball
@@ -457,7 +468,8 @@ fStrings = 'strings';
 strings = struct(fTxtPressEnter, txtPressEnter);
 taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
     fFieldNames, fieldNames, fTriggers, triggers,...
-    fColors, colors, fStrings, strings, 'textures', textures);
+    fColors, colors, fStrings, strings, 'textures', textures,...
+    'unitTest', unitTest);
 
 if ~test && ~allThreeConditions
     
@@ -500,57 +512,56 @@ elseif test && ~allThreeConditions
 elseif allThreeConditions
     
     if Subject.cBal == 1
-        
-        MainCondition
+        DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowOutcomeCondition
+        DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowCannonCondition
+        DataFollowCannon = FollowCannonCondition;
         
     elseif Subject.cBal == 2
         
         % läuft!
-        MainCondition
+        DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowCannonCondition
+        DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowOutcomeCondition
+        DataFollowOutcome = FollowOutcomeCondition;
         
     elseif Subject.cBal == 3
         
         % läuft
-        FollowOutcomeCondition
+        DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        MainCondition
+        DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowCannonCondition
+        DataFollowCannon = FollowCannonCondition;
         
     elseif Subject.cBal == 4
         
         % hier ändern
-        FollowCannonCondition
+        DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        MainCondition
+        DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowOutcomeCondition
+        DataFollowOutcome = FollowOutcomeCondition;
         
     elseif Subject.cBal == 5
         
         % hier ändern
-        FollowOutcomeCondition
+        DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowCannonCondition
+        DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        MainCondition
+        DataMain = MainCondition;
         
     elseif Subject.cBal == 6
         
         % hier ändern
-        FollowCannonCondition
+        DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        FollowOutcomeCondition
+        DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
-        MainCondition
+        DataMain = MainCondition;
         
     end
     
@@ -574,9 +585,9 @@ Screen('CloseAll');
         
     end
 
-    function MainCondition
+    function DataMain = MainCondition
         
-        if runIntro
+        if runIntro && ~unitTest
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                 'zusammengefasst fängst du also die meisten '...
                 'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
@@ -593,15 +604,15 @@ Screen('CloseAll');
         else
             Screen('TextSize', taskParam.gParam.window, 30);
             Screen('TextFont', taskParam.gParam.window, 'Arial');
-            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+            VolaIndication(taskParam, IndicateMain, txtPressEnter)
         end
         [~, DataMain] = Main(taskParam, vola(1), sigma(1), 'main', Subject);
         
     end
 
-    function FollowOutcomeCondition
+    function DataFollowOutcome = FollowOutcomeCondition
         
-        if runIntro
+        if runIntro && ~unitTest
             
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                 'zusammengefasst ist es deine Aufgabe Kanonenkugeln '...
@@ -618,15 +629,15 @@ Screen('CloseAll');
         else
             Screen('TextSize', taskParam.gParam.window, 30);
             Screen('TextFont', taskParam.gParam.window, 'Arial');
-            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+            VolaIndication(taskParam, IndicateFollowOutcome, txtPressEnter)
         end
         [~, DataFollowOutcome] = Main(taskParam, vola(1), sigma(1), 'followOutcome', Subject);
         
     end
 
-    function FollowCannonCondition
+    function DataFollowCannon = FollowCannonCondition
         
-        if runIntro
+        if runIntro && ~unitTest
             
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                 'zusammengefasst fängst du also die meisten '...
@@ -640,9 +651,8 @@ Screen('CloseAll');
         else
             Screen('TextSize', taskParam.gParam.window, 30);
             Screen('TextFont', taskParam.gParam.window, 'Arial');
-            VolaIndication(taskParam, IndicateControl, txtPressEnter)
+            VolaIndication(taskParam, IndicateFollowCannon, txtPressEnter)
         end
-        
         [~, DataFollowCannon] = Main(taskParam, vola(1), sigma(1), 'followCannon', Subject);
         
     end
@@ -661,12 +671,9 @@ Screen('CloseAll');
         cannonPic(:,:,4) = alpha(:,:);
         Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         cannonTxt = Screen('MakeTexture', window, cannonPic);
-        fCannonTxt = 'cannonTxt';
-        fDstRect = 'dstRect';
         [aimPic, ~, alpha]  = imread('arrow.png');
         aimPic(:,:,4) = alpha(:,:);
         aimTxt = Screen('MakeTexture', window, aimPic);
-        fAimTxt = 'aimTxt';
         textures = struct('cannonTxt', cannonTxt, 'aimTxt', aimTxt,...
             'dstRect', dstRect);
         
@@ -676,7 +683,8 @@ Screen('CloseAll');
     end
 
     function window = CloseScreenAndOpenAgain
-        
+   
+        if ~unitTest
         Screen('TextFont', taskParam.gParam.window, 'Arial');
         Screen('TextSize', taskParam.gParam.window, 30);
         
@@ -718,6 +726,8 @@ Screen('CloseAll');
         
         window = OpenWindow;
         
+        end
+        window = taskParam.gParam.window;
     end
 
     function EndOfTask
@@ -750,8 +760,11 @@ Screen('CloseAll');
             time = GetSecs;
             Screen('Flip', taskParam.gParam.window, time + 0.1);
             
-            [ keyIsDown, seconds, keyCode ] = KbCheck;
-            if find(keyCode) == taskParam.keys.s
+            [ ~, ~, keyCode ] = KbCheck;
+            if find(keyCode) == taskParam.keys.s & ~taskParam.unitTest
+                break
+            elseif taskParam.unitTest               
+                WaitSecs(1);
                 break
             end
         end
