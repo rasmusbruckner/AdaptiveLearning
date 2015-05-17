@@ -1,46 +1,31 @@
-%% Adaptive Learning Task - EEG
-%
-% TODO:
+function AdaptiveLearning
+
+clear all
+% indentifies your machine. IF you have internet!
+%[computer, Computer2] = identifyPC;
+computer = 'Macbook'
 
 
-%%
-%% cBal 6: followOutcome nur eine Übung. Übung ohne Kanone fehlt!
-%%
+%% TODO:
+
+% das wichtigste ist dass alle cBal bedingungen jeweils sinn machen!
+
 
 %% check jitter
-%% morgen:
-%% graues schild zu dunkel?
-%%      - richtig gut checken!!! 
 %%      - daten laden für bedingungen (hab ich glaub ich)
 %%       - erinnerung dass EEG eingeschaltet werden muss
 %%       - sachen fett drucken (AUFGABE UND FARBE)
-%%       - zeitmesser einbauen
-%%
+%%       - überlegen wie viel gezahlt werden sollte
+%%       - feedback für main checken!! (mit test!!)
 
-%%        feedback für main checken!! (mit video!!)
-%%      - criterion anpaasen
-%%      - für Dresden: richtige sentenceLength / größe
-%%      - followOutcome: beachten dass erster trial nicht zählt (bei main ja auch nicht. also nicht schlimm)
-%%     - maxMon checken 
-%%      - bei followCannon: vor zweiter übung sagen, dass ball nicht
-%%      - mehr fliegt
-%%      - bei follow cannon kommt übung nicht!
-
-
-%% montag:  
-%%      - trigger für dritte Bedingung
-%%      - to understand triggers again. analyze data a bit!!
-
-%% später
 %%      - google notes
-%       - performance überprüfen (ob alles richtig rausgeschrieben wird) 
-
-%       - notes
-%           - don't mess up oddball task!
-%           - Ben: wir brauchen 30 trials für averaging
+%       - performance überprüfen (ob alles richtig rausgeschrieben wird, MIT TEST)
+%          
 %           - trigger timing liste erstellen und paper lesen
 %           - triggers should be controlled
-%
+%           - check whether conditions can further be reduced when I
+%           - load deterministic practice trials
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       - condition:
 %%           - shield
 %%               - oddballPractice
@@ -50,27 +35,14 @@
 %%           - followOutcome
 %%          - followOutcomePractice
 %%          - followCannon
-%%          - followCannonPractice
-%
-%           - check whether conditions can further be reduced when I
-%           - load deterministic practice trials
+%%          - followCannonPractice        
 %
 %       - whichPractice:
 %           oddballPractice
 %           cpPractice
 %           followOutcomePractice
 %           followCannonPractice
-%
-%
-function AdaptiveLearning
-
-clear all
-
-% indentifies your machine. IF you have internet!
-[computer, Computer2] = identifyPC;
-%computer = 'Macbook'
-
-%% Set general parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 runIntro = true;
 askSubjInfo = true;
@@ -78,36 +50,34 @@ oddball = false;
 allThreeConditions = true;
 sendTrigger = false;
 randomize = true;
-shieldTrials = 1; % Für Pilot: 10
-practTrials = 1; % Für Pilot: 20
-trials = 1;% Für Pilot: 120 // EEG: 240
-controlTrials = 2; % Für Pilot: 60 EEG: 80
-blockIndices = [1 60 120 180]; % When should new block begin?
-vola = [.25 1 0]; % Volatility of the environment
-oddballProb = [.25 0]; % Oddball probability. .15
-sigma = [10 12 99999999];  % [10 12 99999999] SD's of distribution
-driftConc = [30 99999999]; % Concentration of the drift. 10
+shieldTrials = 1; % 6
+practTrials = 1; % 20
+trials = 1; % 240
+controlTrials = 2; % 120 
+blockIndices = [1 60 120 180]; 
+vola = [.25 1 0]; 
+oddballProb = [.25 0];  
+sigma = [10 12 99999999];  
+driftConc = [30 99999999]; 
 safe = [3 0];
 rewMag = 0.2;
 jitter = 0.2;
 practiceTrialCriterion = 10;
-test = false; % Test triggering timing accuracy (see PTB output CW)
-debug = false; % Debug mode
+test = false; 
+debug = false;
 
 % Check number of trials in each condition
 if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
     msgbox('All trials must be even or equal to 1!');
     return
-    %break
 end
 
 % Savedirectory
 if isequal(computer, 'Macbook')
-   % savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
+    % savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
     cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
-    savdir = 'C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory';
-        cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
+    cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
 elseif isequal(computer, 'D_Pilot') && Computer2 == false
     savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
 elseif isequal(computer, 'D_Pilot') && Computer2 == true
@@ -145,17 +115,12 @@ elseif askSubjInfo == true
     
     if randomize
         if allThreeConditions
-        cBal = num2str(round(unifrnd(1,6)));
-%         reward = num2str(round(unifrnd(1,2)));
-%         defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+            cBal = num2str(round(unifrnd(1,6)));
         else
-        cBal = num2str(round(unifrnd(1,2)));
-%         reward = num2str(round(unifrnd(1,2)));
-%         defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+            cBal = num2str(round(unifrnd(1,2)));
         end
         reward = num2str(round(unifrnd(1,2)));
         group = num2str(round(unifrnd(1,2)));
-
         defaultanswer = {'9999','99', group, 'm', cBal, reward};
     else
         defaultanswer = {'9999','99', '1', 'm', '1', '1'};
@@ -163,7 +128,6 @@ elseif askSubjInfo == true
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     subjInfo{7} = date;
     
-    % Make sure you made no mistake
     if numel(subjInfo{1}) < 4 || numel(subjInfo{1}) >4
         msgbox('ID: consists of four numbers!');
         return
@@ -321,35 +285,35 @@ gParam = struct('jitter', jitter,'allThreeConditions', allThreeConditions,...
     windowRect, 'practiceTrialCriterion',practiceTrialCriterion, 'askSubjInfo',...
     askSubjInfo);
 
-fPredSpotRad =  'predSpotRad'; predSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees! it used to be 25
-fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; % Prediction spot (red). This is expressed in pixel, not in degrees!
-fShieldAngle = 'shieldAngle'; shieldAngle = 30; %Shield Angle.
-fOutcSize = 'outcSize'; outcSize = 10; % Black bar. Number must be equal.This is expressed in pixel, not in degrees!
-fCannonEnd = 'cannonEnd'; cannonEnd = 5; %This is in pixel, not in degrees!
-fMeanPoint = 'meanRad'; meanPoint = 1; % Point for radar needle. This is expressed in pixel, not in degrees!
-fRotationRad = 'rotationRad'; rotationRad = 150; % Rotation Radius. This is expressed in pixel, not in degrees!
+fPredSpotRad =  'predSpotRad'; predSpotRad = 10; 
+fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; 
+fShieldAngle = 'shieldAngle'; shieldAngle = 30; 
+fOutcSize = 'outcSize'; outcSize = 10; 
+fCannonEnd = 'cannonEnd'; cannonEnd = 5; 
+fMeanPoint = 'meanRad'; meanPoint = 1; 
+fRotationRad = 'rotationRad'; rotationRad = 150; 
 
-fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2; % Diameter of prediction spot
-fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; % Diameter of outcome
-fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; % Size of Radar needle
+fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2;
+fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; 
+fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; 
 fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2;
 
-fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; % Prediction spot position
-fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; % Outcome position
+fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; 
+fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; 
 fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
-fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; % Radar needle position
-fBoatRect = 'boatRect'; boatRect = [0 0 50 50]; % Boat position
+fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; 
+fBoatRect = 'boatRect'; boatRect = [0 0 50 50]; 
 
-fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); % Center boat
-fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);% Center the prediction spot
-fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect); % Center the outcome
-fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect); % Center the outcome
+fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); 
+fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);
+fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect);
+fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect); 
 fCannonEndCent = 'cannonEndCent'; cannonEndCent = CenterRect(cannonEndRect, windowRect);
-fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); % Center radar needle
+fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); 
 
-fUnit = 'unit'; unit = 2*pi/360; % This expresses the circle (2*pi) as a fraction of 360 degrees
-fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit; % The initial rotation angle (on top of circle)
-fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; % Rotation angle when prediction spot is moved
+fUnit = 'unit'; unit = 2*pi/360; 
+fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit; 
+fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; 
 
 fCircle = 'circle';
 circle = struct(fShieldAngle, shieldAngle, fCannonEndCent,...
@@ -399,29 +363,10 @@ end
 fKeys = 'keys';
 keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
 
-% imageRect = [0 0 120 120];
-% dstRect = CenterRect(imageRect, windowRect);
-% [cannonPic, ~, alpha]  = imread('cannon.png');
-% cannonPic(:,:,4) = alpha(:,:);
-% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-% cannonTxt = Screen('MakeTexture', window, cannonPic);
-% fCannonTxt = 'cannonTxt';
-% fDstRect = 'dstRect';
-% 
-% imageRect = [0 0 120 120];
-% dstRect = CenterRect(imageRect, windowRect);
-% [aimPic, ~, alpha]  = imread('arrow.png');
-% aimPic(:,:,4) = alpha(:,:);
-% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-% aimTxt = Screen('MakeTexture', window, aimPic);
-% fAimTxt = 'aimTxt';
-% fDstRect = 'dstRect';
-
 %% Trigger settings
 
-% should be adapted to current triggers settings!
 if sendTrigger == true
-    config_io;             % IS THIS STILL NECESSARY?
+    config_io;             
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
@@ -485,7 +430,7 @@ if oddball
 else
     %txtPressEnter = 'Zurück mit Löschen - Weiter mit Enter';
     txtPressEnter = 'Weiter mit Enter';
-
+    
     header = 'Anfang der Studie';
     if Subject.cBal == 1
         txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
@@ -515,10 +460,7 @@ taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
     fFieldNames, fieldNames, fTriggers, triggers,...
     fColors, colors, fStrings, strings, 'textures', textures);
 
-
-
 if ~test && ~allThreeConditions
-    
     
     if oddball
         
@@ -542,7 +484,6 @@ if ~test && ~allThreeConditions
         
     end
     
-    % Compute total gain
     if oddball
         totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
     else
@@ -553,9 +494,6 @@ if ~test && ~allThreeConditions
     Screen('TextFont', taskParam.gParam.window, 'Arial');
     EndOfTask
     
-    
-    % If true you run through one main block which enables you to check timing
-    % accuracy (see PTB output in command window)
 elseif test && ~allThreeConditions
     
     [taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject);
@@ -567,52 +505,52 @@ elseif allThreeConditions
         MainCondition
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowOutcomeCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowCannonCondition
         
     elseif Subject.cBal == 2
         
         % läuft!
         MainCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowCannonCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowOutcomeCondition
         
     elseif Subject.cBal == 3
         
         % läuft
         FollowOutcomeCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         MainCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowCannonCondition
         
     elseif Subject.cBal == 4
         
         % hier ändern
         FollowCannonCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         MainCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowOutcomeCondition
         
     elseif Subject.cBal == 5
         
         % hier ändern
         FollowOutcomeCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowCannonCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         MainCondition
         
     elseif Subject.cBal == 6
         
         % hier ändern
         FollowCannonCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         FollowOutcomeCondition
-        CloseScreenAndOpenAgain
+        taskParam.gParam.window = CloseScreenAndOpenAgain;
         MainCondition
         
     end
@@ -690,7 +628,7 @@ Screen('CloseAll');
     function FollowCannonCondition
         
         if runIntro
-           
+            
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
                 'zusammengefasst fängst du also die meisten '...
                 'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
@@ -715,7 +653,7 @@ Screen('CloseAll');
         if debug == true
             [ window, windowRect] = Screen('OpenWindow', 0, [66 66 66], [420 250 1020 650]);
         else
-            [ window, windowRect ] = Screen('OpenWindow', 0, [66 66 66], []);% 66 66 66
+            [ window, windowRect ] = Screen('OpenWindow', 0, [66 66 66], []);
         end
         
         imageRect = [0 0 120 120];
@@ -726,15 +664,10 @@ Screen('CloseAll');
         cannonTxt = Screen('MakeTexture', window, cannonPic);
         fCannonTxt = 'cannonTxt';
         fDstRect = 'dstRect';
-        
-        %imageRect = [0 0 120 120];
-        %dstRect = CenterRect(imageRect, windowRect);
         [aimPic, ~, alpha]  = imread('arrow.png');
         aimPic(:,:,4) = alpha(:,:);
-        %Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         aimTxt = Screen('MakeTexture', window, aimPic);
         fAimTxt = 'aimTxt';
-        %fDstRect = 'dstRect';
         textures = struct('cannonTxt', cannonTxt, 'aimTxt', aimTxt,...
             'dstRect', dstRect);
         
@@ -745,46 +678,10 @@ Screen('CloseAll');
 
     function window = CloseScreenAndOpenAgain
         
-        
-            
-        
         Screen('TextFont', taskParam.gParam.window, 'Arial');
         Screen('TextSize', taskParam.gParam.window, 30);
         
-        %if ~taskParam.gParam.allThreeConditions
-            
-            %if (isequal(whichPractice, 'mainPractice') && subject.cBal == 1) || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 2)
-                txt='Ende der Aufgabe!\n\nBitte auf den Versuchsleiter warten';
-            %else
-             %   txt = 'Zweiter Teil...';
-            %end
-            
-        %elseif taskParam.gParam.allThreeConditions
-            
-%             if (isequal(whichPractice, 'mainPractice') && subject.cBal == 1)...
-%                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 2)...
-%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 3)...
-%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 5)...
-%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 4)...
-%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 6)
-%                 txt='Herzlich Willkommen\n\nErste Aufgabe...';
-%             elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 3)...
-%                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 4)...
-%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 1)...
-%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 6)...
-%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 2)...
-%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 5)
-%                 txt = 'Zweite Aufgabe...';
-%             elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 5)...
-%                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 6)...
-%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 2)...
-%                     || (isequal(whichPractice, 'followOutcomePractice') && subject.cBal == 4)...
-%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 1)...
-%                     || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 3)
-%                 txt = 'Dritte Aufgabe...';
-%             end
-            
-        %end
+        txt='Ende der Aufgabe!\n\nBitte auf den Versuchsleiter warten';
         
         while 1
             
@@ -793,7 +690,7 @@ Screen('CloseAll');
                 'center', 100, [0 0 0]);
             Screen('DrawingFinished', taskParam.gParam.window);
             
-
+            
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window, t + 0.1);
             [~, ~, keyCode] = KbCheck;
@@ -804,8 +701,8 @@ Screen('CloseAll');
         end
         
         WaitSecs(1);
-    
-        ListenChar();
+        
+        %ListenChar();
         ShowCursor;
         Screen('CloseAll');
         disp('Press start to continue...')
@@ -819,28 +716,20 @@ Screen('CloseAll');
                 end
             end
         end
-%         reply = input('Press enter to continue...','s');
-%        if isempty(reply)
-%           reply = 'Y';
-%        else
-%          
-%        end  
-       
-%        if isequal(reply, 'Y');
-         window = OpenWindow;
-%        end
+        
+        window = OpenWindow;
         
     end
 
     function EndOfTask
         
         while 1
-         
+            
             if oddball
                 header = 'End of task!';
                 txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
             else
-                header = 'Ende der Aufgabe!';
+                header = 'Ende des Versuchs!';
                 txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nDu hast %.2f Euro verdient', totWin);
             end
             Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...

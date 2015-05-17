@@ -708,6 +708,41 @@ end
                     screenIndex = YourTaskScreen(txt, screenIndex);
                     
                 case 2
+                    if subject.cBal == 1 || subject.cBal == 2 || subject.cBal == 3 
+                        
+                        header = 'Kanonenkugeln Fangen';
+                   
+                        
+                        if isequal(subject.group, '1')
+                            
+                            txt = ['In dieser Aufgabe ist das Ziel wieder '....
+                                'möglichst viele Kanonenkugeln zu fangen. '...
+                                'Der Unterschied ist allerdings, dass du '...
+                                'die Kanone diesmal sehen kannst.'];
+                        else
+                             
+                            txt = ['In dieser Aufgabe ist das Ziel wieder '....
+                                'möglichst viele Kanonenkugeln zu fangen. '...
+                                'Der Unterschied ist allerdings, dass du '...
+                                'die Kanone diesmal sehen kannst.'];
+                        end
+                        
+                        
+                        feedback = false;
+                        [fw, bw] = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt, feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                            
+                        elseif bw == 1
+                            screenIndex = screenIndex - 3;
+                        end
+                    else
+                        screenIndex = screenIndex + 1;
+                    end
+                    WaitSecs(0.1);
+                
+                case 3
                     
                     if subject.cBal == 1 || subject.cBal == 2 || subject.cBal == 3
                         header = 'Erste Übung';
@@ -748,7 +783,7 @@ end
                     
                     WaitSecs(0.1);
                     
-                case 3
+                case 4
                     break
             end
         end
@@ -787,6 +822,40 @@ end
                 %                     WaitSecs(0.1);
                 
                 case 1
+                    if subject.cBal == 4 || subject.cBal == 6 || subject.cBal == 5 
+                        
+                        header = 'Kanonenkugeln Fangen';
+                   
+                        
+                        if isequal(subject.group, '1')
+                            
+                            txt = ['In dieser Aufgabe ist das Ziel wieder '....
+                                'möglichst viele Kanonenkugeln zu fangen. '...
+                                'Der Unterschied ist allerdings, dass du '...
+                                'die Kanone diesmal nicht sehen kannst.'];
+                        else
+                             
+                            txt = ['In dieser Aufgabe ist das Ziel wieder '....
+                                'möglichst viele Kanonenkugeln zu fangen. '...
+                                'Der Unterschied ist allerdings, dass du '...
+                                'die Kanone diesmal nicht sehen kannst.'];
+                        end
+                        
+                        
+                        feedback = false;
+                        [fw, bw] = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt, feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                            
+                        elseif bw == 1
+                            screenIndex = screenIndex - 3;
+                        end
+                    else
+                        screenIndex = screenIndex + 1;
+                    end
+                    WaitSecs(0.1);
+                case 2
                     if subject.cBal == 4 || subject.cBal == 5 || subject.cBal == 6
                         header = 'Erste Übung';
                     else
@@ -795,7 +864,7 @@ end
                     
                     if isequal(subject.group, '1')
                         
-                        txt = ['Ok, bis jetzt kanntest du das Ziel '...
+                        txt = ['Bis jetzt kanntest du das Ziel '...
                             'der Kanone und du konntest die meisten '...
                             'Kugeln abfangen. Im nächsten '...
                             'Übungsdurchgang wird die Kanone nicht '...
@@ -812,7 +881,7 @@ end
                             'solltest du auch den orangenen Punkt '...
                             'dort hin bewegen.'];
                     else
-                        txt = ['Ok, bis jetzt kannten Sie das Ziel '...
+                        txt = ['Bis jetzt kannten Sie das Ziel '...
                             'der Kanone und Sie konnten die meisten '...
                             'Kugeln abfangen. Im nächsten '...
                             'Übungsdurchgang wird die Kanone nicht '...
@@ -841,7 +910,7 @@ end
                     
                     WaitSecs(0.1);
                     
-                case 2
+                case 3
                     break
             end
         end

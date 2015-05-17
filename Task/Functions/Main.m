@@ -330,9 +330,9 @@ Data = catstruct(Subject, Data);
 if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'main')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))
     
     if Subject.rew == 1
-        rewName = 'B';
-    elseif Subject.rew == 2
         rewName = 'G';
+    elseif Subject.rew == 2
+        rewName = 'S';
     end
     
     savename = sprintf('Cannon_%s_%s_%s', rewName, Subject.ID, condition);
