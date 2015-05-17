@@ -2,8 +2,8 @@ function AdaptiveLearning
 
 clear all
 % indentifies your machine. IF you have internet!
-%[computer, Computer2] = identifyPC;
-computer = 'Macbook'
+[computer, Computer2] = identifyPC;
+%computer = 'Macbook'
 
 
 %% TODO:
@@ -11,20 +11,18 @@ computer = 'Macbook'
 % das wichtigste ist dass alle cBal bedingungen jeweils sinn machen!
 
 
-%% check jitter
-%%      - daten laden für bedingungen (hab ich glaub ich)
-%%       - erinnerung dass EEG eingeschaltet werden muss
+
 %%       - sachen fett drucken (AUFGABE UND FARBE)
 %%       - überlegen wie viel gezahlt werden sollte
-%%       - feedback für main checken!! (mit test!!)
+%%       - check jitter
+%%      - daten laden für bedingungen (keyboard in alle bedingungen setzen und auf zwei bildschirmen checken ob alles erreicht wird)
 
-%%      - google notes
-%       - performance überprüfen (ob alles richtig rausgeschrieben wird, MIT TEST)
-%          
+
+%%       - performance überprüfen (ob alles richtig rausgeschrieben wird, MIT TEST)
+%%       - feedback für main checken!! (mit test!!)
+%%           - triggers should be controlled (mit test)
+
 %           - trigger timing liste erstellen und paper lesen
-%           - triggers should be controlled
-%           - check whether conditions can further be reduced when I
-%           - load deterministic practice trials
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       - condition:
 %%           - shield
@@ -51,9 +49,9 @@ allThreeConditions = true;
 sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 6
-practTrials = 1; % 20
+practTrials = 20; % 20
 trials = 1; % 240
-controlTrials = 2; % 120 
+controlTrials = 1; % 120 
 blockIndices = [1 60 120 180]; 
 vola = [.25 1 0]; 
 oddballProb = [.25 0];  
@@ -65,6 +63,7 @@ jitter = 0.2;
 practiceTrialCriterion = 10;
 test = false; 
 debug = false;
+OutputTest = true;
 
 % Check number of trials in each condition
 if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
