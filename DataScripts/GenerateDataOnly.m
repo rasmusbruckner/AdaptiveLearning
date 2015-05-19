@@ -33,7 +33,7 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block', 'initiationRTs',
     'UPMin', 'UPMin', 'hit', 'hit', 'perf', 'perf', 'accPerf', 'accPerf', 'Date', 'Date', 'driftConc', 'driftConc');
 taskParam = struct('fieldNames', fieldNames, 'gParam', gParam);
 condition = 'main';
-practData = GenerateOutcomes(taskParam, vola(1), sigma(1), condition);
+taskData = GenerateOutcomes(taskParam, vola(1), sigma(1), condition);
 
 hold on 
 plot(practData.outcome, '.')

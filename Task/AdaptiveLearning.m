@@ -53,7 +53,7 @@ computer = 'Macbook'
 %           followCannonPractice
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-runIntro = false;
+runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
@@ -73,7 +73,7 @@ rewMag = 0.2;
 jitter = 0.2;
 practiceTrialCriterion = 10;
 test = false; 
-debug = true;
+debug = false;
 
 % Check number of trials in each condition
 if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
