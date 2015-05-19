@@ -1296,7 +1296,7 @@ end
                 'buttons. Green is for fast movements and yellow is '...
                 'for slow movements.'];
         end
-        
+       
         if isequal(taskParam.gParam.computer, 'Dresden')
             Screen('TextSize', taskParam.gParam.window, 19);
         else

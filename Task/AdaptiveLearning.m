@@ -10,8 +10,8 @@ if ~unitTest
 end
 
 % indentifies your machine. IF you have internet!
-%[computer, Computer2] = identifyPC;
-computer = 'Macbook'
+[computer, Computer2] = identifyPC;
+%computer = 'Macbook'
 
 %% unit test:
 %
@@ -61,8 +61,8 @@ sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 6
 practTrials = 1; % 20
-trials = 1; % 240
-controlTrials = 1; % 120 
+trials = 20; % 240
+controlTrials = 20; % 120 
 blockIndices = [1 60 120 180]; 
 vola = [.25 1 0]; 
 oddballProb = [.25 0];  
