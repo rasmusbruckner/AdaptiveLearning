@@ -17,14 +17,7 @@ classdef OutputTest < matlab.unittest.TestCase
 %  0 1 1 0 -> CP, CP, Catch, noReward -> 106
 %  0 1 1 1 -> CP, CP, Catch, Reward -> 107
 
-%  1 0 0 0 -> FollowOutcome, noCP, noCatch, noReward -> 108
-%  1 0 0 1 -> FollowOutcome, noCP, noCatch, Reward -> 109
-%  1 0 1 0 -> FollowOutcome, noCP, Catch, noReward -> 110
-%  1 0 1 1 -> FollowOutcome, noCP, Catch, Reward -> 111
-%  1 1 0 0 -> FollowOutcome, CP, noCatch, noReward -> 112
-%  1 1 0 1 -> FollowOutcome, CP, noCatch, Reward -> 113
-%  1 1 1 0 -> FollowOutcome, CP, Catch, noReward -> 114
-%  1 1 1 1 -> FollowOutcome, CP, Catch, Reward -> 115
+
 
 % 10 0 0 0 -> FollowCannon, noCP, noCatch, noReward -> 116
 % 10 0 0 1 -> FollowCannon, noCP, noCatch, Reward -> 117
@@ -93,6 +86,76 @@ classdef OutputTest < matlab.unittest.TestCase
 
 
 
+%%%%%%%%%%%%%%%
+
+
+
+%  1 0 0 0 -> FollowOutcome, noCP, noCatch, noReward -> 108
+%  1 0 0 1 -> FollowOutcome, noCP, noCatch, Reward -> 109
+%  1 0 1 0 -> FollowOutcome, noCP, Catch, noReward -> 110
+%  1 0 1 1 -> FollowOutcome, noCP, Catch, Reward -> 111
+%  1 1 0 0 -> FollowOutcome, CP, noCatch, noReward -> 112
+%  1 1 0 1 -> FollowOutcome, CP, noCatch, Reward -> 113
+%  1 1 1 0 -> FollowOutcome, CP, Catch, noReward -> 114
+%  1 1 1 1 -> FollowOutcome, CP, Catch, Reward -> 115
+
+
+
+% followOutcome
+%cp =                   [1;  0;  0;  0; 1; 0; 0; 0;  1;  0;  0;  0;  0; 1; 0; 0; 0; 0; 0; 0];
+%predFollowOutcome = [307;200;100;275;299;     21;23;20;11 ;128;   168;170;206;168;100;0  ; 250;250;250;112];
+% UP =               [0  ;107;100;175; 24;     82; 2; 3;  9;117;    40;  2; 36; 38; 68;100; 110; 0 ;  0;138];
+
+
+% outcome =          [307;314;275;299; 21;     23;20;11;128;168;   170;206;168; 63; 81;67; 61; 94;112;82];
+% memErr =            [999;107;146;  0;  0; 0; 0; 0; 0;   0;  0;  0;  0;  0; 37;81;177;171;156;112];
+% hit =               [  0; 0;  0;  1;  1;  1;  1;  1;  1;  1;  1;  1;  1;  1;   0; 0;  0;  0;  0;  1;]; 
+%actRew =             [  1; 0;  1;  1;  1;  1;  1;  0;  0;  1;  0;  1;  0;  0;   0; 0;  1;  0;  0;  1];
+
+% perf =              [  0; 0;  0;0.2;0.2;0.2;0.2;  0;  0;0.2;  0;0.2;  0;  0;   0;  0;  0;  0;  0;0.2;]; 
+% accPerf =           [  0; 0;  0;0.2;0.4;0.6;0.8;0.8;0.8;  1;  1;1.2;1.2;1.2; 1.2;1.2;1.2;1.2;1.2;1.4;]; 
+
+ 
+% predErr =           [  0;114;175; 24; 82; 2; 3; 9;117; 40;  2; 36; 38;105; 19;67;171;156;138;82];
+
+
+
+%1: 255
+%2: noCP, noCatch, noRew
+%3: noCP, noCatch, Rew
+%8: noCP, Catch, noRew
+%4: noCP, Catch, Rew
+
+%9 CP, Catch, noRew
+%5 CP, Catch, Rew
+%14: CP, Catch, noRew
+
+
+
+%6:  noCP, Catch, rew
+%7:  noCP, Catch, rew
+
+%10: noCP, Catch, rew
+%11: noCP, Catch, noRew
+%12: noCP, Catch, rew
+%13: noCP, Catch, noRew
+%15: noCP, noCatch,
+%16: noCP, noCatch
+%17: noCP, noCatch
+%18: noCP, noCatch
+%19: noCP, noCatch
+%20: noCP, Catch, rew
+
+%FollowOutcome_Expected_SummaryTrigger = [255;108;109;111;115;  111;111;110;114;111;    110;111;110;114;108;    108;109;108;108;111];
+
+%          actRew =   [1;0;1;1;1;   1;1;0;0;1;  0;1;0;0;0;  0;1;0;0;1];
+
+
+%%%%%%%%%%%%%
+
+
+
+
 
 
     methods (Test)
@@ -100,9 +163,8 @@ classdef OutputTest < matlab.unittest.TestCase
         function testTaskOutput(testCase)
             %             predMain = [307;200;350;299;200;23;10;11;300;162;162;162;162;150;73;73;73;73;73;73];
             %
-                         %predFollowOutcome = [307;314;275;299;21;23;20;11;128;168;170;206;168;63;81;67;61;94;112;82];% ones(trial,1);
-            %
-                      %predFollowCannon = [307;200;350;299;200;23;10;11;300;162;162;162;162;150;73;73;73;73;73;73];
+            %%predFollowCannon = [307;200;350;299;200;23;10;11;300;162;162;162;162;150;73;73;73;73;73;73];
+
             
             % triggerliste erstellen
             
@@ -116,12 +178,10 @@ classdef OutputTest < matlab.unittest.TestCase
             Main_Expected_pred = [307;200;350;299;200;23;10;11;300;162;162;162;162;150;73;73;73;73;73;73];
             testCase.verifyEqual(Main_Actual_pred, Main_Expected_pred);
 
-            
             Main_Actual_predErr = round(DataMain.predErr);
             Main_Expected_predErr = [0;114;75;0;179;0;10;0;172;6;8;44;6;87;8;6;12;21;39;9];
             testCase.verifyEqual(Main_Actual_predErr, Main_Expected_predErr);
 
-            
             Main_Actual_hit = DataMain.hit;
             Main_Expected_hit = [1; 0; 0; 1; 0; 1; 1; 1; 0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1];
             testCase.verifyEqual(Main_Actual_hit, Main_Expected_hit);
@@ -146,8 +206,6 @@ classdef OutputTest < matlab.unittest.TestCase
             Main_Expected_distMean = [292;292;292;292;10;10;10;10;162;162;162;162;162;73;73;73;73;73;73;73];
             testCase.verifyEqual(Main_Actual_distMean, Main_Expected_distMean);
 
-
-            keyboard
             Main_Actual_perf = DataMain.perf;
             Main_Expected_perf = [0.2;  0;  0;0.2;  0;0.2;0.2;  0;  0;0.2;  0;  0;  0;  0;  0;  0;0;0;0;0.2];
             testCase.verifyEqual(Main_Actual_perf, Main_Expected_perf);
@@ -236,33 +294,34 @@ classdef OutputTest < matlab.unittest.TestCase
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% 
-%             FollowOutcome_Actual_perf = DataFollowOutcome.perf;
-%             FollowOutcome_Expected_perf = [0.2; 0; 0.2;0.2;0.2;0.2;0.2;0;0; 0.2; 0; 0.2; 0; 0; 0; 0; 0.2; 0; 0; 0.2];
-%             testCase.verifyEqual(FollowOutcome_Actual_perf, FollowOutcome_Expected_perf);
-% 
-%             FollowOutcome_Actual_accPerf = DataFollowOutcome.accPerf;
-%             FollowOutcome_Expected_accPerf = [0.2;0.2;0.4;0.6;0.8;1;1.2;1.2;1.2;1.4;1.4;1.6;1.6;1.6;1.6;1.6;1.8;1.8;1.8;2];%DataFollowOutcome.accPerf;%[0.200000000000000;0.200000000000000;0.400000000000000;0.600000000000000;0.800000000000000;1;1.20000000000000;1.20000000000000;1.20000000000000;1.40000000000000;1.40000000000000;1.60000000000000;1.60000000000000;1.60000000000000;1.60000000000000;1.60000000000000;1.80000000000000;1.80000000000000;1.80000000000000;2.00000000000000];
-%             testCase.verifyEqual(FollowOutcome_Actual_accPerf, FollowOutcome_Expected_accPerf, 'AbsTol', 0.0001);
 
-%             FollowOutcome_Actual_hit = DataFollowOutcome.hit;
-%             FollowOutcome_Expected_hit = [1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1; 1];
-%             testCase.verifyEqual(FollowOutcome_Actual_hit, FollowOutcome_Expected_hit);
-%                
+            FollowOutcome_Actual_perf = DataFollowOutcome.perf;
+            FollowOutcome_Expected_perf = [  0; 0;  0;0.2;0.2;0.2;0.2;  0;  0;0.2;  0;0.2;  0;  0;   0; 0;  0;  0;  0;  0.2;]; 
+            testCase.verifyEqual(FollowOutcome_Actual_perf, FollowOutcome_Expected_perf);
+
+            FollowOutcome_Actual_accPerf = DataFollowOutcome.accPerf;
+            FollowOutcome_Expected_accPerf = [  0; 0;  0;0.2;0.4;0.6;0.8;0.8;0.8;  1;  1;1.2;1.2;1.2; 1.2;1.2;1.2;1.2;1.2;1.4;]; 
+            testCase.verifyEqual(FollowOutcome_Actual_accPerf, FollowOutcome_Expected_accPerf, 'AbsTol', 0.0001);
+            
+            FollowOutcome_Actual_hit = DataFollowOutcome.hit;
+            FollowOutcome_Expected_hit = [  0; 0;  0;  1;  1; 1; 1; 1; 1;   1;  1;  1;  1; 1;   0; 0;  0;  0;  0;  1;]; 
+            testCase.verifyEqual(FollowOutcome_Actual_hit, FollowOutcome_Expected_hit);
+               
             FollowOutcome_Actual_UP = round(DataFollowOutcome.UP);
-            FollowOutcome_Expected_UP = round([0;7.00000000000003;39.0000000000000;24.0000000000000;82.0000000000000;2.00000000000000;3.00000000000000;9;117;40.0000000000000;2.00000000000000;36.0000000000000;38;105;18.0000000000000;14.0000000000000;6.00000000000001;33.0000000000000;18;30.0000000000000]);
+            FollowOutcome_Expected_UP =  [0  ;107;100;175; 24;     82; 2; 3;  9;117;    40;  2; 36; 38; 68;100; 110; 0 ;  0;138];
             testCase.verifyEqual(FollowOutcome_Actual_UP, FollowOutcome_Expected_UP);  
             
-%             FollowOutcome_Actual_memErr = DataFollowOutcome.memErr;
-%             FollowOutcome_Expected_memErr = [999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999];
-%             testCase.verifyEqual(FollowOutcome_Actual_memErr, FollowOutcome_Expected_memErr)
-%             
+            FollowOutcome_Actual_memErr = round(DataFollowOutcome.memErr);
+            FollowOutcome_Expected_memErr = [999;107;146;  0;  0; 0; 0; 0; 0;   0;  0;  0;  0;  0; 37;81;177;171;156;0];
+            testCase.verifyEqual(FollowOutcome_Actual_memErr, FollowOutcome_Expected_memErr)
+            
+            keyboard
             FollowOutcome_Actual_predErr = round(DataFollowOutcome.predErr);
-            FollowOutcome_Expected_predErr = round([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0;]);
+            FollowOutcome_Expected_predErr = [  0;114;175; 24; 82; 2; 3; 9;117; 40;  2; 36; 38;105; 19;67;171;156;138;30];
             testCase.verifyEqual(FollowOutcome_Actual_predErr, FollowOutcome_Expected_predErr);
 
             FollowOutcome_Actual_pred = DataFollowOutcome.pred;
-            FollowOutcome_Expected_pred = [307;314;275;299;21;23;20;11;128;168;170;206;168;63;81;67;61;94;112;82];
+            FollowOutcome_Expected_pred = [307;200;100;275;299;21;23;20;11;128;168;170;206;168;100;0;250;250;250;112];
             testCase.verifyEqual(FollowOutcome_Actual_pred, FollowOutcome_Expected_pred);
 
             FollowOutcome_Actual_catchTrial = DataFollowOutcome.catchTrial;
@@ -349,14 +408,15 @@ classdef OutputTest < matlab.unittest.TestCase
             FollowOutcome_Expected_trigger6 = [6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6;];
             testCase.verifyEqual(FollowOutcome_Actual_trigger6, FollowOutcome_Expected_trigger6);
 
-%             FollowOutcome_Actual_SummaryTrigger = DataFollowOutcome.triggers(:,7);
-%             FollowOutcome_Expected_SummaryTrigger = [255;102;103;103;107;103;103;102;106;103;102;103;102;106;102;102;103;102;102;103];
-%             testCase.verifyEqual(FollowOutcome_Actual_SummaryTrigger, FollowOutcome_Expected_SummaryTrigger);
-%             
+            FollowOutcome_Actual_SummaryTrigger = DataFollowOutcome.triggers(:,7);
+            FollowOutcome_Expected_SummaryTrigger = [255;108;109;111;115;  111;111;110;114;111;    110;111;110;114;108;    108;109;108;108;111];
+            testCase.verifyEqual(FollowOutcome_Actual_SummaryTrigger, FollowOutcome_Expected_SummaryTrigger);
+             
             keyboard
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
             
@@ -367,13 +427,11 @@ classdef OutputTest < matlab.unittest.TestCase
             FollowCannon_Actual_pred = DataFollowCannon.pred;
             FollowCannon_Expected_pred = [307;200;350;299;200;23;10;11;300;162;162;162;162;150;73;73;73;73;73;73];
             testCase.verifyEqual(FollowCannon_Actual_pred, FollowCannon_Expected_pred);
-
             
             FollowCannon_Actual_predErr = round(DataFollowCannon.predErr);
             FollowCannon_Expected_predErr = [0;114;75;0;179;0;10;0;172;6;8;44;6;87;8;6;12;21;39;9];
             testCase.verifyEqual(FollowCannon_Actual_predErr, FollowCannon_Expected_predErr);
 
-            
             FollowCannon_Actual_hit = DataFollowCannon.hit;
             FollowCannon_Expected_hit = [1; 0; 0; 1; 0; 1; 1; 1; 0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1];
             testCase.verifyEqual(FollowCannon_Actual_hit, FollowCannon_Expected_hit);
@@ -478,12 +536,9 @@ classdef OutputTest < matlab.unittest.TestCase
             FollowCannon_Expected_trigger6 = [6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6; 6;];
             testCase.verifyEqual(FollowCannon_Actual_trigger6, FollowCannon_Expected_trigger6);
             
-            keyboard
             FollowCannon_Actual_SummaryTrigger = DataFollowCannon.triggers(:,7);
             FollowCannon_Expected_SummaryTrigger = [255;116;117;119;121;119;119;118;120;119;118;117;118;120;118;118;117;116;116;119];
             testCase.verifyEqual(FollowCannon_Actual_SummaryTrigger, FollowCannon_Expected_SummaryTrigger);
-            
-            
 
         end
         

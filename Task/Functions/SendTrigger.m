@@ -38,10 +38,10 @@ if taskParam.gParam.oddball == false
             elseif isequal(condition, 'followCannon') && taskData.cp(trial) == 0
                 digit1 = 10;
                 digit2 = 0;
-            elseif isequal(condition, 'followOutcome') && taskData.oddBall(trial) == 1
+            elseif isequal(condition, 'followOutcome') && taskData.cp(trial) == 1
                 digit1 = 1;
                 digit2 = 1;
-            elseif isequal(condition, 'followOutcome') && taskData.oddBall(trial) == 0
+            elseif isequal(condition, 'followOutcome') && taskData.cp(trial) == 0
                 digit1 = 1;
                 digit2 = 0;
             elseif isequal(condition, 'main') && taskData.cp(trial) == 1
