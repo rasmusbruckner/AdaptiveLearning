@@ -10,14 +10,14 @@ if ~unitTest
 end
 
 % indentifies your machine. IF you have internet!
-[computer, Computer2] = identifyPC;
-%computer = 'Macbook'
+%[computer, Computer2] = identifyPC;
+computer = 'Macbook'
 
 %% unit test:
 %
 % select acutal data and expectedSolution!
-
-
+% triggerliste erstellen
+% reward in output setzen
 %% TODO:
 
 % sind catch trials in practice? irgendwo noch erwähnen

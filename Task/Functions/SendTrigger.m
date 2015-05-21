@@ -33,10 +33,10 @@ if taskParam.gParam.oddball == false
         elseif trial > 1 && Tevent == 16
             
             if isequal(condition, 'followCannon') && taskData.cp(trial) == 1
-                digit1 = 11;
+                digit1 = 10;
                 digit2 = 1;
             elseif isequal(condition, 'followCannon') && taskData.cp(trial) == 0
-                digit1 = 11;
+                digit1 = 10;
                 digit2 = 0;
             elseif isequal(condition, 'followOutcome') && taskData.oddBall(trial) == 1
                 digit1 = 1;

@@ -51,13 +51,13 @@ elseif taskParam.unitTest
     taskData.initiationRTs = nan(trial,1);
     taskData.actJitter = nan(trial,1);
     taskData.block = ones(trial,1);
-    if isequal(condition, 'Main')
+    if isequal(condition, 'main')
 
         taskData.pred = taskData.predMain;
-    elseif isequal(condition, 'FollowOutcome')
+    elseif isequal(condition, 'followOutcome')
         taskData.pred = taskData.predFollowOutcome;
 
-    elseif isequal(condition, 'FollowCannon')
+    elseif isequal(condition, 'followCannon')
         taskData.pred = taskData.predFollowCannon;
 
     end
@@ -222,6 +222,9 @@ for i=1:trial
         t = GetSecs;
         
         Screen('Flip', taskParam.gParam.window, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+        taskData.timestampOnset(i,:) = GetSecs - ref;
+        
+
         WaitSecs(0.5)
         
         time = GetSecs;
@@ -355,7 +358,7 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     oddballProb, 'oddBall', taskData.oddBall, 'ID', {taskData.ID}, 'age',...
     taskData.age, 'rew', {taskData.rew}, 'actRew', taskData.actRew,...
     'sex', {taskData.sex}, 'cond', {taskData.cond}, 'cBal',...
-    {taskData.cBal}, 'trial', trial, 'vola', vola, 'sigma', sigma,...
+    {taskData.cBal}, 'trial', taskData.trial, 'vola', vola, 'sigma', sigma,...
     'outcome', taskData.outcome, 'distMean', taskData.distMean, 'cp',...
     taskData.cp, 'TAC',taskData.TAC, 'boatType', taskData.boatType,...
     'catchTrial', taskData.catchTrial, 'predT', taskData.predT, 'outT',...
