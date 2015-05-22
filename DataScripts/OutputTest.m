@@ -5,6 +5,79 @@ classdef OutputTest < matlab.unittest.TestCase
 % muss catch trial mitkodiert werden? ja oder?
 %gibt es sonst noch was was ich vergessen habe?
 
+% neues schema
+
+%  0 0 0 0 0 -> CP, noCP, noCatch, noReward, noCT -> 100
+%  0 0 0 0 1 -> CP, noCP, noCatch, noReward, CT -> 101
+%  0 0 0 1 0 -> CP, noCP, noCatch, Reward, noCT ->  102
+%  0 0 0 1 1 -> CP, noCP, noCatch, Reward, CT ->  103
+%  0 0 1 0 0 -> CP, noCP, Catch, noReward, noCT -> 104
+%  0 0 1 0 1 -> CP, noCP, Catch, noReward, CT -> 105
+%  0 0 1 1 0 -> CP, noCP, Catch, Reward, noCT -> 106
+%  0 0 1 1 1 -> CP, noCP, Catch, Reward, CT -> 107
+%  0 1 0 0 0 -> CP, CP, noCatch, noReward, noCT -> 108
+%  0 1 0 0 1 -> CP, CP, noCatch, noReward, CT -> 109
+%  0 1 0 1 0 -> CP, CP, noCatch, Reward, noCT -> 110
+%  0 1 0 1 1 -> CP, CP, noCatch, Reward, CT -> 111
+%  0 1 1 0 0 -> CP, CP, Catch, noReward, noCT -> 112
+%  0 1 1 0 1 -> CP, CP, Catch, noReward, CT -> 113
+%  0 1 1 1 0 -> CP, CP, Catch, Reward, noCT -> 114
+%  0 1 1 1 1 -> CP, CP, Catch, Reward, CT -> 115
+
+%  1 0 0 0 0 -> FollowOutcome, noCP, noCatch, noReward, noCT -> 116
+%  1 0 0 0 1 -> FollowOutcome, noCP, noCatch, noReward, CT -> 117
+%  1 0 0 1 0 -> FollowOutcome, noCP, noCatch, Reward, noCT ->  118
+%  1 0 0 1 1 -> FollowOutcome, noCP, noCatch, Reward, CT ->  119
+%  1 0 1 0 0 -> FollowOutcome, noCP, Catch, noReward, noCT -> 120
+%  1 0 1 0 1 -> FollowOutcome, noCP, Catch, noReward, CT -> 121
+%  1 0 1 1 0 -> FollowOutcome, noCP, Catch, Reward, noCT -> 122
+%  1 0 1 1 1 -> FollowOutcome, noCP, Catch, Reward, CT -> 123
+%  1 1 0 0 0 -> FollowOutcome, CP, noCatch, noReward, noCT -> 124
+%  1 1 0 0 1 -> FollowOutcome, CP, noCatch, noReward, CT -> 125
+%  1 1 0 1 0 -> FollowOutcome, CP, noCatch, Reward, noCT -> 126
+%  1 1 0 1 1 -> FollowOutcome, CP, noCatch, Reward, CT -> 127
+%  1 1 1 0 0 -> FollowOutcome, CP, Catch, noReward, noCT -> 128
+%  1 1 1 0 1 -> FollowOutcome, CP, Catch, noReward, CT -> 129
+%  1 1 1 1 0 -> FollowOutcome, CP, Catch, Reward, noCT -> 130
+%  1 1 1 1 1 -> FollowOutcome, CP, Catch, Reward, CT -> 131
+
+% 10 0 0 0 1 -> FollowCannon, noCP, noCatch, noReward, CT -> 133
+% 10 0 0 1 1 -> FollowCannon, noCP, noCatch, Reward, CT ->  135
+% 10 0 1 0 1 -> FollowCannon, noCP, Catch, noReward, CT -> 137
+% 10 0 1 1 1 -> FollowCannon, noCP, Catch, Reward, CT -> 139
+% 10 1 0 0 1 -> FollowCannon, CP, noCatch, noReward, CT -> 141
+% 10 1 0 1 1 -> FollowCannon, CP, noCatch, Reward, CT -> 143
+% 10 1 1 0 1 -> FollowCannon, CP, Catch, noReward, CT -> 145
+% 10 1 1 1 1 -> FollowCannon, CP, Catch, Reward, CT -> 147
+
+
+
+
+
+
+
+%  1 0 0 0  -> FollowOutcome, noCP, noCatch, noReward -> 108
+%  1 0 0 1 -> FollowOutcome, noCP, noCatch, Reward -> 109
+%  1 0 1 0 -> FollowOutcome, noCP, Catch, noReward -> 110
+%  1 0 1 1 -> FollowOutcome, noCP, Catch, Reward -> 111
+%  1 1 0 0 -> FollowOutcome, CP, noCatch, noReward -> 112
+%  1 1 0 1 -> FollowOutcome, CP, noCatch, Reward -> 113
+%  1 1 1 0 -> FollowOutcome, CP, Catch, noReward -> 114
+%  1 1 1 1 -> FollowOutcome, CP, Catch, Reward -> 115
+
+
+
+
+% 10 0 0 0 -> FollowCannon, noCP, noCatch, noReward -> 116
+% 10 0 0 1 -> FollowCannon, noCP, noCatch, Reward -> 117
+% 10 0 1 0 -> FollowCannon, noCP, Catch, noReward -> 118
+% 10 0 1 1 -> FollowCannon, noCP, Catch, Reward -> 119
+% 10 1 0 0 -> FollowCannon, CP, noCatch, noReward -> 120
+% 10 1 0 1 -> FollowCannon, CP, noCatch, Reward -> 121
+% 10 1 1 0 -> FollowCannon, CP, Catch, noReward -> 122
+% 10 1 1 1 -> FollowCannon, CP, Catch, Reward -> 123
+
+
 
 % checken ob predErr 1 besser nan sein sollte
 
@@ -47,57 +120,82 @@ classdef OutputTest < matlab.unittest.TestCase
 
 % accPerf =  [0.2;0.2;0.2;0.4;0.4;0.6;0.8;0.8;0.8;1.0;1.0;1.0;1.0;1.0;1.0;1.0;1;1;1;1.2];
 %boatType = [0;1;0;0;0;0;0;1;1;0;1;0;1;1;1;1;0;1;1;0];
-%actRew =   [1;0;1;1;1;1;1;0;0;1;0;1;0;0;0;0;1;0;0;1];
+%actRew =   [1;0;1;1;1;     1;1;0;0;1;      0;1;0;0;0;0;1;0;0;1];
 
-%catchTrial = [0;1;0;1;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0];
+
 %distMean = [292;292;292;292;10;10;10;10;162;162;162;162;162;73;73;73;73;73;73;73];
 
 
 
 % Main
 
+%  0 0 0 0 0 -> CP, noCP, noCatch, noReward, noCT -> 100
+%  0 0 0 0 1 -> CP, noCP, noCatch, noReward, CT -> 101
+%  0 0 0 1 0 -> CP, noCP, noCatch, Reward, noCT ->  102
+%  0 0 0 1 1 -> CP, noCP, noCatch, Reward, CT ->  103
+%  0 0 1 0 0 -> CP, noCP, Catch, noReward, noCT -> 104
+%  0 0 1 0 1 -> CP, noCP, Catch, noReward, CT -> 105
+%  0 0 1 1 0 -> CP, noCP, Catch, Reward, noCT -> 106
+%  0 0 1 1 1 -> CP, noCP, Catch, Reward, CT -> 107
+%  0 1 0 0 0 -> CP, CP, noCatch, noReward, noCT -> 108
+%  0 1 0 0 1 -> CP, CP, noCatch, noReward, CT -> 109
+%  0 1 0 1 0 -> CP, CP, noCatch, Reward, noCT -> 110
+%  0 1 0 1 1 -> CP, CP, noCatch, Reward, CT -> 111
+%  0 1 1 0 0 -> CP, CP, Catch, noReward, noCT -> 112
+%  0 1 1 0 1 -> CP, CP, Catch, noReward, CT -> 113
+%  0 1 1 1 0 -> CP, CP, Catch, Reward, noCT -> 114
+%  0 1 1 1 1 -> CP, CP, Catch, Reward, CT -> 115
+
 % 1: eigentlich egal
-% 2: noCP, noCatch, noRew
-% 3: noCP, noCatch, Rew
-% 8: noCP, catch, noRew
-% 6: noCP, catch, Rew
+% 2: noCP, noCatch, noRew, CT -> 101
+% 3: noCP, noCatch, Rew, noCT -> 102
+% 8: noCP, catch, noRew, noCT -> 104
+% 6: noCP, catch, Rew, noCT -> 106
 
-% 5: CP, noCatch, Rew
-% 9: CP, noCatch, noRew
-%14: CP, noCatch, noRew
+% 5: CP, noCatch, Rew, noCT -> 110
+% 9: CP, noCatch, noRew, noCT -> 108
+%14: CP, noCatch, noRew, noCT -> 108
+
+% 4:  noCP, catch, rew, CT -> 107
+% 7:  noCP, catch, rew, noCT -> 106
+% 10: noCP, catch, rew, CT -> 107
+% 11: noCP, catch, noRew, noCT -> 104
+% 12: noCP, noCatch, rew, noCt -> 102
+% 13: noCP, Catch, noRew, noCT -> 104
+% 15: noCP, Catch, noRew, CT -> 105
+% 16: noCP, Catch, noRew, noCT -> 104
+% 17: noCP, noCatch, Rew, noCT -> 102
+% 18: noCP, noCatch, noRew, noCT -> 100
+% 19: noCP, noCatch, noRew, noCT -> 100
+% 20: noCP, catch, Rew, noCT -> 106
 
 
+%catchTrial = [0;1;0;1;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0];
 
-% 4:  noCP, catch, rew
-% 7:  noCP, catch, rew
-% 10: noCP, catch, rew
-% 11: noCP, catch, noRew
-% 12: noCP, noCatch, noRew
-% 13: noCP, Catch, noRew
-% 15: noCP, Catch, noRew
-% 16: noCP, noCatch, noRew
-% 17: noCP, noCatch, noRew
-% 18: noCP, noCatch, noRew
-% 19: noCP, noCatch, noRew
-% 20: noCP, catch, Rew
-
-%Main_Expected_SummaryTrigger = [255;100;101;103;105;103;103;102;104;103;102;101;102;104;102;102;101;100;100;103];
-%FollowOutcome_Expected_SummaryTrigger = [255;116;117;119;121;119;119;118;120;119;118;117;118;120;118;118;117;116;116;119];
+%Main_Expected_SummaryTrigger = [255;101;102;107;110;   106;106;104;108;107;    104;102;104;108;105;    104;102;100;100;106];
 
 
 
 %%%%%%%%%%%%%%%
 
+%  1 0 0 0 0 -> FollowOutcome, noCP, noCatch, noReward, noCT -> 116
+%  1 0 0 0 1 -> FollowOutcome, noCP, noCatch, noReward, CT -> 117
+%  1 0 0 1 0 -> FollowOutcome, noCP, noCatch, Reward, noCT ->  118
+%  1 0 0 1 1 -> FollowOutcome, noCP, noCatch, Reward, CT ->  119
+%  1 0 1 0 0 -> FollowOutcome, noCP, Catch, noReward, noCT -> 120
+%  1 0 1 0 1 -> FollowOutcome, noCP, Catch, noReward, CT -> 121
+%  1 0 1 1 0 -> FollowOutcome, noCP, Catch, Reward, noCT -> 122
+%  1 0 1 1 1 -> FollowOutcome, noCP, Catch, Reward, CT -> 123
+%  1 1 0 0 0 -> FollowOutcome, CP, noCatch, noReward, noCT -> 124
+%  1 1 0 0 1 -> FollowOutcome, CP, noCatch, noReward, CT -> 125
+%  1 1 0 1 0 -> FollowOutcome, CP, noCatch, Reward, noCT -> 126
+%  1 1 0 1 1 -> FollowOutcome, CP, noCatch, Reward, CT -> 127
+%  1 1 1 0 0 -> FollowOutcome, CP, Catch, noReward, noCT -> 128
+%  1 1 1 0 1 -> FollowOutcome, CP, Catch, noReward, CT -> 129
+%  1 1 1 1 0 -> FollowOutcome, CP, Catch, Reward, noCT -> 130
+%  1 1 1 1 1 -> FollowOutcome, CP, Catch, Reward, CT -> 131
 
 
-%  1 0 0 0 -> FollowOutcome, noCP, noCatch, noReward -> 108
-%  1 0 0 1 -> FollowOutcome, noCP, noCatch, Reward -> 109
-%  1 0 1 0 -> FollowOutcome, noCP, Catch, noReward -> 110
-%  1 0 1 1 -> FollowOutcome, noCP, Catch, Reward -> 111
-%  1 1 0 0 -> FollowOutcome, CP, noCatch, noReward -> 112
-%  1 1 0 1 -> FollowOutcome, CP, noCatch, Reward -> 113
-%  1 1 1 0 -> FollowOutcome, CP, Catch, noReward -> 114
-%  1 1 1 1 -> FollowOutcome, CP, Catch, Reward -> 115
 
 
 
@@ -121,32 +219,33 @@ classdef OutputTest < matlab.unittest.TestCase
 
 
 %1: 255
-%2: noCP, noCatch, noRew
-%3: noCP, noCatch, Rew
-%8: noCP, Catch, noRew
-%4: noCP, Catch, Rew
+%2: noCP, noCatch, noRew, CT -> 117
+%3: noCP, noCatch, Rew, noCT -> 118
+%8: noCP, Catch, noRew, noCT -> 120
+%4: noCP, Catch, Rew, CT -> 123
 
-%9 CP, Catch, noRew
-%5 CP, Catch, Rew
-%14: CP, Catch, noRew
+%9 CP, Catch, noRew, noCT -> 128
+%5 CP, Catch, Rew, noCT -> 130
+%14: CP, Catch, noRew, noCT -> 128
+
+%6:  noCP, Catch, rew, noCT -> 122
+%7:  noCP, Catch, rew, noCT -> 122
+
+%10: noCP, Catch, rew, CT -> 123
+%11: noCP, Catch, noRew, noCT -> 120
+%12: noCP, Catch, rew, noCT -> 122
+%13: noCP, Catch, noRew, noCT -> 120
+%15: noCP, noCatch,noRew ,CT -> 117
+%16: noCP, noCatch, noRew, noCT -> 116
+%17: noCP, noCatch, Rew, noCT -> 118
+%18: noCP, noCatch, noRew, noCT -> 116
+%19: noCP, noCatch, noRew, noCT -> 116
+%20: noCP, Catch, rew, noCT -> 122
+
+%catchTrial = [0;1;0;1;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0];
 
 
-
-%6:  noCP, Catch, rew
-%7:  noCP, Catch, rew
-
-%10: noCP, Catch, rew
-%11: noCP, Catch, noRew
-%12: noCP, Catch, rew
-%13: noCP, Catch, noRew
-%15: noCP, noCatch,
-%16: noCP, noCatch
-%17: noCP, noCatch
-%18: noCP, noCatch
-%19: noCP, noCatch
-%20: noCP, Catch, rew
-
-%FollowOutcome_Expected_SummaryTrigger = [255;108;109;111;115;  111;111;110;114;111;    110;111;110;114;108;    108;109;108;108;111];
+%FollowOutcome_Expected_SummaryTrigger = [255;117;118;123;130;  122;122;120;128;123;    120;122;120;128;117;    116;118;116;116;122];
 
 %          actRew =   [1;0;1;1;1;   1;1;0;0;1;  0;1;0;0;0;  0;1;0;0;1];
 
@@ -154,9 +253,46 @@ classdef OutputTest < matlab.unittest.TestCase
 %%%%%%%%%%%%%
 
 
+% 10 0 0 0 1 -> FollowCannon, noCP, noCatch, noReward, CT -> 133
+% 10 0 0 1 1 -> FollowCannon, noCP, noCatch, Reward, CT ->  135
+% 10 0 1 0 1 -> FollowCannon, noCP, Catch, noReward, CT -> 137
+% 10 0 1 1 1 -> FollowCannon, noCP, Catch, Reward, CT -> 139
+% 10 1 0 0 1 -> FollowCannon, CP, noCatch, noReward, CT -> 141
+% 10 1 0 1 1 -> FollowCannon, CP, noCatch, Reward, CT -> 143
+% 10 1 1 0 1 -> FollowCannon, CP, Catch, noReward, CT -> 145
+% 10 1 1 1 1 -> FollowCannon, CP, Catch, Reward, CT -> 147
 
 
 
+% 1: eigentlich egal
+% 2: noCP, noCatch, noRew -> 133
+% 3: noCP, noCatch, Rew -> 135
+% 8: noCP, catch, noRew, -> 137
+% 6: noCP, catch, Rew -> 139
+
+% 5: CP, noCatch, Rew -> 143
+% 9: CP, noCatch, noRew -> 141
+%14: CP, noCatch, noRew -> 141
+
+% 4:  noCP, catch, rew -> 139
+% 7:  noCP, catch, rew -> 139
+% 10: noCP, catch, rew -> 139
+% 11: noCP, catch, noRew -> 137
+% 12: noCP, noCatch, rew -> 135
+% 13: noCP, Catch, noRew -> 137
+% 15: noCP, Catch, noRew -> 137
+% 16: noCP, Catch, noRew -> 137
+% 17: noCP, noCatch, Rew -> 135
+% 18: noCP, noCatch, noRew -> 133
+% 19: noCP, noCatch, noRew -> 133
+% 20: noCP, catch, Rew -> 139
+
+
+% FollowCannon_Expected_SummaryTrigger = [255;133;135;139;143;  139;139;137;141;139;    137;135;137;141;137;    137;135;133;133;139];
+
+
+
+%%%%%%%%%%%%
 
     methods (Test)
         
@@ -287,7 +423,7 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(Main_Actual_trigger6, Main_Expected_trigger6);
             
             Main_Actual_SummaryTrigger = DataMain.triggers(:,7);
-            Main_Expected_SummaryTrigger = [255;100;101;103;105;103;103;102;104;103;102;101;102;104;102;102;101;100;100;103];
+            Main_Expected_SummaryTrigger = [255;101;102;107;110;   106;106;104;108;107;    104;102;104;108;105;    104;102;100;100;106];
             testCase.verifyEqual(Main_Actual_SummaryTrigger, Main_Expected_SummaryTrigger);
             
             keyboard
@@ -409,7 +545,7 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(FollowOutcome_Actual_trigger6, FollowOutcome_Expected_trigger6);
 
             FollowOutcome_Actual_SummaryTrigger = DataFollowOutcome.triggers(:,7);
-            FollowOutcome_Expected_SummaryTrigger = [255;108;109;111;115;  111;111;110;114;111;    110;111;110;114;108;    108;109;108;108;111];
+            FollowOutcome_Expected_SummaryTrigger = [255;117;118;123;130;  122;122;120;128;123;    120;122;120;128;117;    116;118;116;116;122];
             testCase.verifyEqual(FollowOutcome_Actual_SummaryTrigger, FollowOutcome_Expected_SummaryTrigger);
              
             keyboard
@@ -537,7 +673,7 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(FollowCannon_Actual_trigger6, FollowCannon_Expected_trigger6);
             
             FollowCannon_Actual_SummaryTrigger = DataFollowCannon.triggers(:,7);
-            FollowCannon_Expected_SummaryTrigger = [255;116;117;119;121;119;119;118;120;119;118;117;118;120;118;118;117;116;116;119];
+            FollowCannon_Expected_SummaryTrigger = [255;133;135;139;143;  139;139;137;141;139;    137;135;137;141;137;    137;135;133;133;139];
             testCase.verifyEqual(FollowCannon_Actual_SummaryTrigger, FollowCannon_Expected_SummaryTrigger);
 
         end

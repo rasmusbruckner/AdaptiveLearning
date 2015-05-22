@@ -64,6 +64,13 @@ if taskParam.gParam.oddball == false
             elseif taskData.actRew(trial) == 2
                 digit4 = 0;
             end
+
+
+            if taskData.catchTrial(trial) || isequal(condition, 'followCannon');
+                digit5 = 1;
+            else
+                digit5 = 0;
+            end
             
         else
             trigger = 255;
@@ -73,7 +80,7 @@ if taskParam.gParam.oddball == false
         if Tevent == 16 && trial > 1
             
             
-            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
+            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4), num2str(digit5));
             %trigger = str2double(trigger);
             trigger = base2dec(trigger, 2) + 100;
         end
