@@ -263,7 +263,7 @@ for i=1:trial
         end
     end
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'oddball') || isequal(condition,'followCannon')
+    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'oddball') || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice')
         if taskData.predErr(i) <= taskData.allASS(i)/2
             taskData.hit(i) = 1;
         end

@@ -4,7 +4,6 @@ hits = sum(Data.hit == 1);
 
 rewTrials = sum(Data.actRew == 1);
 noRewTrials = sum(Data.actRew == 2);
-
 rewCatches = max(Data.accPerf)/taskParam.gParam.rewMag;
 noRewCatches = hits - rewCatches;
 maxMon = (length(find(Data.boatType == 1))...
@@ -36,11 +35,13 @@ else
     header = 'Leistung';
     if subject.rew == 1
         colRewCap = 'goldenen';
-        colNoRewCap = 'silbernen';
+        colNoRewCap = 'grauen';
     elseif subject.rew == 2
         colRewCap = 'silbernen';
-        colNoRewCap = 'goldenen';
+        colNoRewCap = 'gelben';
     end
+    
+    
     
     if isequal(condition, 'mainPractice') || isequal(condition, 'followOutcomePractice') ||  isequal(condition, 'followCannonPractice')
         wouldHave = 'hättest';
@@ -50,11 +51,13 @@ else
     
     if isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'main') || isequal(condition, 'followCannon')
         
-        gefangenVsGesammelt = 'gefangen';
+        schildVsKorb = 'Schild';
+        gefangenVsGesammelt = 'abgewehrt';
         
     elseif isequal(condition, 'followOutcomePractice') || isequal(condition, 'followOutcome')
         
-        gefangenVsGesammelt = 'gesammelt';
+        schildVsKorb = 'Korb';
+        gefangenVsGesammelt = 'aufgesammelt';
         
     end
     
@@ -72,18 +75,18 @@ else
             wouldHave = 'hast ';
         end
         
-        txt = sprintf(['Weil du %.0f von %.0f Kugeln mit dem %s Schild '...
+        txt = sprintf(['Weil du %.0f von %.0f Kugeln mit dem %s %s '...
             '%s hast,\n\n%s du %.2f von maximal %.2f Euro gewonnen.' ], rewCatches,...
-            rewTrials, colRewCap, gefangenVsGesammelt, wouldHave, max(Data.accPerf), maxMon);
+            rewTrials, colRewCap, schildVsKorb, gefangenVsGesammelt, wouldHave, max(Data.accPerf), maxMon);
     else
         if isequal(condition, 'mainPractice') || isequal(condition, 'followOutcomePractice') ||  isequal(condition, 'followCannonPractice')
             wouldHave = 'hätten';
         else
             wouldHave = 'haben';
         end
-        txt = sprintf(['Weil Sie %.0f von %.0f Kugeln mit dem %s Schild '...
+        txt = sprintf(['Weil Sie %.0f von %.0f Kugeln mit dem %s %s '...
             '%s haben,\n\n%s Sie %.2f von maximal %.2f Euro gewonnen.' ], rewCatches,...
-            rewTrials, colRewCap, gefangenVsGesammelt, wouldHave, max(Data.accPerf), maxMon);
+            rewTrials, colRewCap, schildVsKorb, gefangenVsGesammelt, wouldHave, max(Data.accPerf), maxMon);
     end
     
     

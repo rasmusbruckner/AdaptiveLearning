@@ -68,8 +68,8 @@ while 1
     
     if Data.tickMark == true
     
-        TickMark(taskParam, Data.outcome, 'outc')
-        TickMark(taskParam, Data.pred, 'pred')
+        TickMark(taskParam, Data.outcome(end), 'outc')
+        TickMark(taskParam, Data.pred(end), 'pred')
     end
     DrawCross(taskParam)
    
