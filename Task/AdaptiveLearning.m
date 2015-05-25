@@ -15,24 +15,13 @@ computer = 'Macbook'
 
 %% unit test:
 %
-% select acutal data and expectedSolution!
 % triggerliste erstellen
-% reward in output setzen
+
 %% TODO:
 
-% sind catch trials in practice? irgendwo noch erwähnen
 
-
-%%       - sachen fett drucken (AUFGABE UND FARBE)
 %%       - überlegen wie viel gezahlt werden sollte
 %%       - check jitter
-%%      - daten laden für bedingungen (keyboard in alle bedingungen setzen und auf zwei bildschirmen checken ob alles erreicht wird)
-
-
-%%       - performance überprüfen (ob alles richtig rausgeschrieben wird, MIT TEST)
-%%       - feedback für main checken!! (mit test!!)
-%%           - triggers should be controlled (mit test)
-
 %           - trigger timing liste erstellen und paper lesen
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       - condition:
@@ -60,7 +49,7 @@ allThreeConditions = true;
 sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 6
-practTrials = 20; % 20
+practTrials = 1; % 20
 trials = 1; % 240
 controlTrials = 1; % 120 
 blockIndices = [1 60 120 180]; 
@@ -69,7 +58,7 @@ oddballProb = [.25 0];
 sigma = [10 12 99999999];  
 driftConc = [30 99999999]; 
 safe = [3 0];
-rewMag = 0.2;
+rewMag = 0.1;
 jitter = 0.2;
 practiceTrialCriterion = 10;
 test = false; 
@@ -592,7 +581,7 @@ Screen('CloseAll');
                 'zusammengefasst wehrst du also die meisten '...
                 'Kugeln ab, wenn du den orangenen Punkt auf die Stelle '...
                 'bewegst, auf die die Kanone zielt. Weil du die '...
-                'Kanone nicht mehr sehen kannst, musst du diese '...
+                'Kanone meistens nicht mehr sehen kannst, musst du diese '...
                 'Stelle aufgrund der Position der letzten Kugeln '...
                 'einschätzen. Das Geld für die abgewehrten '...
                 'Kugeln bekommst du nach der Studie '...

@@ -3,13 +3,24 @@ function [taskData, Data] = Main(taskParam, vola, sigma, condition, Subject)
 % "practice" or "control". This loop is optimized for triggering accuracy.
 
 %% Events
-% Trigger 1: Trial Onset (subject presses buttons to indicate prediction)
-% Trigger 2: Prediction/Fixation Cross 1: When subject presses Space until 500 mSec
-% Trigger 3: Outcome: 500 - 1000 mSec
-% Trigger 4: Fixation Cross 2: 1000 - 2000 mSec
-% Trigger 5: Shield: 2000 - 2500 mSec
-% Trigger 6: Fixation Cross 3: 2500 - 3500 mSec
-% Trigger 7: Trial Summary (no timing trigger)
+
+% Trigger 1: Trial Onset
+% Trigger 2: Prediction/Fixation1 (500ms): Subject sees fixation cross
+% Trigger 3: Outcome (500ms): Subject sees outcome
+% Trigger 4: Fixation2 (1000ms)
+% Trigger 5: Shield (500ms)
+% Trigger 6: Fixation3 (1000ms)
+% Trigger 7: Trial Summary
+% Jitter: 0-200ms
+
+%% Timestamps
+
+% trial onset: with trial onset trigger
+% prediction: trigger
+
+
+% InitRT: first button press 
+
 
 KbReleaseWait();
 
@@ -130,7 +141,8 @@ for i=1:trial
     initRT_Timestamp = GetSecs();
     
     taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
-    
+    taskData.timestampOnset(i,:) = GetSecs - ref;
+
     if ~taskParam.unitTest
         while 1
             
@@ -309,10 +321,8 @@ for i=1:trial
     WaitSecs(.5);
     taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
     
-    taskData.timestampOffset(i,:) = GetSecs - ref;
-    
     WaitSecs(.5);
-    
+    taskData.timestampOffset(i,:) = GetSecs - ref;
 end
 
 % hits = sum(taskData.hit == 1);
