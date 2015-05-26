@@ -12,8 +12,8 @@ if ~unitTest
 end
 
 % indentifies your machine. IF you have internet!
-%[computer, Computer2] = identifyPC;
-computer = 'Macbook'
+[computer, Computer2] = identifyPC;
+%computer = 'Macbook'
 
 
 %% TODO:
@@ -48,14 +48,14 @@ oddball = false;
 allThreeConditions = true;
 sendTrigger = true;
 randomize = true;
-shieldTrials = 6; % 6
+shieldTrials = 4; % 6
 practTrials = 20; % 20
 trials = 240; % 240
-controlTrials = 240; % 120 
+controlTrials = 120; % 120 
 blockIndices = [1 60 120 180]; 
 vola = [.25 1 0]; 
 oddballProb = [.25 0];  
-sigma = [12 12 99999999];  %[10 12 99999999];  
+sigma = [14 12 99999999];  %[10 12 99999999];  
 driftConc = [30 99999999]; 
 safe = [3 0];
 rewMag = 0.1;
@@ -126,7 +126,7 @@ elseif askSubjInfo == true
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     subjInfo{7} = date;
     
-    if numel(subjInfo{1}) < 4 || numel(subjInfo{1}) >4
+    if numel(subjInfo{1}) < 5 || numel(subjInfo{1}) > 5
         msgbox('ID: consists of four numbers!');
         return
     end
