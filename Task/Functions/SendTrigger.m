@@ -6,7 +6,6 @@ function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Teve
 % habe trigger jetzt aus der schleife genommen. woran liegt das?
 %   See triggerscheme for details
 
-% preallocats everytime NOT GOOD!!!!!!!!!!!!!!!! in script!
 digit1 = 0;
 digit2 = 0;
 digit3 = 0;

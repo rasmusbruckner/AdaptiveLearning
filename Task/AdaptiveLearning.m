@@ -1,4 +1,6 @@
-function [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(unitTest)
+%function [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(unitTest)
+
+function AdaptiveLearning(unitTest)
 
 if nargin == 0
     unitTest = false;
@@ -13,16 +15,14 @@ end
 %[computer, Computer2] = identifyPC;
 computer = 'Macbook'
 
-%% unit test:
-%
-% triggerliste erstellen
 
 %% TODO:
 
+% paper lesen: überlegen wie lange fixationskreuz sein sollte
+% cavanagh: 
+% überlegen wie viel gezahlt werden sollte
 
-%%       - überlegen wie viel gezahlt werden sollte
-%%       - check jitter
-%           - trigger timing liste erstellen und paper lesen
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       - condition:
 %%           - shield
@@ -46,16 +46,16 @@ runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = false;
+sendTrigger = true;
 randomize = true;
-shieldTrials = 1; % 6
-practTrials = 1; % 20
-trials = 1; % 240
-controlTrials = 1; % 120 
+shieldTrials = 6; % 6
+practTrials = 20; % 20
+trials = 240; % 240
+controlTrials = 240; % 120 
 blockIndices = [1 60 120 180]; 
 vola = [.25 1 0]; 
 oddballProb = [.25 0];  
-sigma = [10 12 99999999];  
+sigma = [12 12 99999999];  %[10 12 99999999];  
 driftConc = [30 99999999]; 
 safe = [3 0];
 rewMag = 0.1;
@@ -667,7 +667,7 @@ Screen('CloseAll');
             'dstRect', dstRect);
         
         ListenChar(2);
-        %HideCursor;
+        HideCursor;
         
     end
 
