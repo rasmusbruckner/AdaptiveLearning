@@ -83,6 +83,12 @@ end
             Screen('FillRect', taskParam.gParam.window, []);
             DrawFormattedText(taskParam.gParam.window, txt,...
                 'center', 100, [0 0 0]);
+            
+            
+            %Screen('DrawTexture', taskParam.gParam.window, taskParam.textures.shieldTxt,[], taskParam.textures.dstRect)%, 'center', [], [0], [0 0 0], [], []);  %Boat
+            %Screen('DrawTexture', taskParam.gParam.window, taskParam.textures.basketTxt,[], taskParam.textures.dstRect)%, 'center', [], [0], [0 0 0], [], []);  %Boat
+
+            
             Screen('DrawingFinished', taskParam.gParam.window);
             
 
@@ -110,7 +116,8 @@ end
                 case 1
                     
                     txt = 'Kanonenkugeln Abwehren';
-                    screenIndex = YourTaskScreen(txt, screenIndex);
+                    screenIndex = YourTaskScreen(txt,...
+                        taskParam.textures.shieldTxt, screenIndex);
                     
                 case 2
                     
@@ -516,7 +523,7 @@ end
                                 'Manchmal dreht sich die Kanone '...
                                 'allerdings auch und zielt auf eine '...
                                 'andere Stelle. Du verdienst am meisten, '...
-                                'wenn du den organgenen Punkt genau '...
+                                'wenn du den orangenen Punkt genau '...
                                 'auf den schwarzen Strich steuerst, weil '...
                                 'du so sicher die Kugel aufsammelst. '...
                                 '\n\nWenn du die Kugel zu oft nicht aufsammelst, '...
@@ -531,7 +538,7 @@ end
                                 'Manchmal dreht sich die Kanone '...
                                 'allerdings auch und zielt auf eine '...
                                 'andere Stelle. Du verdienst am meisten, '...
-                                'wenn du den organgenen Punkt genau '...
+                                'wenn du den oragenen Punkt genau '...
                                 'auf den schwarzen Strich steuerst, weil '...
                                 'du so sicher die Kugel aufsammelst. '...
                                 '\n\nWenn du die Kugel zu oft nicht aufsammelst, '...
@@ -643,7 +650,7 @@ end
                                 'dreht sich die Kanone '...
                                 'auch und zielt auf eine andere Stelle. '...
                                 'Du verdienst am meisten, wenn du den '...
-                                'organgenen Punkt genau auf den '...
+                                'orangenen Punkt genau auf den '...
                                 'schwarzen Strich steuerst, weil du '...
                                 'so sicher die Kugel aufsammelst. '...
                                 '\n\nWenn du die Kugel zu oft nicht aufsammelst, '...
@@ -659,7 +666,7 @@ end
                                 'dreht sich die Kanone '...
                                 'auch und zielt auf eine andere Stelle. '...
                                 'Du verdienst am meisten, wenn du den '...
-                                'organgenen Punkt genau auf den '...
+                                'orangenen Punkt genau auf den '...
                                 'schwarzen Strich steuerst, weil du '...
                                 'so sicher die Kugel aufsammelst. '...
                                 '\n\nWenn du die Kugel zu oft nicht aufsammelst, '...
@@ -745,7 +752,8 @@ end
                 case 1
                     
                     txt = 'Kanonenkugeln Abwehren';
-                    screenIndex = YourTaskScreen(txt, screenIndex);
+                    screenIndex = YourTaskScreen(txt,...
+                        taskParam.textures.shieldTxt, screenIndex);
                     
                 case 2
                     if subject.cBal == 1 || subject.cBal == 2 || subject.cBal == 3 
@@ -875,8 +883,16 @@ end
                 %                         end
                 %                     end
                 %                     WaitSecs(0.1);
-                
                 case 1
+                   if subject.cBal == 4 || subject.cBal == 6 || subject.cBal == 5 
+                    txt = 'Kanonenkugeln Abwehren';
+                    screenIndex = YourTaskScreen(txt,...
+                        taskParam.textures.shieldTxt, screenIndex);
+                    else
+                        screenIndex = screenIndex + 1;
+                   end
+                    
+                case 2
                     if subject.cBal == 4 || subject.cBal == 6 || subject.cBal == 5 
                         
                         header = 'Kanonenkugeln Abwehren';
@@ -910,7 +926,7 @@ end
                         screenIndex = screenIndex + 1;
                     end
                     WaitSecs(0.1);
-                case 2
+                case 3
                     if subject.cBal == 4 || subject.cBal == 5 || subject.cBal == 6
                         header = 'Erste Übung';
                     else
@@ -973,7 +989,7 @@ end
                     
                     WaitSecs(0.1);
                     
-                case 3
+                case 4
                     break
             end
         end
@@ -989,7 +1005,8 @@ end
                 case 1
                     
                     txt = 'Kanonenkugeln Aufsammeln';
-                    screenIndex = YourTaskScreen(txt, screenIndex);
+                    screenIndex = YourTaskScreen(txt,...
+                        taskParam.textures.basketTxt, screenIndex);
                     
                 case 2
                     
@@ -1288,12 +1305,15 @@ end
         end
     end
 
-    function [screenIndex] = YourTaskScreen(txt, screenIndex)
+    function [screenIndex] = YourTaskScreen(txt, texture, screenIndex)
         while 1
             Screen('TextFont', taskParam.gParam.window, 'Arial');
             Screen('TextSize', taskParam.gParam.window, 30);
             DrawFormattedText(taskParam.gParam.window, txt,...
                 'center', 100, [0 0 0], sentenceLength);
+            Screen('DrawTexture', taskParam.gParam.window, texture,[],...
+                taskParam.textures.dstRect)
+
             Screen('DrawingFinished', taskParam.gParam.window);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window, t + 0.1);

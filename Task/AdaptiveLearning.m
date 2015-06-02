@@ -1,5 +1,3 @@
-%function [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(unitTest)
-
 function AdaptiveLearning(unitTest)
 
 if nargin == 0
@@ -14,14 +12,6 @@ end
 % indentifies your machine. IF you have internet!
 [computer, Computer2] = identifyPC;
 %computer = 'Macbook'
-
-
-%% TODO:
-
-% paper lesen: überlegen wie lange fixationskreuz sein sollte
-% cavanagh: 
-% überlegen wie viel gezahlt werden sollte
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       - condition:
@@ -46,12 +36,12 @@ runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = true;
+sendTrigger = false;
 randomize = true;
-shieldTrials = 4; % 6
-practTrials = 20; % 20
-trials = 240; % 240
-controlTrials = 120; % 120 
+shieldTrials = 1; % 6
+practTrials = 1; % 20
+trials = 1; % 240
+controlTrials = 1; % 120 
 blockIndices = [1 60 120 180]; 
 vola = [.25 1 0]; 
 oddballProb = [.25 0];  
@@ -99,7 +89,7 @@ fRew = 'rew';
 fDate = 'Date';
 
 if askSubjInfo == false
-    ID = '9999';
+    ID = '99999';
     age = '99';
     group = '1';
     sex = 'm/w';
@@ -119,15 +109,15 @@ elseif askSubjInfo == true
         end
         reward = num2str(round(unifrnd(1,2)));
         %group = num2str(round(unifrnd(1,2)));
-        defaultanswer = {'9999','99', '1', 'm', cBal, reward};
+        defaultanswer = {'99999','99', '1', 'm', cBal, reward};
     else
-        defaultanswer = {'9999','99', '1', 'm', '1', '1'};
+        defaultanswer = {'99999','99', '1', 'm', '1', '1'};
     end
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     subjInfo{7} = date;
     
     if numel(subjInfo{1}) < 5 || numel(subjInfo{1}) > 5
-        msgbox('ID: consists of four numbers!');
+        msgbox('ID: must consist of five numbers!');
         return
     end
     
@@ -660,11 +650,14 @@ Screen('CloseAll');
         cannonPic(:,:,4) = alpha(:,:);
         Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         cannonTxt = Screen('MakeTexture', window, cannonPic);
-        [aimPic, ~, alpha]  = imread('arrow.png');
-        aimPic(:,:,4) = alpha(:,:);
-        aimTxt = Screen('MakeTexture', window, aimPic);
-        textures = struct('cannonTxt', cannonTxt, 'aimTxt', aimTxt,...
-            'dstRect', dstRect);
+        [shieldPic, ~, alpha]  = imread('shield.png');
+        shieldPic(:,:,4) = alpha(:,:);
+        shieldTxt = Screen('MakeTexture', window, shieldPic);
+        [basketPic, ~, alpha]  = imread('basket.png');
+        basketPic(:,:,4) = alpha(:,:);
+        basketTxt = Screen('MakeTexture', window, basketPic);
+        textures = struct('cannonTxt', cannonTxt, 'shieldTxt', shieldTxt,...
+            'basketTxt', basketTxt, 'dstRect', dstRect);
         
         ListenChar(2);
         HideCursor;
