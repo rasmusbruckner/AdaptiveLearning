@@ -112,7 +112,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
     oddBall(i) = nan;
     
     %CatchTrial
-    if rand <= .125 && cp(i) == 0;
+    if rand <= .10 && cp(i) == 0;
         catchTrial(i) = 1;
     else
         catchTrial(i) = 0;
