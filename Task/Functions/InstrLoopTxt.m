@@ -8,7 +8,6 @@ function [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam, txt, cannon, button
 %%
 % Idee: predError als input. Dann am Anfang zeigen, wobei in normaler
 % practice = 0 und in controlpractice = irgendwas
-%%
 if exist('Data', 'var')
 
     i=1;
