@@ -237,7 +237,7 @@ for i=1:trial
         taskData.timestampOnset(i,:) = GetSecs - ref;
         
 
-        WaitSecs(0.5)
+        WaitSecs(0.5);
         
         time = GetSecs;
     end

@@ -1,5 +1,8 @@
 classdef OutputTest < matlab.unittest.TestCase
     
+% to run the unit test put: run(OutputTest) in command window
+% use: rew = 2
+% trials = 20
 
 % bei followCannon -> catchTrial is nan
 % muss catch trial mitkodiert werden? ja oder?
@@ -305,7 +308,7 @@ classdef OutputTest < matlab.unittest.TestCase
             % triggerliste erstellen
             
             [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(true);
-            
+            keyboard
             Main_Actual_outcome = DataMain.outcome;
             Main_Expected_outcome = [307;314;275;299;21;23;20;11;128;168;170;206;168;63;81;67;61;94;112;82];
             testCase.verifyEqual(Main_Actual_outcome, Main_Expected_outcome);
@@ -343,11 +346,11 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(Main_Actual_distMean, Main_Expected_distMean);
 
             Main_Actual_perf = DataMain.perf;
-            Main_Expected_perf = [0.2;  0;  0;0.2;  0;0.2;0.2;  0;  0;0.2;  0;  0;  0;  0;  0;  0;0;0;0;0.2];
+            Main_Expected_perf = [0.1;  0;  0;0.1;  0;0.1;0.1;  0;  0;0.1;  0;  0;  0;  0;  0;  0;0;0;0;0.1];
             testCase.verifyEqual(Main_Actual_perf, Main_Expected_perf);
 
             Main_Actual_accPerf = DataMain.accPerf;
-            Main_Expected_accPerf = [0.2;0.2;0.2;0.4;0.4;0.6;0.8;0.8;0.8;1.0;1.0;1.0;1.0;1.0;1.0;1.0;1;1;1;1.2];
+            Main_Expected_accPerf = [0.1;0.1;0.1;0.2;0.2;0.3;0.4;0.4;0.4;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.6];
             testCase.verifyEqual(Main_Actual_accPerf, Main_Expected_accPerf, 'AbsTol', 0.0001);
             
             Main_Actual_memErr = DataMain.memErr;
@@ -355,7 +358,7 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(Main_Actual_memErr, Main_Expected_memErr)
 
             Main_Actual_sigma = DataMain.sigma;
-            Main_Expected_sigma = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
+            Main_Expected_sigma = [12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12];
             testCase.verifyEqual(Main_Actual_sigma, Main_Expected_sigma);
 
             Main_Actual_vola = DataMain.vola;
@@ -432,11 +435,11 @@ classdef OutputTest < matlab.unittest.TestCase
 
 
             FollowOutcome_Actual_perf = DataFollowOutcome.perf;
-            FollowOutcome_Expected_perf = [  0; 0;  0;0.2;0.2;0.2;0.2;  0;  0;0.2;  0;0.2;  0;  0;   0; 0;  0;  0;  0;  0.2;]; 
+            FollowOutcome_Expected_perf = [  0; 0;  0;0.1;0.1;0.1;0.1;  0;  0;0.1;  0;0.1;  0;  0;   0; 0;  0;  0;  0;  0.1;]; 
             testCase.verifyEqual(FollowOutcome_Actual_perf, FollowOutcome_Expected_perf);
 
             FollowOutcome_Actual_accPerf = DataFollowOutcome.accPerf;
-            FollowOutcome_Expected_accPerf = [  0; 0;  0;0.2;0.4;0.6;0.8;0.8;0.8;  1;  1;1.2;1.2;1.2; 1.2;1.2;1.2;1.2;1.2;1.4;]; 
+            FollowOutcome_Expected_accPerf = [  0; 0;  0;0.1;0.2;0.3;0.4;0.4;0.4;  0.5;  0.5;0.6;0.6;0.6; 0.6;0.6;0.6;0.6;0.6;0.7;]; 
             testCase.verifyEqual(FollowOutcome_Actual_accPerf, FollowOutcome_Expected_accPerf, 'AbsTol', 0.0001);
             
             FollowOutcome_Actual_hit = DataFollowOutcome.hit;
@@ -477,7 +480,7 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(FollowOutcome_Actual_outcome, FollowOutcome_Expected_outcome);
 
             FollowOutcome_Actual_sigma = DataFollowOutcome.sigma;
-            FollowOutcome_Expected_sigma = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
+            FollowOutcome_Expected_sigma = [12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12];
             testCase.verifyEqual(FollowOutcome_Actual_sigma, FollowOutcome_Expected_sigma);
 
             FollowOutcome_Actual_vola = DataFollowOutcome.vola;
@@ -593,11 +596,11 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(FollowCannon_Actual_distMean, FollowCannon_Expected_distMean);
 
             FollowCannon_Actual_perf = DataFollowCannon.perf;
-            FollowCannon_Expected_perf = [0.2;  0;  0;0.2;  0;0.2;0.2;  0;  0;0.2;  0;  0;  0;  0;  0;  0;0;0;0;0.2];
+            FollowCannon_Expected_perf = [0.1;  0;  0;0.1;  0;0.1;0.1;  0;  0;0.1;  0;  0;  0;  0;  0;  0;0;0;0;0.1];
             testCase.verifyEqual(FollowCannon_Actual_perf, FollowCannon_Expected_perf);
 
             FollowCannon_Actual_accPerf = DataFollowCannon.accPerf;
-            FollowCannon_Expected_accPerf = [0.2;0.2;0.2;0.4;0.4;0.6;0.8;0.8;0.8;1.0;1.0;1.0;1.0;1.0;1.0;1.0;1;1;1;1.2];
+            FollowCannon_Expected_accPerf = [0.1;0.1;0.1;0.2;0.2;0.3;0.4;0.4;0.4;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.6];
             testCase.verifyEqual(FollowCannon_Actual_accPerf, FollowCannon_Expected_accPerf, 'AbsTol', 0.0001);
             
             FollowCannon_Actual_memErr = DataFollowCannon.memErr;
@@ -605,7 +608,7 @@ classdef OutputTest < matlab.unittest.TestCase
             testCase.verifyEqual(FollowCannon_Actual_memErr, FollowCannon_Expected_memErr)
 
             FollowCannon_Actual_sigma = DataFollowCannon.sigma;
-            FollowCannon_Expected_sigma = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
+            FollowCannon_Expected_sigma = [12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12; 12];
             testCase.verifyEqual(FollowCannon_Actual_sigma, FollowCannon_Expected_sigma);
 
             FollowCannon_Actual_vola = DataFollowCannon.vola;

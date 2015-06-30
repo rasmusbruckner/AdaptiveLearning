@@ -1,4 +1,4 @@
-function AdaptiveLearning(unitTest)
+function [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(unitTest)
 
 if nargin == 0
     unitTest = false;
@@ -36,12 +36,12 @@ runIntro = true;
 askSubjInfo = true;
 oddball = false;
 allThreeConditions = true;
-sendTrigger = false;
+sendTrigger = true;
 randomize = true;
-shieldTrials = 1; % 4
-practTrials = 1; % 20
-trials = 1; % 240
-controlTrials = 1; % 120 
+shieldTrials = 4; % 4
+practTrials = 20; % 20
+trials = 240; % 240
+controlTrials = 120; % 120 
 blockIndices = [1 60 120 180]; 
 vola = [.25 1 0]; 
 oddballProb = [.25 0];  
@@ -94,8 +94,8 @@ if askSubjInfo == false
     group = '1';
     sex = 'm/w';
     cBal = 1;
-    reward = 1;
-    Subject = struct(fID, ID, fAge, age, fSex, sex, fCBal, cBal, fRew, reward, fDate, date);
+    reward = 2;
+    Subject = struct(fID, ID, fAge, age, fSex, sex, fGroup, group, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
     prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
     name = 'SubjInfo';
