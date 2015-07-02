@@ -88,6 +88,9 @@ fCBal = 'cBal';
 fRew = 'rew';
 fDate = 'Date';
 
+a = clock;
+rand('twister', a(6).*10000);
+
 if askSubjInfo == false
     ID = '99999';
     age = '99';
