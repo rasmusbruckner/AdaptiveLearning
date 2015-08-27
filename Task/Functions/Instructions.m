@@ -2216,10 +2216,8 @@ end
             if taskParam.gParam.oddball == false
                 
                 if isequal(whichPractice, 'mainPractice') || isequal(whichPractice, 'followCannonPractice')
-                    
-                    if isequal(subject.group, '1')
-                        
                         header = 'Wiederholung der Übung';
+                    if isequal(subject.group, '1')
                         txt = ['In der letzten Übung hast du dich zu häufig '...
                             'vom Ziel der Kanone wegbewegt. Du kannst '...
                             'mehr Kugeln abwehren, wenn du immer auf dem Ziel '...
@@ -2235,8 +2233,8 @@ end
                             'können Sie sich auch an den Versuchsleiter wenden.'];
                     end
                 elseif isequal(whichPractice, 'followOutcomePractice')
-                    if isequal(subject.group, '1')
                         header = 'Wiederholung der Übung';
+                    if isequal(subject.group, '1')
                         txt = ['In der letzten Übung hast du die jeweils '...
                             'letzte Kugel zu selten aufgesammelt.\n\nIn der nächsten Runde '...
                             'kannst nochmal üben. Wenn du noch Fragen hast, '...
