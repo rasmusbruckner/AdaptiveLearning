@@ -23,7 +23,7 @@ end
 %%           - followOutcome
 %%          - followOutcomePractice
 %%          - followCannon
-%%          - followCannonPractice        
+%%          - followCannonPractice
 %
 %       - whichPractice:
 %           oddballPractice
@@ -33,25 +33,25 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 runIntro = true;
-askSubjInfo = true;
-oddball = false;
-allThreeConditions = true;
-sendTrigger = true;
+askSubjInfo = false;
+oddball = true;
+%allThreeConditions = true;
+sendTrigger = false;
 randomize = true;
-shieldTrials = 4; % 4
-practTrials = 20; % 20
-trials = 240; % 240
-controlTrials = 120; % 120 
-blockIndices = [1 60 120 180]; 
-vola = [.25 1 0]; 
-oddballProb = [.25 0];  
+shieldTrials = 1; % 4
+practTrials = 1; % 20
+trials = 1; % 240
+controlTrials = 1; % 120
+blockIndices = [1 60 120 180];
+vola = [.25 1 0];
+oddballProb = [.25 0];
 sigma = [12 12 99999999];  %Für Dresden: [12 12 99999999];  Brown [10 12 99999999];
-driftConc = [30 99999999];  
+driftConc = [30 99999999];
 safe = [3 0];
 rewMag = 0.1;
 jitter = 0.2;
 practiceTrialCriterion = 10;
-test = false; 
+test = false;
 debug = false;
 
 % Check number of trials in each condition
@@ -96,8 +96,8 @@ if askSubjInfo == false
     age = '99';
     group = '1';
     sex = 'm/w';
-    cBal = 1;
-    reward = 2;
+    cBal = 2;
+    reward = 1;
     Subject = struct(fID, ID, fAge, age, fSex, sex, fGroup, group, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
     prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
@@ -265,7 +265,7 @@ else
     sentenceLength = 85;
 end
 ref = GetSecs;
-gParam = struct('jitter', jitter,'allThreeConditions', allThreeConditions,...
+gParam = struct('jitter', jitter,...
     'blockIndices', blockIndices, 'ref', ref, fSentenceLength,...
     sentenceLength, fOddball, oddball, fDriftConc, driftConc,...
     fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola,...
@@ -276,35 +276,35 @@ gParam = struct('jitter', jitter,'allThreeConditions', allThreeConditions,...
     windowRect, 'practiceTrialCriterion',practiceTrialCriterion, 'askSubjInfo',...
     askSubjInfo);
 
-fPredSpotRad =  'predSpotRad'; predSpotRad = 10; 
-fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10; 
-fShieldAngle = 'shieldAngle'; shieldAngle = 30; 
-fOutcSize = 'outcSize'; outcSize = 10; 
-fCannonEnd = 'cannonEnd'; cannonEnd = 5; 
-fMeanPoint = 'meanRad'; meanPoint = 1; 
-fRotationRad = 'rotationRad'; rotationRad = 150; 
+fPredSpotRad =  'predSpotRad'; predSpotRad = 10;
+fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10;
+fShieldAngle = 'shieldAngle'; shieldAngle = 30;
+fOutcSize = 'outcSize'; outcSize = 10;
+fCannonEnd = 'cannonEnd'; cannonEnd = 5;
+fMeanPoint = 'meanRad'; meanPoint = 1;
+fRotationRad = 'rotationRad'; rotationRad = 150;
 
 fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2;
-fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2; 
-fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2; 
+fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2;
+fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2;
 fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2;
 
-fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam]; 
-fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam]; 
+fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam];
+fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam];
 fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
-fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean]; 
-fBoatRect = 'boatRect'; boatRect = [0 0 50 50]; 
+fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean];
+fBoatRect = 'boatRect'; boatRect = [0 0 50 50];
 
-fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect); 
+fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect);
 fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);
 fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect);
-fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect); 
+fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect);
 fCannonEndCent = 'cannonEndCent'; cannonEndCent = CenterRect(cannonEndRect, windowRect);
-fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect); 
+fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect);
 
-fUnit = 'unit'; unit = 2*pi/360; 
-fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit; 
-fRotAngle = 'rotAngle'; rotAngle = initialRotAngle; 
+fUnit = 'unit'; unit = 2*pi/360;
+fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit;
+fRotAngle = 'rotAngle'; rotAngle = initialRotAngle;
 
 fCircle = 'circle';
 circle = struct(fShieldAngle, shieldAngle, fCannonEndCent,...
@@ -357,7 +357,7 @@ keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLe
 %% Trigger settings
 
 if sendTrigger == true
-    config_io;             
+    config_io;
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
@@ -453,45 +453,46 @@ taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
     fColors, colors, fStrings, strings, 'textures', textures,...
     'unitTest', unitTest);
 
-if ~test && ~allThreeConditions
-    
-    if oddball
-        
-        if Subject.cBal == 1
-            OddballCondition
-            MainCondition
-        elseif Subject.cBal == 2
-            MainCondition
-            OddballCondition
-        end
-        
-    elseif ~oddball
-        
-        if Subject.cBal == 1
-            MainCondition;
-            FollowOutcomeCondition
-        elseif Subject.cBal == 2
-            FollowOutcomeCondition
-            MainCondition
-        end
-        
-    end
-    
-    if oddball
-        totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
-    else
-        totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end);
-    end
-    
-    Screen('TextSize', taskParam.gParam.window, 19);
-    Screen('TextFont', taskParam.gParam.window, 'Arial');
-    EndOfTask
-    
-elseif test && ~allThreeConditions
-    
-    [taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject);
-    
-elseif allThreeConditions
+%if ~test && ~allThreeConditions
+
+%     if oddball
+%
+%         if Subject.cBal == 1
+%             OddballCondition
+%             MainCondition
+%         elseif Subject.cBal == 2
+%             MainCondition
+%             OddballCondition
+%         end
+%
+%     elseif ~oddball
+%
+%         if Subject.cBal == 1
+%             MainCondition;
+%             FollowOutcomeCondition
+%         elseif Subject.cBal == 2
+%             FollowOutcomeCondition
+%             MainCondition
+%         end
+%
+%     end
+%
+%     if oddball
+%         totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
+%     else
+%         totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end);
+%     end
+%
+%     Screen('TextSize', taskParam.gParam.window, 19);
+%     Screen('TextFont', taskParam.gParam.window, 'Arial');
+%     EndOfTask
+
+%elseif test && ~allThreeConditions
+
+%[taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject);
+
+%elseif allThreeConditions
+if ~oddball
     
     if Subject.cBal == 1
         DataMain = MainCondition;
@@ -547,13 +548,24 @@ elseif allThreeConditions
         
     end
     
-    totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
-        + DataFollowCannon.accPerf(end);
+else
     
-    
-    EndOfTask
+    if Subject.cBal == 1
+        OddballCondition
+        MainCondition
+    elseif Subject.cBal == 2
+        MainCondition
+        OddballCondition
+    end
     
 end
+totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
+    + DataFollowCannon.accPerf(end);
+
+
+EndOfTask
+
+%end
 
 ListenChar();
 ShowCursor;
@@ -697,49 +709,49 @@ Screen('CloseAll');
     end
 
     function window = CloseScreenAndOpenAgain
-   
+        
         if ~unitTest
-        Screen('TextFont', taskParam.gParam.window, 'Arial');
-        Screen('TextSize', taskParam.gParam.window, 30);
-        
-        txt='Ende der Aufgabe!\n\nBitte auf den Versuchsleiter warten';
-        
-        while 1
+            Screen('TextFont', taskParam.gParam.window, 'Arial');
+            Screen('TextSize', taskParam.gParam.window, 30);
             
-            Screen('FillRect', taskParam.gParam.window, []);
-            DrawFormattedText(taskParam.gParam.window, txt,...
-                'center', 100, [0 0 0]);
-            Screen('DrawingFinished', taskParam.gParam.window);
+            txt='Ende der Aufgabe!\n\nBitte auf den Versuchsleiter warten';
             
-            
-            t = GetSecs;
-            Screen('Flip', taskParam.gParam.window, t + 0.1);
-            [~, ~, keyCode] = KbCheck;
-            
-            if find(keyCode) == taskParam.keys.s
-                break
-            end
-        end
-        
-        WaitSecs(1);
-        
-        %ListenChar();
-        ShowCursor;
-        Screen('CloseAll');
-        disp('Press start to continue...')
-        WaitSecs(1);
-        
-        while 1
-            [ keyIsDown, ~, keyCode ] = KbCheck;
-            if keyIsDown
-                if keyCode(taskParam.keys.s)
+            while 1
+                
+                Screen('FillRect', taskParam.gParam.window, []);
+                DrawFormattedText(taskParam.gParam.window, txt,...
+                    'center', 100, [0 0 0]);
+                Screen('DrawingFinished', taskParam.gParam.window);
+                
+                
+                t = GetSecs;
+                Screen('Flip', taskParam.gParam.window, t + 0.1);
+                [~, ~, keyCode] = KbCheck;
+                
+                if find(keyCode) == taskParam.keys.s
                     break
                 end
             end
-        end
-        
-        window = OpenWindow;
-        
+            
+            WaitSecs(1);
+            
+            %ListenChar();
+            ShowCursor;
+            Screen('CloseAll');
+            disp('Press start to continue...')
+            WaitSecs(1);
+            
+            while 1
+                [ keyIsDown, ~, keyCode ] = KbCheck;
+                if keyIsDown
+                    if keyCode(taskParam.keys.s)
+                        break
+                    end
+                end
+            end
+            
+            window = OpenWindow;
+            
         end
         window = taskParam.gParam.window;
     end
@@ -756,7 +768,7 @@ Screen('CloseAll');
                 if isequal(Subject.group, '1')
                     txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nDu hast %.2f Euro verdient', totWin);
                 else
-                    txt = sprintf('Vielen Dank für Ihre Teilnahme\n\n\nSie haben %.2f Euro verdient', totWin); 
+                    txt = sprintf('Vielen Dank für Ihre Teilnahme\n\n\nSie haben %.2f Euro verdient', totWin);
                 end
             end
             Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...
@@ -781,7 +793,7 @@ Screen('CloseAll');
             [ ~, ~, keyCode ] = KbCheck;
             if find(keyCode) == taskParam.keys.s & ~taskParam.unitTest
                 break
-            elseif taskParam.unitTest               
+            elseif taskParam.unitTest
                 WaitSecs(1);
                 break
             end
