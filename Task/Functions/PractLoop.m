@@ -107,7 +107,7 @@ for i = 1:trials
     %Cannonball(taskParam, practData.distMean(i), practData.distMean(i), background)
     if (isequal(condition, 'oddballPractice') && practData.oddBall(i) == true)
         WaitSecs(0.5)
-    elseif isequal(condition, 'shield') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'oddballPractice_NoOddball') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice')
+    elseif isequal(condition, 'shield') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice')
         Cannonball(taskParam, practData.distMean(i), practData.outcome(i), background)
     end
     
