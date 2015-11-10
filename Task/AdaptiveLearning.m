@@ -96,7 +96,7 @@ if askSubjInfo == false
     age = '99';
     group = '1';
     sex = 'm/w';
-    cBal = 2;
+    cBal = 1;
     reward = 1;
     Subject = struct(fID, ID, fAge, age, fSex, sex, fGroup, group, fCBal, cBal, fRew, reward, fDate, date);
 elseif askSubjInfo == true
@@ -590,7 +590,7 @@ Screen('CloseAll');
             'from a different cannon that is equally likely to '...
             'hit any location on the circle. Like in the previous '...
             'block you will not see the cannon, but still have to infer its '...
-            'aim in order to catch balls and earn money.'];;
+            'aim in order to catch balls and earn money.'];
               
         end
         Instructions(taskParam, 'oddballPractice', Subject);

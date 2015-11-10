@@ -41,10 +41,13 @@ else
     if (isequal(whichPractice, 'oddballPractice') && subject.cBal == 1)...
             || (isequal(whichPractice, 'mainPractice') && subject.cBal == 2)
         SharedInstructions_MainOddballFollowCannon
-    elseif (isequal(whichPractice, 'oddballPractice') && subject.cBal == 2)...
-            || (isequal(whichPractice, 'mainPractice') && subject.cBal == 1)
+    elseif (isequal(whichPractice, 'oddballPractice') && subject.cBal == 2)
         DisplayPartOfTask
         oddballPractice
+    elseif (isequal(whichPractice, 'mainPractice') && subject.cBal == 1)
+        MainAndFollowCannon_CannonVisibleNoNoise
+        
+        MainAndFollowCannon_CannonVisibleNoise
     end
     
 end
