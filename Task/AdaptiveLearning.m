@@ -317,10 +317,13 @@ circle = struct(fShieldAngle, shieldAngle, fCannonEndCent,...
     predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
     centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
 
-fGold = 'gold'; gold = [255 215 0];
-fSilver = 'silver'; silver = [160 160 160];
+gold = [255 215 0];
+blue = [0 0 255];
+silver = [160 160 160];
+green = [0 255 0];
+
 fColors = 'colors';
-colors = struct(fGold, gold, fSilver, silver);
+colors = struct('gold', gold, 'blue', blue, 'silver', silver, 'green', green);
 
 KbName('UnifyKeyNames')
 fRightKey = 'rightKey'; rightKey = KbName('j');

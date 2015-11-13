@@ -1,9 +1,17 @@
 function Shield(taskParam, allASS, pred, color)
 
-if color == 1
-    shieldColor = taskParam.colors.gold;
-elseif color == 0
-    shieldColor = taskParam.colors.silver;
+if taskParam.gParam.oddball == false
+    if color == 1
+        shieldColor = taskParam.colors.gold;
+    elseif color == 0
+        shieldColor = taskParam.colors.silver;
+    end
+else
+    if color == 1
+        shieldColor = taskParam.colors.blue;
+    elseif color == 0
+        shieldColor = taskParam.colors.green;
+    end
 end
 
 rotRad = taskParam.circle.rotationRad + 10;
