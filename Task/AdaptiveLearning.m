@@ -33,7 +33,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 runIntro = true;
-askSubjInfo = false;
+askSubjInfo = true;
 oddball = true;
 %allThreeConditions = true;
 sendTrigger = false;
@@ -45,7 +45,7 @@ controlTrials = 1; % 120
 blockIndices = [1 60 120 180];
 vola = [.25 1 0];
 oddballProb = [.25 0];
-sigma = [12 12 99999999];  %Für Dresden: [12 12 99999999];  Brown [10 12 99999999];
+sigma = [10 12 99999999];  %Für Dresden: [12 12 99999999];  Brown [10 12 99999999];
 driftConc = [30 99999999];
 safe = [3 0];
 rewMag = 0.1;
@@ -105,7 +105,7 @@ elseif askSubjInfo == true
     numlines = 1;
     
     if randomize
-        if allThreeConditions
+        if ~oddball
             cBal = num2str(round(unifrnd(1,6)));
         else
             cBal = num2str(round(unifrnd(1,2)));
@@ -134,13 +134,13 @@ elseif askSubjInfo == true
         return
     end
     
-    if allThreeConditions
+    if ~oddball
         if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'...
                 && subjInfo{5} ~= '4' && subjInfo{5} ~= '5' && subjInfo{5} ~= '6'
             msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
-    elseif ~allThreeConditions
+    else 
         if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
             msgbox('cBal: 1 or 2 ?');
             return

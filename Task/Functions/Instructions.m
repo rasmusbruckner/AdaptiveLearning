@@ -97,11 +97,11 @@ end
             
             if (isequal(whichPractice, 'mainPractice') && subject.cBal == 1)...
                     || (isequal(whichPractice, 'oddballPractice') && subject.cBal == 2)
-                txt = 'Oddball Task';
+                txt = 'Change Point Task';
             elseif (isequal(whichPractice, 'oddballPractice') && subject.cBal == 1)...
                     || (isequal(whichPractice, 'mainPractice') && subject.cBal == 2)
                 %txt = 'Second Task...';
-                txt = 'Change Point Task';
+                txt = 'Oddball Task';
             end
             
         end
@@ -1092,7 +1092,7 @@ end
                     DrawCross(taskParam)
                     DrawCircle(taskParam)
                     Screen('DrawingFinished', taskParam.gParam.window, 1);
-                    Screen('Flip', taskParam.gParam.window, t + 0.6, 1)
+                    Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
                     while 1
                         txt=['In this case the cannonball was shot from a different cannon that you cannot see. '...
                             'Keep in mind that these trials will be quite rare so your best strategy is to '...
@@ -2600,7 +2600,7 @@ end
                     
                 else
                     txt = ['The aim of the cannon is indicated with the '...
-                        'black line. Hit SPACE to let the cannon fire.'];
+                        'black line. Hit SPACE to initiate a cannon shot.'];
                 end
             else
                 txt=['Das Ziel der Kanone wird mit der '...
