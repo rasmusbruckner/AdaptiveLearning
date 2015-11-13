@@ -33,7 +33,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 runIntro = true;
-askSubjInfo = true;
+askSubjInfo = false;
 oddball = true;
 %allThreeConditions = true;
 sendTrigger = false;

@@ -95,13 +95,10 @@ end
             
         else
             
-            if (isequal(whichPractice, 'mainPractice') && subject.cBal == 1)...
-                    || (isequal(whichPractice, 'oddballPractice') && subject.cBal == 2)
-                txt = 'Change Point Task';
-            elseif (isequal(whichPractice, 'oddballPractice') && subject.cBal == 1)...
-                    || (isequal(whichPractice, 'mainPractice') && subject.cBal == 2)
-                %txt = 'Second Task...';
+            if isequal(whichPractice, 'oddballPractice')
                 txt = 'Oddball Task';
+            elseif isequal(whichPractice, 'mainPractice')
+                txt = 'Change Point Task';
             end
             
         end
@@ -309,7 +306,7 @@ end
                     [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, txt, distMean, Data);
                     
                 case 14
-                    
+                   
                     [screenIndex, Data] = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
                     
                 case 15
@@ -2221,13 +2218,9 @@ end
         Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
         WaitSecs(0.5);
         
-        
-        Data.tickMark=true;
-        
-        %Data.outcome=320;
-        %Data.pred = 360;
-        Data.distMean=distMean;
-        [taskParam, fw, bw, Data] = InstrLoopTxt(taskParam,...
+        Data.tickMark = true;
+        Data.distMean = distMean;
+        [taskParam, fw, ~, Data] = InstrLoopTxt(taskParam,...
             txt, cannon, 'space', distMean, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
@@ -2240,7 +2233,7 @@ end
         Data.outcome = distMean;
         background = true;
         Cannonball(taskParam, distMean, outcome, background)
-        if (isequal(whichPractice, 'mainPractice') && Data.predErr >= 9) || (isequal(whichPractice, 'followCannonPractice') && Data.predErr >= 9)
+        if (isequal(whichPractice, 'mainPractice') && Data.predErr >= 9) || (isequal(whichPractice, 'followCannonPractice') && Data.predErr >= 9)  || (isequal(whichPractice, 'oddballPractice') && Data.predErr >= 9)
             %while 1
             if taskParam.gParam.oddball == false
                 if isequal(subject.group, '1')
@@ -2283,7 +2276,7 @@ end
                 end
             end
         else
-            screenIndex = screenIndex +1;
+            screenIndex = screenIndex + 1;
         end
         WaitSecs(0.1);
     end
