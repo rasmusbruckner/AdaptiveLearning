@@ -112,12 +112,12 @@ for i=1:trial
         end
         
     end
-    
+    %keyboard
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
     taskData.ID{i} = Subject.ID;
     taskData.sex{i} = Subject.sex;
-    taskData.Date{i} = Subject.Date;
+    taskData.Date{i} = Subject.date;
     taskData.cond{i} = condition;
     taskData.cBal(i) = Subject.cBal;
     taskData.rew(i) = Subject.rew;

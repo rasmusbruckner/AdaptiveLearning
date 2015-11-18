@@ -32,20 +32,23 @@ end
 %           followCannonPractice
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% for brown:
+% ID length?
+% text size?
+% check trigger!
+% check behavioral data!
+
 runIntro = true;
 askSubjInfo = true;
 oddball = true;
-%allThreeConditions = true;
 sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 4
 practTrials = 1; % 20
 trials = 1; % 240
-controlTrials = 1; % 120
 blockIndices = [1 60 120 180];
 vola = [.25 1 0];
 oddballProb = [.25 0];
-sigma = [10 12 99999999];  %Für Dresden: [12 12 99999999];  Brown [10 12 99999999];
 driftConc = [30 99999999];
 safe = [3 0];
 rewMag = 0.1;
@@ -54,11 +57,23 @@ practiceTrialCriterion = 10;
 test = false;
 debug = false;
 
-% Check number of trials in each condition
-if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
-    msgbox('All trials must be even or equal to 1!');
-    return
+if ~oddball
+    % Dresden
+    controlTrials = 1; % 120
+    sigma = [10 12 99999999];
+    % Check number of trials in each condition
+    if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
+        msgbox('All trials must be even or equal to 1!');
+        return
+    end
+else
+    % Brown
+    controlTrials = nan; % 120
+    sigma = [10 12 99999999];
+    %firstSessionTrials
 end
+
+
 
 % Savedirectory
 if isequal(computer, 'Macbook')
@@ -66,27 +81,21 @@ if isequal(computer, 'Macbook')
     cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
-elseif isequal(computer, 'D_Pilot') && Computer2 == false
-    savdir = '/Users/lifelabtudresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
-elseif isequal(computer, 'D_Pilot') && Computer2 == true
-    savdir = '/Users/TUDresden/Documents/MATLAB/AdaptiveLearning/DataDirectory';
-elseif isequal(computer, 'Dresden_Rene')
-    savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
-elseif isequal(computer, 'Matt')
-    savdir = 'F:\\dokumente\\MATLAB\\adaptive_learning\\DataDirectory';
 elseif isequal(computer, 'Brown')
-    savdir = 'C:\Users\lncc\Dropbox\HeliEEG';
+    %savdir = 'C:\Users\lncc\Dropbox\HeliEEG';
+    %% Matt: please adapt this
+    cd('C:\Users\lncc\Dropbox\CannonDrugStudy\data');
 end
 
 %% User Input
-
-fID = 'ID';
-fAge = 'age';
-fGroup = 'group';
-fSex = 'sex';
-fCBal = 'cBal';
-fRew = 'rew';
-fDate = 'Date';
+% 
+% fID = 'ID';
+% fAge = 'age';
+% fGroup = 'group';
+% fSex = 'sex';
+% fCBal = 'cBal';
+% fRew = 'rew';
+% fDate = 'Date';
 
 a = clock;
 rand('twister', a(6).*10000);
@@ -97,12 +106,12 @@ if askSubjInfo == false
     sex = 'm/w';
     cBal = 1;
     reward = 1;
-    if ~ oddball
+    if ~oddball
         group = '1';
-        Subject = struct(fID, ID, fAge, age, fSex, sex, fGroup, group, fCBal, cBal, fRew, reward, fDate, date);
+        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group', group, 'cBal', cBal, 'rew', reward, 'date', date, 'session', '1');
     else
         session = '1';
-        Subject = struct(fID, ID, fAge, age, fSex, sex, 'session', session, fCBal, cBal, fRew, reward, fDate, date);
+        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session', session, 'cBal', cBal, 'rew', reward, 'date', date);
     end
 elseif askSubjInfo == true
     if ~ oddball
@@ -170,13 +179,13 @@ elseif askSubjInfo == true
     end
     
     if ~oddball
-        Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex,...
-            subjInfo(4), fGroup, subjInfo(3), fCBal, str2double(cell2mat(subjInfo(5))), fRew,...
-            str2double(cell2mat(subjInfo(6))), fDate, subjInfo(7));
+        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+            subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
+            str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
     else
-        Subject = struct(fID, subjInfo(1), fAge, subjInfo(2), fSex,...
-            subjInfo(4), 'session', subjInfo(3), fCBal, str2double(cell2mat(subjInfo(5))), fRew,...
-            str2double(cell2mat(subjInfo(6))), fDate, subjInfo(7));
+        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+            subjInfo(4), 'session', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
+            str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
     end
     
     if ~oddball
@@ -211,6 +220,7 @@ fWindowRect = 'windowRect';
 
 startTime = GetSecs;
 
+% hier kann man noch was anpassen
 fID = 'ID'; ID = fID;
 fAge = 'age'; age = fAge;
 fSex = 'sex'; sex = fSex;
@@ -259,15 +269,15 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
     'initiationRTs', 'initiationRTs','timestampOnset', 'timestampOnset',...
     'timestampPrediction', 'timestampPrediction', 'timestampOffset',...
     'timestampOffset', fOddBall, oddBall, 'oddball', oddball, 'oddballProb',...
-    oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, fID, ID,...
-    fSigmas, sigmas, fAge, age, fSex, sex, fRew, rew, fActRew, actRew, fDate,...
+    oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, 'ID', ID,...
+    fSigmas, sigmas, 'age', age, 'sex', sex, 'rew', rew, fActRew, actRew, 'date',...
     Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
     fVolas, volas, fTAC, TAC, fBoatType, boatType, fCatchTrial, catchTrial,...
     fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr,...
     predErr, fPredErrNorm, predErrNorm, fPredErrPlus, predErrPlus,...
     fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm,...
     fMemErrPlus, memErrPlus,fMemErrMin, memErrMin, fUP, UP, fUPNorm,...
-    UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, fCBal, cBal,...
+    UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, 'cBal', cBal,...
     fPerf, 'perf', 'accPerf', accPerf, fRawPredErr, rawPredErr);
 
 fOddball = 'oddball';
@@ -661,6 +671,7 @@ Screen('CloseAll');
         
         
         if runIntro && ~unitTest
+            
             if isequal(Subject.session, '1')
                 
                 if ~oddball
