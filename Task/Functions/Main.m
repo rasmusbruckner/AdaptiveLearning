@@ -415,14 +415,22 @@ Data = catstruct(Subject, Data);
 
 if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'main')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))
     
-    if Subject.rew == 1
-        rewName = 'G';
-    elseif Subject.rew == 2
-        rewName = 'S';
+    if taskParam.gParam.oddball == false
+        if Subject.rew == 1
+            rewName = 'G';
+        elseif Subject.rew == 2
+            rewName = 'S';
+        end
+    else
+        if Subject.rew == 1
+            rewName = 'B';
+        elseif Subject.rew == 2
+            rewName = 'G';
+        end
     end
     
     if ~taskParam.unitTest
-        savename = sprintf('Cannon_%s_%s_%s', rewName, Subject.ID, condition);
+        savename = sprintf('Drugstudy_%s_%s_session%s_%s', rewName, Subject.ID, Subject.session, condition);
         save(savename, 'Data')
     end
 end
