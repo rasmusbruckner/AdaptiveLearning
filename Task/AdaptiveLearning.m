@@ -1,4 +1,4 @@
-function [DataMain, DataFollowOutcome, DataFollowCannon] = AdaptiveLearning(unitTest)
+function [Data] = AdaptiveLearning(unitTest)
 
 if nargin == 0
     unitTest = false;
@@ -38,14 +38,14 @@ end
 % check trigger!
 % check behavioral data!
 
-runIntro = true;
+runIntro = false;
 askSubjInfo = true;
 oddball = true;
 sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 4
 practTrials = 1; % 20
-trials = 1; % 240
+trials = 20; % 240
 blockIndices = [1 60 120 180];
 vola = [.25 1 0];
 oddballProb = [.25 0];
@@ -60,7 +60,9 @@ debug = false;
 if ~oddball
     % Dresden
     controlTrials = 1; % 120
-    sigma = [10 12 99999999];
+    sigma = [12 12 99999999];
+    DataFollowOutcome = nan; 
+    DataFollowCannon = nan;  
     % Check number of trials in each condition
     if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
         msgbox('All trials must be even or equal to 1!');
@@ -71,6 +73,7 @@ else
     controlTrials = nan; % 120
     sigma = [10 12 99999999];
     %firstSessionTrials
+    DataOddball = nan; 
 end
 
 
@@ -606,6 +609,19 @@ else
     totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
 end
 
+if ~oddball
+    Data.DataMain = DataMain;
+    Data.DataFollowOutcome = DataFollowOutcome;
+    Data.DataFollowCannon = DataFollowCannon;
+
+
+else
+    
+    Data.DataMain = DataMain;
+    Data.DataOddball = DataOddball;
+
+end
+
 EndOfTask
 
 %end
@@ -620,54 +636,56 @@ Screen('CloseAll');
         % kann man verbessern
         % if runIntro && ~unitTest
         
-        
-        
-        %end
         %keyboard
-        if isequal(Subject.session, '1')
-            Instructions(taskParam, 'oddballPractice', Subject);
+        if ~unitTest
+            %end
+            %keyboard
+            if isequal(Subject.session, '1')
+                Instructions(taskParam, 'oddballPractice', Subject);
+                
+                %% habe ich Oddball oder Main in brown version benutzt?
+                
+                Main(taskParam, vola(3), sigma(1), 'oddballPractice', Subject);
+                
+                txtStartTask = ['This is the beginning of the real task. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'previous practice block. On each trial a cannon will aim '...
+                    'at a location on the circle. On most trials the cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'However, on a few trials a ball will be shot '...
+                    'from a different cannon that is equally likely to '...
+                    'hit any location on the circle. Like in the previous '...
+                    'block you will not see the cannon, but still have to infer its '...
+                    'aim in order to catch balls and earn money.'];
+                
+            elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
+                header = 'Oddball Task'
+                txtStartTask = ['This is the beginning of the ODDBALL TASK. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'in the last session. On each trial a cannon will aim '...
+                    'at a location on the circle. On most trials the cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'However, on a few trials a ball will be shot '...
+                    'from a different cannon that is equally likely to '...
+                    'hit any location on the circle. Like in the previous '...
+                    'session you will not see the cannon, but still have to infer its '...
+                    'aim in order to catch balls and earn money.'];
+                
+            end
             
-            %% habe ich Oddball oder Main in brown version benutzt?
-            
-            Main(taskParam, vola(3), sigma(1), 'oddballPractice', Subject);
-            
-            txtStartTask = ['This is the beginning of the real task. During '...
-                'this block you will earn real money for your performance. '...
-                'The trials will be exactly the same as those in the '...
-                'previous practice block. On each trial a cannon will aim '...
-                'at a location on the circle. On most trials the cannon will '...
-                'fire a ball somewhere near the point of aim. '...
-                'However, on a few trials a ball will be shot '...
-                'from a different cannon that is equally likely to '...
-                'hit any location on the circle. Like in the previous '...
-                'block you will not see the cannon, but still have to infer its '...
-                'aim in order to catch balls and earn money.'];
-            
-        elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
-            header = 'Oddball Task'
-            txtStartTask = ['This is the beginning of the ODDBALL TASK. During '...
-                'this block you will earn real money for your performance. '...
-                'The trials will be exactly the same as those in the '...
-                'in the last session. On each trial a cannon will aim '...
-                'at a location on the circle. On most trials the cannon will '...
-                'fire a ball somewhere near the point of aim. '...
-                'However, on a few trials a ball will be shot '...
-                'from a different cannon that is equally likely to '...
-                'hit any location on the circle. Like in the previous '...
-                'session you will not see the cannon, but still have to infer its '...
-                'aim in order to catch balls and earn money.'];
-            
+            feedback = false;
+            BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         end
-        
-        feedback = false;
-        BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
-        [~, DataOddball] = Main(taskParam, vola(1), sigma(1), 'oddball', Subject);
+            %keyboard
+            [~, DataOddball] = Main(taskParam, vola(1), sigma(1), 'oddball', Subject);
         
         
     end
 
     function DataMain = MainCondition
-        
+   
         
         
         if runIntro && ~unitTest

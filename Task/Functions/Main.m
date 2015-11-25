@@ -52,25 +52,38 @@ elseif isequal(condition, 'followOutcomePractice')...
     taskData.actJitter = nan(trial,1);
     taskData.block = ones(trial,1);
 elseif taskParam.unitTest
-    taskData = load('unitTest_TestData');
-    taskData = taskData.taskData;
-    clear taskData.cBal taskData.rew
-    
-    trial = taskParam.gParam.trials;
-    taskData.cBal = nan(trial,1);
-    taskData.rew = nan(trial,1);
-    taskData.initiationRTs = nan(trial,1);
-    taskData.actJitter = nan(trial,1);
-    taskData.block = ones(trial,1);
-    if isequal(condition, 'main')
-
-        taskData.pred = taskData.predMain;
-    elseif isequal(condition, 'followOutcome')
-        taskData.pred = taskData.predFollowOutcome;
-
-    elseif isequal(condition, 'followCannon')
-        taskData.pred = taskData.predFollowCannon;
-
+    %keyboard
+    if isequal(condition, 'oddball')
+        taskData = load('unitTest_TestDataOddball');
+        taskData = taskData.taskData;
+        clear taskData.cBal taskData.rew
+        trial = taskParam.gParam.trials;
+        taskData.cBal = nan(trial,1);
+        taskData.rew = nan(trial,1);
+        taskData.initiationRTs = nan(trial,1);
+        taskData.actJitter = nan(trial,1);
+        taskData.block = ones(trial,1);
+    else
+        
+        taskData = load('unitTest_TestData');
+        taskData = taskData.taskData;
+        clear taskData.cBal taskData.rew
+        
+        trial = taskParam.gParam.trials;
+        taskData.cBal = nan(trial,1);
+        taskData.rew = nan(trial,1);
+        taskData.initiationRTs = nan(trial,1);
+        taskData.actJitter = nan(trial,1);
+        taskData.block = ones(trial,1);
+        if isequal(condition, 'main')
+            taskData.pred = taskData.predMain;
+        elseif isequal(condition, 'followOutcome')
+            taskData.pred = taskData.predFollowOutcome;
+        elseif isequal(condition, 'followCannon')
+            taskData.pred = taskData.predFollowCannon;
+            
+        end
+        
     end
 
 else
@@ -80,7 +93,7 @@ else
 end
 
 % For trigger testing.
-RT_Flip = zeros(taskData.trial, 1);
+%RT_Flip = zeros(taskData.trial, 1);
 
 % Enable real-time mode.
 % Priority(9);
@@ -358,6 +371,8 @@ vola = repmat(vola, length(taskData.trial),1);
 sigma = repmat(sigma, length(taskData.trial),1);
 oddballProb = repmat(taskParam.gParam.oddballProb(1), length(taskData.trial),1);
 driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
+
+%keyboard
 
 %fieldNames = taskParam.fieldNames;
 Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
