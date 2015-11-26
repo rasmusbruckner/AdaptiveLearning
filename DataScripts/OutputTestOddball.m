@@ -144,9 +144,54 @@ classdef OutputTestOddball < matlab.unittest.TestCase
 %                 
 
                 % triggerschema hat sich natürlich verändert! wieder das
-                % brown triggerschema verwenden...
+                % brown triggerschema verwenden... hab ich... jetzt
+                % triggers hier rein setzen. 
                 Main_Actual_SummaryTrigger = Data.DataMain.triggers(:,7);
-                Main_Expected_SummaryTrigger = [255;101;102;107;110;   106;106;104;108;107;    104;102;104;108;105;    104;102;100;100;106];
+                Main_Expected_SummaryTrigger = [255;100;101;103;105;   103;103;102;104;103;    102;101;102;104;102;    102;101;100;100;103];
+
+                %Main_Expected_SummaryTrigger = [255;101;102;107;110;   106;106;104;108;107;    104;102;104;108;105;    104;102;100;100;106];
+                
+                %condition + cp
+                % digit1 = 0
+                
+                % digit 2 = 
+                 %Main_Expected_cp = [1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0];
+                
+                 % digit3 = hit
+                % Main_Expected_hit = [1; 0; 0; 1; 0; 1; 1; 1; 0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1];
+                
+                % digit4 = actRew
+                % Main_Expected_actRew = [1;2;1;1;1;1;1;2;2;1;2;1;2;2;2;2;1;2;2;1];
+                
+                % 0 1 1 1 x
+                % 0 0 0 0 x
+                % 0 0 0 1 x
+                % 0 0 1 1 x
+                % 0 1 0 1 x
+                
+                % 0 0 1 1 x
+                % 0 0 1 1 x
+                % 0 0 1 0 x
+                % 0 1 0 0 x
+                % 0 0 1 1 x
+                
+                % 0 0 1 0 x
+                % 0 0 0 1 x
+                % 0 0 1 0 x
+                % 0 1 0 0 x
+                % 0 0 1 0 x
+                
+                % 0 0 1 0 x
+                % 0 0 0 1 x
+                % 0 0 0 0 x 
+                % 0 0 0 0 x
+                % 0 0 1 1 x
+                
+                %trigger = strcat(num2str(0),num2str(0),num2str(0), num2str(0));
+                %trigger = base2dec(trigger, 2) + 100
+                
+
+                
                 testCase.verifyEqual(Main_Actual_SummaryTrigger, Main_Expected_SummaryTrigger);
 %             
             

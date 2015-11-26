@@ -5,7 +5,7 @@ function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Teve
 % bei dresden version (32 bit) wird die ganze zeit in der schleife gesendet
 % habe trigger jetzt aus der schleife genommen. woran liegt das?
 %   See triggerscheme for details
-
+%keyboard
 digit1 = 0;
 digit2 = 0;
 digit3 = 0;
