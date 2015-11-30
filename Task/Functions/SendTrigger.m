@@ -229,7 +229,7 @@ elseif taskParam.gParam.oddball == true
                 digit3 = 0;
             end
             
-            
+            %keyboard
             if taskData.actRew(trial) == 1
                 digit4 = 1;
             elseif taskData.actRew(trial) == 2

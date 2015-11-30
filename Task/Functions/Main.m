@@ -63,6 +63,8 @@ elseif taskParam.unitTest
         taskData.initiationRTs = nan(trial,1);
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
+        taskData.accPerf = nan(trial,1);
+        taskData.perf = zeros(trial,1);
     else
         
         taskData = load('unitTest_TestData');
@@ -135,13 +137,13 @@ for i=1:trial
     taskData.cBal(i) = Subject.cBal;
     taskData.rew(i) = Subject.rew;
     
-    if taskData.rew(i) == 1 && taskData.boatType(i) == 1
+    if taskData.rew(i) == 1 && taskData.shieldType(i) == 1
         taskData.actRew(i) = 1;
-    elseif taskData.rew(i) == 1 && taskData.boatType(i) == 0
+    elseif taskData.rew(i) == 1 && taskData.shieldType(i) == 0
         taskData.actRew(i) = 2;
-    elseif taskData.rew(i) == 2 && taskData.boatType(i) == 1
+    elseif taskData.rew(i) == 2 && taskData.shieldType(i) == 1
         taskData.actRew(i) = 2;
-    elseif taskData.rew(i) == 2 && taskData.boatType(i) == 0
+    elseif taskData.rew(i) == 2 && taskData.shieldType(i) == 0
         taskData.actRew(i) = 1;
     end
     
@@ -275,7 +277,7 @@ for i=1:trial
     
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon')
+    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'oddball')
         taskData.memErr(i) = 999;
         taskData.memErrNorm(i) = 999;
         taskData.memErrPlus(i) = 999;
@@ -301,7 +303,7 @@ for i=1:trial
     if taskData.actRew(i) == 1 && taskData.hit(i) == 1
         taskData.perf(i) = taskParam.gParam.rewMag;
     end
-    
+    %keyboard
     taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
     
     if i > 1
@@ -318,7 +320,7 @@ for i=1:trial
     taskData.triggers(i,4) = SendTrigger(taskParam, taskData, condition, vola, i, 4); % this is the 2nd fixation
     
     DrawCircle(taskParam)
-    Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.boatType(i))
+    Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
     DrawOutcome(taskParam, taskData.outcome(i))
     
     Screen('DrawingFinished', taskParam.gParam.window, 1);
@@ -339,11 +341,11 @@ for i=1:trial
 end
 
 % hits = sum(taskData.hit == 1);
-% goldBall = sum(taskData.boatType == 1);
+% goldBall = sum(taskData.shieldType == 1);
 % goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag;
-% silverBall = sum(taskData.boatType == 0);
+% silverBall = sum(taskData.shieldType == 0);
 % silverHit = hits - goldHit;
-% maxMon = (length(find(taskData.boatType == 1))...
+% maxMon = (length(find(taskData.shieldType == 1))...
 %     * taskParam.gParam.rewMag);
 if taskParam.gParam.oddball == false
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
@@ -385,7 +387,7 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     'sex', {taskData.sex}, 'cond', {taskData.cond}, 'cBal',...
     {taskData.cBal}, 'trial', taskData.trial, 'vola', vola, 'sigma', sigma,...
     'outcome', taskData.outcome, 'distMean', taskData.distMean, 'cp',...
-    taskData.cp, 'TAC',taskData.TAC, 'boatType', taskData.boatType,...
+    taskData.cp, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
     'catchTrial', taskData.catchTrial, 'predT', taskData.predT, 'outT',...
     taskData.outT, 'triggers', taskData.triggers, 'pred', taskData.pred,...
     'predErr', taskData.predErr, 'memErr', taskData.memErr, 'UP',...

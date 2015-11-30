@@ -883,11 +883,11 @@ end
                         taskParam.gParam.sigma(3), cannon, condition, LoadData);
                     %end
                     hits = sum(practData.hit == 1);
-                    goldBall = sum(practData.boatType == 1);
+                    goldBall = sum(practData.shieldType == 1);
                     goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
-                    silverBall = sum(practData.boatType == 0);
+                    silverBall = sum(practData.shieldType == 0);
                     silverHit = hits - goldHit;
-                    maxMon = (length(find(practData.boatType == 1))...
+                    maxMon = (length(find(practData.shieldType == 1))...
                         * taskParam.gParam.rewMag);
                     if taskParam.gParam.oddball == false
                         header = 'Leistung';
@@ -1147,11 +1147,11 @@ end
                     %                             cannon, condition);
                     %end
                     hits = sum(practData.hit == 1);
-                    goldBall = sum(practData.boatType == 1);
+                    goldBall = sum(practData.shieldType == 1);
                     goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
-                    silverBall = sum(practData.boatType == 0);
+                    silverBall = sum(practData.shieldType == 0);
                     silverHit = hits - goldHit;
-                    maxMon = (length(find(practData.boatType == 1))...
+                    maxMon = (length(find(practData.shieldType == 1))...
                         * taskParam.gParam.rewMag);
                     %if taskParam.gParam.oddball == false
                     %                         header = 'Leistung';
@@ -1227,7 +1227,7 @@ end
                     %                         taskParam.strings.txtPressEnter)
                     %                 end
                     %                 taskParam = PractLoop(taskParam, subject,...
-                    %                     distMean(i), outcome(i), boatType(i), cannon);
+                    %                     distMean(i), outcome(i), shieldType(i), cannon);
                     %                 if taskParam.gParam.runVola == false
                     %                     VolaIndication(taskParam,...
                     %                         taskParam.strings.txtLowVola,...
@@ -1238,7 +1238,7 @@ end
                     %                         taskParam.strings.txtPressEnter)
                     %                 end
                     %                 taskParam = PractLoop(taskParam,...
-                    %                     subject, distMean(i), outcome(i), boatType(i));
+                    %                     subject, distMean(i), outcome(i), shieldType(i));
                     %             end
                     WaitSecs(0.1);
                 case 6
@@ -1355,11 +1355,11 @@ end
                     %                             cannon, condition);
                     % end
                     hits = sum(practData.hit == 1);
-                    goldBall = sum(practData.boatType == 1);
+                    goldBall = sum(practData.shieldType == 1);
                     goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
-                    silverBall = sum(practData.boatType == 0);
+                    silverBall = sum(practData.shieldType == 0);
                     silverHit = hits - goldHit;
-                    maxMon = (length(find(practData.boatType == 1))...
+                    maxMon = (length(find(practData.shieldType == 1))...
                         * taskParam.gParam.rewMag);
                     %if taskParam.gParam.oddball == false
                     %                         header = 'Leistung';
@@ -1436,7 +1436,7 @@ end
                     %                         taskParam.strings.txtPressEnter)
                     %                 end
                     %                 taskParam = PractLoop(taskParam, subject,...
-                    %                     distMean(i), outcome(i), boatType(i), cannon);
+                    %                     distMean(i), outcome(i), shieldType(i), cannon);
                     %                 if taskParam.gParam.runVola == false
                     %                     VolaIndication(taskParam,...
                     %                         taskParam.strings.txtLowVola,...
@@ -1447,7 +1447,7 @@ end
                     %                         taskParam.strings.txtPressEnter)
                     %                 end
                     %                 taskParam = PractLoop(taskParam,...
-                    %                     subject, distMean(i), outcome(i), boatType(i));
+                    %                     subject, distMean(i), outcome(i), shieldType(i));
                     %             end
                     WaitSecs(0.1);
                 case 9                                                            % End of intro
