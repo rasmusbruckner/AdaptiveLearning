@@ -47,7 +47,7 @@ shieldTrials = 1; % 4
 practTrials = 1; % 20
 trials = 20; % 240
 blockIndices = [1 60 120 180];
-vola = [.25 1 0];
+haz = [.25 1 0];
 oddballProb = [.25 0];
 driftConc = [30 99999999];
 safe = [3 0];
@@ -60,7 +60,7 @@ debug = false;
 if ~oddball
     % Dresden
     controlTrials = 1; % 120
-    sigma = [12 12 99999999];
+    concentration = [12 12 99999999];
     DataFollowOutcome = nan; 
     DataFollowCannon = nan;  
     % Check number of trials in each condition
@@ -71,7 +71,7 @@ if ~oddball
 else
     % Brown
     controlTrials = nan; % 120
-    sigma = [10 12 99999999];
+    concentration = [10 12 99999999];
     %firstSessionTrials
     DataOddball = nan; 
 end
@@ -229,11 +229,11 @@ fAge = 'age'; age = fAge;
 fSex = 'sex'; sex = fSex;
 fRew = 'rew'; rew = fRew;
 fActRew = 'actRew'; actRew = fActRew;
-fVolas = 'vola'; volas = fVolas;
+fhazs = 'haz'; hazs = fhazs;
 fOddball = 'oddball';
 fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
 fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
-fSigmas = 'sigma'; sigmas = fSigmas;
+fconcentrations = 'concentration'; concentrations = fconcentrations;
 fOddBall = 'oddBall'; oddBall = fOddBall;
 fDate = 'Date'; Date = fDate;
 fCond = 'cond'; cond = fCond;
@@ -273,9 +273,9 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
     'timestampPrediction', 'timestampPrediction', 'timestampOffset',...
     'timestampOffset', fOddBall, oddBall, 'oddball', oddball, 'oddballProb',...
     oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, 'ID', ID,...
-    fSigmas, sigmas, 'age', age, 'sex', sex, 'rew', rew, fActRew, actRew, 'date',...
+    fconcentrations, concentrations, 'age', age, 'sex', sex, 'rew', rew, fActRew, actRew, 'date',...
     Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
-    fVolas, volas, fTAC, TAC, fshieldType, shieldType, fCatchTrial, catchTrial,...
+    fhazs, hazs, fTAC, TAC, fshieldType, shieldType, fCatchTrial, catchTrial,...
     fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr,...
     predErr, fPredErrNorm, predErrNorm, fPredErrPlus, predErrPlus,...
     fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm,...
@@ -307,7 +307,7 @@ ref = GetSecs;
 gParam = struct('jitter', jitter,...
     'blockIndices', blockIndices, 'ref', ref, fSentenceLength,...
     sentenceLength, fOddball, oddball, fDriftConc, driftConc,...
-    fOddballProb, oddballProb, fSigmas, sigma, fVolas, vola,...
+    fOddballProb, oddballProb, fconcentrations, concentration, fhazs, haz,...
     fSendTrigger, sendTrigger, fComputer, computer, fTrials,...
     trials, fShieldTrials, shieldTrials, fPractTrials, practTrials,...
     fControlTrials, controlTrials,fSafe, safe, fRewMag, rewMag,...
@@ -414,8 +414,8 @@ fOutcomeTrigger = 'outcomeTrigger'; outcomeTrigger = 4; % Outcome.
 fBaseline2Trigger = 'baseline2Trigger'; baseline2Trigger = 5; % Baseline.
 fBoatTrigger = 'boatTrigger'; boatTrigger = 6; % Boat type.
 fBaseline3Trigger = 'baseline3Trigger'; baseline3Trigger = 9; % Baseline.
-fBlockLVTrigger = 'blockLVTrigger'; blockLVTrigger = 10; % Block with low sigma.
-fBlockHVTrigger = 'blockHVTrigger'; blockHVTrigger = 11; % Block with high sigma.
+fBlockLVTrigger = 'blockLVTrigger'; blockLVTrigger = 10; % Block with low concentration.
+fBlockHVTrigger = 'blockHVTrigger'; blockHVTrigger = 11; % Block with high concentration.
 fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
 
 fTriggers = 'triggers';
@@ -531,7 +531,7 @@ taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
 
 %elseif test && ~allThreeConditions
 
-%[taskDataLV, DataLV] = Main(taskParam, vola(1), 'main', Subject);
+%[taskDataLV, DataLV] = Main(taskParam, haz(1), 'main', Subject);
 
 %elseif allThreeConditions
 if ~oddball
@@ -645,7 +645,7 @@ Screen('CloseAll');
                 
                 %% habe ich Oddball oder Main in brown version benutzt?
                 
-                Main(taskParam, vola(3), sigma(1), 'oddballPractice', Subject);
+                Main(taskParam, haz(3), concentration(1), 'oddballPractice', Subject);
                 
                 txtStartTask = ['This is the beginning of the real task. During '...
                     'this block you will earn real money for your performance. '...
@@ -679,7 +679,7 @@ Screen('CloseAll');
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         end
             %keyboard
-            [~, DataOddball] = Main(taskParam, vola(1), sigma(1), 'oddball', Subject);
+            [~, DataOddball] = Main(taskParam, haz(1), concentration(1), 'oddball', Subject);
         
         
     end
@@ -727,7 +727,7 @@ Screen('CloseAll');
                 end
                 
                 Instructions(taskParam, 'mainPractice', Subject);
-                Main(taskParam, vola(3), sigma(1), 'mainPractice', Subject);
+                Main(taskParam, haz(3), concentration(1), 'mainPractice', Subject);
                 feedback = false;
                 BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
             else
@@ -747,7 +747,7 @@ Screen('CloseAll');
                 BigScreen(taskParam, txtPressEnter, header, txt, feedback);
                 %Screen('TextSize', taskParam.gParam.window, 30);
                 %Screen('TextFont', taskParam.gParam.window, 'Arial');
-                %VolaIndication(taskParam, IndicateMain, txtPressEnter)
+                %hazIndication(taskParam, IndicateMain, txtPressEnter)
             end
             
         elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
@@ -760,7 +760,7 @@ Screen('CloseAll');
             %BigScreen(taskParam, txtPressEnter, header, txt, feedback);
             
         end
-        [~, DataMain] = Main(taskParam, vola(1), sigma(1), 'main', Subject);
+        [~, DataMain] = Main(taskParam, haz(1), concentration(1), 'main', Subject);
         
     end
 
@@ -787,7 +787,7 @@ Screen('CloseAll');
                     'ausgezahlt.\n\nViel Erfolg!'];
             end
             Instructions(taskParam, 'followOutcomePractice', Subject)
-            Main(taskParam, vola(3),sigma(1), 'followOutcomePractice', Subject);
+            Main(taskParam, haz(3),concentration(1), 'followOutcomePractice', Subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         else
@@ -795,7 +795,7 @@ Screen('CloseAll');
             Screen('TextFont', taskParam.gParam.window, 'Arial');
             VolaIndication(taskParam, IndicateFollowOutcome, txtPressEnter)
         end
-        [~, DataFollowOutcome] = Main(taskParam, vola(1), sigma(1), 'followOutcome', Subject);
+        [~, DataFollowOutcome] = Main(taskParam, haz(1), concentration(1), 'followOutcome', Subject);
         
     end
 
@@ -816,7 +816,7 @@ Screen('CloseAll');
                     'Dieses Mal können Sie die Kanone sehen.\n\nViel Erfolg!'];
             end
             Instructions(taskParam, 'followCannonPractice', Subject)
-            Main(taskParam, vola(3),sigma(1), 'followCannonPractice', Subject);
+            Main(taskParam, haz(3),concentration(1), 'followCannonPractice', Subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         else
@@ -824,7 +824,7 @@ Screen('CloseAll');
             Screen('TextFont', taskParam.gParam.window, 'Arial');
             VolaIndication(taskParam, IndicateFollowCannon, txtPressEnter)
         end
-        [~, DataFollowCannon] = Main(taskParam, vola(1), sigma(1), 'followCannon', Subject);
+        [~, DataFollowCannon] = Main(taskParam, haz(1), concentration(1), 'followCannon', Subject);
         
     end
 

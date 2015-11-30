@@ -1,4 +1,4 @@
-function [taskData, Data] = Main(taskParam, vola, sigma, condition, Subject)
+function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subject)
 % This function acutally runs the task. You can specify "main",
 % "practice" or "control". This loop is optimized for triggering accuracy.
 
@@ -90,7 +90,7 @@ elseif taskParam.unitTest
 
 else
 
-    taskData = GenerateOutcomes(taskParam, vola, sigma, condition);
+    taskData = GenerateOutcomes(taskParam, haz, concentration, condition);
     trial = taskData.trial;
 end
 
@@ -155,7 +155,7 @@ for i=1:trial
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
     
-    taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
+    taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
     taskData.timestampOnset(i,:) = GetSecs - ref;
 
     if ~taskParam.unitTest
@@ -179,7 +179,7 @@ for i=1:trial
             
             Screen('Flip', taskParam.gParam.window, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
             
-            % taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, vola, i, 1); % this is the trial onset trigger
+            % taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
             
             taskData.timestampOnset(i,:) = GetSecs - ref;
             
@@ -263,7 +263,7 @@ for i=1:trial
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window, t + 0.1, 1);
-    taskData.triggers(i,2) = SendTrigger(taskParam, taskData, condition, vola, i, 2); % this is the prediction / fixation 1 trigger
+    taskData.triggers(i,2) = SendTrigger(taskParam, taskData, condition, haz, i, 2); % this is the prediction / fixation 1 trigger
     taskData.timestampPrediction(i,:) = GetSecs - ref;
     
     RT_Flip(i) = GetSecs-time;
@@ -311,13 +311,13 @@ for i=1:trial
     end
     
     Screen('Flip', taskParam.gParam.window, t + 0.6);
-    taskData.triggers(i,3) = SendTrigger(taskParam, taskData, condition, vola, i, 3); % this is the PE
+    taskData.triggers(i,3) = SendTrigger(taskParam, taskData, condition, haz, i, 3); % this is the PE
     
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 1.1, 1);
-    taskData.triggers(i,4) = SendTrigger(taskParam, taskData, condition, vola, i, 4); % this is the 2nd fixation
+    taskData.triggers(i,4) = SendTrigger(taskParam, taskData, condition, haz, i, 4); % this is the 2nd fixation
     
     DrawCircle(taskParam)
     Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
@@ -325,16 +325,16 @@ for i=1:trial
     
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2.1);
-    taskData.triggers(i,5) = SendTrigger(taskParam, taskData, condition, vola, i, 5); % this is the shield trigger
+    taskData.triggers(i,5) = SendTrigger(taskParam, taskData, condition, haz, i, 5); % this is the shield trigger
     
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window);
     Screen('Flip', taskParam.gParam.window, t + 2.6);
-    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, vola, i, 6); % this is fixation 3
+    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
     
     WaitSecs(.5);
-    taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, vola, i, 16); % this is the trial summary trigger
+    taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, haz, i, 16); % this is the trial summary trigger
     
     WaitSecs(.5);
     taskData.timestampOffset(i,:) = GetSecs - ref;
@@ -369,8 +369,8 @@ feedback = true;
 
 KbReleaseWait();
 
-vola = repmat(vola, length(taskData.trial),1);
-sigma = repmat(sigma, length(taskData.trial),1);
+haz = repmat(haz, length(taskData.trial),1);
+concentration = repmat(concentration, length(taskData.trial),1);
 oddballProb = repmat(taskParam.gParam.oddballProb(1), length(taskData.trial),1);
 driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
 
@@ -385,7 +385,7 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     oddballProb, 'oddBall', taskData.oddBall, 'ID', {taskData.ID}, 'age',...
     taskData.age, 'rew', {taskData.rew}, 'actRew', taskData.actRew,...
     'sex', {taskData.sex}, 'cond', {taskData.cond}, 'cBal',...
-    {taskData.cBal}, 'trial', taskData.trial, 'vola', vola, 'sigma', sigma,...
+    {taskData.cBal}, 'trial', taskData.trial, 'haz', haz, 'concentration', concentration,...
     'outcome', taskData.outcome, 'distMean', taskData.distMean, 'cp',...
     taskData.cp, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
     'catchTrial', taskData.catchTrial, 'predT', taskData.predT, 'outT',...
@@ -411,8 +411,8 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
 % oddball
 % cond
 % trial
-% vola
-% sigma
+% haz
+% concentration
 % outcome
 % distMean
 % cp

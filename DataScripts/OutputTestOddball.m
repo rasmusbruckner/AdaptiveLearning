@@ -81,21 +81,21 @@ classdef OutputTestOddball < matlab.unittest.TestCase
             testCase.verifyEqual(Main_Actual_pred, Main_Expected_pred);
             
             
-            Main_Actual_predErr = round(Data.DataMain.predErr);
+            Main_Actual_predErr = Data.DataMain.predErr;
             Main_Expected_predErr = [0;114;75;0;179;0;10;0;172;6;8;44;6;87;8;6;12;21;39;9];
-            testCase.verifyEqual(Main_Actual_predErr, Main_Expected_predErr);
+            testCase.verifyEqual(Main_Actual_predErr, Main_Expected_predErr, 'AbsTol', 0.1);
             
             Main_Actual_hit = Data.DataMain.hit;
             Main_Expected_hit = [1; 0; 0; 1; 0; 1; 1; 1; 0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1];
             testCase.verifyEqual(Main_Actual_hit, Main_Expected_hit);
             
-            Main_Actual_UP = round(Data.DataMain.UP);
+            Main_Actual_UP = Data.DataMain.UP;
             Main_Expected_UP = [0;107;150;51; 99;177;13;1;71; 138;0;  0;    0;12; 77; 0; 0; 0; 0; 0];
-            testCase.verifyEqual(Main_Actual_UP, Main_Expected_UP);
+            testCase.verifyEqual(Main_Actual_UP, Main_Expected_UP, 'AbsTol', 0.1);
             
-            Main_Actual_allASS = round(Data.DataMain.allASS);
-            Main_Expected_allASS = round([11.0911946854474;42.7721549861295;20.6452074040670;30.0590067560821;64.2584937909519;12.5238023413691;40.6585624004766;30.6687068315704;24.0647917958204;30.7574110311965;20.3993435965304;74.7776255380259;24.8318515931322;15.8088280244768;24.0309958861010;17.9429379577234;16.5571588417380;12.1121520806927;30.4298216823390;34.2607565195953]);
-            testCase.verifyEqual(Main_Actual_allASS, Main_Expected_allASS);
+            Main_Actual_allASS = Data.DataMain.allASS;
+            Main_Expected_allASS = [11.0911946854474;42.7721549861295;20.6452074040670;30.0590067560821;64.2584937909519;12.5238023413691;40.6585624004766;30.6687068315704;24.0647917958204;30.7574110311965;20.3993435965304;74.7776255380259;24.8318515931322;15.8088280244768;24.0309958861010;17.9429379577234;16.5571588417380;12.1121520806927;30.4298216823390;34.2607565195953];
+            testCase.verifyEqual(Main_Actual_allASS, Main_Expected_allASS, 'AbsTol', 0.1);
             
             Main_Actual_catchTrial = Data.DataMain.catchTrial;
             Main_Expected_catchTrial = [0;1;0;1;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0];
@@ -121,13 +121,13 @@ classdef OutputTestOddball < matlab.unittest.TestCase
             Main_Expected_memErr = [999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999];
             testCase.verifyEqual(Main_Actual_memErr, Main_Expected_memErr)
             %
-            Main_Actual_sigma = Data.DataMain.sigma;
-            Main_Expected_sigma = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
-            testCase.verifyEqual(Main_Actual_sigma, Main_Expected_sigma);
+            Main_Actual_concentration = Data.DataMain.concentration;
+            Main_Expected_concentration = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
+            testCase.verifyEqual(Main_Actual_concentration, Main_Expected_concentration);
             %
-            Main_Actual_vola = Data.DataMain.vola;
-            Main_Expected_vola = [.25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25];
-            testCase.verifyEqual(Main_Actual_vola, Main_Expected_vola);
+            Main_Actual_haz = Data.DataMain.haz;
+            Main_Expected_haz = [.25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25];
+            testCase.verifyEqual(Main_Actual_haz, Main_Expected_haz);
             %
             Main_Actual_trial = Data.DataMain.trial;
             Main_Expected_trial = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
@@ -254,21 +254,21 @@ classdef OutputTestOddball < matlab.unittest.TestCase
             Oddball_Expected_pred = [0;169;105;28;13;   34;46;37;37;10;     26;36;28;36;41;     34;44;30;42;38];
             testCase.verifyEqual(Oddball_Actual_pred, Oddball_Expected_pred);
             
-            Oddball_Actual_predErr = round(Data.DataOddball.predErr);
+            Oddball_Actual_predErr = Data.DataOddball.predErr;
             Oddball_Expected_predErr = [168;117;78;32;37;23;20;3;52;32;19;17;17;12;16;18;27;26;10;12];
-            testCase.verifyEqual(Oddball_Actual_predErr, Oddball_Expected_predErr);
+            testCase.verifyEqual(Oddball_Actual_predErr, Oddball_Expected_predErr, 'AbsTol', 0.1);
             
             Oddball_Actual_hit = Data.DataOddball.hit;
             Oddball_Expected_hit = [0;0;0;1;0;0;1;1;0;0;1;1;1;1;1;0;0;0;1;1];
             testCase.verifyEqual(Oddball_Actual_hit, Oddball_Expected_hit);
             
-            Oddball_Actual_UP = round(Data.DataOddball.UP);
+            Oddball_Actual_UP = Data.DataOddball.UP;
             Oddball_Expected_UP = [0;169;64;77;15;  21;12;9;0;27;    16;10;8;8;5;    7;10;14;12;4];
-            testCase.verifyEqual(Oddball_Actual_UP, Oddball_Expected_UP);
+            testCase.verifyEqual(Oddball_Actual_UP, Oddball_Expected_UP, 'AbsTol', 0.1);
             
-            Oddball_Actual_allASS = round(Data.DataOddball.allASS);
-            Oddball_Expected_allASS = round([56.3064169119110;44.7806770819131;32.7628787930898;88.4460393955587;27.5553596399993;23.0169262891260;74.4986218944005;60.0948974162446;57.0078924412632;31.7982792485999;54.3044071256679;70.7407899977594;34.4213389185473;29.2090877790941;32.1457183826683;21.1053433044513;20.3465608984038;46.8616528666608;30.3427769268406;30.4911381108101]);
-            testCase.verifyEqual(Oddball_Actual_allASS, Oddball_Expected_allASS);
+            Oddball_Actual_allASS = Data.DataOddball.allASS;
+            Oddball_Expected_allASS = [56.3064169119110;44.7806770819131;32.7628787930898;88.4460393955587;27.5553596399993;23.0169262891260;74.4986218944005;60.0948974162446;57.0078924412632;31.7982792485999;54.3044071256679;70.7407899977594;34.4213389185473;29.2090877790941;32.1457183826683;21.1053433044513;20.3465608984038;46.8616528666608;30.3427769268406;30.4911381108101];
+            testCase.verifyEqual(Oddball_Actual_allASS, Oddball_Expected_allASS,'AbsTol', 0.1);
             
             Oddball_Actual_catchTrial = Data.DataOddball.catchTrial;
             Oddball_Expected_catchTrial = [0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0];
@@ -278,9 +278,9 @@ classdef OutputTestOddball < matlab.unittest.TestCase
             Oddball_Expected_cp = [NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN];
             testCase.verifyEqual(Oddball_Actual_cp, Oddball_Expected_cp);
             
-            Oddball_Actual_distMean = round(Data.DataOddball.distMean);
-            Oddball_Expected_distMean = round([35.9659756492466;19.8262284443369;25.5095503187431;33.0793504979593;36.0514016801332;16.9686796646885;20.9240546489374;21.3119123215556;37.7617830290837;40.7526136296083;49.2648116118448;43.7497656695111;56.4795648563220;51.7035829196282;48.9285095836465;34.0877052038865;23.1005511901041;52.1721565683915;54.1879625643795;65.5393724834024]);
-            testCase.verifyEqual(Oddball_Actual_distMean, Oddball_Expected_distMean);
+            Oddball_Actual_distMean = Data.DataOddball.distMean;
+            Oddball_Expected_distMean = [35.9659756492466;19.8262284443369;25.5095503187431;33.0793504979593;36.0514016801332;16.9686796646885;20.9240546489374;21.3119123215556;37.7617830290837;40.7526136296083;49.2648116118448;43.7497656695111;56.4795648563220;51.7035829196282;48.9285095836465;34.0877052038865;23.1005511901041;52.1721565683915;54.1879625643795;65.5393724834024];
+            testCase.verifyEqual(Oddball_Actual_distMean, Oddball_Expected_distMean, 'AbsTol', 0.1);
             
             Oddball_Actual_perf = Data.DataOddball.perf;
             Oddball_Expected_perf = [0;0;0;0.100000000000000;0;0;0.100000000000000;0;0;0;0.100000000000000;0.100000000000000;0;0;0;0;0;0;0;0.100000000000000];
@@ -294,13 +294,13 @@ classdef OutputTestOddball < matlab.unittest.TestCase
             Oddball_Expected_memErr = [999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999;999];
             testCase.verifyEqual(Oddball_Actual_memErr, Oddball_Expected_memErr)
             
-            Oddball_Actual_sigma = Data.DataOddball.sigma;
-            Oddball_Expected_sigma = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
-            testCase.verifyEqual(Oddball_Actual_sigma, Oddball_Expected_sigma);
+            Oddball_Actual_concentration = Data.DataOddball.concentration;
+            Oddball_Expected_concentration = [10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10; 10];
+            testCase.verifyEqual(Oddball_Actual_concentration, Oddball_Expected_concentration);
             
-            Oddball_Actual_vola = Data.DataOddball.vola;
-            Oddball_Expected_vola = [.25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25];
-            testCase.verifyEqual(Oddball_Actual_vola, Oddball_Expected_vola);
+            Oddball_Actual_haz = Data.DataOddball.haz;
+            Oddball_Expected_haz = [.25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25; .25];
+            testCase.verifyEqual(Oddball_Actual_haz, Oddball_Expected_haz);
             
             Oddball_Actual_trial = Data.DataOddball.trial;
             Oddball_Expected_trial = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
