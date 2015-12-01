@@ -27,7 +27,9 @@ else
     rawPredErr = 0;
     outcome = distMean;
     tickMark = false;
-    Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome, 'tickMark', tickMark, 'memErr', memErr, 'distMean', distMean);
+    %Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.rawPredErr, rawPredErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome, 'tickMark', tickMark, 'memErr', memErr, 'distMean', distMean);
+    Data = struct(taskParam.fieldNames.predErr, predErr, taskParam.fieldNames.pred, pred, taskParam.fieldNames.outcome, outcome, 'tickMark', tickMark, 'memErr', memErr, 'distMean', distMean);
+
 end
 
 % if nargin == 6

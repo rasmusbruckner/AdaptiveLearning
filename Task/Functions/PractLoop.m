@@ -31,13 +31,13 @@ for i = 1:trials
     
     while 1
         
-        if subject.rew == 1 && practData.boatType(i) == 1
+        if subject.rew == 1 && practData.shieldType(i) == 1
             practData.actRew(i) = 1;
-        elseif subject.rew == 1 && practData.boatType(i) == 0
+        elseif subject.rew == 1 && practData.shieldType(i) == 0
             practData.actRew(i) = 2;
-        elseif subject.rew == 2 && practData.boatType(i) == 1
+        elseif subject.rew == 2 && practData.shieldType(i) == 1
             practData.actRew(i) = 2;
-        elseif subject.rew == 2 && practData.boatType(i) == 0
+        elseif subject.rew == 2 && practData.shieldType(i) == 0
             practData.actRew(i) = 1;
         end
         
@@ -150,7 +150,7 @@ for i = 1:trials
     end
     
     DrawCircle(taskParam)
-    Shield(taskParam, practData.allASS(i), practData.pred(i), practData.boatType(i))
+    Shield(taskParam, practData.allASS(i), practData.pred(i), practData.shieldType(i))
     Cannon(taskParam, practData.distMean(i))
     DrawOutcome(taskParam, practData.outcome(i))
     

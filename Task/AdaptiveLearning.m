@@ -9,8 +9,8 @@ if ~unitTest
     unitTest = false;
 end
 
-% indentifies your machine. IF you have internet!
-[computer, Computer2] = identifyPC;
+% indentifies your machine. If you have internet!
+computer = identifyPC;
 %computer = 'Macbook'
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,20 +32,30 @@ end
 %           followCannonPractice
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% changes in the task:
+% renamed variables:
+
+% boatType --> shieldType
+% sigma --> concentration
+% vola --> haz
+
 %% for brown:
 % ID length?
 % text size?
 % check trigger!
 % check behavioral data!
+% check sample rate!
+% find a good name for each task!
+%% adapt folder path! line: XXXXX
 
-runIntro = false;
+runIntro = true;
 askSubjInfo = true;
 oddball = true;
 sendTrigger = false;
-randomize = true;
+randomize = false;
 shieldTrials = 1; % 4
 practTrials = 1; % 20
-trials = 20; % 240
+trials = 1; % 240
 blockIndices = [1 60 120 180];
 haz = [.25 1 0];
 oddballProb = [.25 0];
@@ -54,15 +64,15 @@ safe = [3 0];
 rewMag = 0.1;
 jitter = 0.2;
 practiceTrialCriterion = 10;
-test = false;
+%test = false;
 debug = false;
 
 if ~oddball
     % Dresden
     controlTrials = 1; % 120
     concentration = [12 12 99999999];
-    DataFollowOutcome = nan; 
-    DataFollowCannon = nan;  
+    DataFollowOutcome = nan;
+    DataFollowCannon = nan;
     % Check number of trials in each condition
     if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
         msgbox('All trials must be even or equal to 1!');
@@ -70,17 +80,13 @@ if ~oddball
     end
 else
     % Brown
-    controlTrials = nan; % 120
+    controlTrials = nan;
     concentration = [10 12 99999999];
-    %firstSessionTrials
-    DataOddball = nan; 
+    DataOddball = nan;
 end
-
-
 
 % Savedirectory
 if isequal(computer, 'Macbook')
-    % savdir = '/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory';
     cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
@@ -91,14 +97,6 @@ elseif isequal(computer, 'Brown')
 end
 
 %% User Input
-% 
-% fID = 'ID';
-% fAge = 'age';
-% fGroup = 'group';
-% fSex = 'sex';
-% fCBal = 'cBal';
-% fRew = 'rew';
-% fDate = 'Date';
 
 a = clock;
 rand('twister', a(6).*10000);
@@ -133,7 +131,6 @@ elseif askSubjInfo == true
             cBal = num2str(round(unifrnd(1,2)));
         end
         reward = num2str(round(unifrnd(1,2)));
-        %group = num2str(round(unifrnd(1,2)));
         defaultanswer = {'99999','99', '1', 'm', cBal, reward};
     else
         defaultanswer = {'99999','99', '1', 'm', '1', '1'};
@@ -223,79 +220,53 @@ fWindowRect = 'windowRect';
 
 startTime = GetSecs;
 
-% hier kann man noch was anpassen
-fID = 'ID'; ID = fID;
-fAge = 'age'; age = fAge;
-fSex = 'sex'; sex = fSex;
-fRew = 'rew'; rew = fRew;
-fActRew = 'actRew'; actRew = fActRew;
+ID = 'ID';
+age = 'age';
+sex = 'sex';
+rew = 'rew';
+actRew = 'actRew';
+Date = 'Date';
+cond = 'cond';
+trial = 'trial';
+outcome = 'outcome';
+allASS = 'allASS';
+distMean = 'distMean';
+cp = 'cp';
+fTAC = 'TAC'; TAC = fTAC;
+fshieldType = 'shieldType'; shieldType = fshieldType;
+fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial;
+triggers = 'triggers';
+pred = 'pred';
+predErr = 'predErr';
+fMemErr = 'memErr'; memErr = fMemErr;
+fUP = 'UP'; UP = fUP;
+hit = 'hit';
+cBal = 'cBal';
+perf = 'perf';
+accPerf = 'accPerf';
+actJitter = 'actJitter';
+block = 'block';
+initiationRTs = 'initiationRTs';
+timestampOnset = 'timestampOnset';
+timestampPrediction = 'timestampPrediction';
+timestampOffset = 'timestampOffset';
 fhazs = 'haz'; hazs = fhazs;
-fOddball = 'oddball';
 fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
 fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
 fconcentrations = 'concentration'; concentrations = fconcentrations;
 fOddBall = 'oddBall'; oddBall = fOddBall;
-fDate = 'Date'; Date = fDate;
-fCond = 'cond'; cond = fCond;
-fTrial = 'trial'; trial = fTrial;
-fOutcome = 'outcome'; outcome = fOutcome;
-fAllASS = 'allASS'; allASS = fAllASS;
-fDistMean = 'distMean'; distMean = fDistMean;
-fCp = 'cp'; cp = fCp;
-fTAC = 'TAC'; TAC = fTAC;
-fshieldType = 'shieldType'; shieldType = fshieldType;
-fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial;
-fPredT = 'predT'; predT = fPredT;
-fOutT = 'outT'; outT = fOutT;
-fTriggers = 'triggers'; triggers = fTriggers;
-fPred = 'pred';pred = fPred;
-fPredErr = 'predErr'; predErr = fPredErr;
-fPredErrNorm = 'predErrNorm'; predErrNorm = fPredErrNorm;
-fPredErrPlus = 'predErrPlus'; predErrPlus = fPredErrPlus;
-fPredErrMin = 'predErrMin'; predErrMin = fPredErrMin;
-fRawPredErr = 'rawPredErr'; rawPredErr = fRawPredErr;
-fMemErr = 'memErr'; memErr = fMemErr;
-fMemErrNorm = 'memErrNorm'; memErrNorm = fMemErrNorm;
-fMemErrPlus = 'memErrPlus'; memErrPlus = fMemErrPlus;
-fMemErrMin = 'memErrMin'; memErrMin = fMemErrMin;
-fUP = 'UP'; UP = fUP;
-fUPNorm = 'UPNorm'; UPNorm = fUPNorm;
-fUPPlus = 'UPPlus'; UPPlus = fUPPlus;
-fUPMin = 'UPMin'; UPMin = fUPMin;
-fHit = 'hit'; hit = fHit;
-fCBal = 'cBal'; cBal = fCBal;
-fPerf = 'perf'; perf = fPerf;
-fAccPerf = 'accPerf'; accPerf = fAccPerf;
 
-fFieldNames = 'fieldNames';
-fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
-    'initiationRTs', 'initiationRTs','timestampOnset', 'timestampOnset',...
-    'timestampPrediction', 'timestampPrediction', 'timestampOffset',...
-    'timestampOffset', fOddBall, oddBall, 'oddball', oddball, 'oddballProb',...
-    oddballProbs, fDriftConc, driftConcentrations, fAllASS, allASS, 'ID', ID,...
-    fconcentrations, concentrations, 'age', age, 'sex', sex, 'rew', rew, fActRew, actRew, 'date',...
-    Date, fCond, cond, fTrial, trial, fOutcome, outcome, fDistMean, distMean, fCp, cp,...
-    fhazs, hazs, fTAC, TAC, fshieldType, shieldType, fCatchTrial, catchTrial,...
-    fPredT, predT, fOutT, outT, fTriggers, triggers, fPred, pred, fPredErr,...
-    predErr, fPredErrNorm, predErrNorm, fPredErrPlus, predErrPlus,...
-    fPredErrMin, predErrMin, fMemErr, memErr, fMemErrNorm, memErrNorm,...
-    fMemErrPlus, memErrPlus,fMemErrMin, memErrMin, fUP, UP, fUPNorm,...
-    UPNorm, fUPPlus, UPPlus, fUPMin, UPMin, fHit, hit, 'cBal', cBal,...
-    fPerf, 'perf', 'accPerf', accPerf, fRawPredErr, rawPredErr);
+fieldNames = struct(actJitter, actJitter, block, block,...
+    initiationRTs, initiationRTs,timestampOnset, timestampOnset,...
+    timestampPrediction, timestampPrediction, timestampOffset,...
+    timestampOffset, fOddBall, oddBall, 'oddball', oddball, 'oddballProb',...
+    oddballProbs, fDriftConc, driftConcentrations, allASS, allASS, ID, ID,...
+    fconcentrations, concentrations, age, age, sex, sex, rew, rew, actRew, actRew, 'date',...
+    Date, cond, cond, trial, trial, outcome, outcome, distMean, distMean, cp, cp,...
+    fhazs, hazs, fTAC, TAC, fshieldType, shieldType, fCatchTrial, catchTrial, triggers, triggers, pred, pred, predErr,...
+    predErr, fMemErr, memErr, fUP, UP,...
+    hit, hit, cBal, cBal, perf, perf, accPerf, accPerf);
 
-fOddball = 'oddball';
-fGParam = 'gParam';
-fSendTrigger = 'sendTrigger';
-fDriftConc = 'driftConc';
-fOddballProb = 'oddballProb';
-fComputer = 'computer';
-fTrials = 'trials';
-fShieldTrials = 'shieldTrials';
-fPractTrials = 'practTrials';
-fControlTrials = 'controlTrials';
-fSafe = 'safe';
-fRewMag = 'rewMag';
-fSentenceLength = 'sentenceLength';
 if isequal(computer, 'Dresden')
     sentenceLength = 70;
 elseif isequal(computer, 'Brown')
@@ -305,76 +276,67 @@ else
 end
 ref = GetSecs;
 gParam = struct('jitter', jitter,...
-    'blockIndices', blockIndices, 'ref', ref, fSentenceLength,...
-    sentenceLength, fOddball, oddball, fDriftConc, driftConc,...
-    fOddballProb, oddballProb, fconcentrations, concentration, fhazs, haz,...
-    fSendTrigger, sendTrigger, fComputer, computer, fTrials,...
-    trials, fShieldTrials, shieldTrials, fPractTrials, practTrials,...
-    fControlTrials, controlTrials,fSafe, safe, fRewMag, rewMag,...
+    'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
+    sentenceLength, 'oddball', oddball, 'driftConc', driftConc,...
+    'oddballProb', oddballProb, fconcentrations, concentration, fhazs, haz,...
+    'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
+    trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials,...
+    'controlTrials', controlTrials, 'safe', safe, 'rewMag', rewMag,...
     fScreensize, screensize, fZero, zero,fWindow, window, fWindowRect,...
     windowRect, 'practiceTrialCriterion',practiceTrialCriterion, 'askSubjInfo',...
     askSubjInfo);
 
-fPredSpotRad =  'predSpotRad'; predSpotRad = 10;
-fOutcSpotRad = 'outcSpotRad'; outcSpotRad = 10;
-fShieldAngle = 'shieldAngle'; shieldAngle = 30;
-fOutcSize = 'outcSize'; outcSize = 10;
-fCannonEnd = 'cannonEnd'; cannonEnd = 5;
-fMeanPoint = 'meanRad'; meanPoint = 1;
-fRotationRad = 'rotationRad'; rotationRad = 150;
+predSpotRad = 10;
+shieldAngle = 30;
+outcSize = 10;
+cannonEnd = 5;
+meanPoint = 1;
+rotationRad = 150;
+predSpotDiam = predSpotRad * 2;
+outcDiam = outcSize * 2;
+spotDiamMean = meanPoint * 2;
+cannonEndDiam = cannonEnd * 2;
+predSpotRect = [0 0 predSpotDiam predSpotDiam];
+outcRect = [0 0 outcDiam outcDiam];
+cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
+spotRectMean = [0 0 spotDiamMean spotDiamMean];
+boatRect = [0 0 50 50];
+centBoatRect = CenterRect(boatRect, windowRect);
+predCentSpotRect = CenterRect(predSpotRect, windowRect);
+outcCentRect = CenterRect(outcRect, windowRect);
+outcCentSpotRect = CenterRect(outcRect, windowRect);
+cannonEndCent = CenterRect(cannonEndRect, windowRect);
+centSpotRectMean = CenterRect(spotRectMean,windowRect);
 
-fPredSpotDiam = 'predSpotDiam'; predSpotDiam = predSpotRad * 2;
-fOutcSpotDiam = 'outcDiam'; outcDiam = outcSize * 2;
-fSpotDiamMean = 'spotDiamMean'; spotDiamMean = meanPoint * 2;
-fCannonEndDiam = 'cannonEndDiam'; cannonEndDiam = cannonEnd * 2;
+unit = 2*pi/360;
+initialRotAngle = 0*unit;
+rotAngle = initialRotAngle;
 
-fPredSpotRect = 'predSpotRect'; predSpotRect = [0 0 predSpotDiam predSpotDiam];
-fOuctcRect = 'outcRect'; outcRect = [0 0 outcDiam outcDiam];
-fCannonEndRect = 'cannonEndRect'; cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
-fSpotRectMean = 'spotRectMean'; spotRectMean =[0 0 spotDiamMean spotDiamMean];
-fBoatRect = 'boatRect'; boatRect = [0 0 50 50];
-
-fCentBoatRect = 'centBoatRect'; centBoatRect = CenterRect(boatRect, windowRect);
-fPredCentSpotRect = 'predCentSpotRect'; predCentSpotRect = CenterRect(predSpotRect, windowRect);
-fOutcCentRect = 'outcCentRect'; outcCentRect = CenterRect(outcRect, windowRect);
-fOutcCentSpotRect = 'outcCentSpotRect'; outcCentSpotRect = CenterRect(outcRect, windowRect);
-fCannonEndCent = 'cannonEndCent'; cannonEndCent = CenterRect(cannonEndRect, windowRect);
-fCentSpotRectMean = 'centSpotRectMean'; centSpotRectMean = CenterRect(spotRectMean,windowRect);
-
-fUnit = 'unit'; unit = 2*pi/360;
-fInitialRotAngle = 'initialRotAngle'; initialRotAngle = 0*unit;
-fRotAngle = 'rotAngle'; rotAngle = initialRotAngle;
-
-fCircle = 'circle';
-circle = struct(fShieldAngle, shieldAngle, fCannonEndCent,...
-    cannonEndCent, fOutcCentSpotRect, outcCentSpotRect, fPredSpotRad,...
-    predSpotRad, fOutcSize, outcSize, fMeanPoint, meanPoint, fRotationRad,...
-    rotationRad, fPredSpotDiam, predSpotDiam, fOutcSpotDiam,...
-    outcDiam, fSpotDiamMean, spotDiamMean, fPredSpotRect, predSpotRect,...
-    fOuctcRect, outcRect, fSpotRectMean, spotRectMean,...
-    fBoatRect, boatRect, fCentBoatRect, centBoatRect, fPredCentSpotRect,...
-    predCentSpotRect, fOutcCentRect, outcCentRect, fCentSpotRectMean,...
-    centSpotRectMean, fUnit, unit, fInitialRotAngle, initialRotAngle, fRotAngle, rotAngle);
+circle = struct('shieldAngle', shieldAngle, 'cannonEndCent',...
+    cannonEndCent, 'outcCentSpotRect', outcCentSpotRect, 'predSpotRad',...
+    predSpotRad, 'outcSize', outcSize, 'meanRad', meanPoint, 'rotationRad',...
+    rotationRad, 'predSpotDiam', predSpotDiam, 'outcDiam',...
+    outcDiam, 'spotDiamMean', spotDiamMean, 'predSpotRect', predSpotRect,...
+    'outcRect', outcRect, 'spotRectMean', spotRectMean,...
+    'boatRect', boatRect, 'centBoatRect', centBoatRect, 'predCentSpotRect',...
+    predCentSpotRect, 'outcCentRect', outcCentRect, 'centSpotRectMean',...
+    centSpotRectMean, 'unit', unit, 'initialRotAngle', initialRotAngle, 'rotAngle', rotAngle);
 
 gold = [255 215 0];
 blue = [0 0 255];
 silver = [160 160 160];
 green = [0 255 0];
-
-fColors = 'colors';
 colors = struct('gold', gold, 'blue', blue, 'silver', silver, 'green', green);
 
 KbName('UnifyKeyNames')
-fRightKey = 'rightKey'; rightKey = KbName('j');
-fLeftKey = 'leftKey'; leftKey = KbName('f');
-fDelete = 'delete'; delete = KbName('DELETE');
-fRightArrow = 'rightArrow'; rightArrow = KbName('RightArrow');
-fLeftArrow = 'leftArrow'; leftArrow = KbName('LeftArrow');
-fRightSlowKey = 'rightSlowKey'; rightSlowKey = KbName('h');
-fLeftSlowKey = 'leftSlowKey'; leftSlowKey = KbName('g');
-fSpace = 'space'; space = KbName('Space');
-fEnter = 'enter';
-fS = 's';
+rightKey = KbName('j');
+leftKey = KbName('f');
+delete = KbName('DELETE');
+rightArrow = KbName('RightArrow');
+leftArrow = KbName('LeftArrow');
+rightSlowKey = KbName('h');
+leftSlowKey = KbName('g');
+space = KbName('Space');
 
 if isequal(computer, 'Macbook')
     enter = 40;
@@ -382,53 +344,29 @@ if isequal(computer, 'Macbook')
 elseif isequal(computer, 'Dresden')
     enter = 13;
     s = 83;
-elseif isequal(computer, 'D_Pilot')
-    enter = 40;
-    s = 22;
-elseif isequal(computer, 'Dresden_Rene')
-    enter = 13;
-    s = 32;
 elseif isequal(computer, 'Brown')
     enter = 13;
     s = 83;
 end
 
-fKeys = 'keys';
-keys = struct(fDelete, delete, fRightKey, rightKey, fRightArrow, rightArrow, fLeftArrow, leftArrow, fRightSlowKey, rightSlowKey, fLeftKey, leftKey, fLeftSlowKey, leftSlowKey, fSpace, space, fEnter, enter, fS, s);
+keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
+    rightArrow, 'leftArrow', leftArrow, 'rightSlowKey', rightSlowKey,...
+    'leftKey', leftKey, 'leftSlowKey', leftSlowKey, 'space', space,...
+    'enter', enter, 's', s);
 
 %% Trigger settings
-
 if sendTrigger == true
     config_io;
 end
 
 fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
-fPort = 'port'; port = 53328; % LPT port (Dresden)
+%fPort = 'port'; port = 53328; % LPT port (Dresden)
 %LPT1address = hex2dec('E050'); %standard location of LPT1 port % copied from heliEEG_main
-%fPort = 'port'; port = hex2dec('E050'); % LPT port
-fStartTrigger = 'startTrigger'; startTrigger = 7; % Start of the task.
-fTrialOnset = 'trialOnsetTrigger'; trialOnsetTrigger = 1; % Trial onset.
-fPredTrigger = 'predTrigger'; predTrigger = 2; % Prediction.
-fBaseline1Trigger = 'baseline1Trigger'; baseline1Trigger = 3; % Baseline.
-fOutcomeTrigger = 'outcomeTrigger'; outcomeTrigger = 4; % Outcome.
-fBaseline2Trigger = 'baseline2Trigger'; baseline2Trigger = 5; % Baseline.
-fBoatTrigger = 'boatTrigger'; boatTrigger = 6; % Boat type.
-fBaseline3Trigger = 'baseline3Trigger'; baseline3Trigger = 9; % Baseline.
-fBlockLVTrigger = 'blockLVTrigger'; blockLVTrigger = 10; % Block with low concentration.
-fBlockHVTrigger = 'blockHVTrigger'; blockHVTrigger = 11; % Block with high concentration.
-fBlockControlTrigger = 'blockControlTrigger'; blockControlTrigger = 12; % Control block.
+fPort = 'port'; port = hex2dec('E050'); % LPT port
+triggers = struct(fSampleRate, sampleRate, fPort, port);
 
-fTriggers = 'triggers';
-triggers = struct(fSampleRate, sampleRate, fPort, port, fStartTrigger,...
-    startTrigger, fTrialOnset, trialOnsetTrigger, fPredTrigger,...
-    predTrigger, fBaseline1Trigger, baseline1Trigger, fOutcomeTrigger,...
-    outcomeTrigger, fBaseline2Trigger, baseline2Trigger,...
-    fBoatTrigger, boatTrigger, fBaseline3Trigger, baseline3Trigger,...
-    fBlockLVTrigger, blockLVTrigger, fBlockHVTrigger, blockHVTrigger,...
-    fBlockControlTrigger, blockControlTrigger);
-
-IndicateOddball = 'Oddball Task';
-IndicateMain = 'Change Point Task';
+%IndicateOddball = 'Oddball Task';
+%IndicateMain = 'Change Point Task';
 IndicateFollowCannon = 'Follow Cannon Task';
 IndicateFollowOutcome = 'Follow Outcome Task';
 fTxtPressEnter = 'txtPressEnter';
@@ -462,7 +400,6 @@ if oddball
             'have to infer its aim in order to catch balls and earn money.'];
     end
 else
-    %txtPressEnter = 'Zurück mit Löschen - Weiter mit Enter';
     txtPressEnter = 'Weiter mit Enter';
     
     header = 'Anfang der Studie';
@@ -488,52 +425,12 @@ else
     end
 end
 
-fStrings = 'strings';
 strings = struct(fTxtPressEnter, txtPressEnter);
-taskParam = struct(fGParam, gParam, fCircle, circle, fKeys, keys,...
-    fFieldNames, fieldNames, fTriggers, triggers,...
-    fColors, colors, fStrings, strings, 'textures', textures,...
+taskParam = struct('gParam', gParam, 'circle', circle, 'keys', keys,...
+    'fieldNames', fieldNames, 'triggers', triggers,...
+    'colors', colors, 'strings', strings, 'textures', textures,...
     'unitTest', unitTest);
 
-%if ~test && ~allThreeConditions
-
-%     if oddball
-%
-%         if Subject.cBal == 1
-%             OddballCondition
-%             MainCondition
-%         elseif Subject.cBal == 2
-%             MainCondition
-%             OddballCondition
-%         end
-%
-%     elseif ~oddball
-%
-%         if Subject.cBal == 1
-%             MainCondition;
-%             FollowOutcomeCondition
-%         elseif Subject.cBal == 2
-%             FollowOutcomeCondition
-%             MainCondition
-%         end
-%
-%     end
-%
-%     if oddball
-%         totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
-%     else
-%         totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end);
-%     end
-%
-%     Screen('TextSize', taskParam.gParam.window, 19);
-%     Screen('TextFont', taskParam.gParam.window, 'Arial');
-%     EndOfTask
-
-%elseif test && ~allThreeConditions
-
-%[taskDataLV, DataLV] = Main(taskParam, haz(1), 'main', Subject);
-
-%elseif allThreeConditions
 if ~oddball
     
     if Subject.cBal == 1
@@ -545,7 +442,6 @@ if ~oddball
         
     elseif Subject.cBal == 2
         
-        % läuft!
         DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowCannon = FollowCannonCondition;
@@ -554,7 +450,6 @@ if ~oddball
         
     elseif Subject.cBal == 3
         
-        % läuft
         DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataMain = MainCondition;
@@ -563,7 +458,6 @@ if ~oddball
         
     elseif Subject.cBal == 4
         
-        % hier ändern
         DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataMain = MainCondition;
@@ -572,7 +466,6 @@ if ~oddball
         
     elseif Subject.cBal == 5
         
-        % hier ändern
         DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowCannon = FollowCannonCondition;
@@ -581,7 +474,6 @@ if ~oddball
         
     elseif Subject.cBal == 6
         
-        % hier ändern
         DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowOutcome = FollowOutcomeCondition;
@@ -613,18 +505,12 @@ if ~oddball
     Data.DataMain = DataMain;
     Data.DataFollowOutcome = DataFollowOutcome;
     Data.DataFollowCannon = DataFollowCannon;
-
-
 else
-    
     Data.DataMain = DataMain;
     Data.DataOddball = DataOddball;
-
 end
 
 EndOfTask
-
-%end
 
 ListenChar();
 ShowCursor;
@@ -633,17 +519,9 @@ Screen('CloseAll');
 
     function DataOddball = OddballCondition
         
-        % kann man verbessern
-        % if runIntro && ~unitTest
-        
-        %keyboard
         if runIntro && ~unitTest
-            %end
-            %keyboard
             if isequal(Subject.session, '1')
                 Instructions(taskParam, 'oddballPractice', Subject);
-                
-                %% habe ich Oddball oder Main in brown version benutzt?
                 
                 Main(taskParam, haz(3), concentration(1), 'oddballPractice', Subject);
                 
@@ -660,7 +538,7 @@ Screen('CloseAll');
                     'aim in order to catch balls and earn money.'];
                 
             elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
-                header = 'Oddball Task'
+                header = 'Oddball Task';
                 txtStartTask = ['This is the beginning of the ODDBALL TASK. During '...
                     'this block you will earn real money for your performance. '...
                     'The trials will be exactly the same as those in the '...
@@ -678,15 +556,11 @@ Screen('CloseAll');
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         end
-            %keyboard
-            [~, DataOddball] = Main(taskParam, haz(1), concentration(1), 'oddball', Subject);
-        
+        [~, DataOddball] = Main(taskParam, haz(1), concentration(1), 'oddball', Subject);
         
     end
 
     function DataMain = MainCondition
-   
-        
         
         if runIntro && ~unitTest
             
@@ -714,16 +588,6 @@ Screen('CloseAll');
                             'Kugeln bekommen Sie nach der Studie '...
                             'ausgezahlt.\n\nViel Erfolg!'];
                     end
-                else
-                    %                 txtStartTask = ['In this block you will encounter a '...
-                    %                     'cannon that is not perfectly accurate. On '...
-                    %                     'some trials it will shoot a bit above where '...
-                    %                     'it is aimed and on other trials a bit below. '...
-                    %                     'Your best strategy is still to place the shield '...
-                    %                     'in the location where the cannon is aimed.\n\n'...
-                    %                     'The cannon will still remain stable on most trials '...
-                    %                     'but be reaimed to another location on the cirlce '...
-                    %                     'occasionally.'];
                 end
                 
                 Instructions(taskParam, 'mainPractice', Subject);
@@ -745,9 +609,6 @@ Screen('CloseAll');
                     'have to infer its aim in order to catch balls and earn money.'];
                 feedback = false;
                 BigScreen(taskParam, txtPressEnter, header, txt, feedback);
-                %Screen('TextSize', taskParam.gParam.window, 30);
-                %Screen('TextFont', taskParam.gParam.window, 'Arial');
-                %hazIndication(taskParam, IndicateMain, txtPressEnter)
             end
             
         elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
