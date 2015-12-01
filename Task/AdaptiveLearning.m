@@ -72,7 +72,8 @@ if ~oddball
     controlTrials = 1; % 120
     concentration = [12 12 99999999];
     DataFollowOutcome = nan;
-    DataFollowCannon = nan;
+    DataFollowCannon = nan;            
+    textSize = 19;
     % Check number of trials in each condition
     if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
         msgbox('All trials must be even or equal to 1!');
@@ -83,6 +84,7 @@ else
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball = nan;
+    textSize = 30;
 end
 
 % Savedirectory
@@ -233,13 +235,17 @@ allASS = 'allASS';
 distMean = 'distMean';
 cp = 'cp';
 fTAC = 'TAC'; TAC = fTAC;
-fshieldType = 'shieldType'; shieldType = fshieldType;
-fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial;
+shieldType = 'shieldType';
+catchTrial = 'catchTrial';
+%fshieldType = 'shieldType'; shieldType = fshieldType;
+%fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial;
 triggers = 'triggers';
 pred = 'pred';
 predErr = 'predErr';
-fMemErr = 'memErr'; memErr = fMemErr;
-fUP = 'UP'; UP = fUP;
+%fMemErr = 'memErr'; memErr = fMemErr;
+memErr = 'memErr';
+%fUP = 'UP'; UP = fUP;
+UP = 'UP';
 hit = 'hit';
 cBal = 'cBal';
 perf = 'perf';
@@ -255,16 +261,18 @@ fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
 fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
 fconcentrations = 'concentration'; concentrations = fconcentrations;
 fOddBall = 'oddBall'; oddBall = fOddBall;
+oddBall = 'oddBall';
 
 fieldNames = struct(actJitter, actJitter, block, block,...
     initiationRTs, initiationRTs,timestampOnset, timestampOnset,...
     timestampPrediction, timestampPrediction, timestampOffset,...
-    timestampOffset, fOddBall, oddBall, 'oddball', oddball, 'oddballProb',...
+    timestampOffset, oddBall, oddBall, 'oddball', oddball, 'oddballProb',...
     oddballProbs, fDriftConc, driftConcentrations, allASS, allASS, ID, ID,...
-    fconcentrations, concentrations, age, age, sex, sex, rew, rew, actRew, actRew, 'date',...
-    Date, cond, cond, trial, trial, outcome, outcome, distMean, distMean, cp, cp,...
-    fhazs, hazs, fTAC, TAC, fshieldType, shieldType, fCatchTrial, catchTrial, triggers, triggers, pred, pred, predErr,...
-    predErr, fMemErr, memErr, fUP, UP,...
+    fconcentrations, concentrations, age, age, sex, sex, rew, rew, actRew,...
+    actRew, 'date',Date, cond, cond, trial, trial, outcome, outcome,...
+    distMean, distMean, cp, cp,fhazs, hazs, fTAC, TAC, shieldType,...
+    shieldType, catchTrial, catchTrial, triggers, triggers, pred, pred,...
+    predErr, predErr, memErr, memErr, UP, UP,...
     hit, hit, cBal, cBal, perf, perf, accPerf, accPerf);
 
 if isequal(computer, 'Dresden')
@@ -516,7 +524,6 @@ ListenChar();
 ShowCursor;
 Screen('CloseAll');
 
-
     function DataOddball = OddballCondition
         
         if runIntro && ~unitTest
@@ -713,7 +720,7 @@ Screen('CloseAll');
             'basketTxt', basketTxt, 'dstRect', dstRect);
         
         ListenChar(2);
-        %HideCursor;
+        HideCursor;
         
     end
 
@@ -771,13 +778,13 @@ Screen('CloseAll');
             
             if oddball
                 header = 'End of task!';
-                txt = sprintf('Thank you for participating\n\n\nYou earned $ %.2f', totWin);
+                txt = sprintf('Thank you for participating!\n\n\nYou earned $ %.2f', totWin);
             else
                 header = 'Ende des Versuchs!';
                 if isequal(Subject.group, '1')
-                    txt = sprintf('Vielen Dank für deine Teilnahme\n\n\nDu hast %.2f Euro verdient', totWin);
+                    txt = sprintf('Vielen Dank für deine Teilnahme!\n\n\nDu hast %.2f Euro verdient', totWin);
                 else
-                    txt = sprintf('Vielen Dank für Ihre Teilnahme\n\n\nSie haben %.2f Euro verdient', totWin);
+                    txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient', totWin);
                 end
             end
             Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...
@@ -792,7 +799,7 @@ Screen('CloseAll');
             Screen('TextSize', taskParam.gParam.window, 30);
             DrawFormattedText(taskParam.gParam.window, header,...
                 'center', taskParam.gParam.screensize(4)*0.1);
-            Screen('TextSize', taskParam.gParam.window, 19);
+            Screen('TextSize', taskParam.gParam.window, textSize);
             DrawFormattedText(taskParam.gParam.window, txt,...
                 'center', 'center');
             Screen('DrawingFinished', taskParam.gParam.window, [], []);
