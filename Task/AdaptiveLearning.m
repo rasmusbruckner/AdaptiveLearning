@@ -1,4 +1,4 @@
-function [Data] = AdaptiveLearning(unitTest)
+function Data = AdaptiveLearning(unitTest)
 
 if nargin == 0
     unitTest = false;
@@ -46,6 +46,7 @@ computer = identifyPC;
 % check behavioral data!
 % check sample rate!
 % find a good name for each task!
+% what about catch trials?
 %% adapt folder path! line: XXXXX
 
 runIntro = true;
@@ -53,10 +54,10 @@ askSubjInfo = true;
 oddball = true;
 sendTrigger = false;
 randomize = false;
-shieldTrials = 1; % 4
-practTrials = 1; % 20
-trials = 1; % 240
-blockIndices = [1 60 120 180];
+shieldTrials = 4; % 4
+practTrials = 20; % 20
+trials = 10; % 240
+blockIndices = [1 5 120 180];
 haz = [.25 1 0];
 oddballProb = [.25 0];
 driftConc = [30 99999999];
@@ -720,7 +721,7 @@ Screen('CloseAll');
             'basketTxt', basketTxt, 'dstRect', dstRect);
         
         ListenChar(2);
-        HideCursor;
+        %HideCursor;
         
     end
 

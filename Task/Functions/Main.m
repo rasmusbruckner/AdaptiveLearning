@@ -21,7 +21,7 @@ function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subje
 
 % InitRT: first button press 
 
-
+keyboard
 KbReleaseWait();
 
 ref = taskParam.gParam.ref;
@@ -104,7 +104,13 @@ for i=1:trial
     
     if i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1|| i == taskParam.gParam.blockIndices(4) + 1
         
-        Screen('TextSize', taskParam.gParam.window, 19);
+        if ~taskParam.gParam.oddball
+            textSize = 19;
+        elseif taskParam.gParam.oddball 
+            textSize = 30;
+        end
+        
+        Screen('TextSize', taskParam.gParam.window, textSize);
         Screen('TextFont', taskParam.gParam.window, 'Arial');
         while 1
             if taskParam.gParam.oddball

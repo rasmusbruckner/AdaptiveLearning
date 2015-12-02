@@ -1,5 +1,5 @@
 function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon, condition, LoadData)
-%keyboard
+keyboard
 if nargin == 7 && isequal(LoadData, 'NoNoise')
     practData = load('OddballNoNoise');
     practData = practData.practData;
