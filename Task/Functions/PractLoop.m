@@ -1,5 +1,5 @@
 function [taskParam, practData] = PractLoop(taskParam, subject, vola, sigma, cannon, condition, LoadData)
-keyboard
+%keyboard
 if nargin == 7 && isequal(LoadData, 'NoNoise')
     practData = load('OddballNoNoise');
     practData = practData.practData;
@@ -9,17 +9,25 @@ elseif nargin == 7 && isequal(LoadData, 'Noise')
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'CP_NoNoise')
-    practData = load('CP_NoNoise');
+    if ~taskParam.gParam.oddball
+        practData = load('CP_NoNoise');
+    elseif taskParam.gParam.oddball
+        practData = load('CP_NoNoise_drugstudy');
+    end
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
-    practData = load('CP_Noise');
+    if ~taskParam.gParam.oddball
+        practData = load('CP_Noise');
+    elseif taskParam.gParam.oddball
+        practData = load('CP_Noise_drugstudy');
+    end
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
-% elseif nargin == 7 && isequal(LoadData, 'Control_Practice')
-%     practData = load('Control_Practice');
-%     practData = practData.practData;
-%     trials = taskParam.gParam.practTrials;
+    % elseif nargin == 7 && isequal(LoadData, 'Control_Practice')
+    %     practData = load('Control_Practice');
+    %     practData = practData.practData;
+    %     trials = taskParam.gParam.practTrials;
 else
     practData = GenerateOutcomes(taskParam, vola, sigma, condition);
     trials = practData.trial;
@@ -105,8 +113,8 @@ for i = 1:trials
     
     background = false;
     %Cannonball(taskParam, practData.distMean(i), practData.distMean(i), background)
-    if (isequal(condition, 'oddballPractice') && practData.oddBall(i) == true)
-        WaitSecs(0.5)
+    if (isequal(condition, 'oddballPractice') && practData.oddBall(i) == true) || (isequal(condition, 'practiceOddball') && practData.oddBall(i) == true)
+        WaitSecs(0.5);
     elseif isequal(condition, 'shield') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice')
         Cannonball(taskParam, practData.distMean(i), practData.outcome(i), background)
     end
@@ -122,7 +130,7 @@ for i = 1:trials
     DrawOutcome(taskParam, practData.outcome(i));
     
     Screen('DrawingFinished', taskParam.gParam.window);
-    if isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice')
+    if isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
         if practData.predErr(i) <= practData.allASS(i)/2
             practData.hit(i) = 1;
         end
@@ -183,4 +191,5 @@ for i = 1:trials
     
     %Priority(0);
     
+end
 end

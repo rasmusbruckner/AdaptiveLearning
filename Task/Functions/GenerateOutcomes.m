@@ -8,7 +8,7 @@ function taskData = GenerateOutcomes(taskParam, vola, sig, condition)
 
 if isequal(condition, 'main') || isequal(condition, 'oddball')
     trials = taskParam.gParam.trials;
-elseif isequal(condition, 'mainPractice') || isequal(condition, 'oddballPractice_NoOddball') || isequal(condition, 'oddballPractice') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
+elseif isequal(condition, 'mainPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'oddballPractice') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
     trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'shield')
     trials = taskParam.gParam.shieldTrials;
@@ -127,7 +127,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
     
     
 elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
-    
+    %keyboard
     distMean=nan(trials,1);
     oddBall=false(trials,1);
     outcome=nan(trials,1);

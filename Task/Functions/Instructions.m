@@ -824,30 +824,33 @@ end
                 case 2
                     
                     condition = 'practiceNoOddball';
-                    LoadData = 'NoNoise';
+                    %LoadData = 'NoNoise';
+                    LoadData = 'None';
+
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(3),...
                         taskParam.gParam.concentration(3), cannon, condition, LoadData);
-                    hits = sum(practData.hit == 1);
-                    goldBall = sum(practData.shieldType == 1);
-                    goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
-                    silverBall = sum(practData.shieldType == 0);
-                    silverHit = hits - goldHit;
-                    maxMon = (length(find(practData.shieldType == 1))...
-                        * taskParam.gParam.rewMag);
-                    if taskParam.gParam.oddball == false
-                        header = 'Leistung';
-                        
-                        txt = sprintf(['Gefangene blaue Kugeln: %.0f von '...
-                            '%.0f\n\nGefangene grüne Kugeln: %.0f von '...
-                            '%.0f\n\n In diesem Block hättest du %.2f von '...
-                            'maximal %.2f Euro gewonnen'], goldHit,...
-                            goldBall, silverHit, silverBall,...
-                            practData.accPerf(end), maxMon);
-                    elseif taskParam.gParam.oddball == true
-                        
-                        [txt, header] = Feedback(practData, taskParam, subject, condition);
-                    end
+                   %keyboard
+%                     hits = sum(practData.hit == 1);
+%                     goldBall = sum(practData.shieldType == 1);
+%                     goldHit = practData.accPerf(end)/taskParam.gParam.rewMag;
+%                     silverBall = sum(practData.shieldType == 0);
+%                     silverHit = hits - goldHit;
+%                     maxMon = (length(find(practData.shieldType == 1))...
+%                         * taskParam.gParam.rewMag);
+                    %if taskParam.gParam.oddball == false
+%                         header = 'Leistung';
+%                         
+%                         txt = sprintf(['Gefangene blaue Kugeln: %.0f von '...
+%                             '%.0f\n\nGefangene grüne Kugeln: %.0f von '...
+%                             '%.0f\n\n In diesem Block hättest du %.2f von '...
+%                             'maximal %.2f Euro gewonnen'], goldHit,...
+%                             goldBall, silverHit, silverBall,...
+%                             practData.accPerf(end), maxMon);
+                    %elseif taskParam.gParam.oddball == true
+                        %keyboard
+                    [txt, header] = Feedback(practData, taskParam, subject, condition);
+                    %end
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,feedback);
@@ -862,8 +865,6 @@ end
                         screenIndex = screenIndex - 1;
                     end
                     WaitSecs(0.1);
-                    
-                    
                     
                 case 3
                     if sumCannonDev >= 4
@@ -1003,13 +1004,14 @@ end
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt, feedback);
-                    
-                    if fw == 1
-                        screenIndex = screenIndex + 1;
-                    elseif bw == 1
-                        screenIndex = screenIndex - 1;
-                    end
+                    %keyboard
+%                     if fw == 1
+%                         screenIndex = screenIndex + 1;
+%                     elseif bw == 1
+%                         screenIndex = screenIndex - 1;
+%                     end
                     WaitSecs(0.1);
+                    
                 case 5
                     sumCannonDev = sum(practData.cannonDev >= 10);
                     if sumCannonDev >= 4
@@ -2157,9 +2159,9 @@ end
     end
 
     function [screenIndex, Data] = ShieldPractice(screenIndex, whichPractice)
-        
+       
         condition = 'shield';
-        if (isequal(whichPractice, 'mainPractice')) || (isequal(whichPractice, 'followCannonPractice'))
+        if (isequal(whichPractice, 'mainPractice')) || (isequal(whichPractice, 'followCannonPractice')) || (isequal(whichPractice, 'oddballPractice'))
             haz = taskParam.gParam.haz(3);
         else
             haz = taskParam.gParam.haz(2);

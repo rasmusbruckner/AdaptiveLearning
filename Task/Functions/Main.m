@@ -21,7 +21,7 @@ function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subje
 
 % InitRT: first button press 
 
-keyboard
+%keyboard
 KbReleaseWait();
 
 ref = taskParam.gParam.ref;

@@ -38,42 +38,29 @@ computer = identifyPC;
 % boatType --> shieldType
 % sigma --> concentration
 % vola --> haz
+% added trialsS1 = XX, trialsS2S3 = XX;
 
 %% for brown:
+% how should we label "change point task" and "oddball task"?
 % ID length?
-% text size?
 % check trigger!
 % check behavioral data!
-% check sample rate!
-% find a good name for each task!
+% check sampling rate!
 % what about catch trials?
+% can you test both cbal and rew conditions?
+
 %% adapt folder path! line: XXXXX
 
-runIntro = true;
-askSubjInfo = true;
+%Dresden or Brown version?
 oddball = true;
-sendTrigger = false;
-randomize = false;
-shieldTrials = 4; % 4
-practTrials = 20; % 20
-trials = 10; % 240
-blockIndices = [1 5 120 180];
-haz = [.25 1 0];
-oddballProb = [.25 0];
-driftConc = [30 99999999];
-safe = [3 0];
-rewMag = 0.1;
-jitter = 0.2;
-practiceTrialCriterion = 10;
-%test = false;
-debug = false;
 
 if ~oddball
     % Dresden
+    trials = 10; % 240
     controlTrials = 1; % 120
     concentration = [12 12 99999999];
     DataFollowOutcome = nan;
-    DataFollowCannon = nan;            
+    DataFollowCannon = nan;
     textSize = 19;
     % Check number of trials in each condition
     if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
@@ -82,11 +69,33 @@ if ~oddball
     end
 else
     % Brown
+    %% How many trials in first session?
+    trialsS1 = 40;
+    %% How many trials in second and third session?
+    trialsS2S3 = 240;
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball = nan;
     textSize = 30;
 end
+
+runIntro = true;
+askSubjInfo = true;
+sendTrigger = true;
+randomize = false;
+shieldTrials = 4; % 4
+practTrials = 20; % 20
+blockIndices = [1 60 120 180];
+haz = [.25 1 0];
+oddballProb = [.25 0];
+driftConc = [30 99999999];
+safe = [3 0];
+%% Choose reward magnitude!
+rewMag = 0.1;
+jitter = 0.2;
+practiceTrialCriterion = 10;
+%test = false;
+debug = false;
 
 % Savedirectory
 if isequal(computer, 'Macbook')
@@ -209,6 +218,12 @@ elseif askSubjInfo == true
     end
 end
 
+if oddball & isequal(Subject.session, '1')
+    trials = trialsS1;
+elseif (oddball & isequal(Subject.session, '2')) || oddball & isequal(Subject.session, '3')
+    trials = trialsS2S3;
+end
+
 Screen('Preference', 'VisualDebugLevel', 3);
 Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('Preference', 'SkipSyncTests', 2);
@@ -238,14 +253,10 @@ cp = 'cp';
 fTAC = 'TAC'; TAC = fTAC;
 shieldType = 'shieldType';
 catchTrial = 'catchTrial';
-%fshieldType = 'shieldType'; shieldType = fshieldType;
-%fCatchTrial = 'catchTrial'; catchTrial = fCatchTrial;
 triggers = 'triggers';
 pred = 'pred';
 predErr = 'predErr';
-%fMemErr = 'memErr'; memErr = fMemErr;
 memErr = 'memErr';
-%fUP = 'UP'; UP = fUP;
 UP = 'UP';
 hit = 'hit';
 cBal = 'cBal';
@@ -261,7 +272,6 @@ fhazs = 'haz'; hazs = fhazs;
 fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
 fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
 fconcentrations = 'concentration'; concentrations = fconcentrations;
-fOddBall = 'oddBall'; oddBall = fOddBall;
 oddBall = 'oddBall';
 
 fieldNames = struct(actJitter, actJitter, block, block,...
@@ -529,28 +539,15 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             if isequal(Subject.session, '1')
+                
                 Instructions(taskParam, 'oddballPractice', Subject);
-                
-                Main(taskParam, haz(3), concentration(1), 'oddballPractice', Subject);
-                
-                txtStartTask = ['This is the beginning of the real task. During '...
-                    'this block you will earn real money for your performance. '...
-                    'The trials will be exactly the same as those in the '...
-                    'previous practice block. On each trial a cannon will aim '...
-                    'at a location on the circle. On most trials the cannon will '...
-                    'fire a ball somewhere near the point of aim. '...
-                    'However, on a few trials a ball will be shot '...
-                    'from a different cannon that is equally likely to '...
-                    'hit any location on the circle. Like in the previous '...
-                    'block you will not see the cannon, but still have to infer its '...
-                    'aim in order to catch balls and earn money.'];
                 
             elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
                 header = 'Oddball Task';
                 txtStartTask = ['This is the beginning of the ODDBALL TASK. During '...
                     'this block you will earn real money for your performance. '...
                     'The trials will be exactly the same as those in the '...
-                    'in the last session. On each trial a cannon will aim '...
+                    'in the last session.\n\nOn each trial a cannon will aim '...
                     'at a location on the circle. On most trials the cannon will '...
                     'fire a ball somewhere near the point of aim. '...
                     'However, on a few trials a ball will be shot '...
@@ -558,11 +555,11 @@ Screen('CloseAll');
                     'hit any location on the circle. Like in the previous '...
                     'session you will not see the cannon, but still have to infer its '...
                     'aim in order to catch balls and earn money.'];
+                feedback = false;
+                BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
                 
             end
             
-            feedback = false;
-            BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
         end
         [~, DataOddball] = Main(taskParam, haz(1), concentration(1), 'oddball', Subject);
         
@@ -599,15 +596,17 @@ Screen('CloseAll');
                 end
                 
                 Instructions(taskParam, 'mainPractice', Subject);
-                Main(taskParam, haz(3), concentration(1), 'mainPractice', Subject);
-                feedback = false;
-                BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                if ~oddball
+                    Main(taskParam, haz(3), concentration(1), 'mainPractice', Subject);
+                    feedback = false;
+                    BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                end
             else
                 header = 'Change Point Task';
                 txt = ['This is the beginning of the CHANGE POINT TASK. During '...
                     'this block you will earn real money for your performance. '...
                     'The trials will be exactly the same as those in the '...
-                    'previous session. On each trial a cannon will aim '...
+                    'previous session.\n\nOn each trial a cannon will aim '...
                     'at a location on the circle. On all trials the cannon will '...
                     'fire a ball somewhere near the point of aim. '...
                     'Most of the time the cannon will remain aimed at '...
@@ -621,12 +620,9 @@ Screen('CloseAll');
             
         elseif isequal(Subject.session, '2') || isequal(Subject.session, '3')
             
-            
             Screen('TextSize', taskParam.gParam.window, 30);
             Screen('TextFont', taskParam.gParam.window, 'Arial');
             VolaIndication(taskParam,txtStartTask, txtPressEnter)
-            %feedback = false;
-            %BigScreen(taskParam, txtPressEnter, header, txt, feedback);
             
         end
         [~, DataMain] = Main(taskParam, haz(1), concentration(1), 'main', Subject);
@@ -721,7 +717,7 @@ Screen('CloseAll');
             'basketTxt', basketTxt, 'dstRect', dstRect);
         
         ListenChar(2);
-        %HideCursor;
+        HideCursor;
         
     end
 
