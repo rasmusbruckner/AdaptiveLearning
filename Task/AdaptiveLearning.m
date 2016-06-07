@@ -1,4 +1,4 @@
-function Data = AdaptiveLearning(unitTest)
+ function Data = AdaptiveLearning(unitTest)
 
 % This function is the master function for the cannon task
 % ------------------------------------------------------------------------- 
@@ -69,15 +69,8 @@ computer = identifyPC;
 %   - 'dresden' 
 %   - 'reversal'
 %   - 'chinese'
+taskType = 'reversal';
 
-
-taskType = 'oddball';
-% delete oddball at some point 
-% if isequal(taskType, 'oddball') 
-%     oddball = true;
-% else
-%     oddball = false;
-% end
 
 if strcmp(taskType, 'dresden')
     
@@ -108,7 +101,7 @@ elseif strcmp(taskType, 'oddball')
     
 elseif strcmp(taskType, 'reversal')
     
-    trials = 10;
+    trials = 100;
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball = nan;
@@ -195,8 +188,14 @@ elseif askSubjInfo == true
         defaultanswer = {'99999','99', '1', 'm', '1', '1'};
     end
     
+    
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
-    subjInfo{7} = date;
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball') 
+        subjInfo{7} = date;
+    else 
+        subjInfo{6} = date;
+
+    end
     
     if numel(subjInfo{1}) < 5 || numel(subjInfo{1}) > 5
         msgbox('ID: must consist of five numbers!');
@@ -214,13 +213,16 @@ elseif askSubjInfo == true
             msgbox('Session: "1", "2" or "3"?');
             return
         end
+        
     end
     
-    if subjInfo{4} ~= 'm' && subjInfo{4} ~= 'f'
-        
-        msgbox('Sex: "m" or "f"?');
-        return
-   
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
+        if subjInfo{4} ~= 'm' && subjInfo{4} ~= 'f'
+            
+            msgbox('Sex: "m" or "f"?');
+            return
+            
+        end
     end
     
     if strcmp(taskType, 'dresden')
@@ -236,9 +238,11 @@ elseif askSubjInfo == true
         end
     end
     
-    if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
-        msgbox('Reward: 1 or 2?');
-        return
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
+        if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
+            msgbox('Reward: 1 or 2?');
+            return
+        end
     end
     
     if strcmp(taskType, 'dresden')
@@ -253,9 +257,15 @@ elseif askSubjInfo == true
             subjInfo(4), 'session', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
         
+    elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
+       
+        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+            subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(4))), 'rew',...
+            str2double(cell2mat(subjInfo(5))), 'date', subjInfo(6), 'session', '1');
+        
     end
     
-    if strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
         checkIdInData = dir(sprintf('*%s*', num2str(cell2mat((subjInfo(1))))));
     elseif strcmp(taskType, 'oddball')
         checkIdInData = dir(sprintf('*%s_session%s*' , num2str(cell2mat((subjInfo(1)))), num2str(cell2mat((subjInfo(3))))));
@@ -266,7 +276,7 @@ elseif askSubjInfo == true
     if  ~isempty(fileNames);
         if strcmp(taskType, 'dresden')
             msgbox('Diese ID wird bereits verwendet!');
-        elseif strcmp(taskType, 'oddball')
+        elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
             msgbox('ID and session have already been used!');
         end
         return
@@ -297,53 +307,55 @@ fWindowRect = 'windowRect';
 
 startTime = GetSecs;
 
-ID = 'ID';
-age = 'age';
-sex = 'sex';
-rew = 'rew';
-actRew = 'actRew';
-Date = 'Date';
-cond = 'cond';
-trial = 'trial';
-outcome = 'outcome';
-allASS = 'allASS';
-distMean = 'distMean';
-cp = 'cp';
-fTAC = 'TAC'; TAC = fTAC;
-shieldType = 'shieldType';
-catchTrial = 'catchTrial';
-triggers = 'triggers';
-pred = 'pred';
-predErr = 'predErr';
-memErr = 'memErr';
-UP = 'UP';
-hit = 'hit';
-cBal = 'cBal';
-perf = 'perf';
-accPerf = 'accPerf';
-actJitter = 'actJitter';
-block = 'block';
-initiationRTs = 'initiationRTs';
-timestampOnset = 'timestampOnset';
-timestampPrediction = 'timestampPrediction';
-timestampOffset = 'timestampOffset';
-fhazs = 'haz'; hazs = fhazs;
-fOddballProb = 'oddballProb'; oddballProbs = fOddballProb;
-fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
-fconcentrations = 'concentration'; concentrations = fconcentrations;
-oddBall = 'oddBall';
+%ID = 'ID';
+%age = 'age';
+%sex = 'sex';
+%rew = 'rew';
+%actRew = 'actRew';
+%Date = 'Date';
+%cond = 'cond';
+%trial = 'trial';
+%outcome = 'outcome';
+%allASS = 'allASS';
+%distMean = 'distMean';
+%cp = 'cp';
+%fTAC = 'TAC'; TAC = fTAC;
+%shieldType = 'shieldType';
+%catchTrial = 'catchTrial';
+%triggers = 'triggers';
+%pred = 'pred';
+%predErr = 'predErr';
+%memErr = 'memErr';
+%UP = 'UP';
+%hit = 'hit';
+%cBal = 'cBal';
+%perf = 'perf';
+%accPerf = 'accPerf';
+%actJitter = 'actJitter';
+%block = 'block';
+%initiationRTs = 'initiationRTs';
+%timestampOnset = 'timestampOnset';
+%timestampPrediction = 'timestampPrediction';
+%timestampOffset = 'timestampOffset';
+%fhazs = 'haz'; hazs = fhazs;
+%fOddballProb = 'oddballProb'; %oddballProbs = fOddballProb;
+%fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
+%fconcentrations = 'concentration'; concentrations = fconcentrations;
+%oddBall = 'oddBall';
 
-fieldNames = struct(actJitter, actJitter, block, block,...
-    initiationRTs, initiationRTs,timestampOnset, timestampOnset,...
-    timestampPrediction, timestampPrediction, timestampOffset,...
-    timestampOffset, oddBall, oddBall, 'oddballProb',...
-    oddballProbs, fDriftConc, driftConcentrations, allASS, allASS, ID, ID,...
-    fconcentrations, concentrations, age, age, sex, sex, rew, rew, actRew,...
-    actRew, 'date',Date, cond, cond, trial, trial, outcome, outcome,...
-    distMean, distMean, cp, cp,fhazs, hazs, fTAC, TAC, shieldType,...
-    shieldType, catchTrial, catchTrial, triggers, triggers, pred, pred,...
-    predErr, predErr, memErr, memErr, UP, UP,...
-    hit, hit, cBal, cBal, perf, perf, accPerf, accPerf);
+% sollte ich wohl irgendwann ersetzen
+fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
+    'initiationRTs', 'initiationRTs', 'timestampOnset', 'timestampOnset',...
+    'timestampPrediction', 'timestampPrediction', 'timestampOffset',...
+    'timestampOffset', 'oddBall', 'oddBall', 'oddballProb',...
+    'oddballProb', 'driftConc', 'driftConc', 'allASS', 'allASS', 'ID', 'ID',...
+    'concentration', 'concentration', 'age', 'age', 'sex', 'sex', 'rew', 'rew', 'actRew',...
+    'actRew', 'date','Date', 'cond', 'cond', 'trial', 'trial', 'outcome', 'outcome',...
+    'distMean', 'distMean', 'cp', 'cp', 'haz', 'haz', 'TAC', 'TAC', 'shieldType',...
+    'shieldType', 'catchTrial', 'catchTrial', 'triggers', 'triggers', 'pred', 'pred',...
+    'predErr', 'predErr', 'memErr', 'memErr', 'UP', 'UP',...
+    'hit', 'hit', 'cBal', 'cBal', 'perf', 'perf', 'accPerf', 'accPerf',...
+    'reversalProb', 'reversalProb');
 
 if isequal(computer, 'Dresden')
     sentenceLength = 70;
@@ -356,11 +368,12 @@ ref = GetSecs;
 gParam = struct('taskType', taskType ,'jitter', jitter,...
     'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
     sentenceLength, 'driftConc', driftConc,...
-    'oddballProb', oddballProb, fconcentrations, concentration, fhazs, haz,...
+    'oddballProb', oddballProb, 'reversalProb', reversalProb,...
+    'concetration', concentration, 'haz', haz,...
     'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
     trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials,...
     'controlTrials', controlTrials, 'safe', safe, 'rewMag', rewMag,...
-    fScreensize, screensize, fZero, zero,fWindow, window, fWindowRect,...
+    'screensize', screensize, 'zero', zero,'window', window, fWindowRect,...
     windowRect, 'practiceTrialCriterion',practiceTrialCriterion, 'askSubjInfo',...
     askSubjInfo);
 
@@ -419,6 +432,8 @@ space = KbName('Space');
 if isequal(computer, 'Macbook')
     enter = 40;
     s = 22;
+    t = 23;
+    z = 28;
 elseif isequal(computer, 'Dresden')
     enter = 13;
     s = 83;
@@ -430,7 +445,7 @@ end
 keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
     rightArrow, 'leftArrow', leftArrow, 'rightSlowKey', rightSlowKey,...
     'leftKey', leftKey, 'leftSlowKey', leftSlowKey, 'space', space,...
-    'enter', enter, 's', s);
+    'enter', enter, 's', s, 't', t, 'z', z);
 
 % -------------------------------------------------------------------------
 % Trigger settings
@@ -591,6 +606,7 @@ elseif isequal(taskType, 'reversal')
     % Reversal version
     % ---------------------------------------------------------------------
     
+    DataReversal = ReversalCondition;
     
 elseif isequal(taskType, 'chinese')
     
@@ -791,6 +807,12 @@ Screen('CloseAll');
         
     end
 
+    function DataReversal = ReversalCondition
+        
+        [~, DataReversal] = Main(taskParam, haz(1), concentration(1), 'reversal', Subject);
+ 
+    end
+
     function [window, windowRect, textures] = OpenWindow
         
         if debug == true
@@ -814,8 +836,8 @@ Screen('CloseAll');
         textures = struct('cannonTxt', cannonTxt, 'shieldTxt', shieldTxt,...
             'basketTxt', basketTxt, 'dstRect', dstRect);
         
-        ListenChar(2);
-        HideCursor;
+        %ListenChar(2);
+        %HideCursor;
         
     end
 

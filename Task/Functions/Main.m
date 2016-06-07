@@ -19,39 +19,23 @@ function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subje
 % prediction: trigger
 
 
-% InitRT: first button press 
+% InitRT: first button press
 
 %keyboard
 KbReleaseWait();
 
 ref = taskParam.gParam.ref;
 
-if isequal(condition, 'oddballPractice')
+if isequal(taskParam.gParam.taskType, 'dresden')
+    textSize = 19;
+else
+    textSize = 30;
+end
+Screen('TextSize', taskParam.gParam.window, textSize);
+Screen('TextFont', taskParam.gParam.window, 'Arial');
+
+if taskParam.unitTest
     
-    taskData = load('OddballInvisible');
-    taskData = taskData.taskData;
-    clear taskData.cBal taskData.rew %% should be checked at some point!!
-    
-    trial = taskParam.gParam.practTrials;
-    taskData.cBal = nan(trial,1);
-    taskData.rew = nan(trial,1);
-    taskData.initiationRTs = nan(trial,1);
-    taskData.actJitter = nan(trial,1);
-    taskData.block = ones(trial,1);
-elseif isequal(condition, 'followOutcomePractice')...
-        ||isequal(condition, 'mainPractice')...
-        ||isequal(condition, 'followCannonPractice')
-    taskData = load('CPInvisible');
-    taskData = taskData.taskData;
-    clear taskData.cBal taskData.rew
-    
-    trial = taskParam.gParam.practTrials;
-    taskData.cBal = nan(trial,1);
-    taskData.rew = nan(trial,1);
-    taskData.initiationRTs = nan(trial,1);
-    taskData.actJitter = nan(trial,1);
-    taskData.block = ones(trial,1);
-elseif taskParam.unitTest
     %keyboard
     if isequal(condition, 'oddball')
         taskData = load('unitTest_TestDataOddball');
@@ -65,6 +49,7 @@ elseif taskParam.unitTest
         taskData.block = ones(trial,1);
         taskData.accPerf = nan(trial,1);
         taskData.perf = zeros(trial,1);
+        
     else
         
         taskData = load('unitTest_TestData');
@@ -87,31 +72,92 @@ elseif taskParam.unitTest
         end
         
     end
-
-else
-
-    taskData = GenerateOutcomes(taskParam, haz, concentration, condition);
-    trial = taskData.trial;
+    
+elseif ~taskParam.unitTest
+    
+    
+    if isequal(condition, 'oddballPractice')
+        
+        taskData = load('OddballInvisible');
+        taskData = taskData.taskData;
+        clear taskData.cBal taskData.rew %% should be checked at some point!!
+        
+        trial = taskParam.gParam.practTrials;
+        taskData.cBal = nan(trial,1);
+        taskData.rew = nan(trial,1);
+        taskData.initiationRTs = nan(trial,1);
+        taskData.actJitter = nan(trial,1);
+        taskData.block = ones(trial,1);
+        
+    elseif isequal(condition, 'followOutcomePractice')...
+            ||isequal(condition, 'mainPractice')...
+            ||isequal(condition, 'followCannonPractice')
+        taskData = load('CPInvisible');
+        taskData = taskData.taskData;
+        clear taskData.cBal taskData.rew
+        
+        trial = taskParam.gParam.practTrials;
+        taskData.cBal = nan(trial,1);
+        taskData.rew = nan(trial,1);
+        taskData.initiationRTs = nan(trial,1);
+        taskData.actJitter = nan(trial,1);
+        taskData.block = ones(trial,1);
+        
+        
+        
+        
+        %elseif taskParam.unitTest
+        
+        %     %keyboard
+        %     if isequal(condition, 'oddball')
+        %         taskData = load('unitTest_TestDataOddball');
+        %         taskData = taskData.taskData;
+        %         clear taskData.cBal taskData.rew
+        %         trial = taskParam.gParam.trials;
+        %         taskData.cBal = nan(trial,1);
+        %         taskData.rew = nan(trial,1);
+        %         taskData.initiationRTs = nan(trial,1);
+        %         taskData.actJitter = nan(trial,1);
+        %         taskData.block = ones(trial,1);
+        %         taskData.accPerf = nan(trial,1);
+        %         taskData.perf = zeros(trial,1);
+        %
+        %     else
+        %
+        %         taskData = load('unitTest_TestData');
+        %         taskData = taskData.taskData;
+        %         clear taskData.cBal taskData.rew
+        %
+        %         trial = taskParam.gParam.trials;
+        %         taskData.cBal = nan(trial,1);
+        %         taskData.rew = nan(trial,1);
+        %         taskData.initiationRTs = nan(trial,1);
+        %         taskData.actJitter = nan(trial,1);
+        %         taskData.block = ones(trial,1);
+        %         if isequal(condition, 'main')
+        %             taskData.pred = taskData.predMain;
+        %         elseif isequal(condition, 'followOutcome')
+        %             taskData.pred = taskData.predFollowOutcome;
+        %         elseif isequal(condition, 'followCannon')
+        %             taskData.pred = taskData.predFollowCannon;
+        %
+        %         end
+        %
+        %     end
+        
+    else
+        
+        taskData = GenerateOutcomes(taskParam, haz, concentration, condition);
+        trial = taskData.trial;
+    end
 end
-
-% For trigger testing.
-%RT_Flip = zeros(taskData.trial, 1);
-
-% Enable real-time mode.
-% Priority(9);
 
 for i=1:trial
     
     if i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1|| i == taskParam.gParam.blockIndices(4) + 1
         
-        if ~taskParam.gParam.oddball
-            textSize = 19;
-        elseif taskParam.gParam.oddball 
-            textSize = 30;
-        end
         
-        Screen('TextSize', taskParam.gParam.window, textSize);
-        Screen('TextFont', taskParam.gParam.window, 'Arial');
+        
         while 1
             if taskParam.gParam.oddball
                 txt = 'Take a break!';
@@ -163,7 +209,7 @@ for i=1:trial
     
     taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
     taskData.timestampOnset(i,:) = GetSecs - ref;
-
+    
     if ~taskParam.unitTest
         while 1
             
@@ -174,9 +220,11 @@ for i=1:trial
             if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
                 TickMark(taskParam, taskData.outcome(i-1), 'outc')
                 TickMark(taskParam, taskData.pred(i-1), 'pred')
+                TickMark(taskParam, savedTickmark, 'saved')
+
             end
             
-            if (taskData.catchTrial(i) == 1 && ~taskParam.gParam.oddball) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
+            if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
                 Cannon(taskParam, taskData.distMean(i))
                 Aim(taskParam, taskData.distMean(i))
             end
@@ -245,6 +293,7 @@ for i=1:trial
         if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
             TickMark(taskParam, taskData.outcome(i-1), 'outc')
             TickMark(taskParam, taskData.pred(i-1), 'pred')
+            TickMark(taskParam, savedTickmark, 'saved')
         end
         
         if (taskData.catchTrial(i) == 1 && ~taskParam.gParam.oddball) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
@@ -257,7 +306,7 @@ for i=1:trial
         Screen('Flip', taskParam.gParam.window, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
         taskData.timestampOnset(i,:) = GetSecs - ref;
         
-
+        
         WaitSecs(0.5);
         
         time = GetSecs;
@@ -318,7 +367,7 @@ for i=1:trial
     
     Screen('Flip', taskParam.gParam.window, t + 0.6);
     taskData.triggers(i,3) = SendTrigger(taskParam, taskData, condition, haz, i, 3); % this is the PE
-    
+    %keyboard
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window, 1);
@@ -332,12 +381,77 @@ for i=1:trial
     Screen('DrawingFinished', taskParam.gParam.window, 1);
     Screen('Flip', taskParam.gParam.window, t + 2.1);
     taskData.triggers(i,5) = SendTrigger(taskParam, taskData, condition, haz, i, 5); % this is the shield trigger
+    %keyboard
+    WaitSecs(.1);
     
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
-    Screen('DrawingFinished', taskParam.gParam.window);
-    Screen('Flip', taskParam.gParam.window, t + 2.6);
-    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
+    %DrawCross(taskParam)
+    %DrawCircle(taskParam)
+    %Screen('DrawingFinished', taskParam.gParam.window);
+    
+    if isequal(taskParam.gParam.taskType, 'reversal')
+        %
+        %keyboard
+        txt = 'Would you like to update the tickmark?';
+        %DrawFormattedText(taskParam.gParam.window, txt,...
+        %       'center', 'center', [255 255 255]);
+        
+%         DrawFormattedText(taskParam.gParam.window, txt,...
+%             'center', 100, [255 255 255]);
+%         Screen('Flip', taskParam.gParam.window, t + 2.6);
+%         %% Be careful here!
+%         taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
+
+        
+       % outcome = distMean;
+        %LineAndBack(taskParam)
+%         DrawCross(taskParam)
+%         DrawCircle(taskParam)
+%         Screen('DrawingFinished', taskParam.gParam.window, 1);
+%         Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
+        while 1
+            
+            %LineAndBack(taskParam)
+            %Cannon(taskParam, distMean)
+            DrawCircle(taskParam)
+            DrawCross(taskParam)
+            Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
+            DrawOutcome(taskParam, taskData.outcome(i))
+%             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
+%                 Shield(taskParam, 20, Data.pred, 1)
+%             elseif (subject.rew == 2 && win) || (subject.rew == 1 && ~win)
+%                 Shield(taskParam, 20, Data.pred, 0)
+%             end
+            %DrawOutcome(taskParam, outcome)
+            DrawFormattedText(taskParam.gParam.window,txt,...
+                taskParam.gParam.screensize(3)*0.1,...
+                taskParam.gParam.screensize(4)*0.05,...
+                [255 255 255]);
+%             DrawFormattedText(taskParam.gParam.window,...
+%                 taskParam.strings.txtPressEnter,'center',...
+%                 taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+            Screen('DrawingFinished', taskParam.gParam.window, 1);
+            Screen('Flip', taskParam.gParam.window, t + 1.2);
+            
+            [ keyIsDown, ~, keyCode ] = KbCheck;
+            if keyIsDown
+                if keyCode(taskParam.keys.t)  
+                    %screenIndex = screenIndex + 1;
+                    savedTickmark = taskData.pred(i);
+                    break
+                elseif keyCode(taskParam.keys.z)
+                    break
+                    
+                end
+                
+            end
+        end
+        WaitSecs(0.1);
+    
+    end
+    
+    
+    
+    %keyboard
     
     WaitSecs(.5);
     taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, haz, i, 16); % this is the trial summary trigger
@@ -354,12 +468,12 @@ end
 % maxMon = (length(find(taskData.shieldType == 1))...
 %     * taskParam.gParam.rewMag);
 %if taskParam.gParam.oddball == false
-if isequal(taskParam.gParam.taskType, 'dresden')    
+if isequal(taskParam.gParam.taskType, 'dresden')
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
     
-%elseif taskParam.gParam.oddball == true
-elseif isequal(taskParam.gParam.taskType, 'oddball')    
-
+    %elseif taskParam.gParam.oddball == true
+elseif isequal(taskParam.gParam.taskType, 'oddball')
+    
     header = 'Performance';
     if isequal(condition, 'oddballPractice')
         
@@ -426,7 +540,7 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
 % cp
 % catchTrial
 % welche trigger?
-% pred 
+% pred
 % predErr
 % memErr
 % UP

@@ -1,133 +1,133 @@
-function taskData = GenerateOutcomes(taskParam, vola, sig, condition)
-% This funtion generates the outcomes of the task.
-%   The outcomes that are centerend around the mean of a normal
-%   distribution (distMean) with standard deviation = sigma.
-%   All other variables are preallocated.
-%
-%   This function uses code from Matt Nassar (Brown University). Thanks Matt!
+function taskData = GenerateOutcomes(taskParam, haz, concentration, condition)
 
-if isequal(condition, 'main') || isequal(condition, 'oddball')
+% This funtion generates the outcomes of the cannon task
+% -------------------------------------------------------------------------
+
+% -------------------------------------------------------------------------
+% Select number of trials
+% -------------------------------------------------------------------------
+
+if isequal(condition, 'main') || isequal(condition, 'oddball') ||...
+        isequal(condition, 'reversal')
     trials = taskParam.gParam.trials;
-elseif isequal(condition, 'mainPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'oddballPractice') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
+elseif isequal(condition, 'mainPractice') ||...
+        isequal(condition, 'practiceNoOddball') ||...
+        isequal(condition, 'oddballPractice') ||...
+        isequal(condition, 'followOutcomePractice') ||...
+        isequal(condition, 'followCannonPractice')
     trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'shield')
     trials = taskParam.gParam.shieldTrials;
-elseif isequal(condition, 'followCannon') || isequal(condition, 'followOutcome')
+elseif isequal(condition, 'followCannon') ||...
+        isequal(condition, 'followOutcome')
     trials = taskParam.gParam.controlTrials;
 end
 
-% Preallocate variables.
+% -------------------------------------------------------------------------
+% Preallocate variables
+% -------------------------------------------------------------------------
+
 fieldNames = taskParam.fieldNames;
-ID = cell(trials, 1); % ID.
-age = zeros(trials, 1); % Age.
-sex = cell(trials, 1); % Sex.
-rew = nan(trials, 1); % Reward.
-actRew = nan(trials,1); % Actual reward.
-Date = cell(trials, 1); % Date.
-cond = cell(trials, 1); % Condition.
-outcome=nan(trials, 1); % Outcome.
-distMean=nan(trials, 1); % Distribution mean.
-cp=zeros(trials, 1); % Change point.
-TAC=nan(trials, 1); % Trials after change-point.
+ID = cell(trials, 1);
+age = zeros(trials, 1);
+sex = cell(trials, 1);
+rew = nan(trials, 1);
+actRew = nan(trials,1);
+Date = cell(trials, 1);
+cond = cell(trials, 1);
+outcome=nan(trials, 1);
+distMean=nan(trials, 1);
+cp = zeros(trials, 1);
+reversal = zeros(trials, 1);
+TAC=nan(trials, 1);
 oddBall = zeros(trials, 1);
-catchTrial = zeros(trials, 1); % Catch trial.
-predT = zeros(trials, 1); % Trigger: prediction.
-outT = zeros(trials, 1); % Trigger: outcome.
-triggers = zeros(trials, 7); % Trigger: boat.
-pred = zeros(trials, 1); % Prediction of participant.
-predErr = nan(trials, 1); % Prediction error.
-predErrNorm = zeros(trials, 1);% Regular prediction error.
-predErrPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
-predErrMin = zeros(trials, 1); % Prediction error minus 360 degrees.
-memErr = zeros(trials, 1);% Memory error.
-memErrNorm = zeros(trials, 1);% Regular memory error.
-memErrPlus = zeros(trials, 1); % Memory error plus 360 degrees.
-memErrMin = zeros(trials, 1); % Memory error minus 360 degrees.
-UP = zeros(trials, 1); % Update of participant.
-UPNorm = zeros(trials, 1);% Regular prediction error.
-UPPlus = zeros(trials, 1); %Prediction error plus 360 degrees.
-UPMin = zeros(trials, 1); % Prediction error minus 360 degrees.
-hit = zeros(trials, 1); % Hit.
-cBal = nan(trials, 1); % Counterbalancing.
+catchTrial = zeros(trials, 1);
+triggers = zeros(trials, 7);
+pred = zeros(trials, 1);
+predErr = nan(trials, 1);
+memErr = zeros(trials, 1);
+UP = zeros(trials, 1);
+hit = zeros(trials, 1);
+cBal = nan(trials, 1);
 if isequal(condition,'shield')
     s=taskParam.gParam.safe(2);
 else
     s=taskParam.gParam.safe(1);
 end
-%s=taskParam.gParam.safe; % how many guaranteed trials before change-point.
-perf = zeros(trials, 1); % Performance.
-accPerf = zeros(trials, 1); % Accumulated performance.
+perf = zeros(trials, 1); 
+accPerf = zeros(trials, 1); 
 timestampOnset = nan(trials,1);
 timestampPrediction = nan(trials,1);
 timestampOffset = nan(trials, 1);
 initiationRT = nan(trials,1);
 block = nan(trials,1);
 actJitter = nan(trials,1);
-%% generateOutcomes (by Matt Nassar)
-
-%rng('shuffle')
 a = clock;
 rand('twister', a(6).*10000);
-
-% Angular shield size:
-UorExp=0;
-mu=15; % for CP = 15
+mu = 15;
 minASS = 10;
-maxASS=180;
+maxASS = 180;
 allASS = zeros(trials,1);
 
-if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'shield') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
+% -------------------------------------------------------------------------
+% Generate outcomes for current condition
+% -------------------------------------------------------------------------
+
+if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
+        isequal(condition, 'mainPractice') ||...
+        isequal(condition, 'followCannon') ||...
+        isequal(condition, 'shield') ||...
+        isequal(condition, 'followOutcomePractice') ||...
+        isequal(condition, 'followCannonPractice')
     
-    for i=1:trials
-    % blocknumber
-    if i >= taskParam.gParam.blockIndices(1) && i <= taskParam.gParam.blockIndices(2)
-        block(i) = 1;
-    elseif i >= taskParam.gParam.blockIndices(2) && i <= taskParam.gParam.blockIndices(3)
-        block(i) = 2;
-    elseif i >= taskParam.gParam.blockIndices(3) && i <= taskParam.gParam.blockIndices(4)
-        block(i) = 3;
-    elseif i >= taskParam.gParam.blockIndices(4)
-        block(i) = 4;
-    end
-    
-    if (rand < vola && s==0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block!
-        mean=round(rand(1).*359); % Outcome expressed in degrees.
-        cp(i)=1;
-        if isequal(condition,'shield')
-            s=taskParam.gParam.safe(2);
-        else
-            s=taskParam.gParam.safe(1);
+    for i = 1:trials
+        
+        if i >= taskParam.gParam.blockIndices(1) && i <= taskParam.gParam.blockIndices(2)
+            block(i) = 1;
+        elseif i >= taskParam.gParam.blockIndices(2) && i <= taskParam.gParam.blockIndices(3)
+            block(i) = 2;
+        elseif i >= taskParam.gParam.blockIndices(3) && i <= taskParam.gParam.blockIndices(4)
+            block(i) = 3;
+        elseif i >= taskParam.gParam.blockIndices(4)
+            block(i) = 4;
         end
         
-        TAC(i)=0; %TAC(i)=1;
-    else
-        TAC(i)=TAC(i-1)+1;
-        s=max([s-1, 0]);
-    end
-    %outcome(i) = 90
-    
-    outcome(i)=round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), sig, 1)));
-    %outcome(i)=round(normrnd(mean, sig));
-    distMean(i)=mean;
-    oddBall(i) = nan;
-    
-    %CatchTrial
-    if rand <= .10 && cp(i) == 0;
-        catchTrial(i) = 1;
-    else
-        catchTrial(i) = 0;
-    end
-    ASS=nan;
-    
-    while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
-        ASS=exprnd(mu);
-    end
-    allASS(i)=ASS;
+        if (rand < haz && s==0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block!
+            mean=round(rand(1).*359); 
+            cp(i)=1;
+            if isequal(condition,'shield')
+                s=taskParam.gParam.safe(2);
+            else
+                s=taskParam.gParam.safe(1);
+            end
+            
+            TAC(i)=0; %TAC(i)=1;
+        else
+            TAC(i)=TAC(i-1)+1;
+            s=max([s-1, 0]);
+        end
+        
+        outcome(i)=round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), concentration, 1)));
+        distMean(i)=mean;
+        oddBall(i) = nan;
+        
+        %CatchTrial
+        if rand <= .10 && cp(i) == 0;
+            catchTrial(i) = 1;
+        else
+            catchTrial(i) = 0;
+        end
+        ASS=nan;
+        
+        while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
+            ASS=exprnd(mu);
+        end
+        allASS(i)=ASS;
     end
     
     
 elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
-    %keyboard
+
     distMean=nan(trials,1);
     oddBall=false(trials,1);
     outcome=nan(trials,1);
@@ -178,7 +178,7 @@ elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') 
             else
                 TAC(i)=TAC(i-1)+1;
             end
-            outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), sig, 1))+180); %taskParam.gParam.driftConc
+            outcome(i)= round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180), concentration, 1))+180); %taskParam.gParam.driftConc
             s=max([s-1, 0]);
         end
         cp(i) = nan;
@@ -192,10 +192,66 @@ elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') 
         allASS(i)=ASS.*2;
     end
     
+elseif isequal(condition, 'reversal')
+    
+    for i = 1:trials
+        %keyboard
+        if i >= taskParam.gParam.blockIndices(1) && i <= taskParam.gParam.blockIndices(2)
+            block(i) = 1;
+        elseif i >= taskParam.gParam.blockIndices(2) && i <= taskParam.gParam.blockIndices(3)
+            block(i) = 2;
+        elseif i >= taskParam.gParam.blockIndices(3) && i <= taskParam.gParam.blockIndices(4)
+            block(i) = 3;
+        elseif i >= taskParam.gParam.blockIndices(4)
+            block(i) = 4;
+        end
+        currentBlock = block(i);
+        %keyboard
+        if (rand < haz && s == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block!
+            %keyboard
+            cp(i) = 1;
+            if rand < taskParam.gParam.reversalProb(1) && sum(cp(block == currentBlock)) > 2
+                reversal(i) = true;
+                allMeans = distMean(cp==true);
+                mean = allMeans(end-2);
+            else
+                mean = round(rand(1).*359);
+            end 
+                
+            s = taskParam.gParam.safe(1);
+            TAC(i) = 0; 
+            
+        else
+            TAC(i) = TAC(i-1)+1;
+            s = max([s-1, 0]);
+        end
+        
+        
+         
+      
+        distMean(i) = mean;
+        
+        
+        outcome(i) = round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), concentration, 1)));
+        oddBall(i) = nan;
+        
+        % CatchTrial
+        if rand <= .10 && cp(i) == 0;
+            catchTrial(i) = 1;
+        else
+            catchTrial(i) = 0;
+        end
+        ASS = nan;
+        
+        while ~isfinite(ASS)|| ASS < minASS || ASS > maxASS
+            ASS = exprnd(mu);
+        end
+        
+        allASS(i) = ASS;
+    end
 end
 
-
-% Boat type
+% Shield type
 if trials > 1
     shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 else shieldType = 1;
