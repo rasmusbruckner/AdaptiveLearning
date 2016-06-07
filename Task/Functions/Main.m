@@ -89,6 +89,7 @@ elseif ~taskParam.unitTest
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
         
+        
     elseif isequal(condition, 'followOutcomePractice')...
             ||isequal(condition, 'mainPractice')...
             ||isequal(condition, 'followCannonPractice')
@@ -152,6 +153,8 @@ elseif ~taskParam.unitTest
     end
 end
 
+savedTickmark = 0;
+
 for i=1:trial
     
     if i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1|| i == taskParam.gParam.blockIndices(4) + 1
@@ -159,7 +162,7 @@ for i=1:trial
         
         
         while 1
-            if taskParam.gParam.oddball
+            if isequal(taskParam.gParam.taskType, 'oddball') ||  isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'chinese')
                 txt = 'Take a break!';
             else
                 txt = 'Kurze Pause!';
@@ -220,8 +223,8 @@ for i=1:trial
             if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
                 TickMark(taskParam, taskData.outcome(i-1), 'outc')
                 TickMark(taskParam, taskData.pred(i-1), 'pred')
-                TickMark(taskParam, savedTickmark, 'saved')
-
+                TickMark(taskParam, savedTickmark(i-1), 'saved')
+                
             end
             
             if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
@@ -280,6 +283,10 @@ for i=1:trial
                 end
             end
         end
+        
+        
+      
+        
     else
         
         % taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
@@ -323,6 +330,7 @@ for i=1:trial
     
     RT_Flip(i) = GetSecs-time;
     
+
     taskData.predErr(i) = Diff(taskData.outcome(i), taskData.pred(i));
     
     DrawCircle(taskParam)
@@ -382,63 +390,45 @@ for i=1:trial
     Screen('Flip', taskParam.gParam.window, t + 2.1);
     taskData.triggers(i,5) = SendTrigger(taskParam, taskData, condition, haz, i, 5); % this is the shield trigger
     %keyboard
-    WaitSecs(.1);
+    WaitSecs(.5);
     
-    %DrawCross(taskParam)
-    %DrawCircle(taskParam)
-    %Screen('DrawingFinished', taskParam.gParam.window);
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('Flip', taskParam.gParam.window, t + 2.6);
+    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
+    WaitSecs(1);
     
-    if isequal(taskParam.gParam.taskType, 'reversal')
-        %
-        %keyboard
-        txt = 'Would you like to update the tickmark?';
-        %DrawFormattedText(taskParam.gParam.window, txt,...
-        %       'center', 'center', [255 255 255]);
+     if isequal(taskParam.gParam.taskType, 'reversal')
         
-%         DrawFormattedText(taskParam.gParam.window, txt,...
-%             'center', 100, [255 255 255]);
-%         Screen('Flip', taskParam.gParam.window, t + 2.6);
-%         %% Be careful here!
-%         taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
-
+        txt = 'Would you like to update the tickmark after the trial?';
         
-       % outcome = distMean;
-        %LineAndBack(taskParam)
-%         DrawCross(taskParam)
-%         DrawCircle(taskParam)
-%         Screen('DrawingFinished', taskParam.gParam.window, 1);
-%         Screen('Flip', taskParam.gParam.window, t + 0.6, 1);
         while 1
             
-            %LineAndBack(taskParam)
-            %Cannon(taskParam, distMean)
             DrawCircle(taskParam)
             DrawCross(taskParam)
-            Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
+            if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
+                TickMark(taskParam, taskData.outcome(i), 'outc')
+                TickMark(taskParam, taskData.pred(i), 'pred')
+                 TickMark(taskParam, savedTickmark(i), 'saved')
+                
+            end
+           
             DrawOutcome(taskParam, taskData.outcome(i))
-%             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
-%                 Shield(taskParam, 20, Data.pred, 1)
-%             elseif (subject.rew == 2 && win) || (subject.rew == 1 && ~win)
-%                 Shield(taskParam, 20, Data.pred, 0)
-%             end
-            %DrawOutcome(taskParam, outcome)
             DrawFormattedText(taskParam.gParam.window,txt,...
                 taskParam.gParam.screensize(3)*0.1,...
                 taskParam.gParam.screensize(4)*0.05,...
                 [255 255 255]);
-%             DrawFormattedText(taskParam.gParam.window,...
-%                 taskParam.strings.txtPressEnter,'center',...
-%                 taskParam.gParam.screensize(4)*0.9, [255 255 255]);
             Screen('DrawingFinished', taskParam.gParam.window, 1);
             Screen('Flip', taskParam.gParam.window, t + 1.2);
             
             [ keyIsDown, ~, keyCode ] = KbCheck;
             if keyIsDown
-                if keyCode(taskParam.keys.t)  
-                    %screenIndex = screenIndex + 1;
-                    savedTickmark = taskData.pred(i);
+                if keyCode(taskParam.keys.t)
+                    savedTickmark(i+1) = taskData.pred(i);
                     break
                 elseif keyCode(taskParam.keys.z)
+                    savedTickmark(i+1) = savedTickmark(i);
                     break
                     
                 end
@@ -446,11 +436,57 @@ for i=1:trial
             end
         end
         WaitSecs(0.1);
+        
+    end     
+    %DrawCross(taskParam)
+    %DrawCircle(taskParam)
+    %Screen('DrawingFinished', taskParam.gParam.window);
     
-    end
+    %     if isequal(taskParam.gParam.taskType, 'reversal')
+    %
+    %         txt = 'Would you like to update the tickmark?';
+    %
+    %         while 1
+    %
+    %             DrawCircle(taskParam)
+    %             DrawCross(taskParam)
+    %             if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
+    %                 TickMark(taskParam, taskData.outcome(i), 'outc')
+    %                 TickMark(taskParam, taskData.pred(i), 'pred')
+    %
+    %             end
+    %             TickMark(taskParam, savedTickmark, 'saved')
+    %             DrawOutcome(taskParam, taskData.outcome(i))
+    %             DrawFormattedText(taskParam.gParam.window,txt,...
+    %                 taskParam.gParam.screensize(3)*0.1,...
+    %                 taskParam.gParam.screensize(4)*0.05,...
+    %                 [255 255 255]);
+    %             Screen('DrawingFinished', taskParam.gParam.window, 1);
+    %             Screen('Flip', taskParam.gParam.window, t + 1.2);
+    %
+    %             [ keyIsDown, ~, keyCode ] = KbCheck;
+    %             if keyIsDown
+    %                 if keyCode(taskParam.keys.t)
+    %                     savedTickmark = taskData.pred(i);
+    %                     break
+    %                 elseif keyCode(taskParam.keys.z)
+    %                     break
+    %
+    %                 end
+    %
+    %             end
+    %         end
+    %         WaitSecs(0.1);
+    %
+    %     end
     
     
-    
+    DrawCross(taskParam)
+    DrawCircle(taskParam)
+    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('Flip', taskParam.gParam.window, t + 2.6);
+    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
+    %WaitSecs(1);
     %keyboard
     
     WaitSecs(.5);
