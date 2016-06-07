@@ -31,7 +31,7 @@ function Data = AdaptiveLearning(unitTest)
 %       - followCannonPractice
 % -------------------------------------------------------------------------
 
-% changes in the task (relative to first data collection at Brown):
+% Changes in the task (relative to first data collection at Brown):
 % renamed variables:
 %   - boatType -> shieldType
 %   - sigma -> concentration
@@ -71,18 +71,18 @@ computer = identifyPC;
 %   - 'chinese'
 
 
-taskType = 'dresden';
+taskType = 'oddball';
 % delete oddball at some point 
-if isequal(taskType, 'oddball') 
-    oddball = true;
-else
-    oddball = false;
-end
+% if isequal(taskType, 'oddball') 
+%     oddball = true;
+% else
+%     oddball = false;
+% end
 
-if ~oddball || strcmp(taskType, 'dresden')
+if strcmp(taskType, 'dresden')
     
     % Dresden
-    trials = 10; % 240
+    trials = 2; % 240
     controlTrials = 1; % 120
     concentration = [12 12 99999999];
     DataFollowOutcome = nan;
@@ -98,9 +98,9 @@ elseif strcmp(taskType, 'oddball')
     
     % Brown
     %% How many trials in first session?
-    trialsS1 = 40;
+    trialsS1 = 2; % 40
     %% How many trials in second and third session?
-    trialsS2S3 = 240;
+    trialsS2S3 = 2; % 240
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball = nan;
@@ -165,38 +165,34 @@ if askSubjInfo == false
     elseif oddball || strcmp(taskType, 'oddball')
         session = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session', session, 'cBal', cBal, 'rew', reward, 'date', date);
-    
     end
+    
 elseif askSubjInfo == true
    
-    if ~oddball || strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden')
         prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
-    elseif oddball || strcmp(taskType, 'oddball')
-        prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
-        
+    elseif strcmp(taskType, 'oddball')
+        prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'}; 
+    elseif isequal(taskType, 'reversal') || isequal(taskType, 'chinese')
+        prompt = {'ID:','Age:', 'Sex:', 'cBal', 'Reward'};
     end
+    
     name = 'SubjInfo';
     numlines = 1;
     
     if randomize
         
         if ~oddball || strcmp(taskType, 'dresden')
-            
             cBal = num2str(round(unifrnd(1,6)));
-        
         elseif oddball || strcmp(taskType, 'oddball')
-        
             cBal = num2str(round(unifrnd(1,2)));
-        
         end
         
         reward = num2str(round(unifrnd(1,2)));
         defaultanswer = {'99999','99', '1', 'm', cBal, reward};
         
     else
-        
         defaultanswer = {'99999','99', '1', 'm', '1', '1'};
-    
     end
     
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
@@ -207,24 +203,17 @@ elseif askSubjInfo == true
         return
     end
     
-    if ~oddball || strcmp(taskType, 'dresden')
-        
-        if subjInfo{3} ~= '1' && subjInfo{3} ~= '2'
-            
+    if strcmp(taskType, 'dresden') 
+        if subjInfo{3} ~= '1' && subjInfo{3} ~= '2'    
             msgbox('Group: "1" or "2"?');
             return
-        
         end
         
-    elseif oddball || strcmp(taskType, 'oddball')
-        
+    elseif strcmp(taskType, 'oddball')
         if subjInfo{3} ~= '1' && subjInfo{3} ~= '2' && subjInfo{3} ~= '3'
-        
             msgbox('Session: "1", "2" or "3"?');
             return
-        
         end
-        
     end
     
     if subjInfo{4} ~= 'm' && subjInfo{4} ~= 'f'
@@ -234,37 +223,31 @@ elseif askSubjInfo == true
    
     end
     
-    if ~oddball || strcmp(taskType, 'dresden')
-        
+    if strcmp(taskType, 'dresden')
         if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'...
                 && subjInfo{5} ~= '4' && subjInfo{5} ~= '5' && subjInfo{5} ~= '6'
             msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
-        
-    elseif oddball || strcmp(taskType, 'oddball')
-        
+    elseif strcmp(taskType, 'oddball')
         if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
             msgbox('cBal: 1 or 2 ?');
             return
         end
-        
     end
     
     if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
-        
         msgbox('Reward: 1 or 2?');
         return
-        
     end
     
-    if ~oddball || strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden')
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
     
-    elseif oddball || strcmp(taskType, 'oddball')
+    elseif strcmp(taskType, 'oddball')
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'session', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
@@ -272,27 +255,27 @@ elseif askSubjInfo == true
         
     end
     
-    if ~oddball || strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden')
         checkIdInData = dir(sprintf('*%s*', num2str(cell2mat((subjInfo(1))))));
-    elseif oddball || strcmp(taskType, 'oddball')
+    elseif strcmp(taskType, 'oddball')
         checkIdInData = dir(sprintf('*%s_session%s*' , num2str(cell2mat((subjInfo(1)))), num2str(cell2mat((subjInfo(3))))));
     end
     
     fileNames = {checkIdInData.name};
     
     if  ~isempty(fileNames);
-        if ~oddball || strcmp(taskType, 'dresden')
+        if strcmp(taskType, 'dresden')
             msgbox('Diese ID wird bereits verwendet!');
-        elseif oddball || strcmp(taskType, 'oddball')
+        elseif strcmp(taskType, 'oddball')
             msgbox('ID and session have already been used!');
         end
         return
     end
 end
 
-if (oddball && isequal(Subject.session, '1')) || (isequal(taskType, 'oddball') && isequal(Subject.session, '1'))
+if isequal(taskType, 'oddball') && isequal(Subject.session, '1')
     trials = trialsS1;
-elseif (oddball && isequal(Subject.session, '2')) || isequal(taskType, 'oddball') && isequal(Subject.session, '3')
+elseif isequal(taskType, 'oddball') && isequal(Subject.session, '3')
     trials = trialsS2S3;
 end
 
@@ -353,7 +336,7 @@ oddBall = 'oddBall';
 fieldNames = struct(actJitter, actJitter, block, block,...
     initiationRTs, initiationRTs,timestampOnset, timestampOnset,...
     timestampPrediction, timestampPrediction, timestampOffset,...
-    timestampOffset, oddBall, oddBall, 'oddball', oddball, 'oddballProb',...
+    timestampOffset, oddBall, oddBall, 'oddballProb',...
     oddballProbs, fDriftConc, driftConcentrations, allASS, allASS, ID, ID,...
     fconcentrations, concentrations, age, age, sex, sex, rew, rew, actRew,...
     actRew, 'date',Date, cond, cond, trial, trial, outcome, outcome,...
@@ -370,9 +353,9 @@ else
     sentenceLength = 85;
 end
 ref = GetSecs;
-gParam = struct('jitter', jitter,...
+gParam = struct('taskType', taskType ,'jitter', jitter,...
     'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
-    sentenceLength, 'oddball', oddball, 'driftConc', driftConc,...
+    sentenceLength, 'driftConc', driftConc,...
     'oddballProb', oddballProb, fconcentrations, concentration, fhazs, haz,...
     'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
     trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials,...
@@ -473,7 +456,7 @@ IndicateFollowCannon = 'Follow Cannon Task';
 IndicateFollowOutcome = 'Follow Outcome Task';
 fTxtPressEnter = 'txtPressEnter';
 
-if oddball
+if isequal(taskType, 'oddball')
     header = 'Real Task!';
     txtPressEnter = 'Press Enter to continue';
     if Subject.cBal == 1
@@ -533,7 +516,7 @@ taskParam = struct('gParam', gParam, 'circle', circle, 'keys', keys,...
     'colors', colors, 'strings', strings, 'textures', textures,...
     'unitTest', unitTest);
 
-if ~oddball || isequal(taskType, 'dresden')
+if isequal(taskType, 'dresden')
     
     % ---------------------------------------------------------------------
     % Dresden version
@@ -588,7 +571,7 @@ if ~oddball || isequal(taskType, 'dresden')
         
     end
     
-elseif oddball || isequal(taskType, 'oddball')
+elseif isequal(taskType, 'oddball')
     
     % ---------------------------------------------------------------------
     % Oddball version
@@ -622,14 +605,16 @@ end
 % Translate performance into monetary reward
 % ---------------------------------------------------------------------
     
-if ~oddball
+%if ~oddball
+if isequal(taskType, 'dresden')
     totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
         + DataFollowCannon.accPerf(end);
 else
     totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
 end
 
-if ~oddball
+%if ~oddball
+if isequal(taskType, 'dresden')
     Data.DataMain = DataMain;
     Data.DataFollowOutcome = DataFollowOutcome;
     Data.DataFollowCannon = DataFollowCannon;
@@ -886,7 +871,8 @@ Screen('CloseAll');
         
         while 1
             
-            if oddball
+            %if oddball
+            if isequal(taskType, 'oddball')
                 header = 'End of task!';
                 txt = sprintf('Thank you for participating!\n\n\nYou earned $ %.2f', totWin);
             else

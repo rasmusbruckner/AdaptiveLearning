@@ -353,10 +353,13 @@ end
 % silverHit = hits - goldHit;
 % maxMon = (length(find(taskData.shieldType == 1))...
 %     * taskParam.gParam.rewMag);
-if taskParam.gParam.oddball == false
+%if taskParam.gParam.oddball == false
+if isequal(taskParam.gParam.taskType, 'dresden')    
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
     
-elseif taskParam.gParam.oddball == true
+%elseif taskParam.gParam.oddball == true
+elseif isequal(taskParam.gParam.taskType, 'oddball')    
+
     header = 'Performance';
     if isequal(condition, 'oddballPractice')
         
@@ -437,7 +440,8 @@ Data = catstruct(Subject, Data);
 
 if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'main')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))
     
-    if taskParam.gParam.oddball == false
+    %if taskParam.gParam.oddball == false
+    if isequal(taskParam.gParam.taskType, 'dresden')
         if Subject.rew == 1
             rewName = 'G';
         elseif Subject.rew == 2

@@ -11,7 +11,8 @@ digit2 = 0;
 digit3 = 0;
 digit4 = 0;
 
-if taskParam.gParam.oddball == false
+%if taskParam.gParam.oddball == false
+if isequal(taskParam.gParam.taskType, 'dresden')
    
     %% "Brown" trigger system
     if taskParam.gParam.sendTrigger == true
@@ -192,8 +193,8 @@ end
 %         trigger = 0000;
 %     end
 
-elseif taskParam.gParam.oddball == true
-    
+%elseif taskParam.gParam.oddball == true
+elseif isequal(taskParam.gParam.taskType, 'oddball')
     if taskParam.gParam.sendTrigger == true
         %ioObject = io64;
         %status = io64(ioObject);

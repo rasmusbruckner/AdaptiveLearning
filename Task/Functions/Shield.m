@@ -1,6 +1,9 @@
 function Shield(taskParam, allASS, pred, color)
 
-if taskParam.gParam.oddball == false
+% This function prints the shield in the cannon task
+
+%if taskParam.gParam.oddball == false
+if isequal(taskParam.gParam.taskType, 'dresden')
     if color == 1
         shieldColor = taskParam.colors.gold;
     elseif color == 0

@@ -9,7 +9,8 @@ noRewCatches = hits - rewCatches;
 maxMon = (length(find(Data.shieldType == 1))...
     * taskParam.gParam.rewMag);
 
-if taskParam.gParam.oddball
+%if taskParam.gParam.oddball
+if isequal(taskParam.gParam.taskType, 'oddball')
     header = 'Performance';
     if subject.rew == 1
         colRewCap = 'Blue';
