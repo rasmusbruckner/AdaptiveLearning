@@ -1,5 +1,51 @@
 function Data = AdaptiveLearning(unitTest)
 
+% This function is the master function for the cannon task
+% ------------------------------------------------------------------------- 
+ 
+% You can choose between four task types: 
+%   "Dresden version":      Change point task with two control conditions
+%                               - learning rate = 1
+%                               - learning rate = 0
+%   "Oddball version":      Change point task with oddball condition
+%   "Reversal version":     Change point task with occasional reversals to 
+%                           previous change point location
+%   "Chinese restaurant":   Change point task with multiple contexts
+
+% -------------------------------------------------------------------------                            
+%  Current task condition (condition):
+%   - shield
+%       - oddballPractice
+%       - oddballPractice_NoOddball
+%       - main
+%       - mainPractice
+%   - followOutcome
+%       - followOutcomePractice
+%   - followCannon
+%       - followCannonPractice
+%
+%   Current practice conditions (whichPractice)
+%       - oddballPractice
+%       - cpPractice
+%       - followOutcomePractice
+%       - followCannonPractice
+% -------------------------------------------------------------------------
+
+% changes in the task (relative to first data collection at Brown):
+% renamed variables:
+%   - boatType -> shieldType
+%   - sigma -> concentration
+%   - vola -> haz
+% added trialsS1 = XX, trialsS2S3 = XX;
+% -------------------------------------------------------------------------
+
+% 06.05.16 starting to extend the task to include multiple task contexts
+% -------------------------------------------------------------------------
+
+% -------------------------------------------------------------------------
+% Check whether or not to run a unit test (not yet implemented for context
+% task)
+% -------------------------------------------------------------------------
 if nargin == 0
     unitTest = false;
 end
@@ -9,52 +55,32 @@ if ~unitTest
     unitTest = false;
 end
 
+% -------------------------------------------------------------------------
+% Initialize task
+% -------------------------------------------------------------------------
+
 % indentifies your machine. If you have internet!
 computer = identifyPC;
 %computer = 'Macbook'
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%       - condition:
-%%           - shield
-%%               - oddballPractice
-%%               - oddballPractice_NoOddball
-%%               - main
-%%               - mainPractice
-%%           - followOutcome
-%%          - followOutcomePractice
-%%          - followCannon
-%%          - followCannonPractice
-%
-%       - whichPractice:
-%           oddballPractice
-%           cpPractice
-%           followOutcomePractice
-%           followCannonPractice
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dresden or Brown version?
+% Choose task type: 
+%   - 'oddball'
+%   - 'dresden' 
+%   - 'reversal'
+%   - 'chinese'
 
-%% changes in the task:
-% renamed variables:
 
-% boatType --> shieldType
-% sigma --> concentration
-% vola --> haz
-% added trialsS1 = XX, trialsS2S3 = XX;
+taskType = 'dresden';
+% delete oddball at some point 
+if isequal(taskType, 'oddball') 
+    oddball = true;
+else
+    oddball = false;
+end
 
-%% for brown:
-% how should we label "change point task" and "oddball task"?
-% ID length?
-% check trigger!
-% check behavioral data!
-% check sampling rate!
-% what about catch trials?
-% can you test both cbal and rew conditions?
-
-%% adapt folder path! line: XXXXX
-
-%Dresden or Brown version?
-oddball = true;
-
-if ~oddball
+if ~oddball || strcmp(taskType, 'dresden')
+    
     % Dresden
     trials = 10; % 240
     controlTrials = 1; % 120
@@ -62,12 +88,14 @@ if ~oddball
     DataFollowOutcome = nan;
     DataFollowCannon = nan;
     textSize = 19;
+    
     % Check number of trials in each condition
     if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
         msgbox('All trials must be even or equal to 1!');
         return
     end
-else
+elseif strcmp(taskType, 'oddball')
+    
     % Brown
     %% How many trials in first session?
     trialsS1 = 40;
@@ -77,59 +105,73 @@ else
     concentration = [10 12 99999999];
     DataOddball = nan;
     textSize = 30;
+    
+elseif strcmp(taskType, 'reversal')
+    
+    trials = 10;
+    controlTrials = nan;
+    concentration = [10 12 99999999];
+    DataOddball = nan;
+    textSize = 19;
+    
+elseif strcmp(taskType, 'chinese')
+    
 end
 
-runIntro = true;
+runIntro = false;
 askSubjInfo = true;
-sendTrigger = true;
+sendTrigger = false;
 randomize = false;
-shieldTrials = 4; % 4
-practTrials = 20; % 20
+shieldTrials = 1; % 4
+practTrials = 1; % 20
 blockIndices = [1 60 120 180];
 haz = [.25 1 0];
 oddballProb = [.25 0];
+reversalProb = [.5 0];
 driftConc = [30 99999999];
 safe = [3 0];
-%% Choose reward magnitude!
 rewMag = 0.1;
 jitter = 0.2;
 practiceTrialCriterion = 10;
-%test = false;
 debug = false;
 
 % Savedirectory
 if isequal(computer, 'Macbook')
-    cd('/Users/Bruckner/Documents/MATLAB/AdaptiveLearning/DataDirectory');
+    cd('/Users/Bruckner/Dropbox/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
 elseif isequal(computer, 'Brown')
-    %savdir = 'C:\Users\lncc\Dropbox\HeliEEG';
-    %% Matt: please adapt this
     cd('C:\Users\lncc\Dropbox\CannonDrugStudy\data');
 end
 
-%% User Input
+% -------------------------------------------------------------------------
+% User Input
+% -------------------------------------------------------------------------
 
 a = clock;
 rand('twister', a(6).*10000);
 
 if askSubjInfo == false
+    
     ID = '99999';
     age = '99';
     sex = 'm/w';
     cBal = 1;
     reward = 1;
-    if ~oddball
+    
+    if ~oddball || strcmp(taskType, 'dresden')
         group = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group', group, 'cBal', cBal, 'rew', reward, 'date', date, 'session', '1');
-    else
+    elseif oddball || strcmp(taskType, 'oddball')
         session = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session', session, 'cBal', cBal, 'rew', reward, 'date', date);
+    
     end
 elseif askSubjInfo == true
-    if ~ oddball
+   
+    if ~oddball || strcmp(taskType, 'dresden')
         prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
-    else
+    elseif oddball || strcmp(taskType, 'oddball')
         prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
         
     end
@@ -137,16 +179,26 @@ elseif askSubjInfo == true
     numlines = 1;
     
     if randomize
-        if ~oddball
+        
+        if ~oddball || strcmp(taskType, 'dresden')
+            
             cBal = num2str(round(unifrnd(1,6)));
-        else
+        
+        elseif oddball || strcmp(taskType, 'oddball')
+        
             cBal = num2str(round(unifrnd(1,2)));
+        
         end
+        
         reward = num2str(round(unifrnd(1,2)));
         defaultanswer = {'99999','99', '1', 'm', cBal, reward};
+        
     else
+        
         defaultanswer = {'99999','99', '1', 'm', '1', '1'};
+    
     end
+    
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     subjInfo{7} = date;
     
@@ -155,74 +207,98 @@ elseif askSubjInfo == true
         return
     end
     
-    if ~ oddball
+    if ~oddball || strcmp(taskType, 'dresden')
+        
         if subjInfo{3} ~= '1' && subjInfo{3} ~= '2'
+            
             msgbox('Group: "1" or "2"?');
             return
+        
         end
-    else
+        
+    elseif oddball || strcmp(taskType, 'oddball')
+        
         if subjInfo{3} ~= '1' && subjInfo{3} ~= '2' && subjInfo{3} ~= '3'
+        
             msgbox('Session: "1", "2" or "3"?');
             return
+        
         end
+        
     end
     
     if subjInfo{4} ~= 'm' && subjInfo{4} ~= 'f'
+        
         msgbox('Sex: "m" or "f"?');
         return
+   
     end
     
-    if ~oddball
+    if ~oddball || strcmp(taskType, 'dresden')
+        
         if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'...
                 && subjInfo{5} ~= '4' && subjInfo{5} ~= '5' && subjInfo{5} ~= '6'
             msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
-    else
+        
+    elseif oddball || strcmp(taskType, 'oddball')
+        
         if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
             msgbox('cBal: 1 or 2 ?');
             return
         end
+        
     end
     
     if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
+        
         msgbox('Reward: 1 or 2?');
         return
+        
     end
     
-    if ~oddball
+    if ~oddball || strcmp(taskType, 'dresden')
+        
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
-    else
+    
+    elseif oddball || strcmp(taskType, 'oddball')
+        
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'session', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
+        
     end
     
-    if ~oddball
+    if ~oddball || strcmp(taskType, 'dresden')
         checkIdInData = dir(sprintf('*%s*', num2str(cell2mat((subjInfo(1))))));
-    else
+    elseif oddball || strcmp(taskType, 'oddball')
         checkIdInData = dir(sprintf('*%s_session%s*' , num2str(cell2mat((subjInfo(1)))), num2str(cell2mat((subjInfo(3))))));
     end
     
     fileNames = {checkIdInData.name};
     
     if  ~isempty(fileNames);
-        if ~oddball
+        if ~oddball || strcmp(taskType, 'dresden')
             msgbox('Diese ID wird bereits verwendet!');
-        else
+        elseif oddball || strcmp(taskType, 'oddball')
             msgbox('ID and session have already been used!');
         end
         return
     end
 end
 
-if oddball & isequal(Subject.session, '1')
+if (oddball && isequal(Subject.session, '1')) || (isequal(taskType, 'oddball') && isequal(Subject.session, '1'))
     trials = trialsS1;
-elseif (oddball & isequal(Subject.session, '2')) || oddball & isequal(Subject.session, '3')
+elseif (oddball && isequal(Subject.session, '2')) || isequal(taskType, 'oddball') && isequal(Subject.session, '3')
     trials = trialsS2S3;
 end
+
+% -------------------------------------------------------------------------
+% Initialize task
+% -------------------------------------------------------------------------
 
 Screen('Preference', 'VisualDebugLevel', 3);
 Screen('Preference', 'SuppressAllWarnings', 1);
@@ -373,7 +449,10 @@ keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
     'leftKey', leftKey, 'leftSlowKey', leftSlowKey, 'space', space,...
     'enter', enter, 's', s);
 
-%% Trigger settings
+% -------------------------------------------------------------------------
+% Trigger settings
+% -------------------------------------------------------------------------
+
 if sendTrigger == true
     config_io;
 end
@@ -383,6 +462,10 @@ fSampleRate = 'sampleRate'; sampleRate = 512; % Sample rate.
 %LPT1address = hex2dec('E050'); %standard location of LPT1 port % copied from heliEEG_main
 fPort = 'port'; port = hex2dec('E050'); % LPT port
 triggers = struct(fSampleRate, sampleRate, fPort, port);
+
+% -------------------------------------------------------------------------
+% Start task
+% -------------------------------------------------------------------------
 
 %IndicateOddball = 'Oddball Task';
 %IndicateMain = 'Change Point Task';
@@ -450,7 +533,11 @@ taskParam = struct('gParam', gParam, 'circle', circle, 'keys', keys,...
     'colors', colors, 'strings', strings, 'textures', textures,...
     'unitTest', unitTest);
 
-if ~oddball
+if ~oddball || isequal(taskType, 'dresden')
+    
+    % ---------------------------------------------------------------------
+    % Dresden version
+    % ---------------------------------------------------------------------
     
     if Subject.cBal == 1
         DataMain = MainCondition;
@@ -501,7 +588,11 @@ if ~oddball
         
     end
     
-else
+elseif oddball || isequal(taskType, 'oddball')
+    
+    % ---------------------------------------------------------------------
+    % Oddball version
+    % ---------------------------------------------------------------------
     
     if Subject.cBal == 1
         DataOddball = OddballCondition;
@@ -511,8 +602,26 @@ else
         DataOddball = OddballCondition;
     end
     
+elseif isequal(taskType, 'reversal')
+    
+    % ---------------------------------------------------------------------
+    % Reversal version
+    % ---------------------------------------------------------------------
+    
+    
+elseif isequal(taskType, 'chinese')
+    
+    % ---------------------------------------------------------------------
+    % Chinese restaurant version
+    % ---------------------------------------------------------------------
+    
+    
 end
 
+% ---------------------------------------------------------------------
+% Translate performance into monetary reward
+% ---------------------------------------------------------------------
+    
 if ~oddball
     totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
         + DataFollowCannon.accPerf(end);
@@ -528,6 +637,10 @@ else
     Data.DataMain = DataMain;
     Data.DataOddball = DataOddball;
 end
+
+% ---------------------------------------------------------------------
+% End of task
+% ---------------------------------------------------------------------
 
 EndOfTask
 
