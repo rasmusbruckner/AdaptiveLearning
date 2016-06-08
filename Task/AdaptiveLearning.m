@@ -297,14 +297,23 @@ Screen('Preference', 'VisualDebugLevel', 3);
 Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('Preference', 'SkipSyncTests', 2);
 
-fScreensize = 'screensize'; screensize = get(0,'MonitorPositions');
+%fScreensize = 'screensize'; 
+screensize = get(0,'MonitorPositions');
 screensizePart = (screensize(3:4));
-fZero = 'zero'; zero = screensizePart / 2;
-fWindow = 'window';
+%fZero = 'zero'; 
+zero = screensizePart / 2;
+%fWindow = 'window';
 fWindowRect = 'windowRect';
 
-[window, windowRect, textures] = OpenWindow;
+[window.onScreen, windowRect, textures] = OpenWindow;
+[window.screenX, window.screenY] = Screen('WindowSize', window.onScreen); % check resolution
+window.centerX = window.screenX * 0.5; % center of screen in X direction
+window.centerY = window.screenY * 0.5; % center of screen in Y direction
+window.centerXL = floor(mean([0 window.centerX])); % center of left half of screen in X direction
+window.centerXR = floor(mean([window.centerX window.screenX])); % center of right half of screen in X direction
 
+%clear all
+%keyboard
 startTime = GetSecs;
 
 %ID = 'ID';
@@ -836,8 +845,8 @@ Screen('CloseAll');
         textures = struct('cannonTxt', cannonTxt, 'shieldTxt', shieldTxt,...
             'basketTxt', basketTxt, 'dstRect', dstRect);
         
-        %ListenChar(2);
-        %HideCursor;
+        ListenChar(2);
+        HideCursor;
         
     end
 

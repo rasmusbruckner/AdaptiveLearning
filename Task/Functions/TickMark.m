@@ -10,7 +10,7 @@ end
 rotRad = taskParam.circle.rotationRad + 10;
 OutcSpot = parameter - 1;
 zero = taskParam.gParam.zero;
-Screen('FrameArc',taskParam.gParam.window, col,[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],OutcSpot, 2, 30, [], [])
+Screen('FrameArc',taskParam.gParam.window.onScreen, col,[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],OutcSpot, 2, 30, [], [])
 
 end
 
