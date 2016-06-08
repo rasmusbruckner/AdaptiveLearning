@@ -318,7 +318,7 @@ for i=1:trial
                 x = x-720;
                 y = (y-450)*-1 ;
                 %atan2(y,x)
-                atan2d(y,x)
+                atan2d(y,x);
                 
                 %taskParam.circle.rotAngle = rad2deg(atan(y/x));
                 taskParam.circle.rotAngle = (atan2d(y,x)+90) * taskParam.circle.unit;%rad2deg(angle);
@@ -363,11 +363,48 @@ for i=1:trial
                 
 
                 %taskParam.circle.rotAngle;
-                
+                % keyboard
+                %rotRad = taskParam.circle.rotationRad;
+                %zero = taskParam.gParam.zero;
+                %[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad]
                 DrawCircle(taskParam)
                 DrawCross(taskParam)
-                PredictionSpot(taskParam)
-                %PredictionSpotReversal(taskParam, x ,y)
+                %PredictionSpot(taskParam)
+                
+                x1 = 0;
+                y1 = 0;
+                
+                xDev = x - x1;
+                yDev = y - y1;
+                
+                hyp = sqrt(x^2 + y^2);
+                              
+                if hyp <= 150
+                        PredictionSpotReversal(taskParam, x ,y*-1)
+                    else
+                        PredictionSpot(taskParam)
+                    
+                    
+                end
+
+                
+                
+%                 if x > 0 && y > 0
+%                     hyp = sqrt(x^2 + y^2)
+%                     if hyp <= 150
+%                         PredictionSpotReversal(taskParam, x ,y*-1)
+%                     else
+%                         PredictionSpot(taskParam)
+%                     end
+%                     
+%                 end
+                
+                
+%                 if x <= 150 && x >= -150 && y <= 150 && y >= -150
+%                     PredictionSpotReversal(taskParam, x ,y*-1)
+%                 else
+%                     PredictionSpot(taskParam)
+%                 end
 
                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
                 t = GetSecs;

@@ -26,7 +26,7 @@ function PredictionSpot(taskParam)
 % Screen('DrawLine', taskParam.gParam.window, [51 51 255], meanSpot2(1), meanSpot2(2), meanSpot(1), meanSpot(2), 4);
 
 
-
+%keyboard
 
 %xPredS = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
 %yPredS = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
