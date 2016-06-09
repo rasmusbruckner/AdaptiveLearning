@@ -159,7 +159,7 @@ elseif ~taskParam.unitTest
     end
 end
 
-savedTickmark = 0;
+savedTickmark(1) = 0;
 [inY,inX,buttons] = GetMouse(taskParam.gParam.window.onScreen);
 %inY=inY./prefs.mouseScale;
 
@@ -297,119 +297,77 @@ for i=1:trial
             end
         else
             SetMouse(720, 450, taskParam.gParam.window.onScreen)
-
+            
             while 1
                 [x,y,buttons,focus,valuators,valinfo] = GetMouse(taskParam.gParam.window.onScreen);
                 
                 
-                %For points (x1,y1) and (x2,y2) use this:
-                %(0,0) (150,0)
-                %x1 = 0
-                %y1 = 0
-                
-                %x2 = 150
-                %y2 = 1440
-                %rad2deg(atan2(y2-y1,x2-x1))
-
-
-                %y= ((y./-900)-.5).*2;
-                %x= ((x./-1440) -.5).*2;
-                
                 x = x-720;
                 y = (y-450)*-1 ;
-                %atan2(y,x)
-                atan2d(y,x);
                 
-                %taskParam.circle.rotAngle = rad2deg(atan(y/x));
-                taskParam.circle.rotAngle = (atan2d(y,x)+90) * taskParam.circle.unit;%rad2deg(angle);
-                %rad2deg(atan(y/x))
-                %y=y.*a+b
-                
-                %inY=inY./prefs.mouseScale;
-                startPoint = 0;
-               % x
-               % y
-                %nValues=180;
-                %x=mod(x-inX+720/180, nValues);
-                %y=mod(y-inY+450/180, nValues);
-
-                %x = 450;
-                %y = 0;
-                %atan(y/x)
-                
-                %x = 
-                %y = 90
-                %x = (x / 8);
-                %y = (y / 5);
-                %%x 
-                %y   
-                %x = x + 720
-               
-                %y = y + 1440
-                
-                %chosenVal = mod(x-inX+startPoint, nValues)
-                %chosenVal =  360*cos(x) + 360*sin(y);
-                %chosenVal = rad2deg(atan(y/x));
-                
-                %x = 0;
-                %y = -taskParam.circle.rotationRad +5
-                
-                %x = taskParam.circle.rotationRad -5
-                %y = 0;
-                %chosenVal = 0;
-                
-                %taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; %0.02
-                %taskParam.circle.rotAngle = chosenVal * taskParam.circle.unit;%chosenVal * taskParam.circle.unit;
-                
-
-                %taskParam.circle.rotAngle;
-                % keyboard
-                %rotRad = taskParam.circle.rotationRad;
-                %zero = taskParam.gParam.zero;
-                %[zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad]
-                DrawCircle(taskParam)
-                DrawCross(taskParam)
-                %PredictionSpot(taskParam)
-                
-                x1 = 0;
-                y1 = 0;
-                
-                xDev = x - x1;
-                yDev = y - y1;
-                
-                hyp = sqrt(x^2 + y^2);
-                              
-                if hyp <= 150
-                        PredictionSpotReversal(taskParam, x ,y*-1)
-                    else
-                        PredictionSpot(taskParam)
-                    
-                    
+                currentDegree = mod( atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
+                if currentDegree > 360 %&& currentDegree < 90
+                    degree = currentDegree - 360
+                else
+                    degree = currentDegree
                 end
 
+                taskParam.circle.rotAngle = degree * taskParam.circle.unit;%rad2deg(angle);
+                
+                DrawCircle(taskParam)
+                DrawCross(taskParam)
                 
                 
-%                 if x > 0 && y > 0
-%                     hyp = sqrt(x^2 + y^2)
-%                     if hyp <= 150
-%                         PredictionSpotReversal(taskParam, x ,y*-1)
-%                     else
-%                         PredictionSpot(taskParam)
-%                     end
-%                     
-%                 end
+                hyp = sqrt(x^2 + y^2);
+                
+                if hyp <= 150
+                    PredictionSpotReversal(taskParam, x ,y*-1)
+                else
+                    PredictionSpot(taskParam)
+                end
                 
                 
-%                 if x <= 150 && x >= -150 && y <= 150 && y >= -150
-%                     PredictionSpotReversal(taskParam, x ,y*-1)
-%                 else
-%                     PredictionSpot(taskParam)
-%                 end
-
-                Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-                t = GetSecs;
+               if buttons(2) == 1
+                    savedTickmark = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
+               end
+               
+               if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
+                    TickMark(taskParam, taskData.outcome(i-1), 'outc')
+                    TickMark(taskParam, taskData.pred(i-1), 'pred')
+                    savedTickmark
+                    TickMark(taskParam, savedTickmark, 'saved')
+                    
+                end 
+               Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+               t = GetSecs;
                 
-                Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+               Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+                
+                
+                %if buttons(2) == 1
+                 %   savedTickmark = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
+                    
+                if buttons(1) == 1
+                    taskData.pred(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
+                    taskData.pred(i)
+                    
+                    time = GetSecs;
+%                     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+%                     t = GetSecs;
+%                 
+%                     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+                
+                    %keyboard
+                    break
+                    
+                end
+                
+                
+%                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+%                 t = GetSecs;
+%                 
+%                 Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+%                 
                 
                 %keyboard
             end
@@ -450,7 +408,7 @@ for i=1:trial
         
         time = GetSecs;
     end
-    
+    %keyboard
     t = GetSecs;
     
     DrawCross(taskParam)
@@ -514,9 +472,12 @@ for i=1:trial
     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
     taskData.triggers(i,4) = SendTrigger(taskParam, taskData, condition, haz, i, 4); % this is the 2nd fixation
     
+    %taskData.pred(i) = 90;
     DrawCircle(taskParam)
     Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
+    
     DrawOutcome(taskParam, taskData.outcome(i))
+    
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);
@@ -531,95 +492,13 @@ for i=1:trial
     taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
     WaitSecs(1);
     
-    if isequal(taskParam.gParam.taskType, 'reversal')
-        
-        txt = 'Would you like to update the tickmark after the trial?';
-        
-        while 1
-            
-            DrawCircle(taskParam)
-            DrawCross(taskParam)
-            if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
-                TickMark(taskParam, taskData.outcome(i), 'outc')
-                TickMark(taskParam, taskData.pred(i), 'pred')
-                TickMark(taskParam, savedTickmark(i), 'saved')
-                
-            end
-            
-            DrawOutcome(taskParam, taskData.outcome(i))
-            DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
-                taskParam.gParam.screensize(3)*0.1,...
-                taskParam.gParam.screensize(4)*0.05,...
-                [255 255 255]);
-            Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-            Screen('Flip', taskParam.gParam.window.onScreen, t + 1.2);
-            
-            [ keyIsDown, ~, keyCode ] = KbCheck;
-            if keyIsDown
-                if keyCode(taskParam.keys.t)
-                    savedTickmark(i+1) = taskData.pred(i);
-                    break
-                elseif keyCode(taskParam.keys.z)
-                    savedTickmark(i+1) = savedTickmark(i);
-                    break
-                    
-                end
-                
-            end
-        end
-        WaitSecs(0.1);
-        
-    end
-    %DrawCross(taskParam)
-    %DrawCircle(taskParam)
-    %Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-    
-    %     if isequal(taskParam.gParam.taskType, 'reversal')
-    %
-    %         txt = 'Would you like to update the tickmark?';
-    %
-    %         while 1
-    %
-    %             DrawCircle(taskParam)
-    %             DrawCross(taskParam)
-    %             if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
-    %                 TickMark(taskParam, taskData.outcome(i), 'outc')
-    %                 TickMark(taskParam, taskData.pred(i), 'pred')
-    %
-    %             end
-    %             TickMark(taskParam, savedTickmark, 'saved')
-    %             DrawOutcome(taskParam, taskData.outcome(i))
-    %             DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
-    %                 taskParam.gParam.screensize(3)*0.1,...
-    %                 taskParam.gParam.screensize(4)*0.05,...
-    %                 [255 255 255]);
-    %             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-    %             Screen('Flip', taskParam.gParam.window.onScreen, t + 1.2);
-    %
-    %             [ keyIsDown, ~, keyCode ] = KbCheck;
-    %             if keyIsDown
-    %                 if keyCode(taskParam.keys.t)
-    %                     savedTickmark = taskData.pred(i);
-    %                     break
-    %                 elseif keyCode(taskParam.keys.z)
-    %                     break
-    %
-    %                 end
-    %
-    %             end
-    %         end
-    %         WaitSecs(0.1);
-    %
-    %     end
-    
-    
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
-    Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
-    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
-    %WaitSecs(1);
-    %keyboard
+%     DrawCross(taskParam)
+%     DrawCircle(taskParam)
+%     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+%     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
+%     taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
+%     %WaitSecs(1);
+%     %keyboard
     
     WaitSecs(.5);
     taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, haz, i, 16); % this is the trial summary trigger

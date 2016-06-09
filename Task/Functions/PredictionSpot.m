@@ -30,8 +30,8 @@ function PredictionSpot(taskParam)
 
 %xPredS = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
 %yPredS = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
-xPredS = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
-yPredS = ((taskParam.circle.rotationRad-5) * (cos(taskParam.circle.rotAngle)));
+xPredS = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle ));
+yPredS = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
 
 PredSpot = OffsetRect(taskParam.circle.predCentSpotRect, xPredS, yPredS);
 Screen('FillOval', taskParam.gParam.window.onScreen, [255 165 0], PredSpot); %51 51 255
