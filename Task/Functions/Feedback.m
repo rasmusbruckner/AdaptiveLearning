@@ -10,7 +10,7 @@ maxMon = (length(find(Data.shieldType == 1))...
     * taskParam.gParam.rewMag);
 
 %if taskParam.gParam.oddball
-if isequal(taskParam.gParam.taskType, 'oddball')
+if isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal')
     header = 'Performance';
     if subject.rew == 1
         colRewCap = 'Blue';

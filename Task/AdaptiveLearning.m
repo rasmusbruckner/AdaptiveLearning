@@ -117,7 +117,7 @@ sendTrigger = false;
 randomize = false;
 shieldTrials = 1; % 4
 practTrials = 1; % 20
-blockIndices = [1 60 120 180];
+blockIndices = [1 60 120 180]; %1 60 120 180
 haz = [.25 1 0];
 oddballProb = [.25 0];
 reversalProb = [.5 0];
@@ -634,8 +634,10 @@ end
 if isequal(taskType, 'dresden')
     totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
         + DataFollowCannon.accPerf(end);
-else
+elseif isequal(taskType, 'oddball')
     totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
+elseif isequal(taskType, 'reversal')
+    totWin = DataReversal.accPerf(end);
 end
 
 %if ~oddball
@@ -643,9 +645,11 @@ if isequal(taskType, 'dresden')
     Data.DataMain = DataMain;
     Data.DataFollowOutcome = DataFollowOutcome;
     Data.DataFollowCannon = DataFollowCannon;
-else
+elseif isequal(taskType, 'oddball')
     Data.DataMain = DataMain;
     Data.DataOddball = DataOddball;
+elseif isequal(taskType, 'reversal')
+    Data.DataReversal = DataReversal;
 end
 
 % ---------------------------------------------------------------------
@@ -903,10 +907,10 @@ Screen('CloseAll');
         while 1
             
             %if oddball
-            if isequal(taskType, 'oddball')
+            if isequal(taskType, 'oddball') || isequal(taskType, 'reversal')
                 header = 'End of task!';
                 txt = sprintf('Thank you for participating!\n\n\nYou earned $ %.2f', totWin);
-            else
+            elseif isequal(taskType, 'dresden')
                 header = 'Ende des Versuchs!';
                 if isequal(Subject.group, '1')
                     txt = sprintf('Vielen Dank für deine Teilnahme!\n\n\nDu hast %.2f Euro verdient', totWin);
@@ -914,24 +918,24 @@ Screen('CloseAll');
                     txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient', totWin);
                 end
             end
-            Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...
+            Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], 0,...
                 taskParam.gParam.screensize(4)*0.16,...
                 taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
-            Screen('DrawLine', taskParam.gParam.window, [0 0 0], 0,...
+            Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], 0,...
                 taskParam.gParam.screensize(4)*0.8,...
                 taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
-            Screen('FillRect', taskParam.gParam.window, [0 25 51],...
+            Screen('FillRect', taskParam.gParam.window.onScreen, [0 25 51],...
                 [0, (taskParam.gParam.screensize(4)*0.16)+3,...
                 taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
-            Screen('TextSize', taskParam.gParam.window, 30);
-            DrawFormattedText(taskParam.gParam.window, header,...
+            Screen('TextSize', taskParam.gParam.window.onScreen, 30);
+            DrawFormattedText(taskParam.gParam.window.onScreen, header,...
                 'center', taskParam.gParam.screensize(4)*0.1);
-            Screen('TextSize', taskParam.gParam.window, textSize);
-            DrawFormattedText(taskParam.gParam.window, txt,...
+            Screen('TextSize', taskParam.gParam.window.onScreen, textSize);
+            DrawFormattedText(taskParam.gParam.window.onScreen, txt,...
                 'center', 'center');
-            Screen('DrawingFinished', taskParam.gParam.window, [], []);
+            Screen('DrawingFinished', taskParam.gParam.window.onScreen, [], []);
             time = GetSecs;
-            Screen('Flip', taskParam.gParam.window, time + 0.1);
+            Screen('Flip', taskParam.gParam.window.onScreen, time + 0.1);
             
             [ ~, ~, keyCode ] = KbCheck;
             if find(keyCode) == taskParam.keys.s & ~taskParam.unitTest

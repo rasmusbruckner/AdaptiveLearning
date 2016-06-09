@@ -4,7 +4,7 @@ if isequal(type, 'pred')
     col = [255 165 0];
 elseif isequal(type,'outc')
     col = [0 0 0];
-elseif isequal(type,'saved')
+elseif isequal(type,'saved') || isequal(type,'update')
     col = [255 0 0];
 end
 rotRad = taskParam.circle.rotationRad + 10;
