@@ -1,4 +1,5 @@
 function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subject)
+
 % This function acutally runs the task. You can specify "main",
 % "practice" or "control". This loop is optimized for triggering accuracy.
 
@@ -20,7 +21,7 @@ HideCursor;
 % prediction: trigger
 
 
-% InitRT: first button press
+% InitRT: first button press / mouse move
 
 %keyboard
 KbReleaseWait();
@@ -34,11 +35,7 @@ else
 end
 Screen('TextSize', taskParam.gParam.window.onScreen, textSize);
 Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
-%SetMouse(taskParam.gParam.window.centerX, taskParam.gParam.window.centerY);
-%SetMouse(720, 450);
-
-ShowCursor('Arrow');
-
+%ShowCursor('Arrow');
 
 if taskParam.unitTest
     
@@ -56,7 +53,7 @@ if taskParam.unitTest
         taskData.accPerf = nan(trial,1);
         taskData.perf = zeros(trial,1);
         
-    else
+    elseif isequal(condition, 'dresden')
         
         taskData = load('unitTest_TestData');
         taskData = taskData.taskData;
@@ -80,6 +77,21 @@ if taskParam.unitTest
             
         end
         
+        elseif isequal(condition, 'reversal')
+        
+            taskData = load('unitTest_TestDataReversal');
+            taskData = taskData.taskData;
+            %clear taskData.cBal taskData.rew
+            trial = taskParam.gParam.trials;
+            taskData.cBal = nan(trial,1);
+            taskData.rew = nan(trial,1);
+            taskData.initiationRTs = nan(trial,1);
+            taskData.actJitter = nan(trial,1);
+            taskData.block = ones(trial,1);
+            taskData.accPerf = nan(trial,1);
+            taskData.perf = zeros(trial,1);
+            taskData.gParam.taskType = 'reversal';
+            savedTickmark = taskData.savedTickmark;
     end
     
 elseif ~taskParam.unitTest
@@ -112,48 +124,6 @@ elseif ~taskParam.unitTest
         taskData.initiationRTs = nan(trial,1);
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
-        
-        
-        
-        
-        %elseif taskParam.unitTest
-        
-        %     %keyboard
-        %     if isequal(condition, 'oddball')
-        %         taskData = load('unitTest_TestDataOddball');
-        %         taskData = taskData.taskData;
-        %         clear taskData.cBal taskData.rew
-        %         trial = taskParam.gParam.trials;
-        %         taskData.cBal = nan(trial,1);
-        %         taskData.rew = nan(trial,1);
-        %         taskData.initiationRTs = nan(trial,1);
-        %         taskData.actJitter = nan(trial,1);
-        %         taskData.block = ones(trial,1);
-        %         taskData.accPerf = nan(trial,1);
-        %         taskData.perf = zeros(trial,1);
-        %
-        %     else
-        %
-        %         taskData = load('unitTest_TestData');
-        %         taskData = taskData.taskData;
-        %         clear taskData.cBal taskData.rew
-        %
-        %         trial = taskParam.gParam.trials;
-        %         taskData.cBal = nan(trial,1);
-        %         taskData.rew = nan(trial,1);
-        %         taskData.initiationRTs = nan(trial,1);
-        %         taskData.actJitter = nan(trial,1);
-        %         taskData.block = ones(trial,1);
-        %         if isequal(condition, 'main')
-        %             taskData.pred = taskData.predMain;
-        %         elseif isequal(condition, 'followOutcome')
-        %             taskData.pred = taskData.predFollowOutcome;
-        %         elseif isequal(condition, 'followCannon')
-        %             taskData.pred = taskData.predFollowCannon;
-        %
-        %         end
-        %
-        %     end
         
     else
         
@@ -238,13 +208,18 @@ for i=1:trial
                 if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
                     TickMark(taskParam, taskData.outcome(i-1), 'outc')
                     TickMark(taskParam, taskData.pred(i-1), 'pred')
-                    TickMark(taskParam, savedTickmark(i-1), 'saved')
+                    if isequal(taskParam.gParam.taskType, 'reversal')
+                        TickMark(taskParam, savedTickmark(i-1), 'saved')
+                    end
                     
                 end
                 
                 if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
                     Cannon(taskParam, taskData.distMean(i))
                     Aim(taskParam, taskData.distMean(i))
+                elseif isequal(taskParam.gParam.taskType, 'reversal')
+                    taskParam.gParam.taskType
+                    taskData.catchTrial(i) = 0;
                 end
                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
                 t = GetSecs;
@@ -301,6 +276,7 @@ for i=1:trial
                 
             end
         else
+            
             SetMouse(720, 450, taskParam.gParam.window.onScreen)
             press = 0;
             while 1
@@ -418,10 +394,12 @@ for i=1:trial
         if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
             TickMark(taskParam, taskData.outcome(i-1), 'outc')
             TickMark(taskParam, taskData.pred(i-1), 'pred')
-            TickMark(taskParam, savedTickmark, 'saved')
+            if isequal(taskData.gParam.taskType, 'reversal')
+                TickMark(taskParam, savedTickmark(i), 'saved')
+            end
         end
         
-        if (taskData.catchTrial(i) == 1 && ~taskParam.gParam.oddball) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
+        if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
             Cannon(taskParam, taskData.distMean(i))
             Aim(taskParam, taskData.distMean(i))
         end
@@ -458,7 +436,7 @@ for i=1:trial
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'oddball')
+    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'oddball') || isequal(taskData.gParam.taskType, 'reversal')
         taskData.memErr(i) = 999;
         taskData.memErrNorm(i) = 999;
         taskData.memErrPlus(i) = 999;
@@ -471,8 +449,8 @@ for i=1:trial
         end
     end
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'oddball') || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice')
-        if taskData.predErr(i) <= taskData.allASS(i)/2
+    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'oddball') || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') || isequal(condition,'reversal')
+        if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
             taskData.hit(i) = 1;
         end
     elseif isequal(condition,'followOutcome') || isequal(condition,'followOutcomePractice')
@@ -580,7 +558,7 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     'sex', {taskData.sex}, 'cond', {taskData.cond}, 'cBal',...
     {taskData.cBal}, 'trial', taskData.trial, 'haz', haz, 'concentration', concentration,...
     'outcome', taskData.outcome, 'distMean', taskData.distMean, 'cp',...
-    taskData.cp, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
+    taskData.cp, 'reversal', taskData.reversal, 'savedTickmark', savedTickmark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
     'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers, 'pred', taskData.pred,...
     'predErr', taskData.predErr, 'memErr', taskData.memErr, 'UP',...
     taskData.UP, 'hit', taskData.hit, 'perf', taskData.perf, 'accPerf',...

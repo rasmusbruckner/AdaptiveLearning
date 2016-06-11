@@ -112,6 +112,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
         oddBall(i) = nan;
         
         %CatchTrial
+        
         if rand <= .10 && cp(i) == 0;
             catchTrial(i) = 1;
         else
@@ -216,6 +217,7 @@ elseif isequal(condition, 'reversal')
                 mean = allMeans(end-2);
             else
                 mean = round(rand(1).*359);
+                reversal(i) = false;
             end 
                 
             s = taskParam.gParam.safe(1);
@@ -266,5 +268,6 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block, block, fiel
     fieldNames.TAC, TAC, fieldNames.shieldType, shieldType, fieldNames.catchTrial, catchTrial, fieldNames.triggers, triggers, fieldNames.pred, pred, fieldNames.predErr, predErr,...
     fieldNames.memErr, memErr,...
     fieldNames.UP, UP, fieldNames.hit, hit,...
-    fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date, {Date});
+    fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date, {Date},... 
+    'reversal', reversal);
 end

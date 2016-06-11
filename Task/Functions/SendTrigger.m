@@ -1,4 +1,4 @@
-function trigger = SendTrigger(taskParam, taskData, condition, vola, trial, Tevent)
+function trigger = SendTrigger(taskParam, taskData, condition, ~, trial, Tevent)
 % This function sends the EEG triggers.
 % 12.05.15: komische triggererfahrung: wenn man mit brown version triggert
 % kann man in while schleife triggern und es wird nur einer gesendet
@@ -174,7 +174,70 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
     
 elseif isequal(taskParam.gParam.taskType, 'reversal')
     
-    trigger = 255;
+    
+    
+    if taskParam.gParam.sendTrigger == true
+        %ioObject = io64;
+        %status = io64(ioObject);
+    end
+    
+   % if  (isequal(condition, 'main') || isequal(condition, 'oddball')) %taskParam.gParam.sendTrigger == true &&
+        
+        if sum(Tevent == 1:7) == 1
+            
+            digit3 = Tevent;
+            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
+            trigger = str2double(trigger);
+            
+        elseif trial > 1 && Tevent == 16
+            
+            %if isequal(condition, 'oddball') && taskData.oddBall(trial) == 1
+             %   digit1 = 1;
+              %  digit2 = 1;
+            %elseif isequal(condition, 'oddball') && taskData.oddBall(trial) == 0
+               % digit1 = 1;
+            %    digit2 = 0;
+            if taskData.cp(trial) == 0
+                digit1 = 0;
+                digit2 = 0;
+            elseif taskData.cp(trial) == 1 && taskData.reversal(trial) == 0
+                digit1 = 1;
+                digit2 = 0;
+            elseif taskData.cp(trial) == 1 && taskData.reversal(trial) == 1
+                digit1 = 1;
+                digit2 = 1;
+            end
+            
+            if taskData.hit(trial) == 1
+                digit3 = 1;
+            elseif taskData.hit(trial) == 0
+                digit3 = 0;
+            end
+            
+            %keyboard
+            if taskData.actRew(trial) == 1
+                digit4 = 1;
+            elseif taskData.actRew(trial) == 2
+                digit4 = 0;
+            end
+            
+        else
+            trigger = 255;
+        end
+        
+        
+        if Tevent == 16 && trial > 1
+            
+            
+            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
+            %trigger = str2double(trigger);
+            trigger = base2dec(trigger, 2) + 100;
+        end
+    %else
+       % trigger = 255;
+        
+        
+    %end
     
 elseif isequal(taskParam.gParam.taskType, 'chinese')
     

@@ -60,8 +60,8 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine. If you have internet!
-computer = identifyPC;
-%computer = 'Macbook'
+%computer = identifyPC;
+computer = 'Macbook'
 
 % Dresden or Brown version?
 % Choose task type: 
@@ -101,7 +101,7 @@ elseif strcmp(taskType, 'oddball')
     
 elseif strcmp(taskType, 'reversal')
     
-    trials = 100;
+    trials = 20;
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball = nan;
