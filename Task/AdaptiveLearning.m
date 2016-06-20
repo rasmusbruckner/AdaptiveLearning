@@ -1,18 +1,20 @@
  function Data = AdaptiveLearning(unitTest)
-% This function is the master function for the cannon task
-% ------------------------------------------------------------------------- 
-% 
-% You can choose between four task types: 
+%ADAPTIVELEARNING   Master function for the cannon task
+%   AdaptiveLearning(false) or AdaptiveLearning runs the cannon task.
+%   AdaptiveLearning(true) is part of a unit test to control task
+%   output after task changes. Scripts for unit test:
+%   ~/AdaptiveLearning/DataScripts
+%
+%   You can choose between four task types: 
 %   "Dresden version":      Change point task with two control conditions
-%                               - learning rate = 1
-%                               - learning rate = 0
+%                               - optimal learning rate = 1
+%                               - optimal learning rate = 0
 %   "Oddball version":      Change point task with oddball condition
 %   "Reversal version":     Change point task with occasional reversals to 
 %                           previous change point location
 %   "Chinese restaurant":   Change point task with multiple contexts
-%
-% -------------------------------------------------------------------------                            
-%  Current task condition (condition):
+%                         
+%  Current task conditions:
 %   - shield
 %       - oddballPractice
 %       - oddballPractice_NoOddball
@@ -23,24 +25,19 @@
 %   - followCannon
 %       - followCannonPractice
 %
-%   Current practice conditions (whichPractice)
+%   Current practice conditions (whichPractice):
 %       - oddballPractice
 %       - cpPractice
 %       - followOutcomePractice
 %       - followCannonPractice
-% -------------------------------------------------------------------------
-%
-% Changes in the task (relative to first data collection at Brown):
-% renamed variables:
-%   - boatType -> shieldType
-%   - sigma -> concentration
-%   - vola -> haz
-% added trialsS1 = XX, trialsS2S3 = XX;
-% -------------------------------------------------------------------------
-%
-% 06.05.16 starting to extend the task to include multiple task contexts
-% -------------------------------------------------------------------------
-%
+%   
+%   Changes in the task (relative to first data collection at Brown):
+%   renamed variables:
+%       - boatType -> shieldType
+%       - sigma -> concentration
+%       - vola -> haz
+%   added trialsS1 = XX, trialsS2S3 = XX
+
 % -------------------------------------------------------------------------
 % Check whether or not to run a unit test (not yet implemented for context
 % task)
@@ -58,11 +55,10 @@ end
 % Initialize task
 % -------------------------------------------------------------------------
 
-% indentifies your machine. If you have internet!
-%computer = identifyPC;
-computer = 'Macbook';
+% indentifies your machine; if you have internet!
+computer = identifyPC;
+%computer = 'Macbook';
 
-% Dresden or Brown version?
 % Choose task type: 
 %   - 'oddball'
 %   - 'dresden' 
@@ -70,10 +66,9 @@ computer = 'Macbook';
 %   - 'chinese'
 taskType = 'reversal';
 
-
+% version specific parameters
 if strcmp(taskType, 'dresden')
     
-    % Dresden
     trials = 2; % 240
     controlTrials = 1; % 120
     concentration = [12 12 99999999];
@@ -82,16 +77,17 @@ if strcmp(taskType, 'dresden')
     textSize = 19;
     
     % Check number of trials in each condition
-    if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials > 1 && mod(controlTrials, 2) == 1)
+    if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials >...
+            1 && mod(controlTrials, 2) == 1)
         msgbox('All trials must be even or equal to 1!');
         return
     end
+    
 elseif strcmp(taskType, 'oddball')
     
-    % Brown
-    %% How many trials in first session?
+    % trials first session
     trialsS1 = 2; % 40
-    %% How many trials in second and third session?
+    % trials second session
     trialsS2S3 = 2; % 240
     controlTrials = nan;
     concentration = [10 12 99999999];
@@ -110,13 +106,14 @@ elseif strcmp(taskType, 'chinese')
     
 end
 
+% version independent parameters
 runIntro = true;
 askSubjInfo = true;
 sendTrigger = false;
-randomize = false;
+randomize = true;
 shieldTrials = 1; % 4
 practTrials = 2; % 20
-blockIndices = [1 60 120 180]; %1 60 120 180
+blockIndices = [1 60 120 180];
 haz = [.25 1 0];
 oddballProb = [.25 0];
 reversalProb = [.5 1];
@@ -127,11 +124,12 @@ jitter = 0.2;
 practiceTrialCriterion = 10;
 debug = false;
 
-% Savedirectory
+% savedirectory
 if isequal(computer, 'Macbook')
     cd('/Users/Bruckner/Dropbox/MATLAB/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
-    cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
+    cd(['C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning'...
+        '\\DataDirectory']);
 elseif isequal(computer, 'Brown')
     cd('C:\Users\lncc\Dropbox\CannonDrugStudy\data');
 end
@@ -153,10 +151,13 @@ if askSubjInfo == false
     
     if ~oddball || strcmp(taskType, 'dresden')
         group = '1';
-        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group', group, 'cBal', cBal, 'rew', reward, 'date', date, 'session', '1');
+        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group',...
+            group, 'cBal', cBal, 'rew', reward, 'date', date,...
+            'session', '1');
     elseif oddball || strcmp(taskType, 'oddball')
         session = '1';
-        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session', session, 'cBal', cBal, 'rew', reward, 'date', date);
+        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session',...
+            session, 'cBal', cBal, 'rew', reward, 'date', date);
     end
     
 elseif askSubjInfo == true
@@ -174,26 +175,30 @@ elseif askSubjInfo == true
     
     if randomize
         
-        if ~oddball || strcmp(taskType, 'dresden')
+        if strcmp(taskType, 'dresden')
             cBal = num2str(round(unifrnd(1,6)));
-        elseif oddball || strcmp(taskType, 'oddball')
+        elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'reversal')
             cBal = num2str(round(unifrnd(1,2)));
         end
         
         reward = num2str(round(unifrnd(1,2)));
-        defaultanswer = {'99999','99', '1', 'm', cBal, reward};
         
     else
-        defaultanswer = {'99999','99', '1', 'm', '1', '1'};
+        cBal = '1';
+        reward = '1';
     end
     
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
+        defaultanswer = {'99999','99', '1', 'm', cBal, reward};
+    else
+        defaultanswer = {'99999','99', 'm', cBal, reward};
+    end
     
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball') 
         subjInfo{7} = date;
     else 
         subjInfo{6} = date;
-
     end
     
     if numel(subjInfo{1}) < 5 || numel(subjInfo{1}) > 5
@@ -206,7 +211,6 @@ elseif askSubjInfo == true
             msgbox('Group: "1" or "2"?');
             return
         end
-        
     elseif strcmp(taskType, 'oddball')
         if subjInfo{3} ~= '1' && subjInfo{3} ~= '2' && subjInfo{3} ~= '3'
             msgbox('Session: "1", "2" or "3"?');
@@ -216,8 +220,15 @@ elseif askSubjInfo == true
     end
     
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
-        if subjInfo{4} ~= 'm' && subjInfo{4} ~= 'f'
+        if subjInfo{4} ~= 'm'...
+                && subjInfo{4} ~= 'f'
+            msgbox('Sex: "m" or "f"?');
+            return
             
+        end
+    else
+        if subjInfo{3} ~= 'm'...
+                && subjInfo{4} ~= 'f'
             msgbox('Sex: "m" or "f"?');
             return
             
@@ -225,20 +236,38 @@ elseif askSubjInfo == true
     end
     
     if strcmp(taskType, 'dresden')
-        if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3'...
-                && subjInfo{5} ~= '4' && subjInfo{5} ~= '5' && subjInfo{5} ~= '6'
+        if subjInfo{5} ~= '1'...
+                && subjInfo{5} ~= '2'...
+                && subjInfo{5} ~= '3'...
+                && subjInfo{5} ~= '4'...
+                && subjInfo{5} ~= '5'...
+                && subjInfo{5} ~= '6'
             msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
     elseif strcmp(taskType, 'oddball')
-        if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
+        if subjInfo{5} ~= '1'...
+                && subjInfo{5} ~= '2'
+            msgbox('cBal: 1 or 2 ?');
+            return
+        end
+    elseif strcmp(taskType, 'reversal')
+        if subjInfo{4} ~= '1'...
+                && subjInfo{4} ~= '2'
             msgbox('cBal: 1 or 2 ?');
             return
         end
     end
     
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
-        if subjInfo{6} ~= '1' && subjInfo{6} ~= '2'
+        if subjInfo{6} ~= '1'...
+                && subjInfo{6} ~= '2'
+            msgbox('Reward: 1 or 2?');
+            return
+        end
+    elseif strcmp(taskType, 'reversal')
+        if subjInfo{5} ~= '1'...
+                && subjInfo{5} ~= '2'
             msgbox('Reward: 1 or 2?');
             return
         end
@@ -247,27 +276,33 @@ elseif askSubjInfo == true
     if strcmp(taskType, 'dresden')
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-            subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
-            str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
+            subjInfo(4), 'group', subjInfo(3), 'cBal',...
+            str2double(cell2mat(subjInfo(5))), 'rew',...
+            str2double(cell2mat(subjInfo(6))), 'date',...
+            subjInfo(7), 'session', '1');
     
     elseif strcmp(taskType, 'oddball')
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-            subjInfo(4), 'session', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
+            subjInfo(4), 'session', subjInfo(3), 'cBal',...
+            str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
         
     elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
        
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(4))), 'rew',...
-            str2double(cell2mat(subjInfo(5))), 'date', subjInfo(6), 'session', '1');
+            str2double(cell2mat(subjInfo(5))), 'date', subjInfo(6),...
+            'session', '1');
         
     end
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'reversal') ||...
+            strcmp(taskType, 'chinese')
         checkIdInData = dir(sprintf('*%s*', num2str(cell2mat((subjInfo(1))))));
     elseif strcmp(taskType, 'oddball')
-        checkIdInData = dir(sprintf('*%s_session%s*' , num2str(cell2mat((subjInfo(1)))), num2str(cell2mat((subjInfo(3))))));
+        checkIdInData = dir(sprintf('*%s_session%s*',...
+            num2str(cell2mat((subjInfo(1)))), num2str(cell2mat((subjInfo(3))))));
     end
     
     fileNames = {checkIdInData.name};
@@ -275,7 +310,8 @@ elseif askSubjInfo == true
     if  ~isempty(fileNames);
         if strcmp(taskType, 'dresden')
             msgbox('Diese ID wird bereits verwendet!');
-        elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
+        elseif strcmp(taskType, 'oddball') ||...
+                strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
             msgbox('ID and session have already been used!');
         end
         return
@@ -305,7 +341,8 @@ zero = screensizePart / 2;
 fWindowRect = 'windowRect';
 
 [window.onScreen, windowRect, textures] = OpenWindow;
-[window.screenX, window.screenY] = Screen('WindowSize', window.onScreen); % check resolution
+[window.screenX, window.screenY] = Screen('WindowSize',...
+    window.onScreen); % check resolution
 window.centerX = window.screenX * 0.5; % center of screen in X direction
 window.centerY = window.screenY * 0.5; % center of screen in Y direction
 window.centerXL = floor(mean([0 window.centerX])); % center of left half of screen in X direction
@@ -620,9 +657,9 @@ elseif isequal(taskType, 'reversal')
     Data.DataReversal = DataReversal;
 end
 
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 % End of task
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 
 EndOfTask
 
