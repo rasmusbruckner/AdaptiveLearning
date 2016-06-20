@@ -1,8 +1,7 @@
  function Data = AdaptiveLearning(unitTest)
-
 % This function is the master function for the cannon task
 % ------------------------------------------------------------------------- 
- 
+% 
 % You can choose between four task types: 
 %   "Dresden version":      Change point task with two control conditions
 %                               - learning rate = 1
@@ -11,7 +10,7 @@
 %   "Reversal version":     Change point task with occasional reversals to 
 %                           previous change point location
 %   "Chinese restaurant":   Change point task with multiple contexts
-
+%
 % -------------------------------------------------------------------------                            
 %  Current task condition (condition):
 %   - shield
@@ -30,7 +29,7 @@
 %       - followOutcomePractice
 %       - followCannonPractice
 % -------------------------------------------------------------------------
-
+%
 % Changes in the task (relative to first data collection at Brown):
 % renamed variables:
 %   - boatType -> shieldType
@@ -38,10 +37,10 @@
 %   - vola -> haz
 % added trialsS1 = XX, trialsS2S3 = XX;
 % -------------------------------------------------------------------------
-
+%
 % 06.05.16 starting to extend the task to include multiple task contexts
 % -------------------------------------------------------------------------
-
+%
 % -------------------------------------------------------------------------
 % Check whether or not to run a unit test (not yet implemented for context
 % task)
@@ -61,7 +60,7 @@ end
 
 % indentifies your machine. If you have internet!
 %computer = identifyPC;
-computer = 'Macbook'
+computer = 'Macbook';
 
 % Dresden or Brown version?
 % Choose task type: 
@@ -111,16 +110,16 @@ elseif strcmp(taskType, 'chinese')
     
 end
 
-runIntro = false;
+runIntro = true;
 askSubjInfo = true;
 sendTrigger = false;
 randomize = false;
 shieldTrials = 1; % 4
-practTrials = 1; % 20
+practTrials = 2; % 20
 blockIndices = [1 60 120 180]; %1 60 120 180
 haz = [.25 1 0];
 oddballProb = [.25 0];
-reversalProb = [.5 0];
+reversalProb = [.5 1];
 driftConc = [30 99999999];
 safe = [3 0];
 rewMag = 0.1;
@@ -316,42 +315,6 @@ window.centerXR = floor(mean([window.centerX window.screenX])); % center of righ
 %keyboard
 startTime = GetSecs;
 
-%ID = 'ID';
-%age = 'age';
-%sex = 'sex';
-%rew = 'rew';
-%actRew = 'actRew';
-%Date = 'Date';
-%cond = 'cond';
-%trial = 'trial';
-%outcome = 'outcome';
-%allASS = 'allASS';
-%distMean = 'distMean';
-%cp = 'cp';
-%fTAC = 'TAC'; TAC = fTAC;
-%shieldType = 'shieldType';
-%catchTrial = 'catchTrial';
-%triggers = 'triggers';
-%pred = 'pred';
-%predErr = 'predErr';
-%memErr = 'memErr';
-%UP = 'UP';
-%hit = 'hit';
-%cBal = 'cBal';
-%perf = 'perf';
-%accPerf = 'accPerf';
-%actJitter = 'actJitter';
-%block = 'block';
-%initiationRTs = 'initiationRTs';
-%timestampOnset = 'timestampOnset';
-%timestampPrediction = 'timestampPrediction';
-%timestampOffset = 'timestampOffset';
-%fhazs = 'haz'; hazs = fhazs;
-%fOddballProb = 'oddballProb'; %oddballProbs = fOddballProb;
-%fDriftConc = 'driftConc'; driftConcentrations = fDriftConc;
-%fconcentrations = 'concentration'; concentrations = fconcentrations;
-%oddBall = 'oddBall';
-
 % sollte ich wohl irgendwann ersetzen
 fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
     'initiationRTs', 'initiationRTs', 'timestampOnset', 'timestampOnset',...
@@ -378,7 +341,7 @@ gParam = struct('taskType', taskType ,'jitter', jitter,...
     'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
     sentenceLength, 'driftConc', driftConc,...
     'oddballProb', oddballProb, 'reversalProb', reversalProb,...
-    'concetration', concentration, 'haz', haz,...
+    'concentration', concentration, 'haz', haz,...
     'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
     trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials,...
     'controlTrials', controlTrials, 'safe', safe, 'rewMag', rewMag,...
@@ -508,7 +471,7 @@ if isequal(taskType, 'oddball')
             'block you will not see the cannon, but still '...
             'have to infer its aim in order to catch balls and earn money.'];
     end
-else
+elseif isequal(taskType, 'dresden')
     txtPressEnter = 'Weiter mit Enter';
     
     header = 'Anfang der Studie';
@@ -532,6 +495,11 @@ else
             'Kugeln bekommst du nach der Studie '...
             'ausgezahlt.\n\nViel Erfolg!'];
     end
+    
+elseif isequal(taskType, 'reversal')
+    
+    txtPressEnter = 'Press Enter to continue';
+   
 end
 
 strings = struct(fTxtPressEnter, txtPressEnter);
@@ -822,6 +790,31 @@ Screen('CloseAll');
 
     function DataReversal = ReversalCondition
         
+        
+        %%%
+        
+        if runIntro && ~unitTest
+            
+                
+                Instructions(taskParam, 'reversal', Subject);
+                Main(taskParam, haz(1), concentration(1), 'reversalPracticeNoiseInv3', Subject);
+                header = 'Beginning of the Task';
+                txtStartTask = ['This is the beginning of the task. During '...
+                    'this block you will earn real money for your performance. '...
+                    'The trials will be exactly the same as those in the '...
+                    'in the practice session.\n\nOn each trial a cannon will aim '...
+                    'at a location on the circle. The cannon will '...
+                    'fire a ball somewhere near the point of aim. '...
+                    'Most of the time the cannon will remain aimed at '...
+                    'the same location, but occasionally the cannon '...
+                    'will be reaimed, either to the previous aim or to a new aim. Like in the previous '...
+                    'session you will not see the cannon, but '...
+                    'have to infer its aim in order to catch balls and earn money.'];
+                feedback = false;
+                BigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                
+            
+        end
         [~, DataReversal] = Main(taskParam, haz(1), concentration(1), 'reversal', Subject);
  
     end

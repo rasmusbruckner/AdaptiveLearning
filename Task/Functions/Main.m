@@ -436,7 +436,7 @@ for i=1:trial
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'oddball') || isequal(taskData.gParam.taskType, 'reversal')
+    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal')
         taskData.memErr(i) = 999;
         taskData.memErrNorm(i) = 999;
         taskData.memErrPlus(i) = 999;

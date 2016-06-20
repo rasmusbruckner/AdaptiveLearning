@@ -161,13 +161,13 @@ classdef OutputTestReversal < matlab.unittest.TestCase
             Main_Expected_actRew = [1;1;1;2;1;  1;2;2;2;1;  1;2;2;2;2;  1;1;2;2;1];
             testCase.verifyEqual(Main_Actual_actRew, Main_Expected_actRew);            
 
-             Main_Actual_hit = Data.DataReversal.hit;
-             Main_Expected_hit = [0;0;1;1;0;    0;1;0;0;0;  0;1;1;1;0;  0;0;1;0;1];
-             testCase.verifyEqual(Main_Actual_hit, Main_Expected_hit);
+            Main_Actual_hit = Data.DataReversal.hit;
+            Main_Expected_hit = [0;0;1;1;0;    0;1;0;0;0;  0;1;1;1;0;  0;0;1;0;1];
+            testCase.verifyEqual(Main_Actual_hit, Main_Expected_hit);
              
             Main_Actual_perf = Data.DataReversal.perf;
             Main_Expected_perf = [0;0;0.1;0;0;  0;0;0;0;0;  0;0;0;0;0;  0;0;0;0;0.1];
-             testCase.verifyEqual(Main_Actual_perf, Main_Expected_perf);
+            testCase.verifyEqual(Main_Actual_perf, Main_Expected_perf);
              
             Main_Actual_accPerf = Data.DataReversal.accPerf;
             Main_Expected_accPerf = [0;0;0.1;0.1;0.1;  0.1;0.1;0.1;0.1;0.1;  0.1;0.1;0.1;0.1;0.1;  0.1;0.1;0.1;0.1;0.2];

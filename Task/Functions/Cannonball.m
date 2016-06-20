@@ -40,10 +40,10 @@ for i = 1:nFrames
     DrawCircle(taskParam)
     Cannon(taskParam, distMean)
     PredictionSpot(taskParam)
-    Screen('FillOval', taskParam.gParam.window, [0 0 0], OutcSpotAct);
-    Screen('DrawingFinished', taskParam.gParam.window);
+    Screen('FillOval', taskParam.gParam.window.onScreen, [0 0 0], OutcSpotAct);
+    Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     t = GetSecs;
-    Screen('Flip', taskParam.gParam.window, t + 0.01);
+    Screen('Flip', taskParam.gParam.window.onScreen, t + 0.01);
 end
 
 

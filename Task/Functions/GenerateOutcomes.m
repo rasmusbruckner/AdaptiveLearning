@@ -14,13 +14,22 @@ elseif isequal(condition, 'mainPractice') ||...
         isequal(condition, 'practiceNoOddball') ||...
         isequal(condition, 'oddballPractice') ||...
         isequal(condition, 'followOutcomePractice') ||...
-        isequal(condition, 'followCannonPractice')
+        isequal(condition, 'followCannonPractice') ||...
+        isequal(condition, 'reversalPractice') ||...
+        isequal(condition, 'reversalPracticeNoise')
+            
+        
     trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'shield')
     trials = taskParam.gParam.shieldTrials;
 elseif isequal(condition, 'followCannon') ||...
         isequal(condition, 'followOutcome')
     trials = taskParam.gParam.controlTrials;
+elseif isequal(condition, 'reversalPracticeNoiseInv')
+    trials = 4;
+elseif isequal(condition, 'reversalPracticeNoiseInv2') || isequal(condition, 'reversalPracticeNoiseInv3')
+    trials = taskParam.gParam.practTrials * 2;
+
 end
 
 % -------------------------------------------------------------------------
@@ -107,8 +116,8 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
             s=max([s-1, 0]);
         end
         
-        outcome(i)=round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), concentration, 1)));
-        distMean(i)=mean;
+        outcome(i) = round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), concentration, 1)));
+        distMean(i) = mean;
         oddBall(i) = nan;
         
         %CatchTrial
@@ -193,7 +202,7 @@ elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') 
         allASS(i)=ASS.*2;
     end
     
-elseif isequal(condition, 'reversal')
+elseif isequal(condition, 'reversal') || isequal(condition, 'reversalPractice')  || isequal(condition, 'reversalPracticeNoise') || isequal(condition, 'reversalPracticeNoiseInv2') || isequal(condition, 'reversalPracticeNoiseInv3')
     
     for i = 1:trials
         %keyboard
@@ -211,10 +220,12 @@ elseif isequal(condition, 'reversal')
         if (rand < haz && s == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1 %% new mean for every block!
             %keyboard
             cp(i) = 1;
-            if rand < taskParam.gParam.reversalProb(1) && sum(cp(block == currentBlock)) > 2
+            if (rand < taskParam.gParam.reversalProb(1) && sum(cp(block == currentBlock)) > 2) || (rand < taskParam.gParam.reversalProb(2) && sum(cp(block == currentBlock)) > 2 && isequal(condition, 'reversalPractice')) || (rand < taskParam.gParam.reversalProb(2) && sum(cp(block == currentBlock)) > 2 && isequal(condition, 'reversalPracticeNoise')) || (rand < taskParam.gParam.reversalProb(2) && sum(cp(block == currentBlock)) > 2 && isequal(condition, 'reversalPracticeNoiseInv2'))
                 reversal(i) = true;
                 allMeans = distMean(cp==true);
                 mean = allMeans(end-2);
+                %sum(cp(block == currentBlock))
+                %allMeans
             else
                 mean = round(rand(1).*359);
                 reversal(i) = false;
@@ -232,6 +243,7 @@ elseif isequal(condition, 'reversal')
          
       
         distMean(i) = mean;
+        
         
         
         outcome(i) = round(180+rad2deg(circ_vmrnd(deg2rad(mean-180), concentration, 1)));
@@ -270,4 +282,5 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block, block, fiel
     fieldNames.UP, UP, fieldNames.hit, hit,...
     fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date, {Date},... 
     'reversal', reversal);
+    outcome
 end

@@ -1,6 +1,6 @@
 % GenerateDataOnly
 
-updateManualVariables = true;
+updateManualVariables = false;
 condition = 'reversal';
 
 if ~updateManualVariables
@@ -20,7 +20,7 @@ practTrials = 20; % 20
 trials = 20; % 240
 controlTrials = 1; % 120 
 blockIndices = [1 60 120 180]; 
-vola = [.25 1 0]; 
+haz = [.25 1 0]; 
 oddballProb = [.25 0];
 reversalProb = [.5 .5];
 concentration = [10 12 99999999];  
@@ -43,7 +43,7 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block', 'initiationRTs',
     'UPMin', 'UPMin', 'hit', 'hit', 'perf', 'perf', 'accPerf', 'accPerf', 'date', 'date', 'driftConc', 'driftConc', 'reversalProb', 'reversalProb', 'taskType', 'taskType');
 taskParam = struct('fieldNames', fieldNames, 'gParam', gParam);
 condition = 'reversal';
-taskData = GenerateOutcomes(taskParam, vola(1), concentration(1), condition);
+taskData = GenerateOutcomes(taskParam, haz(1), concentration(1), condition);
 
 end
 % manually add behavior

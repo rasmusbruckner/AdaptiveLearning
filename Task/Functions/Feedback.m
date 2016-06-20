@@ -1,7 +1,6 @@
 function [txt, header] = Feedback(Data, taskParam, subject, condition)
 
 hits = sum(Data.hit == 1);
-
 rewTrials = sum(Data.actRew == 1);
 noRewTrials = sum(Data.actRew == 2);
 rewCatches = max(Data.accPerf)/taskParam.gParam.rewMag;
@@ -10,7 +9,7 @@ maxMon = (length(find(Data.shieldType == 1))...
     * taskParam.gParam.rewMag);
 
 %if taskParam.gParam.oddball
-if isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal')
+if isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal') || isequal(condition, 'reversalPractice') || isequal(condition, 'reversalPracticeNoise')
     header = 'Performance';
     if subject.rew == 1
         colRewCap = 'Blue';
@@ -20,7 +19,7 @@ if isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.tas
         colNoRewCap = 'Blue';
     end
     
-    if isequal(condition, 'practice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
+    if isequal(condition, 'practice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball') || isequal(condition, 'reversalPractice')
         wouldHave = ' would have ';
     else
         wouldHave = ' ';
@@ -31,6 +30,8 @@ if isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.tas
         'possible $ %.2f.'], colRewCap, rewCatches,...
         rewTrials, colNoRewCap, noRewCatches, noRewTrials,...
         wouldHave, max(Data.accPerf), maxMon);
+    %condition
+    
 else
     
     header = 'Leistung';
