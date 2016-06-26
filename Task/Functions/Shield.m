@@ -1,7 +1,6 @@
 function Shield(taskParam, allASS, pred, color)
+%SHIELD   Draws the shield in the cannon task
 
-% This function prints the shield in the cannon task
-% -------------------------------------------------------------------------
 
 %if taskParam.gParam.oddball == false
 if isequal(taskParam.gParam.taskType, 'dresden')
