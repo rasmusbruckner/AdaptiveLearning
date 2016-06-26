@@ -1,5 +1,5 @@
 function DrawOutcome(taskParam, outcome)
-%DRAWOUTCOME Prints the of the outcome spot
+%DRAWOUTCOME Prints the outcome spot
 
 xPredS = ((taskParam.circle.rotationRad-5)...
     * sin(outcome*taskParam.circle.unit));
