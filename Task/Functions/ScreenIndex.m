@@ -1,15 +1,13 @@
 function [screenIndex] = ScreenIndex(taskParam, screenIndex)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%SCREENINDEX   Tests whether the participant pressed a button to go 
+%forward
 
 [ keyIsDown, ~, keyCode ] = KbCheck;
     if keyIsDown
         if keyCode(taskParam.keys.enter)
             screenIndex = screenIndex + 1;
-            %break
         elseif keyCode(taskParam.keys.delete)
-            screenIndex = screenIndex - 1;
-            %break
+            screenIndex = screenIndex - 1;  
         end
     end
 end
