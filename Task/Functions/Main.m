@@ -1,11 +1,9 @@
 function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subject)
-
-% This function acutally runs the task. You can specify "main",
-% "practice" or "control". This loop is optimized for triggering accuracy.
-
-HideCursor;
-%% Events
-
+%MAIN   Runs the experimental part of the cannon task. You can specify
+%"main", "practice" or "control". This loop is optimized for triggering
+%accuracy
+%
+% Events
 % Trigger 1: Trial Onset
 % Trigger 2: Prediction/Fixation1 (500ms): Subject sees fixation cross
 % Trigger 3: Outcome (500ms): Subject sees outcome
@@ -14,16 +12,13 @@ HideCursor;
 % Trigger 6: Fixation3 (1000ms)
 % Trigger 7: Trial Summary
 % Jitter: 0-200ms
-
-%% Timestamps
-
+%
+% Timestamps
 % trial onset: with trial onset trigger
 % prediction: trigger
-
-
 % InitRT: first button press / mouse move
 
-%keyboard
+HideCursor;
 KbReleaseWait();
 
 ref = taskParam.gParam.ref;
@@ -35,11 +30,9 @@ else
 end
 Screen('TextSize', taskParam.gParam.window.onScreen, textSize);
 Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
-%ShowCursor('Arrow');
 
 if taskParam.unitTest
     
-    %keyboard
     if isequal(condition, 'oddball')
         taskData = load('unitTest_TestDataOddball');
         taskData = taskData.taskData;
@@ -58,15 +51,12 @@ if taskParam.unitTest
         taskData = load('unitTest_TestData');
         taskData = taskData.taskData;
         clear taskData.cBal taskData.rew
-        
         trial = taskParam.gParam.trials;
-                
-
         taskData.cBal = nan(trial,1);
         taskData.rew = nan(trial,1);
         taskData.initiationRTs = nan(trial,1);
         taskData.actJitter = nan(trial,1);
-
+        
         taskData.block = ones(trial,1);
         if isequal(condition, 'main')
             taskData.pred = taskData.predMain;
@@ -77,31 +67,29 @@ if taskParam.unitTest
             
         end
         
-        elseif isequal(condition, 'reversal')
+    elseif isequal(condition, 'reversal')
         
-            taskData = load('unitTest_TestDataReversal');
-            taskData = taskData.taskData;
-            %clear taskData.cBal taskData.rew
-            trial = taskParam.gParam.trials;
-            taskData.cBal = nan(trial,1);
-            taskData.rew = nan(trial,1);
-            taskData.initiationRTs = nan(trial,1);
-            taskData.actJitter = nan(trial,1);
-            taskData.block = ones(trial,1);
-            taskData.accPerf = nan(trial,1);
-            taskData.perf = zeros(trial,1);
-            taskData.gParam.taskType = 'reversal';
-            savedTickmark = taskData.savedTickmark;
+        taskData = load('unitTest_TestDataReversal');
+        taskData = taskData.taskData;
+        trial = taskParam.gParam.trials;
+        taskData.cBal = nan(trial,1);
+        taskData.rew = nan(trial,1);
+        taskData.initiationRTs = nan(trial,1);
+        taskData.actJitter = nan(trial,1);
+        taskData.block = ones(trial,1);
+        taskData.accPerf = nan(trial,1);
+        taskData.perf = zeros(trial,1);
+        taskData.gParam.taskType = 'reversal';
+        savedTickmark = taskData.savedTickmark;
     end
     
 elseif ~taskParam.unitTest
-    
     
     if isequal(condition, 'oddballPractice')
         
         taskData = load('OddballInvisible');
         taskData = taskData.taskData;
-        clear taskData.cBal taskData.rew %% should be checked at some point!!
+        clear taskData.cBal taskData.rew
         
         trial = taskParam.gParam.practTrials;
         taskData.cBal = nan(trial,1);
@@ -127,35 +115,37 @@ elseif ~taskParam.unitTest
         
     else
         
-        taskData = GenerateOutcomes(taskParam, haz, concentration, condition);
+        taskData = GenerateOutcomes...
+            (taskParam, haz, concentration, condition);
         trial = taskData.trial;
         savedTickmark(1) = 0;
-        %savedTickmark(2) = 0;
         savedTickmarkPrevious(1) = 0;
-        %savedTickmarkPrevious(2) = 0;
-
+        
     end
 end
 
-%savedTickmark(1) = 0;
 [inY,inX,buttons] = GetMouse(taskParam.gParam.window.onScreen);
-%inY=inY./prefs.mouseScale;
 
 for i=1:trial
     
-    if i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1|| i == taskParam.gParam.blockIndices(4) + 1
-        
-        
+    if i == taskParam.gParam.blockIndices(2) + 1 ...
+            || i == taskParam.gParam.blockIndices(3) + 1 ...
+            || i == taskParam.gParam.blockIndices(4) + 1
         
         while 1
-            if isequal(taskParam.gParam.taskType, 'oddball') ||  isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'chinese')
+            if isequal(taskParam.gParam.taskType, 'oddball') ...
+                    ||  isequal(taskParam.gParam.taskType, 'reversal')...
+                    || isequal(taskParam.gParam.taskType, 'chinese')
                 txt = 'Take a break!';
             else
                 txt = 'Kurze Pause!';
             end
-            DrawFormattedText(taskParam.gParam.window.onScreen, txt, 'center', 'center', [255 255 255]);
+            DrawFormattedText(taskParam.gParam.window.onScreen,...
+                txt, 'center', 'center', [255 255 255]);
             
-            DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center',taskParam.gParam.screensize(4)*0.9);
+            DrawFormattedText(taskParam.gParam.window.onScreen,...
+                taskParam.strings.txtPressEnter,'center',...
+                taskParam.gParam.screensize(4)*0.9);
             Screen('Flip', taskParam.gParam.window.onScreen);
             [~, ~, keyCode] = KbCheck;
             if find(keyCode) == taskParam.keys.enter
@@ -165,7 +155,7 @@ for i=1:trial
         end
         
     end
-    %keyboard
+    
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
     taskData.ID{i} = Subject.ID;
@@ -185,7 +175,10 @@ for i=1:trial
         taskData.actRew(i) = 1;
     end
     
-    if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1
+    if i == taskParam.gParam.blockIndices(1)...
+            || i == taskParam.gParam.blockIndices(2) + 1 ...
+            || i == taskParam.gParam.blockIndices(3) + 1 ...
+            || i == taskParam.gParam.blockIndices(4) + 1
         taskParam.circle.rotAngle =  taskParam.circle.initialRotAngle;
     end
     
@@ -193,7 +186,8 @@ for i=1:trial
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
     
-    taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
+    taskData.triggers(i,1) = SendTrigger...
+        (taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
     taskData.timestampOnset(i,:) = GetSecs - ref;
     
     if ~taskParam.unitTest
@@ -205,7 +199,11 @@ for i=1:trial
                 DrawCross(taskParam)
                 PredictionSpot(taskParam)
                 
-                if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
+                if i ~= taskParam.gParam.blockIndices(1)...
+                        && i ~= taskParam.gParam.blockIndices(2) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(3) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(4) + 1
+                    
                     TickMark(taskParam, taskData.outcome(i-1), 'outc')
                     TickMark(taskParam, taskData.pred(i-1), 'pred')
                     if isequal(taskParam.gParam.taskType, 'reversal')
@@ -214,7 +212,10 @@ for i=1:trial
                     
                 end
                 
-                if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
+                if (taskData.catchTrial(i) == 1 ...
+                        && isequal(taskParam.gParam.taskType, 'dresden'))...
+                        || isequal(condition,'followCannon')...
+                        || isequal(condition,'followCannonPractice')
                     Cannon(taskParam, taskData.distMean(i))
                     Aim(taskParam, taskData.distMean(i))
                 elseif isequal(taskParam.gParam.taskType, 'reversal')
@@ -224,47 +225,64 @@ for i=1:trial
                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
                 t = GetSecs;
                 
-                Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
-                
-                % taskData.triggers(i,1) = SendTrigger(taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
+                Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
                 
                 taskData.timestampOnset(i,:) = GetSecs - ref;
                 
                 %% get initiation RT
-                
                 [ keyIsDown, ~, keyCode ] = KbCheck;
                 
                 if keyIsDown && isnan(taskData.initiationRTs(i,:)); % initationRTs is nan before first button press: save time of button press. thereafter variable is not nan anymore and not resaved.
-                    if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
-                        taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;
+                    if keyCode(taskParam.keys.rightKey)...
+                            || keyCode(taskParam.keys.leftKey)...
+                            || keyCode(taskParam.keys.rightSlowKey)...
+                            || keyCode(taskParam.keys.leftSlowKey)...
+                            || keyCode(taskParam.keys.space)
+                        taskData.initiationRTs(i,:) =...
+                            GetSecs() - initRT_Timestamp;
                     end
                 elseif keyIsDown
                     if keyCode(taskParam.keys.rightKey)
-                        if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                            taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; %0.02
+                        if taskParam.circle.rotAngle <...
+                                360*taskParam.circle.unit
+                            taskParam.circle.rotAngle =...
+                                taskParam.circle.rotAngle...
+                                + 0.75*taskParam.circle.unit;
                         else
                             taskParam.circle.rotAngle = 0;
                         end
                     elseif keyCode(taskParam.keys.rightSlowKey)
-                        if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                            taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
+                        if taskParam.circle.rotAngle <...
+                                360*taskParam.circle.unit
+                            taskParam.circle.rotAngle =...
+                                taskParam.circle.rotAngle +...
+                                0.1*taskParam.circle.unit;
                         else
                             taskParam.circle.rotAngle = 0;
                         end
                     elseif keyCode(taskParam.keys.leftKey)
-                        if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                            taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
+                        if taskParam.circle.rotAngle >...
+                                0*taskParam.circle.unit
+                            taskParam.circle.rotAngle =...
+                                taskParam.circle.rotAngle -...
+                                0.75*taskParam.circle.unit;
                         else
-                            taskParam.circle.rotAngle = 360*taskParam.circle.unit;
+                            taskParam.circle.rotAngle =...
+                                360*taskParam.circle.unit;
                         end
                     elseif keyCode(taskParam.keys.leftSlowKey)
-                        if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                            taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
+                        if taskParam.circle.rotAngle >...
+                                0*taskParam.circle.unit
+                            taskParam.circle.rotAngle =...
+                                taskParam.circle.rotAngle -...
+                                0.1*taskParam.circle.unit;
                         else
-                            taskParam.circle.rotAngle = 360*taskParam.circle.unit;
+                            taskParam.circle.rotAngle =...
+                                360*taskParam.circle.unit;
                         end
                     elseif keyCode(taskParam.keys.space)
-                        taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
+                        taskData.pred(i) = (taskParam.circle.rotAngle /...
+                            taskParam.circle.unit);
                         
                         time = GetSecs;
                         
@@ -273,27 +291,28 @@ for i=1:trial
                     end
                 end
                 
-                
             end
         else
             
             SetMouse(720, 450, taskParam.gParam.window.onScreen)
             press = 0;
             while 1
-                [x,y,buttons,focus,valuators,valinfo] = GetMouse(taskParam.gParam.window.onScreen);
+                [x,y,buttons,focus,valuators,valinfo] =...
+                    GetMouse(taskParam.gParam.window.onScreen);
                 
                 
                 x = x-720;
                 y = (y-450)*-1 ;
                 
-                currentDegree = mod( atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
-                if currentDegree > 360 %&& currentDegree < 90
+                currentDegree = ...
+                    mod( atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
+                if currentDegree > 360
                     degree = currentDegree - 360;
                 else
                     degree = currentDegree;
                 end
-
-                taskParam.circle.rotAngle = degree * taskParam.circle.unit;%rad2deg(angle);
+                
+                taskParam.circle.rotAngle = degree * taskParam.circle.unit;
                 
                 DrawCircle(taskParam)
                 DrawCross(taskParam)
@@ -307,91 +326,74 @@ for i=1:trial
                     PredictionSpot(taskParam)
                 end
                 
-               %keyboard 
-               if buttons(2) == 1 && i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
+                if buttons(2) == 1 && i ~=...
+                        taskParam.gParam.blockIndices(1)...
+                        && i ~= taskParam.gParam.blockIndices(2) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(3) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(4) + 1
                     
-                    savedTickmark(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
+                    savedTickmark(i) =...
+                        ((taskParam.circle.rotAngle)/taskParam.circle.unit);
                     WaitSecs(0.2);
                     press = 1;
-                    %keyboard
-               elseif i > 1 && press == 0
-                   %keyboard
-                   savedTickmarkPrevious(i) = savedTickmarkPrevious(i - 1);
-                   savedTickmark(i) = savedTickmark(i - 1);
-               elseif i == 1
-                   savedTickmarPrevious(i) = 0;
-                   %savedTickmark(i) = 0;
-               end
-               
-               if press == 1
-                  savedTickmarkPrevious(i) = savedTickmark(i-1);  
-               end
-              % press
-               %savedTickmarkPrevious
-               %savedTickmark 
-               %savedTickmark
-               if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
-                   %keyboard 
-                   
-                   TickMark(taskParam, taskData.outcome(i-1), 'outc');
-                   TickMark(taskParam, taskData.pred(i-1), 'pred');
+                    
+                elseif i > 1 && press == 0
+                    savedTickmarkPrevious(i) = savedTickmarkPrevious(i - 1);
+                    savedTickmark(i) = savedTickmark(i - 1);
+                elseif i == 1
+                    savedTickmarPrevious(i) = 0;
+                end
+                
+                if press == 1
+                    savedTickmarkPrevious(i) = savedTickmark(i-1);
+                end
+                
+                if i ~= taskParam.gParam.blockIndices(1)...
+                        && i ~= taskParam.gParam.blockIndices(2) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(3) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(4) + 1
+                    
+                    TickMark(taskParam, taskData.outcome(i-1), 'outc');
+                    TickMark(taskParam, taskData.pred(i-1), 'pred');
                     if press == 1
-                        TickMark(taskParam, savedTickmarkPrevious(i), 'update');
+                        TickMark(taskParam, savedTickmarkPrevious(i),...
+                            'update');
                     end
                     TickMark(taskParam, savedTickmark(i), 'saved');
-                    %keyboard
                     
-                end 
-               Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-               t = GetSecs;
+                end
+                Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+                t = GetSecs;
                 
-               Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+                Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
                 
-                
-                %if buttons(2) == 1
-                 %   savedTickmark = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
-                    
                 if buttons(1) == 1
-                    taskData.pred(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
+                    taskData.pred(i) =...
+                        ((taskParam.circle.rotAngle) / taskParam.circle.unit);
                     taskData.pred(i);
                     
                     time = GetSecs;
-%                     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-%                     t = GetSecs;
-%                 
-%                     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
-                
-                    %keyboard
+                    
                     break
                     
                 end
                 
-                
-%                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-%                 t = GetSecs;
-%                 
-%                 Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
-%                 
-                
-                %keyboard
             end
             
         end
         
-        
-        
-        
     else
         
-        % taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
-        % 57.2958 = 1 / (2*pi/360)
-        taskParam.circle.rotAngle = taskData.pred(i) * taskParam.circle.unit;
-        % 1 = 57.2958 * (2*pi/360)
+        taskParam.circle.rotAngle = ...
+            taskData.pred(i) * taskParam.circle.unit;
         DrawCircle(taskParam)
         DrawCross(taskParam)
         PredictionSpot(taskParam)
         
-        if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1
+        if i ~= taskParam.gParam.blockIndices(1) && i ~=...
+                taskParam.gParam.blockIndices(2) + 1 && i ~=...
+                taskParam.gParam.blockIndices(3) + 1 && i ~=...
+                taskParam.gParam.blockIndices(4) + 1
             TickMark(taskParam, taskData.outcome(i-1), 'outc')
             TickMark(taskParam, taskData.pred(i-1), 'pred')
             if isequal(taskData.gParam.taskType, 'reversal')
@@ -399,14 +401,17 @@ for i=1:trial
             end
         end
         
-        if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') %|| isequal(condition,'mainPractice')
+        if (taskData.catchTrial(i) == 1 ...
+                && isequal(taskParam.gParam.taskType, 'dresden')) ...
+                || isequal(condition,'followCannon') ...
+                || isequal(condition,'followCannonPractice')
             Cannon(taskParam, taskData.distMean(i))
             Aim(taskParam, taskData.distMean(i))
         end
         Screen('DrawingFinished', taskParam.gParam.window.onScreen);
         t = GetSecs;
         
-        Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);% taskData.actJitter(i)); %% Inter trial jitter.
+        Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
         taskData.timestampOnset(i,:) = GetSecs - ref;
         
         
@@ -414,18 +419,19 @@ for i=1:trial
         
         time = GetSecs;
     end
-    %keyboard
     t = GetSecs;
     
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i) Beampos(i)] = Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
-    taskData.triggers(i,2) = SendTrigger(taskParam, taskData, condition, haz, i, 2); % this is the prediction / fixation 1 trigger
+    [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i)...
+        Beampos(i)] =...
+        Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
+    taskData.triggers(i,2) = ...
+        SendTrigger(taskParam, taskData, condition, haz, i, 2);
     taskData.timestampPrediction(i,:) = GetSecs - ref;
     
     RT_Flip(i) = GetSecs-time;
-    
     
     taskData.predErr(i) = Diff(taskData.outcome(i), taskData.pred(i));
     
@@ -436,24 +442,36 @@ for i=1:trial
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'followCannon') || isequal(condition, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal')
+    if isequal(condition,'main')...
+            || isequal(condition,'mainPractice')...
+            || isequal(condition, 'followCannon')...
+            || isequal(condition, 'oddball')...
+            || isequal(taskParam.gParam.taskType, 'reversal')
         taskData.memErr(i) = 999;
         taskData.memErrNorm(i) = 999;
         taskData.memErrPlus(i) = 999;
         taskData.memErrMin(i) = 999;
     else
         if i > 1
-            taskData.memErr(i) = Diff(taskData.pred(i), taskData.outcome(i-1));
+            taskData.memErr(i) = Diff(taskData.pred(i),...
+                taskData.outcome(i-1));
         else
             taskData.memErr(i) = 999;
         end
     end
     
-    if isequal(condition,'main') || isequal(condition,'mainPractice') || isequal(condition, 'oddballPractice') || isequal(condition, 'oddball') || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice') || isequal(condition,'reversal')
+    if isequal(condition,'main')...
+            || isequal(condition,'mainPractice')...
+            || isequal(condition, 'oddballPractice')...
+            || isequal(condition, 'oddball')...
+            || isequal(condition,'followCannon')...
+            || isequal(condition,'followCannonPractice')...
+            || isequal(condition,'reversal')
         if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
             taskData.hit(i) = 1;
         end
-    elseif isequal(condition,'followOutcome') || isequal(condition,'followOutcomePractice')
+    elseif isequal(condition,'followOutcome')...
+            || isequal(condition,'followOutcomePractice')
         if taskData.memErr(i) <= 5
             taskData.hit(i) = 1;
         end
@@ -462,60 +480,55 @@ for i=1:trial
     if taskData.actRew(i) == 1 && taskData.hit(i) == 1
         taskData.perf(i) = taskParam.gParam.rewMag;
     end
-    %keyboard
-    taskData.accPerf(i) = sum(taskData.perf);% + taskData.perf(i);
+    
+    taskData.accPerf(i) = sum(taskData.perf);
     
     if i > 1
         taskData.UP(i) = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
-    taskData.triggers(i,3) = SendTrigger(taskParam, taskData, condition, haz, i, 3); % this is the PE
-    %keyboard
+    taskData.triggers(i,3) = ...
+        SendTrigger(taskParam, taskData, condition, haz, i, 3);
+    
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
-    taskData.triggers(i,4) = SendTrigger(taskParam, taskData, condition, haz, i, 4); % this is the 2nd fixation
+    taskData.triggers(i,4) = ...
+        SendTrigger(taskParam, taskData, condition, haz, i, 4);
     
-    %taskData.pred(i) = 90;
     DrawCircle(taskParam)
-    Shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
+    Shield(taskParam, taskData.allASS(i),...
+        taskData.pred(i), taskData.shieldType(i))
     
     DrawOutcome(taskParam, taskData.outcome(i))
     
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);
-    taskData.triggers(i,5) = SendTrigger(taskParam, taskData, condition, haz, i, 5); % this is the shield trigger
-    %keyboard
+    taskData.triggers(i,5) = ...
+        SendTrigger(taskParam, taskData, condition, haz, i, 5);
     WaitSecs(.5);
     
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
-    taskData.triggers(i,6) = SendTrigger(taskParam, taskData, condition, haz, i, 6); % this is fixation 3
+    taskData.triggers(i,6) = ...
+        SendTrigger(taskParam, taskData, condition, haz, i, 6);             % this is fixation 3
     
     WaitSecs(.5);
-    taskData.triggers(i,7) = SendTrigger(taskParam, taskData, condition, haz, i, 16); % this is the trial summary trigger
+    taskData.triggers(i,7) = ...
+        SendTrigger(taskParam, taskData, condition, haz, i, 16);            % this is the trial summary trigger
     
     WaitSecs(.5);
     taskData.timestampOffset(i,:) = GetSecs - ref;
 end
 
-% hits = sum(taskData.hit == 1);
-% goldBall = sum(taskData.shieldType == 1);
-% goldHit = taskData.accPerf(end)/taskParam.gParam.rewMag;
-% silverBall = sum(taskData.shieldType == 0);
-% silverHit = hits - goldHit;
-% maxMon = (length(find(taskData.shieldType == 1))...
-%     * taskParam.gParam.rewMag);
-%if taskParam.gParam.oddball == false
 if isequal(taskParam.gParam.taskType, 'dresden')
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
     
-    %elseif taskParam.gParam.oddball == true
 elseif isequal(taskParam.gParam.taskType, 'oddball')
     
     header = 'Performance';
@@ -532,77 +545,48 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
 elseif isequal(taskParam.gParam.taskType, 'reversal')
     header = 'Performance';
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
-
+    
 end
 
 feedback = true;
-[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter,...
+    header, txt, feedback);
 
 KbReleaseWait();
 
 haz = repmat(haz, length(taskData.trial),1);
 concentration = repmat(concentration, length(taskData.trial),1);
-oddballProb = repmat(taskParam.gParam.oddballProb(1), length(taskData.trial),1);
-driftConc = repmat(taskParam.gParam.driftConc(1), length(taskData.trial),1);
+oddballProb = repmat(taskParam.gParam.oddballProb(1),...
+    length(taskData.trial),1);
+driftConc = repmat(taskParam.gParam.driftConc(1),...
+    length(taskData.trial),1);
 
-%keyboard
 
-%fieldNames = taskParam.fieldNames;
 Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     'initiationRTs', taskData.initiationRTs, 'timestampOnset',...
     taskData.timestampOnset,'timestampPrediction',...
-    taskData.timestampPrediction,'timestampOffset', taskData.timestampOffset,...
-    'allASS', taskData.allASS, 'driftConc', driftConc,'oddballProb',...
-    oddballProb, 'oddBall', taskData.oddBall, 'ID', {taskData.ID}, 'age',...
-    taskData.age, 'rew', {taskData.rew}, 'actRew', taskData.actRew,...
-    'sex', {taskData.sex}, 'cond', {taskData.cond}, 'cBal',...
-    {taskData.cBal}, 'trial', taskData.trial, 'haz', haz, 'concentration', concentration,...
-    'outcome', taskData.outcome, 'distMean', taskData.distMean, 'cp',...
-    taskData.cp, 'reversal', taskData.reversal, 'savedTickmark', savedTickmark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
-    'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers, 'pred', taskData.pred,...
-    'predErr', taskData.predErr, 'memErr', taskData.memErr, 'UP',...
-    taskData.UP, 'hit', taskData.hit, 'perf', taskData.perf, 'accPerf',...
-    taskData.accPerf, 'Date', {taskData.Date});
-
-% predT
-% outT
-% triggers
-
-
-%% in OutputTest
-
-% block?
-% timestampOnset
-% timestampPrediction
-% timestampOffset
-% allASS
-% driftConc
-% oddballProb
-% oddball
-% cond
-% trial
-% haz
-% concentration
-% outcome
-% distMean
-% cp
-% catchTrial
-% welche trigger?
-% pred
-% predErr
-% memErr
-% UP
-% hit
-% perf
-% accPerf
-
-
+    taskData.timestampPrediction,'timestampOffset',...
+    taskData.timestampOffset, 'allASS', taskData.allASS, 'driftConc',...
+    driftConc,'oddballProb',oddballProb, 'oddBall', taskData.oddBall,...
+    'ID', {taskData.ID}, 'age',taskData.age, 'rew', {taskData.rew},...
+    'actRew', taskData.actRew,'sex', {taskData.sex}, 'cond',...
+    {taskData.cond}, 'cBal',{taskData.cBal}, 'trial', taskData.trial,...
+    'haz', haz, 'concentration', concentration,'outcome',...
+    taskData.outcome, 'distMean', taskData.distMean, 'cp',...
+    taskData.cp, 'reversal', taskData.reversal, 'savedTickmark',...
+    savedTickmark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
+    'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers,...
+    'pred', taskData.pred,'predErr', taskData.predErr, 'memErr',...
+    taskData.memErr, 'UP',taskData.UP, 'hit', taskData.hit, 'perf',....
+    taskData.perf, 'accPerf',taskData.accPerf, 'Date', {taskData.Date});
 
 Data = catstruct(Subject, Data);
 
-if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'main')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball')) || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))
+if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome'))...
+        || (taskParam.gParam.askSubjInfo && isequal(condition, 'main'))...
+        || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball'))...
+        || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))
     
-    %if taskParam.gParam.oddball == false
     if isequal(taskParam.gParam.taskType, 'dresden')
         if Subject.rew == 1
             rewName = 'G';
@@ -618,7 +602,8 @@ if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome')) || (tas
     end
     
     if ~taskParam.unitTest
-        savename = sprintf('Drugstudy_%s_%s_session%s_%s', rewName, Subject.ID, Subject.session, condition);
+        savename = sprintf('Drugstudy_%s_%s_session%s_%s',...
+            rewName, Subject.ID, Subject.session, condition);
         save(savename, 'Data')
     end
 end
