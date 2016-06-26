@@ -1,6 +1,5 @@
-function VolaIndication(taskParam, txtNoise, txtPressEnter)
-% This function tells the participant whether he is in a high or low
-% volatility environment.
+function conditionIndication(taskParam, txtNoise, txtPressEnter)
+%CONDITIONINDICATION displays the current task condition
 
 DrawFormattedText(taskParam.gParam.window, txtNoise, 'center','center',...
     [255 255 255]);
