@@ -29,6 +29,7 @@ elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
     trials = taskParam.gParam.practTrials;
     
 elseif isequal(condition, 'reversalPracticeNoiseInv')
+    
     practData.outcome = [170 190 195 320];
     practData.distMean = [187 187 187 290];
     practData.shieldType = [1 0 0 1];

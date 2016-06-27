@@ -93,7 +93,7 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
 elseif isequal(taskParam.gParam.taskType, 'reversal')
     
     SharedInstructions_MainOddballFollowCannon
-    reversalPractice
+    %reversalPractice
     
 end
 
@@ -1401,7 +1401,7 @@ end
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     if fw == 1
-                        screenIndex = screenIndex + 8; % 1
+                        screenIndex = screenIndex + 1; % 1
                     end
                     WaitSecs(0.1);
                     
@@ -1576,7 +1576,7 @@ end
                     tickInstruction.savedTickmark = nan;
                     tickInstruction.previousOutcome = nan;
                     tickInstruction.previousPrediction = nan;
-                    [taskParam, fw, bw, Data, savedTickmark] =...
+                    [taskParam, fw, Data, savedTickmark] =...
                         InstrLoopTxt(taskParam,...
                         txt, cannon, 'space', distMean, tickInstruction);
                     LineAndBack(taskParam)
@@ -1738,7 +1738,7 @@ end
                         tickInstructions.previousOutcome = outcome;
                         tickInstructions.previousPrediction =...
                             practData.pred(end);
-                        [taskParam, fw, bw, Data, savedTickmark] =...
+                        [taskParam, fw, Data, savedTickmark] =...
                             InstrLoopTxt(taskParam,...
                             txt, cannon, 'space', distMean,...
                             tickInstructions);
@@ -1838,7 +1838,7 @@ end
                     end
                     WaitSecs(0.1);
                    
-                    break
+                    %break
                     
                 case 9
                     
@@ -2627,6 +2627,7 @@ end
         distMean = 0;
         outcome = 0;
         tickInstruction.savedTickmark = nan;
+        tickInstruction.previousOutcome = nan;
         DrawFormattedText(taskParam.gParam.window.onScreen,...
             taskParam.strings.txtPressEnter,'center',...
             taskParam.gParam.screensize(4)*0.9);
@@ -2653,8 +2654,10 @@ end
         
         Data.tickMark = true;
         Data.distMean = distMean;
-        [taskParam, fw, ~, Data] = InstrLoopTxt(taskParam,...
-            txt, cannon, 'space', distMean, Data);
+        tickInstruction.savedTickmark = nan;
+        tickInstruction.previousOutcome = nan;
+        [taskParam, fw, Data, savedTickmark] = InstrLoopTxt(taskParam,...
+            txt, cannon, 'space', distMean, tickInstruction, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
         end
@@ -2799,8 +2802,10 @@ end
         
         outcome = distMean;
         Data.tickMark = true;
+        tickInstruction.savedTickmark = nan;
+        tickInstruction.previousOutcome = nan;
         [taskParam, fw, Data] = InstrLoopTxt(taskParam, txt,...
-            cannon, 'space', distMean, Data);
+            cannon, 'space', distMean, tickInstruction, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
         end
@@ -3083,8 +3088,10 @@ end
         end
         distMean = 290;
         outcome = 290;
+        tickInstruction.savedTickmark = nan;
+        tickInstruction.previousOutcome = nan;
         [taskParam, fw, Data] = InstrLoopTxt(taskParam,...
-            txt, cannon, 'space', distMean);
+            txt, cannon, 'space', distMean, tickInstruction);
         
         if fw == 1
             

@@ -92,7 +92,7 @@ elseif strcmp(taskType, 'oddball')
     
 elseif strcmp(taskType, 'reversal')
     
-    trials = 20;
+    trials = 2;
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball = nan;
@@ -103,7 +103,7 @@ elseif strcmp(taskType, 'chinese')
 end
 
 % version independent parameters
-runIntro = true;
+runIntro = false;
 askSubjInfo = true;
 sendTrigger = false;
 randomize = true;
@@ -1053,8 +1053,10 @@ Screen('CloseAll');
             time = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, time + 0.1);
             
-            [ ~, ~, keyCode ] = KbCheck;
-            if find(keyCode) == taskParam.keys.s && ~taskParam.unitTest
+            [ ~, ~, keyCode] = KbCheck;
+            
+            
+            if find(keyCode) == taskParam.keys.s & ~taskParam.unitTest
                 break
             elseif taskParam.unitTest
                 WaitSecs(1);

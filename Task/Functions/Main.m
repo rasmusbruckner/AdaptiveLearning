@@ -549,7 +549,7 @@ elseif isequal(taskParam.gParam.taskType, 'reversal')
 end
 
 feedback = true;
-[fw, bw] = BigScreen(taskParam, taskParam.strings.txtPressEnter,...
+fw = BigScreen(taskParam, taskParam.strings.txtPressEnter,...
     header, txt, feedback);
 
 KbReleaseWait();
