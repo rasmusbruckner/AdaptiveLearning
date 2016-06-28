@@ -70,6 +70,8 @@ timestampOnset = nan(trials,1);
 timestampPrediction = nan(trials,1);
 timestampOffset = nan(trials, 1);
 initiationRT = nan(trials,1);
+RT = nan(trials,1);
+initialTendency = nan(trials,1);
 block = nan(trials,1);
 actJitter = nan(trials,1);
 a = clock;
@@ -324,5 +326,6 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     fieldNames.pred, pred, fieldNames.predErr, predErr,...
     fieldNames.memErr, memErr, fieldNames.UP, UP, fieldNames.hit, hit,...
     fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date,...
-    {Date},'reversal', reversal);
+    {Date},'reversal', reversal, 'initialTendency', initialTendency,...
+    'RT', RT);
 end

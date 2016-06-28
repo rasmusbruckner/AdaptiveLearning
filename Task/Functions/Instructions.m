@@ -1408,7 +1408,8 @@ end
                 case 2
                     
                     condition = 'reversalPractice';
-                    LoadData = 'None';
+                    LoadData = 'reversalVisibleNoNoise';
+                    
                     
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
@@ -1460,12 +1461,7 @@ end
                             'is still to place the shield in the '...
                             'location where the cannon is aimed. If '...
                             'the cannon reaims its position, it will '...
-                            'still go back to its previous aim.\n\nTo '...
-                            'help you remeber the previous aim of the '...
-                            'cannon you can place a tickmark at the '...
-                            'position where you think the cannon aimed '...
-                            'previously.\n\nPress Enter to see an '...
-                            'example of this.'];
+                            'still go back to its previous aim.'];
                         
                         
                         %end
@@ -1485,7 +1481,7 @@ end
                 case 4
                     
                     condition = 'reversalPracticeNoise';
-                    LoadData = 'None';
+                    LoadData = 'reversalVisibleNoise';
                     
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
@@ -1576,6 +1572,7 @@ end
                     tickInstruction.savedTickmark = nan;
                     tickInstruction.previousOutcome = nan;
                     tickInstruction.previousPrediction = nan;
+                    cannon = true;
                     [taskParam, fw, Data, savedTickmark] =...
                         InstrLoopTxt(taskParam,...
                         txt, cannon, 'space', distMean, tickInstruction);
@@ -1598,12 +1595,8 @@ end
                                 'will be the best way to earn money. '...
                                 'Now try again. '];
                         elseif isnan(Data.tickCannonDev)
-                            txt = ['In that block your shield was not '...
-                                'always placed where the cannon was '...
-                                'aiming. Remember: Placing your '...
-                                'shield where the cannon is aimed '...
-                                'will be the best way to earn money. '...
-                                'Now try again.'];
+                            txt = ['In this case you did not save your '...
+                                'tickmark. Try again!'];
                         end
                         
                         feedback = false;
@@ -1742,7 +1735,9 @@ end
                             InstrLoopTxt(taskParam,...
                             txt, cannon, 'space', distMean,...
                             tickInstructions);
-                                                
+                        
+                        tickDev = tickInstructions.savedTickmark - Data.pred;
+                        
                         DrawCross(taskParam);
                         LineAndBack(taskParam)
                         DrawCross(taskParam)
@@ -1763,7 +1758,7 @@ end
                             taskParam.gParam.window.onScreen, 1);
                         Screen('Flip', taskParam.gParam.window.onScreen,...
                             t + 3.1, 1);
-                        WaitSecs(1);
+                        WaitSecs(0.5);
                         
                         DrawCross(taskParam);
                         LineAndBack(taskParam)
@@ -1793,6 +1788,7 @@ end
                     
                 case 7
                     
+                    if tickDev <= 10
                     header = '';
                     txt = ['Well done! In this block you can practice '...
                         'the task with an invisible cannon. Keep in '...
@@ -1801,7 +1797,7 @@ end
                         'to mark the previous aim of the cannon.'];
                     
                     
-                    %end
+           
                     feedback = false;
                     fw = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,...
@@ -1811,6 +1807,25 @@ end
                     elseif bw == 1
                         screenIndex = screenIndex - 2;
                     end
+                    else
+                       
+                              header = 'Try again!';
+                    txt = ['In this case you did not use the information '...
+                        'of the tickmark for your current prediction. '...
+                        'Keep in mind to use the tickmark '...
+                        'this time!.'];
+                    
+                    
+           
+                    feedback = false;
+                    fw = BigScreen(taskParam,...
+                        taskParam.strings.txtPressEnter, header, txt,...
+                        feedback);
+                    if fw == 1
+                        screenIndex = screenIndex - 1;
+                    
+                    end
+                    end
                     
                     
                     WaitSecs(0.1);
@@ -1818,13 +1833,15 @@ end
                 case 8
                     
                     condition = 'reversalPracticeNoiseInv2';
-                    LoadData = 'None';
+                    LoadData = 'reversalNotVisibleNoise';
                     cannon = false;
-                    
+                    savedTickmark = nan;
+                    reversalPackage = struct('savedTickmark',...
+                            savedTickmark);
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
-                        cannon, condition, LoadData);
+                        cannon, condition, LoadData, reversalPackage);
                     
                     [txt, header] = Feedback(practData,...
                         taskParam, subject, condition);
@@ -1833,6 +1850,8 @@ end
                         taskParam.strings.txtPressEnter,...
                         header, txt,feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
+                    
+                    
                     if fw == 1   
                         screenIndex = screenIndex + 1;
                     end
@@ -1841,6 +1860,27 @@ end
                     %break
                     
                 case 9
+                    
+                    if isnan(practData.savedTickmark)
+                        
+                        header = 'Try it again!';
+                        txt = ['In that block you have never used '...
+                            'your tickmark. Remember: Placing '...
+                            'your tickmark where the cannon was '...
+                            'previously aimed will be the '...
+                            'best way to earn money. Now try again.' ];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header,txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex - 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                        
+                    else
                     
                     header = 'Fourth Practice';
                     txt = ['Now comes the last practice block. In this '...
@@ -1868,6 +1908,7 @@ end
                     
                     
                     WaitSecs(0.1);
+                    end
                     
                 case 10
                     
@@ -2819,7 +2860,7 @@ end
         outcome = Data.outcome;
         background = true;
         Cannonball(taskParam, distMean, outcome, background)
-        Data.predErr
+        
         if abs(Data.predErr) <= 9
             while 1
                 if isequal(taskParam.gParam.taskType, 'dresden')

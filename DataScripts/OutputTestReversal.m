@@ -40,18 +40,18 @@ classdef OutputTestReversal < matlab.unittest.TestCase
     % we use base2dec and add 100 to obtain trigger codes between 100 and
     % 115.
     %
-    % 0 0 0 0 -> noCP, noReversal, noCatch, noReward -> 100
-    % 0 0 0 1 -> noCP, noReversal, noCatch, Reward ->  101
-    % 0 0 1 0 -> noCP, noReversal, Catch, noReward -> 102
-    % 0 0 1 1 -> noCP, noReversal, Catch, Reward -> 103
-    % 1 0 0 0 -> CP, noReversal, noCatch, noReward -> 108
-    % 1 0 0 1 -> CP, noReversal, noCatch, Reward -> 109
-    % 1 0 1 0 -> CP, noReveral, Catch, noReward -> 110
-    % 1 0 1 1 -> CP, noReversal, Catch, Reward -> 111
-    % 1 1 0 0 -> CP, Reversal, noCatch, noReward -> 112
-    % 1 1 0 1 -> CP, Reversal, noCatch, Reward -> 113
-    % 1 1 1 0 -> CP, Reversal, Catch, noReward -> 114
-    % 1 1 1 1 -> CP, Reversal, Catch, Reward -> 115
+    % 0 0 0 0 -> noCP,  noReversal, noCatch, noReward -> 100
+    % 0 0 0 1 -> noCP,  noReversal, noCatch, Reward ->  101
+    % 0 0 1 0 -> noCP,  noReversal, Catch,   noReward -> 102
+    % 0 0 1 1 -> noCP,  noReversal, Catch,   Reward -> 103
+    % 1 0 0 0 -> CP,    noReversal, noCatch, noReward -> 108
+    % 1 0 0 1 -> CP,    noReversal, noCatch, Reward -> 109
+    % 1 0 1 0 -> CP,    noReversal, Catch,   noReward -> 110
+    % 1 0 1 1 -> CP,    noReversal, Catch,   Reward -> 111
+    % 1 1 0 0 -> CP,    Reversal,   noCatch, noReward -> 112
+    % 1 1 0 1 -> CP,    Reversal,   noCatch, Reward -> 113
+    % 1 1 1 0 -> CP,    Reversal,   Catch,   noReward -> 114
+    % 1 1 1 1 -> CP,    Reversal,   Catch,   Reward -> 115
     
     
     % 0 1 0 0 -> CP, CP, noCatch, noReward -> 104

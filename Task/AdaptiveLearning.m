@@ -52,8 +52,8 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine; if you have internet!
-computer = identifyPC;
-%computer = 'Macbook';
+%computer = identifyPC;
+computer = 'Macbook';
 
 % Choose task type:
 %   - 'oddball'
@@ -65,12 +65,12 @@ taskType = 'reversal';
 % version specific parameters
 if strcmp(taskType, 'dresden')
     
-    trials = 2; % 240
-    controlTrials = 1; % 120
-    concentration = [12 12 99999999];
-    DataFollowOutcome = nan;
-    DataFollowCannon = nan;
-    textSize = 19;
+    trials              = 2; % 240
+    controlTrials       = 1; % 120
+    concentration       = [12 12 99999999];
+    DataFollowOutcome   = nan;
+    DataFollowCannon    = nan;
+    textSize            = 19;
     
     % Check number of trials in each condition
     if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials >...
@@ -82,43 +82,43 @@ if strcmp(taskType, 'dresden')
 elseif strcmp(taskType, 'oddball')
     
     % trials first session
-    trialsS1 = 2; % 40
+    trialsS1      = 2; % 40
     % trials second session
-    trialsS2S3 = 2; % 240
+    trialsS2S3    = 2; % 240
     controlTrials = nan;
     concentration = [10 12 99999999];
-    DataOddball = nan;
-    textSize = 30;
+    DataOddball   = nan;
+    textSize      = 30;
     
 elseif strcmp(taskType, 'reversal')
     
-    trials = 2;
-    controlTrials = nan;
-    concentration = [10 12 99999999];
-    DataOddball = nan;
-    textSize = 19;
+    trials          = 6;
+    controlTrials   = nan;
+    concentration   = [10 12 99999999];
+    DataOddball     = nan;
+    textSize        = 19;
     
 elseif strcmp(taskType, 'chinese')
     
 end
 
 % version independent parameters
-runIntro = false;
-askSubjInfo = true;
-sendTrigger = false;
-randomize = true;
-shieldTrials = 1; % 4
-practTrials = 2; % 20
-blockIndices = [1 60 120 180];
-haz = [.25 1 0];
-oddballProb = [.25 0];
-reversalProb = [.5 1];
-driftConc = [30 99999999];
-safe = [3 0];
-rewMag = 0.1;
-jitter = 0.2;
-practiceTrialCriterion = 10;
-debug = false;
+runIntro                = false;
+askSubjInfo             = true;
+sendTrigger             = false;
+randomize               = true;
+shieldTrials            = 2; % 4
+practTrials             = 2; % 20
+blockIndices            = [1 60 120 180];
+haz                     = [.25 1 0];
+oddballProb             = [.25 0];
+reversalProb            = [.5 1];
+driftConc               = [30 99999999];
+safe                    = [3 0];
+rewMag                  = 0.1;
+jitter                  = 0.2;
+practiceTrialCriterion  = 10;
+debug                   = false;
 
 % savedirectory
 if isequal(computer, 'Macbook')
@@ -202,7 +202,7 @@ elseif askSubjInfo == true
         subjInfo{6} = date;
     end
     
-    if numel(subjInfo{1}) < 5....
+    if numel(subjInfo{1}) < 5 ...
         || numel(subjInfo{1}) > 5
         msgbox('ID: must consist of five numbers!');
         return
@@ -348,11 +348,11 @@ zero = screensizePart / 2;
 [window.onScreen, windowRect, textures] = OpenWindow;
 [window.screenX, window.screenY] = Screen('WindowSize',...
     window.onScreen);
-window.centerX = window.screenX * 0.5; % center of screen in X direction
-window.centerY = window.screenY * 0.5; % center of screen in Y direction
-window.centerXL = floor(mean([0 window.centerX])); % center of left half
+window.centerX      = window.screenX * 0.5; % center of screen in X direction
+window.centerY      = window.screenY * 0.5; % center of screen in Y direction
+window.centerXL     = floor(mean([0 window.centerX])); % center of left half
 % of screen in X direction
-window.centerXR = floor(mean([window.centerX window.screenX])); % center
+window.centerXR     = floor(mean([window.centerX window.screenX])); % center
 %of right half of screen in X direction
 
 % define variable names
@@ -396,49 +396,51 @@ gParam = struct('taskType', taskType ,'jitter', jitter,...
     'windowRect', windowRect, 'practiceTrialCriterion',...
     practiceTrialCriterion, 'askSubjInfo', askSubjInfo);
 
-predSpotRad = 10;
-shieldAngle = 30;
-outcSize = 10;
-cannonEnd = 5;
-meanPoint = 1;
-rotationRad = 150;
-predSpotDiam = predSpotRad * 2;
-outcDiam = outcSize * 2;
-spotDiamMean = meanPoint * 2;
-cannonEndDiam = cannonEnd * 2;
-predSpotRect = [0 0 predSpotDiam predSpotDiam];
-outcRect = [0 0 outcDiam outcDiam];
-cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
-spotRectMean = [0 0 spotDiamMean spotDiamMean];
-boatRect = [0 0 50 50];
-centBoatRect = CenterRect(boatRect, windowRect);
-predCentSpotRect = CenterRect(predSpotRect, windowRect);
-outcCentRect = CenterRect(outcRect, windowRect);
-outcCentSpotRect = CenterRect(outcRect, windowRect);
-cannonEndCent = CenterRect(cannonEndRect, windowRect);
-centSpotRectMean = CenterRect(spotRectMean,windowRect);
-unit = 2*pi/360;
-initialRotAngle = 0*unit;
-rotAngle = initialRotAngle;
+predSpotRad         = 10;
+shieldAngle         = 30;
+outcSize            = 10;
+cannonEnd           = 5;
+meanPoint           = 1;
+rotationRad         = 150;
+tendencyThreshold   = 15;
+predSpotDiam        = predSpotRad * 2;
+outcDiam            = outcSize * 2;
+spotDiamMean        = meanPoint * 2;
+cannonEndDiam       = cannonEnd * 2;
+predSpotRect        = [0 0 predSpotDiam predSpotDiam];
+outcRect            = [0 0 outcDiam outcDiam];
+cannonEndRect       = [0 0 cannonEndDiam cannonEndDiam];
+spotRectMean        = [0 0 spotDiamMean spotDiamMean];
+boatRect            = [0 0 50 50];
+centBoatRect        = CenterRect(boatRect, windowRect);
+predCentSpotRect    = CenterRect(predSpotRect, windowRect);
+outcCentRect        = CenterRect(outcRect, windowRect);
+outcCentSpotRect    = CenterRect(outcRect, windowRect);
+cannonEndCent       = CenterRect(cannonEndRect, windowRect);
+centSpotRectMean    = CenterRect(spotRectMean,windowRect);
+unit                = 2*pi/360;
+initialRotAngle     = 0*unit;
+rotAngle            = initialRotAngle;
 
 % parameters related to the circle
 circle = struct('shieldAngle', shieldAngle, 'cannonEndCent',...
     cannonEndCent, 'outcCentSpotRect', outcCentSpotRect,...
     'predSpotRad', predSpotRad, 'outcSize', outcSize, 'meanRad',...
-    meanPoint, 'rotationRad', rotationRad, 'predSpotDiam',...
-    predSpotDiam, 'outcDiam', outcDiam, 'spotDiamMean', spotDiamMean,...
-    'predSpotRect', predSpotRect, 'outcRect', outcRect, 'spotRectMean',...
+    meanPoint, 'rotationRad', rotationRad, 'tendencyThreshold',...
+    tendencyThreshold, 'predSpotDiam', predSpotDiam, 'outcDiam',...
+    outcDiam, 'spotDiamMean', spotDiamMean, 'predSpotRect',...
+    predSpotRect, 'outcRect', outcRect, 'spotRectMean',...
     spotRectMean, 'boatRect', boatRect, 'centBoatRect', centBoatRect,...
     'predCentSpotRect', predCentSpotRect, 'outcCentRect', outcCentRect,...
     'centSpotRectMean', centSpotRectMean, 'unit', unit,...
     'initialRotAngle', initialRotAngle, 'rotAngle', rotAngle);
 
 % parameters related to color
-gold = [255 215 0];
-blue = [0 0 255];
-silver = [160 160 160];
-green = [0 255 0];
-colors = struct('gold', gold, 'blue', blue, 'silver', silver,...
+gold    = [255 215 0];
+blue    = [0 0 255];
+silver  = [160 160 160];
+green   = [0 255 0];
+colors  = struct('gold', gold, 'blue', blue, 'silver', silver,...
     'green', green);
 
 % parameters related to keyboard
@@ -849,8 +851,7 @@ Screen('CloseAll');
         
         [~, DataFollowOutcome] = Main(taskParam, haz(1),...
             concentration(1), 'followOutcome', Subject);
-        
-        
+
     end
 
     function DataFollowCannon = FollowCannonCondition
@@ -902,7 +903,7 @@ Screen('CloseAll');
             
             Instructions(taskParam, 'reversal', Subject);
             Main(taskParam, haz(1), concentration(1),...
-                'reversalPracticeNoiseInv3', Subject);
+                'reversalPractice', Subject); %'reversalPracticeNoiseInv3'
             header = 'Beginning of the Task';
             txtStartTask = ['This is the beginning of the task. During '...
                 'this block you will earn real money for your '...
@@ -954,7 +955,7 @@ Screen('CloseAll');
         textures = struct('cannonTxt', cannonTxt, 'shieldTxt',...
             shieldTxt, 'basketTxt', basketTxt, 'dstRect', dstRect);
         ListenChar(2);
-        HideCursor;
+        %HideCursor;
         
     end
 

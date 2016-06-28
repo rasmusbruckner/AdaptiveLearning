@@ -27,6 +27,24 @@ elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
     end
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
+elseif nargin == 7 && isequal(LoadData, 'reversalVisibleNoNoise')
+   practData = load(LoadData);
+    practData = practData.taskData;
+    trials = taskParam.gParam.practTrials;
+    practData.savedTickmark(1) = nan;
+    practData.savedTickmarkPrevious(1) = nan;
+elseif nargin == 7 && isequal(LoadData, 'reversalVisibleNoise')
+   practData = load(LoadData);
+    practData = practData.taskData;
+    trials = taskParam.gParam.practTrials;
+    practData.savedTickmark(1) = nan;
+    practData.savedTickmarkPrevious(1) = nan;
+elseif nargin == 7 && isequal(LoadData, 'reversalNotVisibleNoise')
+   practData = load(LoadData);
+    practData = practData.taskData;
+    trials = taskParam.gParam.practTrials;
+    practData.savedTickmark(1) = nan;
+    practData.savedTickmarkPrevious(1) = nan;
     
 elseif isequal(condition, 'reversalPracticeNoiseInv')
     
@@ -40,18 +58,23 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
     
     trials = 4;
     if nargin == 7
-        savedTickmark(1) = nan;
-        savedTickmarkPrevious(1) = nan;
+        practData.savedTickmark(1) = nan;
+        practData.savedTickmarkPrevious(1) = nan;
     else
-        savedTickmark = reversalPackage.savedTickmark;
+        practData.savedTickmark = reversalPackage.savedTickmark;
         practData.pred = reversalPackage.pred;
         
     end
 else
     practData = GenerateOutcomes(taskParam, vola, sigma, condition);
-    trials = practData.trial;
-    savedTickmark(1) = nan;
-    savedTickmarkPrevious(1) = nan;
+    if isequal(condition, 'shield')
+        trials = practData.trial;
+    else
+        trials = taskParam.gParam.practTrials;
+    end
+        
+    practData.savedTickmark(1) = nan;
+    practData.savedTickmarkPrevious(1) = nan;
 end
 
 for i = 1:trials
@@ -192,21 +215,21 @@ for i = 1:trials
                         i ~= taskParam.gParam.blockIndices(3) + 1 &&...
                         i ~= taskParam.gParam.blockIndices(4) + 1
                     
-                    savedTickmark(i) =...
+                    practData.savedTickmark(i) =...
                         ((taskParam.circle.rotAngle) /...
                         taskParam.circle.unit);
                     WaitSecs(0.2);
                     press = 1;
                 elseif i > 1 && press == 0
-                    savedTickmarkPrevious(i) = ...
-                        savedTickmarkPrevious(i - 1);
-                    savedTickmark(i) = savedTickmark(i - 1);
+                    practData.savedTickmarkPrevious(i) = ...
+                        practData.savedTickmarkPrevious(i - 1);
+                    practData.savedTickmark(i) = practData.savedTickmark(i - 1);
                 elseif i == 1
                     savedTickmarPrevious(i) = 0;
                 end
                 
                 if press == 1
-                    savedTickmarkPrevious(i) = savedTickmark(i-1);
+                    practData.savedTickmarkPrevious(i) = practData.savedTickmark(i-1);
                 end
                 
                 if i ~= taskParam.gParam.blockIndices(1) &&...
@@ -217,9 +240,9 @@ for i = 1:trials
                     TickMark(taskParam, practData.outcome(i-1), 'outc');
                     if press == 1
                         TickMark(taskParam,...
-                            savedTickmarkPrevious(i), 'update');
+                            practData.savedTickmarkPrevious(i), 'update');
                     end
-                    TickMark(taskParam, savedTickmark(i), 'saved');
+                    TickMark(taskParam, practData.savedTickmark(i), 'saved');
                 end
                 
             else
@@ -232,7 +255,7 @@ for i = 1:trials
                     TickMark(taskParam, practData.pred(i-1), 'pred');
                     TickMark(taskParam, practData.outcome(i-1), 'outc');
                 end
-                TickMark(taskParam, savedTickmark, 'saved');
+                TickMark(taskParam, practData.savedTickmark, 'saved');
                 
             end
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);

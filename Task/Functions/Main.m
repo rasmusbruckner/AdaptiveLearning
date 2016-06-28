@@ -17,8 +17,7 @@ function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subje
 % trial onset: with trial onset trigger
 % prediction: trigger
 % InitRT: first button press / mouse move
-
-HideCursor;
+%HideCursor;
 KbReleaseWait();
 
 ref = taskParam.gParam.ref;
@@ -98,7 +97,6 @@ elseif ~taskParam.unitTest
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
         
-        
     elseif isequal(condition, 'followOutcomePractice')...
             ||isequal(condition, 'mainPractice')...
             ||isequal(condition, 'followCannonPractice')
@@ -112,14 +110,21 @@ elseif ~taskParam.unitTest
         taskData.initiationRTs = nan(trial,1);
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
-        
+
     else
         
+        
+        if isequal(condition, 'reversalPractice')
+            taskParam.gParam.practTrials = taskParam.gParam.practTrials * 2;
+            trial = taskParam.gParam.practTrials;
+
+        else
+             trial = taskParam.gParam.trials;
+        end
         taskData = GenerateOutcomes...
             (taskParam, haz, concentration, condition);
-        trial = taskData.trial;
-        savedTickmark(1) = 0;
-        savedTickmarkPrevious(1) = 0;
+        savedTickmark(1) = nan;
+        savedTickmarkPrevious(1) = nan;
         
     end
 end
@@ -134,7 +139,8 @@ for i=1:trial
         
         while 1
             if isequal(taskParam.gParam.taskType, 'oddball') ...
-                    ||  isequal(taskParam.gParam.taskType, 'reversal')...
+                    || isequal(taskParam.gParam.taskType, 'reversal')...
+                    || isequal(taskParam.gParam.taskType, 'reversalPractice')...
                     || isequal(taskParam.gParam.taskType, 'chinese')
                 txt = 'Take a break!';
             else
@@ -192,7 +198,7 @@ for i=1:trial
     
     if ~taskParam.unitTest
         
-        if ~isequal(taskParam.gParam.taskType, 'reversal')
+        if ~isequal(taskParam.gParam.taskType, 'reversal') && ~isequal(taskParam.gParam.taskType, 'reversalPractice')
             while 1
                 
                 DrawCircle(taskParam)
@@ -206,7 +212,7 @@ for i=1:trial
                     
                     TickMark(taskParam, taskData.outcome(i-1), 'outc')
                     TickMark(taskParam, taskData.pred(i-1), 'pred')
-                    if isequal(taskParam.gParam.taskType, 'reversal')
+                    if isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
                         TickMark(taskParam, savedTickmark(i-1), 'saved')
                     end
                     
@@ -218,8 +224,8 @@ for i=1:trial
                         || isequal(condition,'followCannonPractice')
                     Cannon(taskParam, taskData.distMean(i))
                     Aim(taskParam, taskData.distMean(i))
-                elseif isequal(taskParam.gParam.taskType, 'reversal')
-                    taskParam.gParam.taskType
+                elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
+                    
                     taskData.catchTrial(i) = 0;
                 end
                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
@@ -296,6 +302,7 @@ for i=1:trial
             
             SetMouse(720, 450, taskParam.gParam.window.onScreen)
             press = 0;
+            %initialTendencyLogged = false;
             while 1
                 [x,y,buttons,focus,valuators,valinfo] =...
                     GetMouse(taskParam.gParam.window.onScreen);
@@ -317,13 +324,19 @@ for i=1:trial
                 DrawCircle(taskParam)
                 DrawCross(taskParam)
                 
-                
                 hyp = sqrt(x^2 + y^2);
                 
                 if hyp <= 150
                     PredictionSpotReversal(taskParam, x ,y*-1)
                 else
                     PredictionSpot(taskParam)
+                end
+                %keyboard
+                if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(i))
+                    taskData.initialTendency(i) = degree
+                    taskData.initiationRTs(i,:) =...
+                            GetSecs() - initRT_Timestamp;
+                    %initialTendencyLogged = true;
                 end
                 
                 if buttons(2) == 1 && i ~=...
@@ -373,7 +386,7 @@ for i=1:trial
                     taskData.pred(i);
                     
                     time = GetSecs;
-                    
+                    taskData.RT(i) = GetSecs() - initRT_Timestamp;
                     break
                     
                 end
@@ -396,7 +409,7 @@ for i=1:trial
                 taskParam.gParam.blockIndices(4) + 1
             TickMark(taskParam, taskData.outcome(i-1), 'outc')
             TickMark(taskParam, taskData.pred(i-1), 'pred')
-            if isequal(taskData.gParam.taskType, 'reversal')
+            if isequal(taskData.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
                 TickMark(taskParam, savedTickmark(i), 'saved')
             end
         end
@@ -446,7 +459,8 @@ for i=1:trial
             || isequal(condition,'mainPractice')...
             || isequal(condition, 'followCannon')...
             || isequal(condition, 'oddball')...
-            || isequal(taskParam.gParam.taskType, 'reversal')
+            || isequal(taskParam.gParam.taskType, 'reversal')...
+            || isequal(taskParam.gParam.taskType, 'reversalPractice')
         taskData.memErr(i) = 999;
         taskData.memErrNorm(i) = 999;
         taskData.memErrPlus(i) = 999;
@@ -466,7 +480,8 @@ for i=1:trial
             || isequal(condition, 'oddball')...
             || isequal(condition,'followCannon')...
             || isequal(condition,'followCannonPractice')...
-            || isequal(condition,'reversal')
+            || isequal(condition,'reversal')...
+            || isequal(condition, 'reversalPractice')
         if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
             taskData.hit(i) = 1;
         end
@@ -542,7 +557,7 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
         
     end
     
-elseif isequal(taskParam.gParam.taskType, 'reversal')
+elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
     header = 'Performance';
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
     
@@ -578,7 +593,8 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers,...
     'pred', taskData.pred,'predErr', taskData.predErr, 'memErr',...
     taskData.memErr, 'UP',taskData.UP, 'hit', taskData.hit, 'perf',....
-    taskData.perf, 'accPerf',taskData.accPerf, 'Date', {taskData.Date});
+    taskData.perf, 'accPerf',taskData.accPerf,'initialTendency',...
+    taskData.initialTendency, 'RT', taskData.RT, 'Date', {taskData.Date});
 
 Data = catstruct(Subject, Data);
 

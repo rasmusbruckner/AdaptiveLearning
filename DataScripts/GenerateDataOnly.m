@@ -7,8 +7,6 @@ if ~updateManualVariables
     close all
     clear all
 
-
-
 runIntro = true;
 askSubjInfo = true;
 oddball = false;
@@ -22,8 +20,8 @@ controlTrials = 1; % 120
 blockIndices = [1 60 120 180]; 
 haz = [.25 1 0]; 
 oddballProb = [.25 0];
-reversalProb = [.5 .5];
-concentration = [10 12 99999999];  
+reversalProb = [1 1];
+concentration = [10 12 99999999];  %10
 driftConc = [30 99999999]; 
 safe = [3 0];
 rewMag = 0.2;
