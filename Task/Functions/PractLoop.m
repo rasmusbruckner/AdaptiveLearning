@@ -43,9 +43,14 @@ elseif nargin == 7 && isequal(LoadData, 'reversalNotVisibleNoise')
    practData = load(LoadData);
     practData = practData.taskData;
     trials = taskParam.gParam.practTrials;
+    practData.savedTickmark(:,1) = nan;
+    practData.savedTickmarkPrevious(1) = nan;
+elseif nargin == 7 && isequal(LoadData, 'reversalPracticeNoiseInv2')
+    practData = load(LoadData);
+    practData = practData.taskData;
+    trials = taskParam.gParam.practTrials;
     practData.savedTickmark(1) = nan;
     practData.savedTickmarkPrevious(1) = nan;
-    
 elseif isequal(condition, 'reversalPracticeNoiseInv')
     
     practData.outcome = [170 190 195 320];
@@ -66,6 +71,7 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
         
     end
 else
+    
     practData = GenerateOutcomes(taskParam, vola, sigma, condition);
     if isequal(condition, 'shield')
         trials = practData.trial;
@@ -328,7 +334,8 @@ for i = 1:trials
             || isequal(condition, 'practiceOddball')...
             || isequal(condition, 'reversalPractice')...
             || isequal(condition, 'reversalPracticeNoise')...
-            || isequal(condition, 'reversalPracticeNoiseInv')
+            || isequal(condition, 'reversalPracticeNoiseInv')...
+            || isequal(condition, 'reversalPracticeNoiseInv2')
         if abs(practData.predErr(i)) <= practData.allASS(i)/2
             practData.hit(i) = 1;
         end

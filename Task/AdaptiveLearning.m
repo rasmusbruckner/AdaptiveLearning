@@ -103,12 +103,12 @@ elseif strcmp(taskType, 'chinese')
 end
 
 % version independent parameters
-runIntro                = false;
+runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
 shieldTrials            = 2; % 4
-practTrials             = 2; % 20
+practTrials             = 4; % 20
 blockIndices            = [1 60 120 180];
 haz                     = [.25 1 0];
 oddballProb             = [.25 0];
@@ -166,7 +166,7 @@ elseif askSubjInfo == true
         prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
     elseif isequal(taskType, 'reversal')...
             || isequal(taskType, 'chinese')
-        prompt = {'ID:','Age:', 'Sex:', 'cBal', 'Reward'};
+        prompt = {'ID:','Age:', 'Sex:', 'Reward'};
     end
     
     name = 'SubjInfo';
@@ -176,8 +176,7 @@ elseif askSubjInfo == true
         
         if strcmp(taskType, 'dresden')
             cBal = num2str(round(unifrnd(1,6)));
-        elseif strcmp(taskType, 'oddball')...
-                || strcmp(taskType, 'reversal')
+        elseif strcmp(taskType, 'oddball')
             cBal = num2str(round(unifrnd(1,2)));
         end
         
@@ -191,6 +190,8 @@ elseif askSubjInfo == true
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'oddball')
         defaultanswer = {'99999','99', '1', 'm', cBal, reward};
+    elseif strcmp(taskType, 'reversal')
+        defaultanswer = {'99999','99', 'm', reward};
     else
         defaultanswer = {'99999','99', 'm', cBal, reward};
     end
@@ -198,6 +199,8 @@ elseif askSubjInfo == true
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
         subjInfo{7} = date;
+    elseif strcmp(taskType, 'reversal')
+        subjInfo{5} = date;
     else
         subjInfo{6} = date;
     end
@@ -256,12 +259,12 @@ elseif askSubjInfo == true
             msgbox('cBal: 1 or 2 ?');
             return
         end
-    elseif strcmp(taskType, 'reversal')
-        if subjInfo{4} ~= '1'...
-                && subjInfo{4} ~= '2'
-            msgbox('cBal: 1 or 2 ?');
-            return
-        end
+%     elseif strcmp(taskType, 'reversal')
+%         if subjInfo{4} ~= '1'...
+%                 && subjInfo{4} ~= '2'
+%             msgbox('cBal: 1 or 2 ?');
+%             return
+%         end
     end
     
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
@@ -271,8 +274,8 @@ elseif askSubjInfo == true
             return
         end
     elseif strcmp(taskType, 'reversal')
-        if subjInfo{5} ~= '1'...
-                && subjInfo{5} ~= '2'
+        if subjInfo{4} ~= '1'...
+                && subjInfo{4} ~= '2'
             msgbox('Reward: 1 or 2?');
             return
         end
@@ -296,9 +299,8 @@ elseif askSubjInfo == true
     elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-            subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(4))),...
-            'rew', str2double(cell2mat(subjInfo(5))), 'date',...
-            subjInfo(6), 'session', '1');
+            subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))),...
+            'date',subjInfo(5), 'session', '1');
         
     end
     
@@ -955,7 +957,7 @@ Screen('CloseAll');
         textures = struct('cannonTxt', cannonTxt, 'shieldTxt',...
             shieldTxt, 'basketTxt', basketTxt, 'dstRect', dstRect);
         ListenChar(2);
-        %HideCursor;
+        HideCursor;
         
     end
 

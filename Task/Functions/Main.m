@@ -17,7 +17,7 @@ function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subje
 % trial onset: with trial onset trigger
 % prediction: trigger
 % InitRT: first button press / mouse move
-%HideCursor;
+
 KbReleaseWait();
 
 ref = taskParam.gParam.ref;
@@ -618,8 +618,8 @@ if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome'))...
     end
     
     if ~taskParam.unitTest
-        savename = sprintf('Drugstudy_%s_%s_session%s_%s',...
-            rewName, Subject.ID, Subject.session, condition);
+        savename = sprintf('ReversalTask_%s_%s',...
+            rewName, Subject.ID);
         save(savename, 'Data')
     end
 end

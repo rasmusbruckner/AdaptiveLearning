@@ -92,8 +92,8 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
     
 elseif isequal(taskParam.gParam.taskType, 'reversal')
     
-    SharedInstructions_MainOddballFollowCannon
-    %reversalPractice
+    %SharedInstructions_MainOddballFollowCannon
+    reversalPractice
     
 end
 
@@ -1373,7 +1373,7 @@ end
 
     function reversalPractice
         
-        screenIndex = 1;
+        screenIndex = 8;
         
         while 1
             
@@ -1383,7 +1383,7 @@ end
                 case 1
                     
                     header = 'First Practice';
-                    txt = ['You will will now need to catch '...
+                    txt = ['You will now need to catch '...
                         'cannonballs shot from the cannon. '...
                         'The cannon will usually remain aimed '...
                         'at the same location. However, '...
@@ -1588,15 +1588,18 @@ end
                         header = 'Try it again!';
                         
                         if ~isnan(Data.tickCannonDev)
-                            txt = ['In that block your shield was not '...
-                                'always placed where the cannon was '...
-                                'aiming. Remember: Placing your '...
-                                'shield where the cannon is aimed '...
+                            txt = ['In this case your tickmark was too '...
+                                'far away from the cannon aim. '...
+                                'Remember: Placing your '...
+                                'tickmark where the cannon is aimed '...
                                 'will be the best way to earn money. '...
                                 'Now try again. '];
                         elseif isnan(Data.tickCannonDev)
                             txt = ['In this case you did not save your '...
-                                'tickmark. Try again!'];
+                                'tickmark. Remember: Placing your '...
+                                'tickmark where the cannon is aimed '...
+                                'will be the best way to earn money. '...
+                                'Now try again.'];
                         end
                         
                         feedback = false;
@@ -1605,7 +1608,6 @@ end
                             feedback);
                         
                     else
-                        
                         
                         Screen('DrawingFinished',...
                             taskParam.gParam.window.onScreen);
@@ -1665,12 +1667,9 @@ end
                                 'many cannonballs as possible.'];
                             LineAndBack(taskParam)
                             DrawCross(taskParam)
-                            
-                            %Cannon(taskParam, distMean)
                             DrawCircle(taskParam)
                             PredictionSpot(taskParam);
                             TickMark(taskParam, savedTickmark, 'saved');
-                            
                             DrawOutcome(taskParam, outcome)
                             DrawFormattedText...
                                 (taskParam.gParam.window.onScreen,txt,...
@@ -1709,11 +1708,6 @@ end
                             subject, taskParam.gParam.haz(3),...
                             taskParam.gParam.concentration(1),...
                             cannon, condition, LoadData, reversalPackage);
-                        
-                        
-                        %% hier weitermachen und tickmarks aus übung übernehmen
-                        %% und reversal zeigen und sagen, dass rotes tickmark
-                        %% hierbei hilft
                         
                         txt=['In this case the cannon reaimed to its '...
                             'previous position. You can use your saved '...
@@ -1834,21 +1828,23 @@ end
                     
                     condition = 'reversalPracticeNoiseInv2';
                     LoadData = 'reversalNotVisibleNoise';
+                    %LoadData = 'reversalPracticeNoiseInv2' %for 40 trials
                     cannon = false;
                     savedTickmark = nan;
+                    keyboard
                     reversalPackage = struct('savedTickmark',...
                             savedTickmark);
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
-                        cannon, condition, LoadData, reversalPackage);
-                    
+                        cannon, condition, LoadData);
+                    keyboard
                     [txt, header] = Feedback(practData,...
                         taskParam, subject, condition);
                     feedback = true;
                     fw = BigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter,...
-                        header, txt,feedback);
+                        header, txt, feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
                     
                     
@@ -1870,6 +1866,7 @@ end
                             'previously aimed will be the '...
                             'best way to earn money. Now try again.' ];
                         
+
                         feedback = false;
                         fw = BigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
