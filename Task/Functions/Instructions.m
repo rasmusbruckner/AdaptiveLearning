@@ -92,8 +92,8 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
     
 elseif isequal(taskParam.gParam.taskType, 'reversal')
     
-    %SharedInstructions_MainOddballFollowCannon
-    reversalPractice
+    SharedInstructions_MainOddballFollowCannon
+    %reversalPractice
     
 end
 
@@ -1373,7 +1373,7 @@ end
 
     function reversalPractice
         
-        screenIndex = 8;
+        screenIndex = 1;
         
         while 1
             
@@ -1831,14 +1831,14 @@ end
                     %LoadData = 'reversalPracticeNoiseInv2' %for 40 trials
                     cannon = false;
                     savedTickmark = nan;
-                    keyboard
-                    reversalPackage = struct('savedTickmark',...
-                            savedTickmark);
+                    
+%                     reversalPackage = struct('savedTickmark',...
+%                             savedTickmark);
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
                         cannon, condition, LoadData);
-                    keyboard
+                    
                     [txt, header] = Feedback(practData,...
                         taskParam, subject, condition);
                     feedback = true;

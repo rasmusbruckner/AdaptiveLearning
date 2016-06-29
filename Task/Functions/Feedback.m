@@ -5,7 +5,7 @@ function [txt, header] = Feedback(Data, taskParam, subject, condition)
 hits = sum(Data.hit == 1);
 rewTrials = sum(Data.actRew == 1);
 noRewTrials = sum(Data.actRew == 2);
-rewCatches = max(Data.accPerf)/taskParam.gParam.rewMag;
+rewCatches = round(max(Data.accPerf)/taskParam.gParam.rewMag);
 noRewCatches = hits - rewCatches;
 maxMon = (length(find(Data.shieldType == 1))...
     * taskParam.gParam.rewMag);

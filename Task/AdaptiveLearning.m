@@ -37,6 +37,11 @@ function Data = AdaptiveLearning(unitTest)
 %       - sigma -> concentration
 %       - vola -> haz
 %   added trialsS1 = XX, trialsS2S3 = XX
+%
+%   29.06.16
+%   reversal task
+%       - added "initialTendency": inital angle when orange dot is moved
+%       - added "RT": reaction time when prediction is made
 
 if nargin == 0
     unitTest = false;
@@ -92,7 +97,7 @@ elseif strcmp(taskType, 'oddball')
     
 elseif strcmp(taskType, 'reversal')
     
-    trials          = 6;
+    trials          = 20;
     controlTrials   = nan;
     concentration   = [10 12 99999999];
     DataOddball     = nan;
@@ -107,8 +112,8 @@ runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
-shieldTrials            = 2; % 4
-practTrials             = 4; % 20
+shieldTrials            = 4; % 4
+practTrials             = 20; % 20
 blockIndices            = [1 60 120 180];
 haz                     = [.25 1 0];
 oddballProb             = [.25 0];
@@ -300,7 +305,7 @@ elseif askSubjInfo == true
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))),...
-            'date',subjInfo(5), 'session', '1');
+            'date',subjInfo(5), 'session', '1', 'cBal', nan);
         
     end
     
@@ -904,8 +909,10 @@ Screen('CloseAll');
         if runIntro && ~unitTest
             
             Instructions(taskParam, 'reversal', Subject);
-            Main(taskParam, haz(1), concentration(1),...
+            Data = Main(taskParam, haz(1), concentration(1),...
                 'reversalPractice', Subject); %'reversalPracticeNoiseInv3'
+            %Data.cp
+            %Data.reversal
             header = 'Beginning of the Task';
             txtStartTask = ['This is the beginning of the task. During '...
                 'this block you will earn real money for your '...

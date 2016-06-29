@@ -333,7 +333,7 @@ for i=1:trial
                 end
                 %keyboard
                 if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(i))
-                    taskData.initialTendency(i) = degree
+                    taskData.initialTendency(i) = degree;
                     taskData.initiationRTs(i,:) =...
                             GetSecs() - initRT_Timestamp;
                     %initialTendencyLogged = true;
@@ -601,7 +601,8 @@ Data = catstruct(Subject, Data);
 if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome'))...
         || (taskParam.gParam.askSubjInfo && isequal(condition, 'main'))...
         || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball'))...
-        || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))
+        || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))...
+        || (taskParam.gParam.askSubjInfo && isequal(condition, 'reversal')) 
     
     if isequal(taskParam.gParam.taskType, 'dresden')
         if Subject.rew == 1
