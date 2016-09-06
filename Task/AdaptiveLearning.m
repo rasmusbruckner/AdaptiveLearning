@@ -57,8 +57,8 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine; if you have internet!
-%computer = identifyPC;
-computer = 'Macbook';
+computer = identifyPC;
+%computer = 'Macbook';
 
 % Choose task type:
 %   - 'oddball'
@@ -132,7 +132,7 @@ elseif isequal(computer, 'Dresden')
     cd(['C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning'...
         '\\DataDirectory']);
 elseif isequal(computer, 'Brown')
-    cd('C:\Users\lncc\Dropbox\CannonDrugStudy\data');
+    cd('C:\Users\lncc\Dropbox\ReversalTask\data');
 end
 
 % -------------------------------------------------------------------------
