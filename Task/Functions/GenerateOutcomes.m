@@ -8,7 +8,7 @@ function taskData = GenerateOutcomes(taskParam, haz, concentration, condition)
 % -------------------------------------------------------------------------
 
 if isequal(condition, 'main') || isequal(condition, 'oddball') ||...
-        isequal(condition, 'reversal')
+        isequal(condition, 'reversal') || isequal(condition, 'chinese')
     trials = taskParam.gParam.trials;
 elseif isequal(condition, 'mainPractice')... 
     || isequal(condition, 'practiceNoOddball')...
@@ -43,7 +43,7 @@ rew = nan(trials, 1);
 actRew = nan(trials,1);
 Date = cell(trials, 1);
 cond = cell(trials, 1);
-outcome=nan(trials, 1);
+outcome = nan(trials, 1);
 distMean=nan(trials, 1);
 cp = zeros(trials, 1);
 reversal = zeros(trials, 1);
@@ -74,6 +74,7 @@ block = nan(trials,1);
 actJitter = nan(trials,1);
 a = clock;
 rand('twister', a(6).*10000);
+%% in hauptskript verschieben
 mu = 15;
 minASS = 10;
 maxASS = 180;
@@ -300,6 +301,106 @@ elseif isequal(condition, 'reversal')...
         
         allASS(i) = ASS;
     end
+    
+elseif isequal(condition, 'chinese')
+    
+        %% nContexts
+        % contextHaz = 1/nContexts;
+        % sContext = 3
+        %keyboard
+        nContexts = 3;
+        contextHaz = 1/nContexts;
+        safeContext = 3;
+        sContext = nan;
+        contextMean = nan(trials, nContexts);
+        firstVisit = zeros(trials,1);
+        cp = zeros(trials, nContexts);
+    
+    for i = 1:trials
+        
+        %% überlegen wie viele Blöcke wir wollen
+        if i >= taskParam.gParam.blockIndices(1)...
+                && i <= taskParam.gParam.blockIndices(2)
+            block(i) = 1;
+        elseif i >= taskParam.gParam.blockIndices(2)...
+                && i <= taskParam.gParam.blockIndices(3)
+            block(i) = 2;
+        elseif i >= taskParam.gParam.blockIndices(3)...
+                && i <= taskParam.gParam.blockIndices(4)
+            block(i) = 3;
+        elseif i >= taskParam.gParam.blockIndices(4)
+            block(i) = 4;
+        end
+        
+        % determine current context 
+        if (rand < contextHaz && sContext == 0)...
+                || i == taskParam.gParam.blockIndices(1)...
+                || i == taskParam.gParam.blockIndices(2) + 1 ...
+                || i == taskParam.gParam.blockIndices(3) + 1 ...
+                || i == taskParam.gParam.blockIndices(4) + 1 
+            currentContext(i) = randi(nContexts); 
+            contextCp(i) = 1;
+            sContext = safeContext;
+            TAC_Context(i) = 0; %TAC(i)=1;
+        else
+            TAC_Context(i) = TAC_Context(i-1) + 1;
+            sContext = max([sContext-1, 0]);
+            currentContext(i) = currentContext(i-1); 
+        end
+        
+        if sum(currentContext == currentContext(i)) == 1
+            firstVisit(i) = 1;
+        end
+        
+        if (rand < haz && s==0)...
+                || i == taskParam.gParam.blockIndices(1)...
+                || i == taskParam.gParam.blockIndices(2) + 1 ...
+                || i == taskParam.gParam.blockIndices(3) + 1 ...
+                || i == taskParam.gParam.blockIndices(4) + 1 ...
+                || firstVisit(i) == 1
+            %mean = randi(359);%round(rand(1).*359); 
+            
+            cp(i,currentContext(i)) = 1;
+            
+            contextMean(i,cp(i,:) == 1) = randi(359);
+            keyboard
+            if i > 1
+                contextMean(i,cp(i,:) == 0) = contextMean(i-1,cp(i,:) == 0);
+            end
+            if isequal(condition,'shield')
+                s=taskParam.gParam.safe(2);
+            else
+                s=taskParam.gParam.safe(1);
+            end
+            
+            TAC(i)=0; %TAC(i)=1;
+        else
+            TAC(i)=TAC(i-1)+1;
+            s=max([s-1, 0]);
+            contextMean(i,:) = contextMean(i-1,:);
+        end
+        
+        outcome(i) =...
+            round(180+rad2deg(circ_vmrnd(deg2rad(contextMean(i,currentContext(i))-180),...
+            concentration, 1)));
+        %distMean(i) = mean;
+        %contextMean(i,currentContext) = mean;
+        oddBall(i) = nan;
+        
+        %CatchTrial
+        if rand <= .10 && cp(i) == 0;
+            catchTrial(i) = 1;
+        else
+            catchTrial(i) = 0;
+        end
+        ASS=nan;
+        
+        while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
+            ASS=exprnd(mu);
+        end
+        allASS(i) = ASS;
+    end
+    
 end
 
 

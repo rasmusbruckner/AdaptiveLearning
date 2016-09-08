@@ -57,15 +57,15 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine; if you have internet!
-computer = identifyPC;
-%computer = 'Macbook';
+%computer = identifyPC;
+computer = 'Macbook';
 
 % Choose task type:
 %   - 'oddball'
 %   - 'dresden'
 %   - 'reversal'
 %   - 'chinese'
-taskType = 'reversal';
+taskType = 'chinese';
 
 % version specific parameters
 if strcmp(taskType, 'dresden')
@@ -87,9 +87,9 @@ if strcmp(taskType, 'dresden')
 elseif strcmp(taskType, 'oddball')
     
     % trials first session
-    trialsS1      = 2; % 40
+    trialsS1      = 50; % 40
     % trials second session
-    trialsS2S3    = 2; % 240
+    trialsS2S3    = 50; % 240
     controlTrials = nan;
     concentration = [10 12 99999999];
     DataOddball   = nan;
@@ -105,10 +105,16 @@ elseif strcmp(taskType, 'reversal')
     
 elseif strcmp(taskType, 'chinese')
     
+    trials          = 40;
+    controlTrials   = nan;
+    concentration   = [10 12 99999999];
+    DataOddball     = nan;
+    textSize        = 19;
+    
 end
 
 % version independent parameters
-runIntro                = true;
+runIntro                = false;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
@@ -192,10 +198,11 @@ elseif askSubjInfo == true
         reward = '1';
     end
     
+    % checken, dass das für alle bedingungen stimmt
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'oddball')
         defaultanswer = {'99999','99', '1', 'm', cBal, reward};
-    elseif strcmp(taskType, 'reversal')
+    elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
         defaultanswer = {'99999','99', 'm', reward};
     else
         defaultanswer = {'99999','99', 'm', cBal, reward};
@@ -559,6 +566,10 @@ elseif isequal(taskType, 'dresden')
 elseif isequal(taskType, 'reversal')
     
     txtPressEnter = 'Press Enter to continue';
+
+elseif isequal(taskType, 'chinese')
+    
+    txtPressEnter = 'Press Enter to continue';
     
 end
 
@@ -650,6 +661,8 @@ elseif isequal(taskType, 'chinese')
     % ---------------------------------------------------------------------
     % Chinese restaurant version
     % ---------------------------------------------------------------------
+    
+    DataChinese = ChineseCondition;
     
 end
 
@@ -937,6 +950,14 @@ Screen('CloseAll');
         
     end
 
+    function DataChinese = ChineseCondition
+    %CHINESECONDITION   Runs the chinese condition of the cannon task
+    
+     [~, DataChinese] = Main(taskParam, haz(1), concentration(1),...
+            'chinese', Subject);
+    
+    end
+
     function [window, windowRect, textures] = OpenWindow
         %OPENWINDOW   Opens the psychtoolbox screen
         
@@ -963,8 +984,8 @@ Screen('CloseAll');
         basketTxt = Screen('MakeTexture', window, basketPic);
         textures = struct('cannonTxt', cannonTxt, 'shieldTxt',...
             shieldTxt, 'basketTxt', basketTxt, 'dstRect', dstRect);
-        ListenChar(2);
-        HideCursor;
+        %ListenChar(2);
+        %HideCursor;
         
     end
 

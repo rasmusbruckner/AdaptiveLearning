@@ -111,8 +111,9 @@ elseif ~taskParam.unitTest
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
 
-    else
-        
+    elseif isequal(condition, 'reversal')...
+            || isequal(condition, 'reversalPractice')
+    %% 08.09.16: gucken dass hier alle bedingungen spezifiziert werden    
         
         if isequal(condition, 'reversalPractice')
             taskParam.gParam.practTrials = taskParam.gParam.practTrials * 2;
@@ -121,6 +122,14 @@ elseif ~taskParam.unitTest
         else
              trial = taskParam.gParam.trials;
         end
+        taskData = GenerateOutcomes...
+            (taskParam, haz, concentration, condition);
+        savedTickmark(1) = nan;
+        savedTickmarkPrevious(1) = nan;
+        
+    elseif isequal(condition, 'chinese')
+        
+        trial = taskParam.gParam.trials;
         taskData = GenerateOutcomes...
             (taskParam, haz, concentration, condition);
         savedTickmark(1) = nan;
