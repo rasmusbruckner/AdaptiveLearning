@@ -9,7 +9,12 @@ function taskData = GenerateOutcomes(taskParam, haz, concentration, condition)
 
 if isequal(condition, 'main') || isequal(condition, 'oddball') ||...
         isequal(condition, 'reversal') || isequal(condition, 'chinese')
+    try
     trials = taskParam.gParam.trials;
+    catch
+        keyboard
+        
+    end
 elseif isequal(condition, 'mainPractice')... 
     || isequal(condition, 'practiceNoOddball')...
     || isequal(condition, 'oddballPractice')... 
@@ -48,6 +53,7 @@ distMean=nan(trials, 1);
 cp = zeros(trials, 1);
 reversal = zeros(trials, 1);
 TAC=nan(trials, 1);
+TAC_Chinese = nan(trials,3);
 oddBall = zeros(trials, 1);
 catchTrial = zeros(trials, 1);
 triggers = zeros(trials, 7);
@@ -322,7 +328,7 @@ elseif isequal(condition, 'chinese')
         if i >= taskParam.gParam.blockIndices(1)...
                 && i <= taskParam.gParam.blockIndices(2)
             block(i) = 1;
-        elseif i >= taskParam.gParam.blockIndices(2)...
+           elseif i >= taskParam.gParam.blockIndices(2)...
                 && i <= taskParam.gParam.blockIndices(3)
             block(i) = 2;
         elseif i >= taskParam.gParam.blockIndices(3)...
@@ -331,6 +337,15 @@ elseif isequal(condition, 'chinese')
         elseif i >= taskParam.gParam.blockIndices(4)
             block(i) = 4;
         end
+        %keyboard
+        if i == taskParam.gParam.blockIndices(1)...
+                || i == taskParam.gParam.blockIndices(2)...
+                || i == taskParam.gParam.blockIndices(3)...
+                || i == taskParam.gParam.blockIndices(4)
+            contextTypes = randi(nContexts,nContexts,1);
+        end
+            
+        
         
         % determine current context 
         if (rand < contextHaz && sContext == 0)...
@@ -338,17 +353,21 @@ elseif isequal(condition, 'chinese')
                 || i == taskParam.gParam.blockIndices(2) + 1 ...
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
                 || i == taskParam.gParam.blockIndices(4) + 1 
+            %keyboard
             currentContext(i) = randi(nContexts); 
+            hiddenContext(i) = contextTypes(currentContext(i));
             contextCp(i) = 1;
             sContext = safeContext;
             TAC_Context(i) = 0; %TAC(i)=1;
         else
             TAC_Context(i) = TAC_Context(i-1) + 1;
             sContext = max([sContext-1, 0]);
-            currentContext(i) = currentContext(i-1); 
+            currentContext(i) = currentContext(i-1);
+            hiddenContext(i) = hiddenContext(i-1);
         end
         
-        if sum(currentContext == currentContext(i)) == 1
+        %if sum(currentContext == currentContext(i)) == 1
+        if sum(hiddenContext == hiddenContext(i)) == 1
             firstVisit(i) = 1;
         end
         
@@ -360,10 +379,20 @@ elseif isequal(condition, 'chinese')
                 || firstVisit(i) == 1
             %mean = randi(359);%round(rand(1).*359); 
             
-            cp(i,currentContext(i)) = 1;
+            sameButDifferent = contextTypes(currentContext(i));
             
-            contextMean(i,cp(i,:) == 1) = randi(359);
-            keyboard
+            %cp(i,currentContext(i)) = 1;
+            try
+            cp(i,contextTypes == sameButDifferent) = 1;
+            catch
+                
+                keyboard
+                
+            end
+            %keyboard
+            %contextMean(i,cp(i,:) == 1) = randi(359);
+            contextMean(i,contextTypes == sameButDifferent) = randi(359);
+            %keyboard
             if i > 1
                 contextMean(i,cp(i,:) == 0) = contextMean(i-1,cp(i,:) == 0);
             end
@@ -373,9 +402,14 @@ elseif isequal(condition, 'chinese')
                 s=taskParam.gParam.safe(1);
             end
             
-            TAC(i)=0; %TAC(i)=1;
+           % keyboard
+            TAC_Chinese(i,contextTypes == sameButDifferent) = 0; %TAC(i)=1;
+           
+            %TAC_Chinese(i,contextTypes ~= sameButDifferent) = nan;
         else
-            TAC(i)=TAC(i-1)+1;
+            TAC_Chinese(i,contextTypes == sameButDifferent) = TAC_Chinese(i-1,contextTypes == sameButDifferent) + 1;
+            TAC_Chinese(i,contextTypes ~= sameButDifferent) = TAC_Chinese(i-1,contextTypes ~= sameButDifferent);
+
             s=max([s-1, 0]);
             contextMean(i,:) = contextMean(i-1,:);
         end
@@ -408,7 +442,7 @@ if trials > 1
     shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 else shieldType = 1;
 end
-
+%keyboard
 %% Save data
 taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     block, fieldNames.initiationRTs, initiationRT, ...

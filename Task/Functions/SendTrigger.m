@@ -241,6 +241,8 @@ elseif isequal(taskParam.gParam.taskType, 'reversal')
     
 elseif isequal(taskParam.gParam.taskType, 'chinese')
     
+    trigger = 255;
+    
 end
 
 if taskParam.gParam.sendTrigger == true
