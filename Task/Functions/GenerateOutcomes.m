@@ -315,7 +315,7 @@ elseif isequal(condition, 'chinese')
         % sContext = 3
         %keyboard
         nContexts = 3;
-        contextHaz = 1/nContexts;
+        contextHaz = 0.5;%1/nContexts;
         safeContext = 3;
         sContext = nan;
         contextMean = nan(trials, nContexts);
@@ -460,5 +460,5 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     fieldNames.memErr, memErr, fieldNames.UP, UP, fieldNames.hit, hit,...
     fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date,...
     {Date},'reversal', reversal, 'initialTendency', initialTendency,...
-    'RT', RT);
+    'RT', RT, 'currentContext', currentContext);
 end
