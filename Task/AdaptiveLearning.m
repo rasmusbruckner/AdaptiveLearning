@@ -65,7 +65,7 @@ computer = 'Macbook';
 %   - 'dresden'
 %   - 'reversal'
 %   - 'chinese'
-taskType = 'chinese';
+taskType = 'reversal';
 
 % version specific parameters
 if strcmp(taskType, 'dresden')
@@ -114,11 +114,11 @@ elseif strcmp(taskType, 'chinese')
 end
 
 % version independent parameters
-runIntro                = false;
+runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
-shieldTrials            = 4; % 4
+shieldTrials            = 1; % 4
 practTrials             = 20; % 20
 blockIndices            = [1 60 120 180];
 haz                     = [.25 1 0];

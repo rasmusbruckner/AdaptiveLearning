@@ -86,6 +86,9 @@ minASS = 10;
 maxASS = 180;
 allASS = zeros(trials,1);
 
+currentContext = nan(trials,1);
+hiddenContext = nan(trials,1);
+
 % -------------------------------------------------------------------------
 % Generate outcomes for current condition
 % -------------------------------------------------------------------------
@@ -328,7 +331,7 @@ elseif isequal(condition, 'chinese')
         if i >= taskParam.gParam.blockIndices(1)...
                 && i <= taskParam.gParam.blockIndices(2)
             block(i) = 1;
-           elseif i >= taskParam.gParam.blockIndices(2)...
+        elseif i >= taskParam.gParam.blockIndices(2)...
                 && i <= taskParam.gParam.blockIndices(3)
             block(i) = 2;
         elseif i >= taskParam.gParam.blockIndices(3)...
@@ -337,16 +340,45 @@ elseif isequal(condition, 'chinese')
         elseif i >= taskParam.gParam.blockIndices(4)
             block(i) = 4;
         end
-        %keyboard
+        
         if i == taskParam.gParam.blockIndices(1)...
                 || i == taskParam.gParam.blockIndices(2)...
                 || i == taskParam.gParam.blockIndices(3)...
                 || i == taskParam.gParam.blockIndices(4)
-            contextTypes = randi(nContexts,nContexts,1);
+            %keyboard
+            %nHiddenContexts = randi(3);
+            %nHiddenContexts = randi(2)+1;
+            
+            %contextTypes = randi(nHiddenContexts,nContexts,1); % welche kontexte sind gleich?
+            %keyboard
+            
+            %x = randi(3);
+            x = randi(3);
+            if x == 1
+                
+                contextTypes = [1 1 1]; % all equal
+                
+            elseif x == 2 
+                
+                contextTypes = [1 1 2]; % two equal, one distinct
+                
+                % shuffle that we get differences between blocks
+                contextTypes = Shuffle(contextTypes);
+                
+            elseif x == 3
+                
+                contextTypes = [1 2 3]; % all distinct
+                
+            end
+            
+             
+            
+            
+            
         end
             
         
-        
+        %keyboard
         % determine current context 
         if (rand < contextHaz && sContext == 0)...
                 || i == taskParam.gParam.blockIndices(1)...
@@ -354,8 +386,12 @@ elseif isequal(condition, 'chinese')
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
                 || i == taskParam.gParam.blockIndices(4) + 1 
             %keyboard
-            currentContext(i) = randi(nContexts); 
+            currentContext(i) = randi(nContexts); % observierbarer kontext
             hiddenContext(i) = contextTypes(currentContext(i));
+%             if hiddenContext(i) == 1
+%                 keyboard
+%             end
+            
             contextCp(i) = 1;
             sContext = safeContext;
             TAC_Context(i) = 0; %TAC(i)=1;
@@ -371,7 +407,9 @@ elseif isequal(condition, 'chinese')
             firstVisit(i) = 1;
         end
         
-        if (rand < haz && s==0)...
+         %sameButDifferent(i) = contextTypes(currentContext(i)); % ist das gleich hidden context?
+        
+         if (rand < haz && s==0)...
                 || i == taskParam.gParam.blockIndices(1)...
                 || i == taskParam.gParam.blockIndices(2) + 1 ...
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
@@ -379,11 +417,11 @@ elseif isequal(condition, 'chinese')
                 || firstVisit(i) == 1
             %mean = randi(359);%round(rand(1).*359); 
             
-            sameButDifferent = contextTypes(currentContext(i));
+            %sameButDifferent(i) = contextTypes(currentContext(i));
             
             %cp(i,currentContext(i)) = 1;
             try
-            cp(i,contextTypes == sameButDifferent) = 1;
+            cp(i,contextTypes == hiddenContext(i)) = 1;
             catch
                 
                 keyboard
@@ -391,7 +429,7 @@ elseif isequal(condition, 'chinese')
             end
             %keyboard
             %contextMean(i,cp(i,:) == 1) = randi(359);
-            contextMean(i,contextTypes == sameButDifferent) = randi(359);
+            contextMean(i,contextTypes == hiddenContext(i)) = randi(359);
             %keyboard
             if i > 1
                 contextMean(i,cp(i,:) == 0) = contextMean(i-1,cp(i,:) == 0);
@@ -403,12 +441,12 @@ elseif isequal(condition, 'chinese')
             end
             
            % keyboard
-            TAC_Chinese(i,contextTypes == sameButDifferent) = 0; %TAC(i)=1;
+            TAC_Chinese(i,contextTypes == hiddenContext(i)) = 0; %TAC(i)=1;
            
-            %TAC_Chinese(i,contextTypes ~= sameButDifferent) = nan;
+            %TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = nan;
         else
-            TAC_Chinese(i,contextTypes == sameButDifferent) = TAC_Chinese(i-1,contextTypes == sameButDifferent) + 1;
-            TAC_Chinese(i,contextTypes ~= sameButDifferent) = TAC_Chinese(i-1,contextTypes ~= sameButDifferent);
+            TAC_Chinese(i,contextTypes == hiddenContext(i)) = TAC_Chinese(i-1,contextTypes == hiddenContext(i)) + 1;
+            TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = TAC_Chinese(i-1,contextTypes ~= hiddenContext(i));
 
             s=max([s-1, 0]);
             contextMean(i,:) = contextMean(i-1,:);
@@ -418,6 +456,7 @@ elseif isequal(condition, 'chinese')
             round(180+rad2deg(circ_vmrnd(deg2rad(contextMean(i,currentContext(i))-180),...
             concentration, 1)));
         %distMean(i) = mean;
+        distMean(i) =contextMean(i,currentContext(i))
         %contextMean(i,currentContext) = mean;
         oddBall(i) = nan;
         
@@ -446,8 +485,8 @@ end
 %% Save data
 taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     block, fieldNames.initiationRTs, initiationRT, ...
-    fieldNames.timestampOnset, timestampOnset,...
-    fieldNames.timestampPrediction, timestampPrediction,...
+    fieldNames.timestampOnset, timestampOnset, 'haz', haz,...
+    'concentration', concentration, fieldNames.timestampPrediction, timestampPrediction,...
     fieldNames.timestampOffset, timestampOffset, fieldNames.oddBall,...
     oddBall, fieldNames.allASS, allASS, fieldNames.ID, {ID},...
     fieldNames.age, {age}, fieldNames.rew, {rew}, fieldNames.actRew,...
@@ -460,5 +499,6 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     fieldNames.memErr, memErr, fieldNames.UP, UP, fieldNames.hit, hit,...
     fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date,...
     {Date},'reversal', reversal, 'initialTendency', initialTendency,...
-    'RT', RT, 'currentContext', currentContext);
+    'RT', RT, 'currentContext', currentContext,...
+    'hiddenContext', hiddenContext, 'contextTypes', contextTypes);
 end

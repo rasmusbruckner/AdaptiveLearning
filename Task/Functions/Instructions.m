@@ -192,7 +192,8 @@ end
         %part of the instructions for change point, oddball, follow 
         %cannon and reversal task
         
-        screenIndex = 1;
+        screenIndex = 25%1;
+        warning('springt direkt zu 25')
         
         while 1
             
@@ -1373,7 +1374,8 @@ end
 
     function reversalPractice
         
-        screenIndex = 1;
+        screenIndex = 6;
+        warning('springt direkt zu 6')
         
         while 1
             
@@ -1721,7 +1723,8 @@ end
                         
                         distMean = practData.distMean(end);
                         outcome = practData.outcome(end);
-                        tickInstructions.savedTickmark = savedTickmark;
+                        practData
+                        tickInstructions.savedTickmark = practData.savedTickmark(end);%savedTickmark;
                         tickInstructions.previousOutcome = outcome;
                         tickInstructions.previousPrediction =...
                             practData.pred(end);

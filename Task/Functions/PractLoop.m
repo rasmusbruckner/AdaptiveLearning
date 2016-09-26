@@ -28,19 +28,19 @@ elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'reversalVisibleNoNoise')
-   practData = load(LoadData);
+    practData = load(LoadData);
     practData = practData.taskData;
     trials = taskParam.gParam.practTrials;
     practData.savedTickmark(1) = nan;
     practData.savedTickmarkPrevious(1) = nan;
 elseif nargin == 7 && isequal(LoadData, 'reversalVisibleNoise')
-   practData = load(LoadData);
+    practData = load(LoadData);
     practData = practData.taskData;
     trials = taskParam.gParam.practTrials;
     practData.savedTickmark(1) = nan;
     practData.savedTickmarkPrevious(1) = nan;
 elseif nargin == 7 && isequal(LoadData, 'reversalNotVisibleNoise')
-   practData = load(LoadData);
+    practData = load(LoadData);
     practData = practData.taskData;
     trials = taskParam.gParam.practTrials;
     practData.savedTickmark(:,1) = nan;
@@ -78,7 +78,7 @@ else
     else
         trials = taskParam.gParam.practTrials;
     end
-        
+    
     practData.savedTickmark(1) = nan;
     practData.savedTickmarkPrevious(1) = nan;
 end
@@ -253,15 +253,49 @@ for i = 1:trials
                 
             else
                 
+                if buttons(2) == 1
+                    
+                    practData.savedTickmark(i) =...
+                        ((taskParam.circle.rotAngle) /...
+                        taskParam.circle.unit);
+                    WaitSecs(0.2);
+                    press = 1;
+                elseif i == 1 && press == 0
+                    practData.savedTickmarkPrevious(i) = practData.savedTickmark(i);
+                elseif i > 1 && press == 0
+                    
+                    practData.savedTickmarkPrevious(i) = ...
+                        practData.savedTickmarkPrevious(i - 1);
+                    practData.savedTickmark(i) = practData.savedTickmark(i - 1);
+                
+                end
+                
+                if press == 1
+                    if i == 1
+                        practData.savedTickmarkPrevious(i) = practData.savedTickmark;
+                        
+                    else
+                        practData.savedTickmarkPrevious(i) = practData.savedTickmark(i-1);
+                    end
+                end
+                
                 if i == 1
                     TickMark(taskParam, practData.pred(i), 'pred');
-                    TickMark(taskParam, reversalPackage.outcome, 'outc');
-                    
+                    TickMark(taskParam, practData.outcome(i), 'outc');
+                    if press == 1
+                        TickMark(taskParam,...
+                            practData.savedTickmarkPrevious(i), 'update');
+                    end
+                    TickMark(taskParam, practData.savedTickmark(i), 'saved');
                 else
                     TickMark(taskParam, practData.pred(i-1), 'pred');
                     TickMark(taskParam, practData.outcome(i-1), 'outc');
+                    if press == 1
+                        TickMark(taskParam,...
+                            practData.savedTickmarkPrevious(i), 'update');
+                    end
+                    TickMark(taskParam, practData.savedTickmark(i), 'saved');
                 end
-                TickMark(taskParam, practData.savedTickmark, 'saved');
                 
             end
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);
