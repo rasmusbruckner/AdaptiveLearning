@@ -1,4 +1,4 @@
-function [taskParam, practData] = PractLoop(taskParam, subject, vola,...
+function [taskParam, practData, leaveLoop] = PractLoop(taskParam, subject, vola,...
     sigma, cannon, condition, LoadData, reversalPackage)
 %PRACTLOOP Runs the practice blocks. Depending on the condition, the
 %cannon is visible.
@@ -83,6 +83,7 @@ else
     practData.savedTickmarkPrevious(1) = nan;
 end
 
+leaveLoop = 0;
 for i = 1:trials
     
     WaitSecs(rand*taskParam.gParam.jitter);
@@ -174,6 +175,7 @@ for i = 1:trials
         
         SetMouse(720, 450, taskParam.gParam.window.onScreen)
         press = 0;
+        %keyboard
         while 1
             [x,y,buttons,focus,valuators,valinfo] =...
                 GetMouse(taskParam.gParam.window.onScreen);
@@ -231,7 +233,7 @@ for i = 1:trials
                         practData.savedTickmarkPrevious(i - 1);
                     practData.savedTickmark(i) = practData.savedTickmark(i - 1);
                 elseif i == 1
-                    savedTickmarPrevious(i) = 0;
+                    savedTickmarkPrevious(i) = 0;
                 end
                 
                 if press == 1
@@ -254,12 +256,19 @@ for i = 1:trials
             else
                 
                 if buttons(2) == 1
-                    
+                   
                     practData.savedTickmark(i) =...
                         ((taskParam.circle.rotAngle) /...
                         taskParam.circle.unit);
                     WaitSecs(0.2);
                     press = 1;
+                    
+                    if abs(Diff(practData.savedTickmark(i),reversalPackage.savedTickmark)) > 0.01
+                        
+                        leaveLoop = true;
+ 
+                    end
+                             
                 elseif i == 1 && press == 0
                     practData.savedTickmarkPrevious(i) = practData.savedTickmark(i);
                 elseif i > 1 && press == 0
@@ -435,6 +444,10 @@ for i = 1:trials
     % Calculate accumulated performance.
     practData.accPerf(i) = sum(practData.perf);
     WaitSecs(1);
+   
+    if leaveLoop
+        break 
+    end
     
 end
 

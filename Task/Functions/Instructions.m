@@ -192,8 +192,7 @@ end
         %part of the instructions for change point, oddball, follow 
         %cannon and reversal task
         
-        screenIndex = 25%1;
-        warning('springt direkt zu 25')
+        screenIndex = 1;
         
         while 1
             
@@ -1374,13 +1373,11 @@ end
 
     function reversalPractice
         
-        screenIndex = 6;
-        warning('springt direkt zu 6')
+        screenIndex = 1;
         
         while 1
             
             switch(screenIndex)
-                
                 
                 case 1
                     
@@ -1465,8 +1462,6 @@ end
                             'the cannon reaims its position, it will '...
                             'still go back to its previous aim.'];
                         
-                        
-                        %end
                         feedback = false;
                         fw = BigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
@@ -1706,10 +1701,31 @@ end
                         reversalPackage = struct('savedTickmark',...
                             savedTickmark, 'pred', Data.pred,...
                             'outcome', outcome);
-                        [taskParam, practData] = PractLoop(taskParam,...
+                        [taskParam, practData, leaveLoop] = PractLoop(taskParam,...
                             subject, taskParam.gParam.haz(3),...
                             taskParam.gParam.concentration(1),...
                             cannon, condition, LoadData, reversalPackage);
+                        
+                        if leaveLoop
+                           
+                           header = 'Try it one more time!';
+                           txt = ['In this case you updated your tickmark '...
+                               'although the cannon did not change its aim. '...
+                               'In the next round try to hold off for '...
+                               'the tickmark while the cannon does not change.'];
+                                    
+                            feedback = false;
+                            fw = BigScreen(taskParam,...
+                                taskParam.strings.txtPressEnter, header, txt,...
+                                feedback);
+                            screenIndex = 5; 
+                            if fw == 1
+                                screenIndex = screenIndex + 1;
+                            elseif bw == 1
+                                screenIndex = screenIndex - 2;
+                            end
+
+                        else
                         
                         txt=['In this case the cannon reaimed to its '...
                             'previous position. You can use your saved '...
@@ -1723,8 +1739,7 @@ end
                         
                         distMean = practData.distMean(end);
                         outcome = practData.outcome(end);
-                        practData
-                        tickInstructions.savedTickmark = practData.savedTickmark(end);%savedTickmark;
+                        tickInstructions.savedTickmark = practData.savedTickmark(end);
                         tickInstructions.previousOutcome = outcome;
                         tickInstructions.previousPrediction =...
                             practData.pred(end);
@@ -1733,8 +1748,8 @@ end
                             txt, cannon, 'space', distMean,...
                             tickInstructions);
                         
-                        tickDev = tickInstructions.savedTickmark - Data.pred;
-                        
+                        tickDev = abs(tickInstructions.savedTickmark - Data.pred);
+                        updatedTickDev = abs(practData.pred(end-1) - savedTickmark);
                         DrawCross(taskParam);
                         LineAndBack(taskParam)
                         DrawCross(taskParam)
@@ -1779,51 +1794,64 @@ end
                             taskParam.gParam.window.onScreen, t + 3.1, 1);
                         WaitSecs(1);
                         
+                        end
                     end
-                    
-                    
                     
                 case 7
                     
-                    if tickDev <= 10
-                    header = '';
-                    txt = ['Well done! In this block you can practice '...
-                        'the task with an invisible cannon. Keep in '...
-                        'mind that the cannon occasionally reaims to '...
-                        'its previous position. Use the red tickmark '...
-                        'to mark the previous aim of the cannon.'];
-                    
-                    
-           
-                    feedback = false;
-                    fw = BigScreen(taskParam,...
-                        taskParam.strings.txtPressEnter, header, txt,...
-                        feedback);
-                    if fw == 1
-                        screenIndex = screenIndex + 1;
-                    elseif bw == 1
-                        screenIndex = screenIndex - 2;
-                    end
-                    else
+                    if tickDev <= 10 && updatedTickDev <= 10 && ~isnan(updatedTickDev)
+                        header = ''; 
+                        txt = ['Well done! In this block you can practice '...
+                            'the task with an invisible cannon. Keep in '...
+                            'mind that the cannon occasionally reaims to '...
+                            'its previous position. Use the red tickmark '...
+                            'to mark the previous aim of the cannon.'];
                        
-                              header = 'Try again!';
-                    txt = ['In this case you did not use the information '...
-                        'of the tickmark for your current prediction. '...
-                        'Keep in mind to use the tickmark '...
-                        'this time!.'];
-                    
-                    
-           
-                    feedback = false;
-                    fw = BigScreen(taskParam,...
-                        taskParam.strings.txtPressEnter, header, txt,...
-                        feedback);
-                    if fw == 1
-                        screenIndex = screenIndex - 1;
-                    
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                    elseif tickDev > 10
+                        
+                        header = 'Try again!';
+                        txt = ['In this case you did not use the information '...
+                            'of the tickmark for your current prediction. '...
+                            'Keep in mind to use the tickmark '...
+                            'this time!.'];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+
+                        if fw == 1
+                            screenIndex = screenIndex - 1;
+                            
+                        end
+                        
+                    elseif updatedTickDev > 10 || isnan(updatedTickDev)
+                        
+                        header = 'Try again!';
+                        txt = ['In this case you did not correctly update your '...
+                            'tickmark after the cannon reaimed. Keep '...
+                            'in mind to use the tickmark this time!'];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+
+                        if fw == 1
+                            screenIndex = screenIndex - 1;
+                            
+                        end
+                        
                     end
-                    end
-                    
                     
                     WaitSecs(0.1);
                     
@@ -1831,12 +1859,10 @@ end
                     
                     condition = 'reversalPracticeNoiseInv2';
                     LoadData = 'reversalNotVisibleNoise';
-                    %LoadData = 'reversalPracticeNoiseInv2' %for 40 trials
+                    
                     cannon = false;
                     savedTickmark = nan;
                     
-%                     reversalPackage = struct('savedTickmark',...
-%                             savedTickmark);
                     [taskParam, practData] = PractLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
@@ -1855,8 +1881,6 @@ end
                         screenIndex = screenIndex + 1;
                     end
                     WaitSecs(0.1);
-                   
-                    %break
                     
                 case 9
                     
@@ -1894,8 +1918,6 @@ end
                         'it reaimed to the previous location or '...
                         'whether it is aiming at a new location.'];
                     
-                    
-                    %end
                     feedback = false;
                     fw = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,...

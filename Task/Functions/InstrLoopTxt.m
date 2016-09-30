@@ -6,11 +6,9 @@ function [taskParam, fw, Data, savedTickmark] = InstrLoopTxt...
 if exist('Data', 'var')
     i = 1;
     fw = 0;
-    %bw = 0;
 else
     i = 1;
     fw = 0;
-    %bw = 0;
     pred = 0;
     predErr = 0;
     memErr = 0;
@@ -22,7 +20,6 @@ else
         distMean);
 end
 
-%savedTickmarPrevious(1) = nan;
 savedTickmark(1) = nan;
 previousTickmark = nan;
 Data.tickCannonDev = nan;

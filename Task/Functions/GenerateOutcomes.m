@@ -35,6 +35,7 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
 elseif isequal(condition, 'reversalPracticeNoiseInv3')
     trials = taskParam.gParam.practTrials * 2;
 end
+contextTypes = 0;
 
 % -------------------------------------------------------------------------
 % Preallocate variables
