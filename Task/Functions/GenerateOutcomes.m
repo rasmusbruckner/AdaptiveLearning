@@ -319,9 +319,13 @@ elseif isequal(condition, 'chinese')
         % sContext = 3
         %keyboard
         nContexts = 3;
+        nStates = 3;
         contextHaz = 0.5;%1/nContexts;
+        stateHaz = 0.5;
         safeContext = 3;
+        safeState = 3;
         sContext = nan;
+        sState = nan;
         contextMean = nan(trials, nContexts);
         firstVisit = zeros(trials,1);
         cp = zeros(trials, nContexts);
@@ -346,38 +350,56 @@ elseif isequal(condition, 'chinese')
                 || i == taskParam.gParam.blockIndices(2)...
                 || i == taskParam.gParam.blockIndices(3)...
                 || i == taskParam.gParam.blockIndices(4)
-            %keyboard
-            %nHiddenContexts = randi(3);
-            %nHiddenContexts = randi(2)+1;
             
-            %contextTypes = randi(nHiddenContexts,nContexts,1); % welche kontexte sind gleich?
-            %keyboard
+            %% alte version
+%             x = randi(3);
+%             if x == 1
+%                 
+%                 contextTypes = [1 1 1]; % all equal
+%                 
+%             elseif x == 2 
+%                 
+%                 contextTypes = [1 1 2]; % two equal, one distinct
+%                 
+%                 % shuffle that we get differences between blocks
+%                 contextTypes = Shuffle(contextTypes);
+%                 
+%             elseif x == 3
+%                 
+%                 contextTypes = [1 2 3]; % all distinct
+%                 
+%             end
+            %% neue version
             
-            %x = randi(3);
-            x = randi(3);
-            if x == 1
-                
-                contextTypes = [1 1 1]; % all equal
-                
-            elseif x == 2 
-                
-                contextTypes = [1 1 2]; % two equal, one distinct
-                
-                % shuffle that we get differences between blocks
-                contextTypes = Shuffle(contextTypes);
-                
-            elseif x == 3
-                
-                contextTypes = [1 2 3]; % all distinct
-                
-            end
-            
-             
+            % determine state space
+            % row = latent state
+            % column = color
+            stateSpace = randi(360,3,3);
             
             
             
         end
-            
+        %keyboard
+        
+        % determine latent state
+        if (rand < stateHaz && sState == 0)...
+                || i == taskParam.gParam.blockIndices(1)...
+                || i == taskParam.gParam.blockIndices(2) + 1 ...
+                || i == taskParam.gParam.blockIndices(3) + 1 ...
+                || i == taskParam.gParam.blockIndices(4) + 1 
+          
+            latentState(i) = randi(nContexts); % observierbarer kontext
+            stateCp(i) = 1;
+            sState = safeState;
+            TAC_State(i) = 0; %TAC(i)=1;
+        else
+            TAC_State(i) = TAC_State(i-1) + 1;
+            sState = max([sState-1, 0]);
+            latentState(i) = latentState(i-1);
+        end
+        
+        
+        
         
         %keyboard
         % determine current context 
@@ -387,8 +409,8 @@ elseif isequal(condition, 'chinese')
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
                 || i == taskParam.gParam.blockIndices(4) + 1 
             %keyboard
-            currentContext(i) = randi(nContexts); % observierbarer kontext
-            hiddenContext(i) = contextTypes(currentContext(i));
+            currentContext(i) = randi(nStates); % observierbarer kontext
+            %hiddenContext(i) = contextTypes(currentContext(i));
 %             if hiddenContext(i) == 1
 %                 keyboard
 %             end
@@ -400,65 +422,68 @@ elseif isequal(condition, 'chinese')
             TAC_Context(i) = TAC_Context(i-1) + 1;
             sContext = max([sContext-1, 0]);
             currentContext(i) = currentContext(i-1);
-            hiddenContext(i) = hiddenContext(i-1);
+            %hiddenContext(i) = hiddenContext(i-1);
         end
         
         %if sum(currentContext == currentContext(i)) == 1
-        if sum(hiddenContext == hiddenContext(i)) == 1
-            firstVisit(i) = 1;
-        end
+%         if sum(hiddenContext == hiddenContext(i)) == 1
+%             firstVisit(i) = 1;
+%         end
         
          %sameButDifferent(i) = contextTypes(currentContext(i)); % ist das gleich hidden context?
-        
-         if (rand < haz && s==0)...
-                || i == taskParam.gParam.blockIndices(1)...
-                || i == taskParam.gParam.blockIndices(2) + 1 ...
-                || i == taskParam.gParam.blockIndices(3) + 1 ...
-                || i == taskParam.gParam.blockIndices(4) + 1 ...
-                || firstVisit(i) == 1
-            %mean = randi(359);%round(rand(1).*359); 
-            
-            %sameButDifferent(i) = contextTypes(currentContext(i));
-            
-            %cp(i,currentContext(i)) = 1;
-            try
-            cp(i,contextTypes == hiddenContext(i)) = 1;
-            catch
-                
-                keyboard
-                
-            end
-            %keyboard
-            %contextMean(i,cp(i,:) == 1) = randi(359);
-            contextMean(i,contextTypes == hiddenContext(i)) = randi(359);
-            %keyboard
-            if i > 1
-                contextMean(i,cp(i,:) == 0) = contextMean(i-1,cp(i,:) == 0);
-            end
-            if isequal(condition,'shield')
-                s=taskParam.gParam.safe(2);
-            else
-                s=taskParam.gParam.safe(1);
-            end
-            
-           % keyboard
-            TAC_Chinese(i,contextTypes == hiddenContext(i)) = 0; %TAC(i)=1;
-           
-            %TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = nan;
-        else
-            TAC_Chinese(i,contextTypes == hiddenContext(i)) = TAC_Chinese(i-1,contextTypes == hiddenContext(i)) + 1;
-            TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = TAC_Chinese(i-1,contextTypes ~= hiddenContext(i));
-
-            s=max([s-1, 0]);
-            contextMean(i,:) = contextMean(i-1,:);
-        end
+%         
+%          if (rand < haz && s==0)...
+%                 || i == taskParam.gParam.blockIndices(1)...
+%                 || i == taskParam.gParam.blockIndices(2) + 1 ...
+%                 || i == taskParam.gParam.blockIndices(3) + 1 ...
+%                 || i == taskParam.gParam.blockIndices(4) + 1 ...
+%                 || firstVisit(i) == 1
+%             %mean = randi(359);%round(rand(1).*359); 
+%             
+%             %sameButDifferent(i) = contextTypes(currentContext(i));
+%             
+%             %cp(i,currentContext(i)) = 1;
+% %             try
+% %             cp(i,contextTypes == hiddenContext(i)) = 1;
+% %             catch
+% %                 
+% %                 keyboard
+% %                 
+% %             end
+% %             %keyboard
+%             %contextMean(i,cp(i,:) == 1) = randi(359);
+%             %contextMean(i,contextTypes == hiddenContext(i)) = randi(359);
+%             %keyboard
+%             %if i > 1
+%             %    contextMean(i,cp(i,:) == 0) = contextMean(i-1,cp(i,:) == 0);
+%             %end
+%             
+%             if isequal(condition,'shield')
+%                 s=taskParam.gParam.safe(2);
+%             else
+%                 s=taskParam.gParam.safe(1);
+%             end
+%             
+%            % keyboard
+%             %TAC_Chinese(i,contextTypes == hiddenContext(i)) = 0; %TAC(i)=1;
+%            
+%             %TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = nan;
+%         else
+%             TAC_Chinese(i,contextTypes == hiddenContext(i)) = TAC_Chinese(i-1,contextTypes == hiddenContext(i)) + 1;
+%             TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = TAC_Chinese(i-1,contextTypes ~= hiddenContext(i));
+% 
+%             s=max([s-1, 0]);
+%             contextMean(i,:) = contextMean(i-1,:);
+%         end
         
         outcome(i) =...
-            round(180+rad2deg(circ_vmrnd(deg2rad(contextMean(i,currentContext(i))-180),...
+            round(180+rad2deg(circ_vmrnd(deg2rad(stateSpace(latentState(i), currentContext(i))-180),...
             concentration, 1)));
-        %distMean(i) = mean;
-        distMean(i) =contextMean(i,currentContext(i))
-        %contextMean(i,currentContext) = mean;
+        
+       
+        
+        distMean(i) = stateSpace(latentState(i), currentContext(i));
+        
         oddBall(i) = nan;
         
         %CatchTrial
@@ -470,7 +495,7 @@ elseif isequal(condition, 'chinese')
         ASS=nan;
         
         while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
-            ASS=exprnd(mu);
+            ASS = exprnd(mu);
         end
         allASS(i) = ASS;
     end

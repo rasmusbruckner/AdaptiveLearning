@@ -603,7 +603,7 @@ for i=1:trial
     taskData.timestampOffset(i,:) = GetSecs - ref;
 end
 
-if isequal(taskParam.gParam.taskType, 'dresden')
+if isequal(taskParam.gParam.taskType, 'dresden') || isequal(taskParam.gParam.taskType, 'chinese')
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
     
 elseif isequal(taskParam.gParam.taskType, 'oddball')
