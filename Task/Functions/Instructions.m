@@ -90,10 +90,9 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
         
     end
     
-elseif isequal(taskParam.gParam.taskType, 'reversal')
+elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'chinese')
     
     SharedInstructions_MainOddballFollowCannon
-    %reversalPractice
     
 end
 
@@ -102,7 +101,7 @@ end
 % -------------------------------------------------------------------------
 
     function DisplayPartOfTask
-        %DISPLAYPARTOFTASK   Prints task version at the beginning of the 
+        %DISPLAYPARTOFTASK   Prints task version at the beginning of the
         %task
         
         Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
@@ -165,6 +164,8 @@ end
                 txt = 'Change Point Task';
             elseif isequal(whichPractice, 'reversal')
                 txt = 'Reversal Task';
+            elseif isequal(whichPractice, 'chinese')
+                txt = 'Beschütze Deine Planeten';
             end
             
         end
@@ -188,11 +189,11 @@ end
     end
 
     function SharedInstructions_MainOddballFollowCannon
-        %SHAREDINSTRUCTIONS_MAINODDBALLFOLLOWCANNON   Runs first 
-        %part of the instructions for change point, oddball, follow 
+        %SHAREDINSTRUCTIONS_MAINODDBALLFOLLOWCANNON   Runs first
+        %part of the instructions for change point, oddball, follow
         %cannon and reversal task
         
-        screenIndex = 1;
+        screenIndex = 25;%1;
         
         while 1
             
@@ -208,6 +209,7 @@ end
                     else
                         screenIndex = screenIndex + 1;
                     end
+                    
                 case 2
                     
                     screenIndex = FirstCannonSlide(screenIndex);
@@ -218,8 +220,6 @@ end
                         PressSpaceToInitiateCannonShot(screenIndex, true);
                     
                     WaitSecs(0.1);
-                    
-                    
                     
                 case 4
                     distMean = 290;
@@ -249,6 +249,10 @@ end
                         txt=['Move the orange spot to the part of the '...
                             'circle, where the cannon is aimed and '...
                             'press the left mouse button.'];
+                    elseif isequal(taskParam.gParam.taskType, 'chinese')
+                        txt=['Bewege den orangenen Punkt zu der Stelle '...
+                            'auf dem Planeten auf die die Kanone zielt '...
+                            'und drücke die linke Maustaste.'];
                     end
                     [screenIndex, Data] = MoveSpotToCannonAim...
                         (screenIndex, txt, distMean, Data);
@@ -284,6 +288,12 @@ end
                             'ball. If at least half of the ball '...
                             'overlaps with the shield then it is '...
                             'a "catch".'];
+                    elseif isequal(taskParam.gParam.taskType, 'chinese')
+                        txt=['Dein Schild erscheint nach dem Schuss '...
+                            'des Raumschiffs. In diesem Fall hast du '...
+                            'die Rakete abgewehrt. Wenn mindestens '...
+                            'die Hälfte der Rakete auf dem Schild ist, '...
+                            'hast du die Rakete erfolgreich abgewehrt.'];
                     end
                     win = true;
                     [screenIndex, Data] =...
@@ -312,9 +322,12 @@ end
                         txt = ['Now try to place the shield so '...
                             'that you miss the cannonball. Then hit '...
                             'the left mouse button. '];
-                        
+                    elseif isequal(taskParam.gParam.taskType, 'chinese')
+                        txt = ['Versuche nun dein Schild so zu '...
+                            'positionieren, dass du die Rakete '...
+                            'verfehlst. Drücke dann die linke Maustaste.'];
                     end
-                    distMean = 35;
+                    distMean = 55;
                     [screenIndex, Data] = TryToMissTheCannon...
                         (screenIndex, Data, txt, distMean);
                     
@@ -323,7 +336,7 @@ end
                     [screenIndex, Data, t] =...
                         YouCaughtTheCannonball_TryToMissIt...
                         (screenIndex, Data, distMean);
-                    
+                    %keyboard
                 case 9
                     
                     if isequal(taskParam.gParam.taskType, 'dresden')
@@ -338,6 +351,8 @@ end
                     elseif isequal(taskParam.gParam.taskType, 'oddball')...
                             ||isequal(taskParam.gParam.taskType,'reversal')
                         txt='In this case you missed the cannonball.';
+                    elseif isequal(taskParam.gParam.taskType, 'chinese')
+                        txt='In diesem Fall hast du die Rakete verfehlt.';
                     end
                     win = true;
                     [screenIndex, Data, t] =...
@@ -392,6 +407,10 @@ end
                     
                     [screenIndex, Data] = ShieldPractice...
                         (screenIndex, whichPractice);
+                    if isequal(taskParam.gParam.taskType, 'chinese')
+                        screenIndex = 25;
+                    end
+                    
                     
                 case 12
                     
@@ -495,7 +514,7 @@ end
                     Data.outcome = distMean;
                     [screenIndex, Data, t] =...
                         YouCaughtTheCannonball_TryToMissIt...
-                    (screenIndex, Data, distMean);
+                        (screenIndex, Data, distMean);
                     
                 case 18
                     
@@ -515,8 +534,8 @@ end
                     win = true;
                     
                     [screenIndex, Data, t] =...
-                       InThisCaseYouMissedTheCannonball...
-                       (screenIndex, Data, t, txt, distMean, win);
+                        InThisCaseYouMissedTheCannonball...
+                        (screenIndex, Data, t, txt, distMean, win);
                     
                 case 19
                     
@@ -538,8 +557,8 @@ end
                     end
                     
                     [screenIndex, Data] =...
-                       MoveSpotToCannonAim...
-                       (screenIndex, txt, distMean, Data);
+                        MoveSpotToCannonAim...
+                        (screenIndex, txt, distMean, Data);
                     
                 case 20
                     
@@ -567,7 +586,7 @@ end
                             
                         end
                     elseif isequal(taskParam.gParam.taskType, 'oddball')...
-                           ||isequal(taskParam.gParam.taskType,'reversal')
+                            ||isequal(taskParam.gParam.taskType,'reversal')
                         txt=sprintf(['You caught the ball and your '...
                             'shield was %s so you would earn nothing.'],...
                             colNoRew);
@@ -655,9 +674,13 @@ end
                         
                         reversalPractice
                         
-                    else % specify
+                    elseif isequal(taskParam.gParam.taskType, 'dresden')
                         
                         FollowCannonJustInstructions
+                        
+                    elseif (isequal(whichPractice, 'chinese'))
+                        
+                        chinesePractice
                         
                     end
                     
@@ -738,6 +761,7 @@ end
                                 'is aimed.'];
                             
                         end
+                        
                     else
                         
                         if isequal(subject.group, '1')
@@ -774,7 +798,7 @@ end
                         
                     end
                     feedback = false;
-                    [fw, bw] = BigScreen(taskParam, ...
+                    fw = BigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     
@@ -1123,7 +1147,7 @@ end
                     end
                     WaitSecs(0.1);
                     
-                case 4                                        
+                case 4
                     txt=['Move the orange spot to the part of the '...
                         'circle, where the cannon is aimed and press '...
                         'SPACE.'];
@@ -1280,7 +1304,7 @@ end
                     
                     WaitSecs(0.1);
                 case 7
-
+                    
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         LoadOddballPracticeNoNoise = true;
                         [taskParam, practData] = PractLoop(taskParam,...
@@ -1300,7 +1324,7 @@ end
                     [txt, header] = Feedback(practData, taskParam,...
                         subject, condition);
                     
-
+                    
                     feedback = true;
                     [fw, bw] = BigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
@@ -1365,7 +1389,7 @@ end
                     end
                     
                     WaitSecs(0.1);
-                case 10                                                             
+                case 10
                     break
             end
         end
@@ -1610,7 +1634,7 @@ end
                             taskParam.gParam.window.onScreen);
                         t = GetSecs;
                         Screen('Flip',...
-                        taskParam.gParam.window.onScreen, t + 0.1);
+                            taskParam.gParam.window.onScreen, t + 0.1);
                         % Show baseline 1.
                         DrawCross(taskParam);
                         LineAndBack(taskParam)
@@ -1707,106 +1731,106 @@ end
                             cannon, condition, LoadData, reversalPackage);
                         
                         if leaveLoop
-                           
-                           header = 'Try it one more time!';
-                           txt = ['In this case you updated your tickmark '...
-                               'although the cannon did not change its aim. '...
-                               'In the next round try to hold off for '...
-                               'the tickmark while the cannon does not change.'];
-                                    
+                            
+                            header = 'Try it one more time!';
+                            txt = ['In this case you updated your tickmark '...
+                                'although the cannon did not change its aim. '...
+                                'In the next round try to hold off for '...
+                                'the tickmark while the cannon does not change.'];
+                            
                             feedback = false;
                             fw = BigScreen(taskParam,...
                                 taskParam.strings.txtPressEnter, header, txt,...
                                 feedback);
-                            screenIndex = 5; 
+                            screenIndex = 5;
                             if fw == 1
                                 screenIndex = screenIndex + 1;
                             elseif bw == 1
                                 screenIndex = screenIndex - 2;
                             end
-
+                            
                         else
-                        
-                        txt=['In this case the cannon reaimed to its '...
-                            'previous position. You can use your saved '...
-                            'tickmark to inform your prediction and to '...
-                            'avoid recalibrating your shield again.\n'...
-                            'Before you indicate your prediction you '...
-                            'should update your tickmark. Move the '...
-                            'mouse to your last prediction (orange '...
-                            'tickmark) and hit the right mouse button. '...
-                            'Then indicate your prediction.'];
-                        
-                        distMean = practData.distMean(end);
-                        outcome = practData.outcome(end);
-                        tickInstructions.savedTickmark = practData.savedTickmark(end);
-                        tickInstructions.previousOutcome = outcome;
-                        tickInstructions.previousPrediction =...
-                            practData.pred(end);
-                        [taskParam, fw, Data, savedTickmark] =...
-                            InstrLoopTxt(taskParam,...
-                            txt, cannon, 'space', distMean,...
-                            tickInstructions);
-                        
-                        tickDev = abs(tickInstructions.savedTickmark - Data.pred);
-                        updatedTickDev = abs(practData.pred(end-1) - savedTickmark);
-                        DrawCross(taskParam);
-                        LineAndBack(taskParam)
-                        DrawCross(taskParam)
-                        DrawCircle(taskParam)
-                        Screen('DrawingFinished',...
-                            taskParam.gParam.window.onScreen, 1);
-                        Screen('Flip', taskParam.gParam.window.onScreen,...
-                            t + 2.1, 1);
-                        WaitSecs(1);
-                        
-                        DrawCross(taskParam);
-                        LineAndBack(taskParam)
-                        DrawCross(taskParam)
-                        DrawCircle(taskParam)
-                        DrawOutcome(taskParam, outcome)
-                        PredictionSpot(taskParam);
-                        Screen('DrawingFinished',...
-                            taskParam.gParam.window.onScreen, 1);
-                        Screen('Flip', taskParam.gParam.window.onScreen,...
-                            t + 3.1, 1);
-                        WaitSecs(0.5);
-                        
-                        DrawCross(taskParam);
-                        LineAndBack(taskParam)
-                        DrawCross(taskParam)
-                        DrawCircle(taskParam)
-                        Screen('DrawingFinished',...
-                            taskParam.gParam.window.onScreen, 1);
-                        Screen('Flip', taskParam.gParam.window.onScreen,...
-                            t + 2.1, 1);
-                        WaitSecs(1);
-                        
-                        DrawCross(taskParam);
-                        LineAndBack(taskParam)
-                        DrawCross(taskParam)
-                        DrawCircle(taskParam)
-                        Shield(taskParam, 20, Data.pred, 1)
-                        DrawOutcome(taskParam, outcome)
-                        Screen('DrawingFinished',...
-                            taskParam.gParam.window.onScreen, 1);
-                        Screen('Flip',...
-                            taskParam.gParam.window.onScreen, t + 3.1, 1);
-                        WaitSecs(1);
-                        
+                            
+                            txt=['In this case the cannon reaimed to its '...
+                                'previous position. You can use your saved '...
+                                'tickmark to inform your prediction and to '...
+                                'avoid recalibrating your shield again.\n'...
+                                'Before you indicate your prediction you '...
+                                'should update your tickmark. Move the '...
+                                'mouse to your last prediction (orange '...
+                                'tickmark) and hit the right mouse button. '...
+                                'Then indicate your prediction.'];
+                            
+                            distMean = practData.distMean(end);
+                            outcome = practData.outcome(end);
+                            tickInstructions.savedTickmark = practData.savedTickmark(end);
+                            tickInstructions.previousOutcome = outcome;
+                            tickInstructions.previousPrediction =...
+                                practData.pred(end);
+                            [taskParam, fw, Data, savedTickmark] =...
+                                InstrLoopTxt(taskParam,...
+                                txt, cannon, 'space', distMean,...
+                                tickInstructions);
+                            
+                            tickDev = abs(tickInstructions.savedTickmark - Data.pred);
+                            updatedTickDev = abs(practData.pred(end-1) - savedTickmark);
+                            DrawCross(taskParam);
+                            LineAndBack(taskParam)
+                            DrawCross(taskParam)
+                            DrawCircle(taskParam)
+                            Screen('DrawingFinished',...
+                                taskParam.gParam.window.onScreen, 1);
+                            Screen('Flip', taskParam.gParam.window.onScreen,...
+                                t + 2.1, 1);
+                            WaitSecs(1);
+                            
+                            DrawCross(taskParam);
+                            LineAndBack(taskParam)
+                            DrawCross(taskParam)
+                            DrawCircle(taskParam)
+                            DrawOutcome(taskParam, outcome)
+                            PredictionSpot(taskParam);
+                            Screen('DrawingFinished',...
+                                taskParam.gParam.window.onScreen, 1);
+                            Screen('Flip', taskParam.gParam.window.onScreen,...
+                                t + 3.1, 1);
+                            WaitSecs(0.5);
+                            
+                            DrawCross(taskParam);
+                            LineAndBack(taskParam)
+                            DrawCross(taskParam)
+                            DrawCircle(taskParam)
+                            Screen('DrawingFinished',...
+                                taskParam.gParam.window.onScreen, 1);
+                            Screen('Flip', taskParam.gParam.window.onScreen,...
+                                t + 2.1, 1);
+                            WaitSecs(1);
+                            
+                            DrawCross(taskParam);
+                            LineAndBack(taskParam)
+                            DrawCross(taskParam)
+                            DrawCircle(taskParam)
+                            Shield(taskParam, 20, Data.pred, 1)
+                            DrawOutcome(taskParam, outcome)
+                            Screen('DrawingFinished',...
+                                taskParam.gParam.window.onScreen, 1);
+                            Screen('Flip',...
+                                taskParam.gParam.window.onScreen, t + 3.1, 1);
+                            WaitSecs(1);
+                            
                         end
                     end
                     
                 case 7
                     
                     if tickDev <= 10 && updatedTickDev <= 10 && ~isnan(updatedTickDev)
-                        header = ''; 
+                        header = '';
                         txt = ['Well done! In this block you can practice '...
                             'the task with an invisible cannon. Keep in '...
                             'mind that the cannon occasionally reaims to '...
                             'its previous position. Use the red tickmark '...
                             'to mark the previous aim of the cannon.'];
-                       
+                        
                         feedback = false;
                         fw = BigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
@@ -1828,7 +1852,7 @@ end
                         fw = BigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
-
+                        
                         if fw == 1
                             screenIndex = screenIndex - 1;
                             
@@ -1845,7 +1869,7 @@ end
                         fw = BigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
-
+                        
                         if fw == 1
                             screenIndex = screenIndex - 1;
                             
@@ -1877,7 +1901,7 @@ end
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
                     
                     
-                    if fw == 1   
+                    if fw == 1
                         screenIndex = screenIndex + 1;
                     end
                     WaitSecs(0.1);
@@ -1893,7 +1917,7 @@ end
                             'previously aimed will be the '...
                             'best way to earn money. Now try again.' ];
                         
-
+                        
                         feedback = false;
                         fw = BigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
@@ -1905,31 +1929,31 @@ end
                         end
                         
                     else
-                    
-                    header = 'Fourth Practice';
-                    txt = ['Now comes the last practice block. In this '...
-                        'block of trials the cannon will not always '...
-                        'reaim to its previous target, but will '...
-                        'occasionally aim at a new location on the '...
-                        'circle. You can still use the red tickmark to '...
-                        'mark the previous aim of the cannon. '...
-                        'That is, if you realize that the cannon '...
-                        'changed its aim you have to decide whether '...
-                        'it reaimed to the previous location or '...
-                        'whether it is aiming at a new location.'];
-                    
-                    feedback = false;
-                    fw = BigScreen(taskParam,...
-                        taskParam.strings.txtPressEnter, header, txt,...
-                        feedback);
-                    if fw == 1
-                        screenIndex = screenIndex + 1;
-                    elseif bw == 1
-                        screenIndex = screenIndex - 2;
-                    end
-                    
-                    
-                    WaitSecs(0.1);
+                        
+                        header = 'Fourth Practice';
+                        txt = ['Now comes the last practice block. In this '...
+                            'block of trials the cannon will not always '...
+                            'reaim to its previous target, but will '...
+                            'occasionally aim at a new location on the '...
+                            'circle. You can still use the red tickmark to '...
+                            'mark the previous aim of the cannon. '...
+                            'That is, if you realize that the cannon '...
+                            'changed its aim you have to decide whether '...
+                            'it reaimed to the previous location or '...
+                            'whether it is aiming at a new location.'];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                        
+                        
+                        WaitSecs(0.1);
                     end
                     
                 case 10
@@ -1940,6 +1964,324 @@ end
         end
         
     end
+
+
+    function chinesePractice
+        
+        screenIndex = 1; %1
+        
+        while 1
+            
+            switch(screenIndex)
+                
+                case 1
+                    
+                    header = 'Erste Übung';
+                    
+                    txt = ['Du wurdest zum Beschützer der Galaxie '...
+                        'ernannt und sollst nun mehrere Planeten '...
+                        'vor den Raketen beschützen. Du kannst die '...
+                        'Planeten anhand ihrer Farbe unterscheiden. '...
+                        'Der Gegner hat auf jeden deiner Planeten '...
+                        'genau eine Kanone gerichtet. Die '...
+                        'Positionen der Kanonen bleiben während '...
+                        'eines Aufgabenblocks gleich. Der Gegner '...
+                        'schießt mit seiner Kanone einige Zeit auf '...
+                        'einen deiner Planeten. Gelegentlich wird '...
+                        'jedoch auch einer der anderen Planeten für '...
+                        'einige Zeit beschossen. Es ist vollkommen '...
+                        'zufällig, welcher Planet gerade beschossen '...
+                        'wird. Es wird jedoch immer nur ein Planet '...
+                        'zurzeit beschossen.\n\nUm möglichst viele '...
+                        'Raketen abzuwehren, solltest du dein '...
+                        'Schild auf jedem deiner Planeten immer '...
+                        'genau an der Stelle positionieren, auf die '...
+                        'der Gegner mit seiner Kanone zielt.\n\nIn '...
+                        'jedem neuen Aufgabenblock können sich die '...
+                        'Anzahl und Positionen der Gegner '...
+                        'verändern. Merke dir, auf welche Stelle '...
+                        'der Gegner auf dem jeweiligen Planeten '...
+                        'seine Kanone gerichtet hat. Du kannst '...
+                        'dann bei einem Wechsel des Planeten dein '...
+                        'Schild direkt an dieser Stelle positionieren.'];
+                    
+                    feedback = false;
+                    fw = BigScreen(taskParam, ...
+                        taskParam.strings.txtPressEnter, header,...
+                        txt, feedback);
+                    
+                    if fw == 1
+                        screenIndex = screenIndex + 1;
+                    end
+                    WaitSecs(0.1);
+                    
+                case 2
+                    
+                    condition = 'chinesePractice';
+                    LoadData = 'CP_NoNoise';
+                    taskParam.gParam.nContexts = 1;
+                    taskParam.gParam.nStates = 3;
+                    [taskParam, practData] = PractLoop(taskParam,...
+                        subject, taskParam.gParam.haz(1),...
+                        taskParam.gParam.concentration(3),...
+                        cannon, condition);
+                    
+                    [txt, header] = Feedback(practData, taskParam,...
+                        subject, condition);
+                    feedback = true;
+                    fw = BigScreen(taskParam,...
+                        taskParam.strings.txtPressEnter,...
+                        header, txt, feedback);
+                    
+                    if fw == 1
+                        screenIndex = screenIndex + 1;
+                    elseif bw == 1
+                        screenIndex = screenIndex - 1;
+                    end
+                    WaitSecs(0.1);
+                    
+                case 3
+                    
+                    %screenIndex = performanceCriterion...
+                    %    (screenIndex, practData);
+                    sumCannonDev = sum(abs(practData.cannonDev) >= 10);
+                    
+                    if sumCannonDev >= 4
+                        
+                        header = 'Try it again!';
+                        txt = ['In that block your shield was not '...
+                            'always placed where the cannon was '...
+                            'aiming. Remember: Placing your shield '...
+                            'where the cannon is aimed will be the '...
+                            'best way to earn money. Now try again.'];
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex - 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                    else
+                        
+                        
+                        header = 'Zweite Übung';
+                        txt = ['Aufgrund unterschiedler '...
+                            'Gravitationskräfte in der Atmosphäre, '...
+                            'sind die Schüsse der Kanonen ungenau. '...
+                            'Das heißt, auch wenn du genau auf das '...
+                            'Ziel der Kanone gehst, kannst du die '...
+                            'Raketen verfehlen. Es ist zufällig, wie '...
+                            'ungenau die Rakete ist. Deshalb wehrst du '...
+                            'die meisten Raketen ab, wenn du den '...
+                            'orangenen Punkt immer genau auf die '...
+                            'Stelle steuerst, auf die die jeweilige '...
+                            'Kanone gerade zielt. In der nächsten '...
+                            'Übung sollst du mit der Ungenauigkeit '...
+                            'der Kanonen vertraut werden. Lasse den '...
+                            'orangenen Punkt bitte immer auf der '...
+                            'anvisierten Stelle der jeweiligen Kanone '...
+                            'stehen. Wenn du deinen Punkt zu oft neben '...
+                            'die anvisierte Stelle steuerst, wird die '...
+                            'Übung wiederholt.'];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                        end
+                        
+                    end
+                    WaitSecs(0.1);
+                    
+                case 4
+                    
+                    condition = 'chinesePracticeNoise';
+                    %LoadData = 'reversalVisibleNoise';
+                    
+                    [taskParam, practData] = PractLoop(taskParam,...
+                        subject, taskParam.gParam.haz(1),...
+                        taskParam.gParam.concentration(1), cannon,...
+                        condition);
+                    
+                    [txt, header] = Feedback(practData, taskParam,...
+                        subject, condition);
+                    feedback = true;
+                    fw = BigScreen(taskParam,...
+                        taskParam.strings.txtPressEnter, header,...
+                        txt,feedback);
+                    sumCannonDev = sum(abs(practData.cannonDev) >= 10);
+                    if fw == 1
+                        
+                        screenIndex = screenIndex + 1;
+                        
+                        
+                    end
+                    WaitSecs(0.1);
+                    
+                case 5
+                    if sumCannonDev >= 4
+                        
+                        header = 'Try it again!';
+                        txt = ['In that block your shield was not '...
+                            'always placed where the cannon was '...
+                            'aiming. Remember: Placing your shield '...
+                            'where the cannon is aimed will be the '...
+                            'best way to earn money. Now try again.' ];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header,txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex - 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                    else
+                        
+                        
+                        header = 'Dritte Übung';
+                        
+                        txt = ['Deine Planeten werden jetzt von '...
+                            'mehreren Gegnern beschossen. Du weißt nie, '...
+                            'wie viele Gegner es gerade sind. Wie '...
+                            'zuvor hat jeder Gegner auf jeden deiner '...
+                            'Planeten genau eine Kanone gerichtet. '...
+                            'Die Positionen der Kanonen bleiben '...
+                            'während eines Aufgabenblocks gleich. Deine '...
+                            'Planeten werden einige Zeit vom selben '...
+                            'Gegner beschossen. Gelegentlich wird '...
+                            'jedoch auch einer der anderen Gegner '...
+                            'für einige Zeit auf deine Planeten '...
+                            'schießen. Es ist vollkommen zufällig, '...
+                            'welcher Gegner gerade deine Planeten '...
+                            'beschießt. Die Planeten werden jedoch '...
+                            'immer nur von einem Gegner zurzeit beschossen.'...
+                            'Merke dir wieder, auf welche Stelle der '...
+                            'jeweilige Gegner auf dem jeweiligen '...
+                            'Planeten seine Kanone gerichtet hat. '...
+                            'Du kannst dann bei einem Wechsel des '...
+                            'Gegners oder des Planeten dein Schild '...
+                            'direkt an dieser Stelle positionieren.'];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header,txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                        
+                    end
+                    WaitSecs(0.1);
+                    
+                case 6
+                    condition = 'chinesePracticeStateSpace';
+                    %LoadData = 'reversalNotVisibleNoise';
+                    
+                    cannon = true;
+                    savedTickmark = nan;
+                    taskParam.gParam.nContexts = 3;% 1;
+                    taskParam.gParam.nStates = 3;%3;
+                    [taskParam, practData] = PractLoop(taskParam,...
+                        subject, taskParam.gParam.haz(1),...
+                        taskParam.gParam.concentration(1),...
+                        cannon, condition);
+                    
+                    [txt, header] = Feedback(practData,...
+                        taskParam, subject, condition);
+                    feedback = true;
+                    fw = BigScreen(taskParam, ...
+                        taskParam.strings.txtPressEnter,...
+                        header, txt, feedback);
+                    sumCannonDev = sum(abs(practData.cannonDev) >= 10);
+                    
+                    
+                    if fw == 1
+                        screenIndex = screenIndex + 1;
+                    end
+                    WaitSecs(0.1);
+                    
+                case 7
+                    
+                    %if isnan(practData.savedTickmark)
+                        
+%                         header = 'Try it again!';
+%                         txt = ['In that block you have never used '...
+%                             'your tickmark. Remember: Placing '...
+%                             'your tickmark where the cannon was '...
+%                             'previously aimed will be the '...
+%                             'best way to earn money. Now try again.' ];
+%                         
+%                         
+%                         feedback = false;
+%                         fw = BigScreen(taskParam,...
+%                             taskParam.strings.txtPressEnter, header,txt,...
+%                             feedback);
+%                         if fw == 1
+%                             screenIndex = screenIndex - 1;
+%                         elseif bw == 1
+%                             screenIndex = screenIndex - 2;
+%                         end
+                        
+                   % else
+                        
+                        header = 'Fourth Practice';
+                        txt = ['Oh nein! Die gegnerischen Raumschiffe '...
+                            'haben ihre Tarnfunktion aktiviert und sind '...
+                            'jetzt unsichtbar. Du wirst die Kanonen der '...
+                            'Gegner jetzt nicht mehr sehen können. '...
+                            'Ansonsten bleibt alles so, wie du es '...
+                            'schon geübt hast. Die Kanonen der '...
+                            'Gegner zielen und schießen genau so wie '...
+                            'vorher. Du verdienst weiterhin für jede '...
+                            'abgewehrte Rakete Geld. Nun musst du aber '...
+                            'herausfinden, wohin die unsichtbaren '...
+                            'Kanonen zielen und dein Schild entsprechend '...
+                            'positionieren. Du kannst die Stellen, '...
+                            'an denen die Raketen auf dem Planeten '...
+                            'landen, als Information nutzen, um dein '...
+                            'Schild zu positionieren. Du solltest '...
+                            'dir wieder merken, auf welche Stelle der '...
+                            'jeweilige Gegner auf dem jeweiligen '...
+                            'Planeten seine Kanone gerichtet hat, '...
+                            'auch wenn du die Kanonen jetzt nicht '...
+                            'mehr sehen kannst. Du kannst dann bei '...
+                            'einem Wechsel des Gegners oder des '...
+                            'Planeten dein Schild direkt an dieser '...
+                            'Stelle positionieren. Drücke Enter '...
+                            'um ein Beispiel zu sehen.'];
+                        
+                        feedback = false;
+                        fw = BigScreen(taskParam,...
+                            taskParam.strings.txtPressEnter, header, txt,...
+                            feedback);
+                        if fw == 1
+                            screenIndex = screenIndex + 1;
+                        elseif bw == 1
+                            screenIndex = screenIndex - 2;
+                        end
+                        
+                        
+                        WaitSecs(0.1);
+                   % end
+                    
+                case 8
+                    
+                    break
+                    
+            end
+            
+        end
+        
+    end
+
 
     function FollowCannonJustInstructions
         if subject.cBal == 1 ...
@@ -2440,7 +2782,7 @@ end
                                 'aufgesammelt hast und das Schild %s '...
                                 'war, hättest du jetzt %s CENT '...
                                 'verdient.'], colRew,...
-                                num2str(100*taskParam.gParam.rewMag)); 
+                                num2str(100*taskParam.gParam.rewMag));
                         end
                     else
                         if isequal(whichPractice, 'followOutcomePractice')
@@ -2454,7 +2796,7 @@ end
                                 'aufgesammelt haben und das Schild '...
                                 '%s war, hätten Sie jetzt %s CENT '...
                                 'verdient.'], colRew,...
-                                num2str(100*taskParam.gParam.rewMag)); 
+                                num2str(100*taskParam.gParam.rewMag));
                         end
                     end
                     distMean = 35;
@@ -2508,8 +2850,8 @@ end
                 case 17
                     
                     [screenIndex, Data] =...
-                       YouMissedTheCannonball_TryToCollectIt...
-                       (screenIndex, Data);
+                        YouMissedTheCannonball_TryToCollectIt...
+                        (screenIndex, Data);
                     
                 case 18
                     
@@ -2589,7 +2931,7 @@ end
     end
 
 %     function instructionsReversal
-%         
+%
 %     end
 
     function [screenIndex] = YourTaskScreen(txt, texture, screenIndex)
@@ -2680,6 +3022,14 @@ end
                 'you would like to place your shield to catch '...
                 'cannonballs with the orange spot. '...
                 'You can move the orange spot using the mouse.'];
+        elseif isequal(taskParam.gParam.taskType, 'chinese')
+            txt=['Ein gegnerisches Raumschiff zielt mit seiner '...
+                'Kanone auf eine Stelle deines Planeten und feuert '...
+                'Raketen. Deine Aufgabe ist es, die Rakete mit einem '...
+                'Schild abzuwehren. Mit dem orangenen Punkt kannst du '...
+                'angeben, wo du dein Schild platzieren möchtest, '...
+                'um die Rakete abzuwehren. Du kannst den Punkt mit '...
+                'der Maus bewegen.'];
         end
         
         if isequal(taskParam.gParam.computer, 'Dresden')
@@ -2687,8 +3037,8 @@ end
         else
             Screen('TextSize', taskParam.gParam.window.onScreen, 30);
         end
-        distMean = 0;
-        outcome = 0;
+        distMean = 300;
+        outcome = 300;
         tickInstruction.savedTickmark = nan;
         tickInstruction.previousOutcome = nan;
         DrawFormattedText(taskParam.gParam.window.onScreen,...
@@ -2709,6 +3059,10 @@ end
         
         t = GetSecs;
         LineAndBack(taskParam)
+        if isequal(taskParam.gParam.taskType, 'chinese')
+            currentContext = 1;
+            DrawContext(taskParam, currentContext)
+        end
         DrawCross(taskParam)
         DrawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
@@ -2728,7 +3082,8 @@ end
     end
 
     function [screenIndex, Data] =...
-           YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean)
+            YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean)
+        
         outcome = distMean;
         Data.outcome = distMean;
         background = true;
@@ -2741,6 +3096,8 @@ end
                 || (isequal(whichPractice, 'oddballPractice')...
                 && Data.predErr >= 9)...
                 || (isequal(whichPractice, 'reversal')...
+                && abs(Data.predErr) >= 9)...
+                || (isequal(whichPractice, 'chinese')...
                 && abs(Data.predErr) >= 9)
             if isequal(taskParam.gParam.taskType, 'dresden')
                 if isequal(subject.group, '1')
@@ -2754,13 +3111,17 @@ end
                     || isequal(taskParam.gParam.taskType, 'reversal')
                 txt=['You missed the cannonball. '...
                     'Try it again!'];
+            elseif isequal(taskParam.gParam.taskType, 'chinese')...
+                    txt=['Du hast die Rakete verfehlt. Versuche es nochmal!'];
             end
+            
             LineAndBack(taskParam)
             DrawCircle(taskParam);
             DrawCross(taskParam);
             PredictionSpot(taskParam);
             DrawOutcome(taskParam, outcome);
             Cannon(taskParam, distMean)
+            
             DrawFormattedText(taskParam.gParam.window.onScreen,...
                 taskParam.strings.txtPressEnter,'center',...
                 taskParam.gParam.screensize(4)*0.9, [255 255 255]);
@@ -2787,14 +3148,20 @@ end
             screenIndex = screenIndex + 1;
         end
         WaitSecs(0.1);
+        
     end
 
     function [screenIndex, Data] =...
             AfterCannonIsShotYouSeeTheShield...
             (screenIndex, Data, txt, distMean, win)
+        
         outcome = distMean;
         LineAndBack(taskParam)
         DrawCircle(taskParam);
+        if isequal(taskParam.gParam.taskType, 'chinese')
+            currentContext = 1;
+            DrawContext(taskParam, currentContext)
+        end
         DrawCross(taskParam);
         PredictionSpot(taskParam);
         DrawOutcome(taskParam, outcome);
@@ -2803,6 +3170,10 @@ end
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
         LineAndBack(taskParam)
+        if isequal(taskParam.gParam.taskType, 'chinese')
+            currentContext = 1;
+            DrawContext(taskParam, currentContext)
+        end
         DrawCross(taskParam)
         DrawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
@@ -2812,7 +3183,11 @@ end
             LineAndBack(taskParam)
             Cannon(taskParam, distMean)
             DrawCircle(taskParam)
-            
+            if isequal(taskParam.gParam.taskType, 'chinese')
+                currentContext = 1;
+                DrawContext(taskParam, currentContext)
+                DrawCross(taskParam);
+            end
             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
                 Shield(taskParam, 20, Data.pred, 1)
             elseif (subject.rew == 2 && win) || (subject.rew == 1 && ~win)
@@ -2847,22 +3222,22 @@ end
     end
 
     function [screenIndex, Data] = TryToMissTheCannon...
-           (screenIndex, Data, txt, distMean)
-        
+            (screenIndex, Data, txt, distMean)
         
         t = GetSecs;
         LineAndBack(taskParam)
+        if isequal(taskParam.gParam.taskType, 'chinese')
+            currentContext = 1;
+            DrawContext(taskParam, currentContext)
+            DrawCross(taskParam);
+        end
         DrawCross(taskParam)
         DrawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
         WaitSecs(0.5);
-        
-        
-        Data.tickMark=true;
-        
-        Data.distMean=distMean;
-        
+        Data.tickMark = true;
+        Data.distMean = distMean;
         outcome = distMean;
         Data.tickMark = true;
         tickInstruction.savedTickmark = nan;
@@ -2877,7 +3252,7 @@ end
     end
 
     function [screenIndex, Data, t] =...
-           YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean)
+            YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean)
         
         outcome = Data.outcome;
         background = true;
@@ -2901,6 +3276,9 @@ end
                         || isequal(taskParam.gParam.taskType, 'reversal')
                     txt=['You caught the cannonball. '...
                         'Try to miss it!'];
+                elseif isequal(taskParam.gParam.taskType, 'chinese')
+                    txt=['Du hast die Rakete abgewehrt! '...
+                        'Versuche sie zu verfehlen!'];
                 end
                 LineAndBack(taskParam)
                 DrawCircle(taskParam);
@@ -2948,6 +3326,11 @@ end
             end
             LineAndBack(taskParam)
             DrawCircle(taskParam);
+            if isequal(taskParam.gParam.taskType, 'chinese')
+                currentContext = 1;
+                DrawContext(taskParam, currentContext)
+                DrawCross(taskParam);
+            end
             DrawCross(taskParam);
             PredictionSpot(taskParam);
             DrawOutcome(taskParam, outcome);
@@ -2963,11 +3346,16 @@ end
     end
 
     function [screenIndex, Data, t] =...
-           InThisCaseYouMissedTheCannonball(screenIndex, Data, t, txt,...
-           distMean, win)
+            InThisCaseYouMissedTheCannonball(screenIndex, Data, t, txt,...
+            distMean, win)
         
         outcome = distMean;
         LineAndBack(taskParam)
+        if isequal(taskParam.gParam.taskType, 'chinese')
+            currentContext = 1;
+            DrawContext(taskParam, currentContext)
+            DrawCross(taskParam);
+        end
         DrawCross(taskParam)
         DrawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
@@ -2975,6 +3363,11 @@ end
         while 1
             
             LineAndBack(taskParam)
+            if isequal(taskParam.gParam.taskType, 'chinese')
+                currentContext = 1;
+                DrawContext(taskParam, currentContext)
+                DrawCross(taskParam);
+            end
             Cannon(taskParam, distMean)
             DrawCircle(taskParam)
             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
@@ -3045,6 +3438,30 @@ end
                 'previous trial will be marked with an '...
                 'orange line.'],...
                 colRew, num2str(100*taskParam.gParam.rewMag), colNoRew);
+        elseif isequal(taskParam.gParam.taskType, 'chinese')
+            header = 'Dein Schild';
+            if subject.rew == 1
+                colRew = 'schwarz';
+                colNoRew = 'green';
+            elseif subject.rew == 2
+                colRew = 'green';
+                colNoRew = 'blue';
+            end
+            txt = sprintf(['Wenn du die Raketen abwehrst, kannst du '...
+                'Geld verdienen. Du verdienst %s Cent für jede Rakete, '...
+                'die du abgewehrt hast. Dieses Geld wird dir am Ende '...
+                'des Experiments ausgezahlt.\n\nDie Größe deines Schildes '...
+                'kann sich in jedem Durchgang verändern. Die Größe '...
+                'des Schildes siehst du jedoch erst, nachdem die '...
+                'Kanone geschossen hat. Daher solltest du versuchen, '...
+                'dein Schild so genau wie möglich zu positionieren, '...
+                'um so viele Raketen wie möglich abzuwehren.\n\nUm einen '...
+                'Eindruck von der wechselnden Größe des Schildes zu '...
+                'bekommen, folgt jetzt eine kurze Übung. Der '...
+                'schwarze Strich zeigt dir die Position der '...
+                'letzten Rakete. Der orangene Strich zeigt dir die '...
+                'Position deines letzten Schildes.'],...
+                num2str(100*taskParam.gParam.rewMag));
         end
         
         feedback = false;
@@ -3135,6 +3552,10 @@ end
                 txt = ['The aim of the cannon is indicated with the '...
                     'black line. Hit the left mouse button to '...
                     'initiate a cannon shot.'];
+            elseif isequal(taskParam.gParam.taskType, 'chinese')
+                txt = ['Das Ziel der Kanone wird mit der schwarzen '...
+                    'Nadel angezeigt. Drücke bitte die linke '...
+                    'Maustaste, damit die Kanone schießt.'];
                 
             end
         else
@@ -3149,8 +3570,8 @@ end
             end
             
         end
-        distMean = 290;
-        outcome = 290;
+        distMean = 210;
+        outcome = 210;
         tickInstruction.savedTickmark = nan;
         tickInstruction.previousOutcome = nan;
         [taskParam, fw, Data] = InstrLoopTxt(taskParam,...
@@ -3292,7 +3713,7 @@ end
     end
 
     function [screenIndex, Data] =...
-           YouCollectedTheCannonball_TryToMissIt(screenIndex, Data, win)
+            YouCollectedTheCannonball_TryToMissIt(screenIndex, Data, win)
         
         background = true;
         Cannonball(taskParam, Data.distMean, Data.outcome, background)
@@ -3409,7 +3830,7 @@ end
     end
 
     function [screenIndex, Data] =...
-           YouMissedTheCannonball_TryToCollectIt(screenIndex, Data)
+            YouMissedTheCannonball_TryToCollectIt(screenIndex, Data)
         
         background = true;
         Data.distMean = 160;
@@ -3537,20 +3958,22 @@ end
     end
 
     function [screenIndex] = performanceCriterion(screenIndex, practData)
-        
+        whichPractice
         if isequal(whichPractice, 'mainPractice')...
-                || isequal(whichPractice, 'followCannonPractice')
+                || isequal(whichPractice, 'followCannonPractice')...
+                || isequal(whichPractice, 'chinese')
             sumCannonDev = sum(practData.cannonDev...
-               >= taskParam.gParam.practiceTrialCriterion);
+                >= taskParam.gParam.practiceTrialCriterion);
         elseif isequal(whichPractice, 'followOutcomePractice')
             sumCannonDev = sum(practData.controlDev...
                 >= taskParam.gParam.practiceTrialCriterion);
         end
+        
         if sumCannonDev >= 4
             if isequal(taskParam.gParam.taskType, 'dresden')
                 
                 if isequal(whichPractice, 'mainPractice')...
-                       || isequal(whichPractice, 'followCannonPractice')
+                        || isequal(whichPractice, 'followCannonPractice')
                     header = 'Wiederholung der Übung';
                     if isequal(subject.group, '1')
                         txt = ['In der letzten Übung hast du dich zu '...
@@ -3595,6 +4018,15 @@ end
                     'placed where the cannon was aiming. Remember: '...
                     'Placing your shield where the cannon is aimed '...
                     'will be the best way to earn money. Now try again.'];
+            elseif isequal(taskParam.gParam.taskType, 'chinese')
+                header = 'Wiederholung der Übung!';
+                txt = ['In der letzten Übung hast du dich zu '...
+                    'häufig vom Ziel des Gegners wegbewegt. '...
+                    'Du kannst mehr Raketen abwehren, wenn du '...
+                    'immer auf dem Ziel des Gegners bleibst!'...
+                    '\n\nIn der nächsten Runde kannst nochmal '...
+                    'üben. Wenn du noch Fragen hast, kannst du '...
+                    'dich auch an den Versuchsleiter wenden.'];
             end
             feedback = false;
             fw = BigScreen(taskParam,...

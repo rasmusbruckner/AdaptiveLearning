@@ -32,8 +32,9 @@ else
     press = 0;
 end
 
-if ~isequal(taskParam.gParam.taskType, 'reversal')
-    
+if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
+        ~isequal(taskParam.gParam.taskType, 'chinese')
+   
     while 1    
         LineAndBack(taskParam)
         sentenceLength = taskParam.gParam.sentenceLength;
@@ -149,15 +150,20 @@ else
             taskParam.gParam.screensize(4)*0.05, [255 255 255],...
             sentenceLength);
 
-        if cannon == true
-            
-            Cannon(taskParam, distMean)
+        if isequal(taskParam.gParam.taskType, 'chinese')
+            currentContext = 1;
+            DrawContext(taskParam, currentContext)
         end
         
         DrawCircle(taskParam)
         DrawCross(taskParam)
         if isnan(tickInstruction.savedTickmark)
             Aim(taskParam, Data.distMean)
+        end
+        
+        if cannon == true
+            
+            Cannon(taskParam, distMean)
         end
         
         if isequal(button, 'arrow')
@@ -188,8 +194,7 @@ else
             TickMark(taskParam, tickInstruction.previousOutcome, 'outc');
             TickMark(taskParam, tickInstruction.previousPrediction, 'pred');
             TickMark(taskParam, savedTickmark(i), 'saved');
-            TickMark(taskParam, previousTickmark, 'saved');
-            
+            TickMark(taskParam, previousTickmark, 'saved');  
         end
         
         Screen('DrawingFinished', taskParam.gParam.window.onScreen);

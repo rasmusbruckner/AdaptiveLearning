@@ -12,9 +12,9 @@ elseif nargin == 7 && isequal(LoadData, 'Noise')
     practData = practData.practData;
     trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'CP_NoNoise')
-    if ~taskParam.gParam.oddball
+    if ~isequal(taskParam.gParam.taskType, 'oddball')
         practData = load('CP_NoNoise');
-    elseif taskParam.gParam.oddball
+    elseif isequal(taskParam.gParam.taskType, 'oddball')
         practData = load('CP_NoNoise_drugstudy');
     end
     practData = practData.practData;
@@ -98,7 +98,8 @@ for i = 1:trials
         practData.actRew(i) = 1;
     end
     
-    if ~isequal(taskParam.gParam.taskType, 'reversal')
+    if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
+            ~isequal(taskParam.gParam.taskType, 'chinese')
         
         while 1
             
@@ -191,9 +192,7 @@ for i = 1:trials
             end
             
             taskParam.circle.rotAngle = degree * taskParam.circle.unit;
-            
-            % sentenceLength = taskParam.gParam.sentenceLength;
-            
+                        
             DrawCircle(taskParam)
             DrawCross(taskParam)
             if ~isequal(condition, 'reversalPracticeNoiseInv') &&...
@@ -202,8 +201,15 @@ for i = 1:trials
                 Aim(taskParam, practData.distMean(i))
             end
             
+            if isequal(taskParam.gParam.taskType, 'chinese')
+                %practData.currentContext
+                %currentContext = 1;
+                DrawContext(taskParam, practData.currentContext(i))
+                DrawCross(taskParam);
+            end
+            practData
             if cannon == true
-                Cannon(taskParam, practData.distMean(i))
+                Cannon(taskParam, practData.distMean(i),practData.latentState(i))
             else
                 DrawCross(taskParam)
             end
@@ -352,17 +358,27 @@ for i = 1:trials
             || isequal(condition, 'mainPractice')...
             || isequal(condition, 'followCannonPractice')...
             || isequal(condition, 'reversalPractice')...
-            || isequal(condition, 'reversalPracticeNoise')
+            || isequal(condition, 'reversalPracticeNoise')...
+            || isequal(condition, 'chinesePractice')...
+            || isequal(condition, 'chinesePracticeNoise')...
+            || isequal(condition, 'chinesePracticeStateSpace')
         Cannonball(taskParam, practData.distMean(i),...
-            practData.outcome(i), background)
+            practData.outcome(i), background, practData.currentContext(i),...
+            practData.latentState(i))
     end
     
     t = GetSecs;
     
     % Show outcome
+    if isequal(taskParam.gParam.taskType, 'chinese')
+        %currentContext = 1;
+        DrawContext(taskParam, practData.currentContext(i))
+        DrawCross(taskParam);
+    end
+    
     DrawCircle(taskParam);
     if cannon == true
-        Cannon(taskParam, practData.distMean(i))
+        Cannon(taskParam, practData.distMean(i),practData.latentState(i))
     else
         DrawCross(taskParam)
         
@@ -395,7 +411,12 @@ for i = 1:trials
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
     end
     
-    DrawCircle(taskParam);
+    if isequal(taskParam.gParam.taskType, 'chinese')
+        %currentContext = 1;
+        DrawContext(taskParam, practData.currentContext(i))
+        DrawCross(taskParam);
+    end
+    DrawCircle(taskParam)
     DrawCross(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     
@@ -406,11 +427,16 @@ for i = 1:trials
     end
     
     DrawCircle(taskParam)
+    if isequal(taskParam.gParam.taskType, 'chinese')
+        %currentContext = 1;
+        DrawContext(taskParam, practData.currentContext(i))
+        DrawCross(taskParam);
+    end
     Shield(taskParam, practData.allASS(i),...
         practData.pred(i), practData.shieldType(i))
     
     if cannon == true
-        Cannon(taskParam, practData.distMean(i))
+        Cannon(taskParam, practData.distMean(i), practData.latentState(i))
     else
         DrawCross(taskParam)
         
@@ -428,6 +454,11 @@ for i = 1:trials
     end
     
     % Show baseline 3
+    if isequal(taskParam.gParam.taskType, 'chinese')
+        %currentContext = 1;
+        DrawContext(taskParam, practData.currentContext(i))
+        DrawCross(taskParam);
+    end
     DrawCross(taskParam)
     DrawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);

@@ -9,6 +9,9 @@ if isequal(taskParam.gParam.taskType, 'dresden')
     elseif color == 0
         shieldColor = taskParam.colors.silver;
     end
+    
+elseif isequal(taskParam.gParam.taskType, 'chinese')
+    shieldColor = taskParam.colors.black;
 else
     if color == 1
         shieldColor = taskParam.colors.blue;

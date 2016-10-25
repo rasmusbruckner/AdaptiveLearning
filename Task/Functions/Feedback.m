@@ -38,7 +38,7 @@ if isequal(taskParam.gParam.taskType, 'oddball')...
         rewTrials, colNoRewCap, noRewCatches, noRewTrials,...
         wouldHave, max(Data.accPerf), maxMon);
     
-else
+elseif isequal(taskParam.gParam.taskType, 'dresden')
     
     header = 'Leistung';
     if subject.rew == 1
@@ -98,8 +98,16 @@ else
             rewTrials, colRewCap, schildVsKorb, gefangenVsGesammelt,...
             wouldHave, max(Data.accPerf), maxMon);
     end
-    
+   
+elseif isequal(taskParam.gParam.taskType, 'chinese')
+     
+    header = 'Ergebnis';
+     
+    txt = sprintf(['Raketen gefangen: %.0f von %.0f.\n\n'...
+        'In diesem Block hättest du %.2f von maximal %.2f Euro gewonnen'],...
+        rewCatches, rewTrials, max(Data.accPerf), maxMon);
 end
+
 end
 
 

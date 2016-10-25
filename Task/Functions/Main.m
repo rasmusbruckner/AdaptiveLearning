@@ -127,7 +127,7 @@ elseif ~taskParam.unitTest
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
         
-    elseif isequal(condition, 'chinese')
+    elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice')
         
         trial = taskParam.gParam.trials;
         taskData = GenerateOutcomes...
@@ -214,17 +214,17 @@ for i=1:trial
                 DrawCircle(taskParam)
                 if isequal(taskParam.gParam.taskType, 'chinese')
                     DrawContext(taskParam, taskData.currentContext(i))
+                    DrawCross(taskParam)
+
                 end
                 DrawCross(taskParam)
                 PredictionSpot(taskParam)
                 
-                %if ~isequal(taskParam.gParam.taskType, 'chinese')
                     if i ~= taskParam.gParam.blockIndices(1)...
                             && i ~= taskParam.gParam.blockIndices(2) + 1 ...
                             && i ~= taskParam.gParam.blockIndices(3) + 1 ...
                             && i ~= taskParam.gParam.blockIndices(4) + 1
                         if isequal(taskParam.gParam.taskType, 'chinese')
-                            %keyboard
                             TickMark(taskParam, taskData.outcome(i-1), 'outc')
                             TickMark(taskParam, taskData.pred(i-1), 'pred')
                         else
@@ -236,7 +236,6 @@ for i=1:trial
                         end
 
                     end
-               % end
                 
                 if (taskData.catchTrial(i) == 1 ...
                         && isequal(taskParam.gParam.taskType, 'dresden'))...
@@ -344,6 +343,8 @@ for i=1:trial
                 DrawCircle(taskParam)
                 if isequal(taskParam.gParam.taskType, 'chinese')
                     DrawContext(taskParam,taskData.currentContext(i))
+                    DrawCross(taskParam)
+
                 end
                 DrawCross(taskParam)
                 
@@ -444,6 +445,8 @@ for i=1:trial
         DrawCircle(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             DrawContext(taskParam,taskData.currentContext(i))
+            DrawCross(taskParam)
+
         end
         DrawCross(taskParam)
         PredictionSpot(taskParam)
@@ -485,6 +488,8 @@ for i=1:trial
     DrawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam,taskData.currentContext(i))
+        DrawCross(taskParam)
+
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i)...
@@ -501,6 +506,8 @@ for i=1:trial
     DrawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam,taskData.currentContext(i))
+        DrawCross(taskParam)
+
     end
     
     PredictionSpot(taskParam)
@@ -563,6 +570,8 @@ for i=1:trial
     DrawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam, taskData.currentContext(i))
+        DrawCross(taskParam)
+
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
@@ -572,6 +581,8 @@ for i=1:trial
     DrawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam, taskData.currentContext(i))
+        DrawCross(taskParam)
+
     end
     Shield(taskParam, taskData.allASS(i),...
         taskData.pred(i), taskData.shieldType(i))
@@ -589,6 +600,8 @@ for i=1:trial
     DrawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam,taskData.currentContext(i))
+        DrawCross(taskParam)
+
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);

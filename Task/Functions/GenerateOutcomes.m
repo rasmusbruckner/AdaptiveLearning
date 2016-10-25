@@ -34,6 +34,8 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
     trials = 4;
 elseif isequal(condition, 'reversalPracticeNoiseInv3')
     trials = taskParam.gParam.practTrials * 2;
+elseif isequal(condition, 'chinesePractice') || isequal(condition, 'chinesePracticeNoise') || isequal(condition, 'chinesePracticeStateSpace')
+    trials = taskParam.gParam.chinesePractTrials;
 end
 contextTypes = 0;
 
@@ -102,7 +104,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
         isequal(condition, 'followCannonPractice')
     
     for i = 1:trials
-        
+        currentContext(i) = 1;
         if i >= taskParam.gParam.blockIndices(1)...
                 && i <= taskParam.gParam.blockIndices(2)
             block(i) = 1;
@@ -312,22 +314,22 @@ elseif isequal(condition, 'reversal')...
         allASS(i) = ASS;
     end
     
-elseif isequal(condition, 'chinese')
+elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice') || isequal(condition, 'chinesePracticeNoise') || isequal(condition, 'chinesePracticeStateSpace')
     
         %% nContexts
         % contextHaz = 1/nContexts;
         % sContext = 3
         %keyboard
-        nContexts = 3;
-        nStates = 3;
-        contextHaz = 0.5;%1/nContexts;
-        stateHaz = 0.5;
-        safeContext = 3;
-        safeState = 3;
+        nContexts = taskParam.gParam.nContexts;% 1;
+        nStates = taskParam.gParam.nStates;%3;
+        contextHaz = taskParam.gParam.contextHaz;%0.5;%1/nContexts;
+        stateHaz = taskParam.gParam.stateHaz;% 0.5;
+        safeContext =  taskParam.gParam.safeContext;% 0;
+        safeState = taskParam.gParam.safeState;%;0;
         sContext = nan;
         sState = nan;
-        contextMean = nan(trials, nContexts);
-        firstVisit = zeros(trials,1);
+        %contextMean = nan(trials, nContexts);
+        %firstVisit = zeros(trials,1);
         cp = zeros(trials, nContexts);
     
     for i = 1:trials
@@ -502,7 +504,6 @@ elseif isequal(condition, 'chinese')
     
 end
 
-
 if trials > 1
     shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 else shieldType = 1;
@@ -526,5 +527,6 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date,...
     {Date},'reversal', reversal, 'initialTendency', initialTendency,...
     'RT', RT, 'currentContext', currentContext,...
-    'hiddenContext', hiddenContext, 'contextTypes', contextTypes);
+    'hiddenContext', hiddenContext, 'contextTypes', contextTypes,...
+    'latentState', latentState);
 end

@@ -105,8 +105,14 @@ elseif strcmp(taskType, 'reversal')
     
 elseif strcmp(taskType, 'chinese')
     
-    trials          = 40;
+    trials          = 4;
     controlTrials   = nan;
+    nContexts       = 3; % planets 
+    nStates         = 3; % enemies
+    contextHaz      = 0.5;
+    stateHaz        = 0.5;
+    safeContext     = 0;
+    safeState       = 3;
     concentration   = [10 12 99999999];
     DataOddball     = nan;
     textSize        = 19;
@@ -115,11 +121,12 @@ end
 
 % version independent parameters
 runIntro                = false;
-askSubjInfo             = true;
+askSubjInfo             = false;
 sendTrigger             = false;
 randomize               = true;
 shieldTrials            = 1; % 4
-practTrials             = 20; % 20 in reversal muliplied by 2!
+practTrials             = 4; % 20 in reversal muliplied by 2!
+chinesePractTrials      = 4; 
 blockIndices            = [1 60 120 180];
 haz                     = [.25 1 0];
 oddballProb             = [.25 0];
@@ -129,7 +136,7 @@ safe                    = [3 0];
 rewMag                  = 0.1;
 jitter                  = 0.2;
 practiceTrialCriterion  = 10;
-debug                   = false;
+debug                   = true;
 
 % savedirectory
 if isequal(computer, 'Macbook')
@@ -156,14 +163,12 @@ if askSubjInfo == false
     cBal = 1;
     reward = 1;
     
-    if ~oddball...
-            || strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'chinese')
         group = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group',...
             group, 'cBal', cBal, 'rew', reward, 'date', date,...
             'session', '1');
-    elseif oddball...
-            || strcmp(taskType, 'oddball')
+    elseif strcmp(taskType, 'oddball') 
         session = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session',...
             session, 'cBal', cBal, 'rew', reward, 'date', date);
@@ -218,7 +223,7 @@ elseif askSubjInfo == true
     end
     
     if numel(subjInfo{1}) < 5 ...
-        || numel(subjInfo{1}) > 5
+            || numel(subjInfo{1}) > 5
         msgbox('ID: must consist of five numbers!');
         return
     end
@@ -271,12 +276,12 @@ elseif askSubjInfo == true
             msgbox('cBal: 1 or 2 ?');
             return
         end
-%     elseif strcmp(taskType, 'reversal')
-%         if subjInfo{4} ~= '1'...
-%                 && subjInfo{4} ~= '2'
-%             msgbox('cBal: 1 or 2 ?');
-%             return
-%         end
+        %     elseif strcmp(taskType, 'reversal')
+        %         if subjInfo{4} ~= '1'...
+        %                 && subjInfo{4} ~= '2'
+        %             msgbox('cBal: 1 or 2 ?');
+        %             return
+        %         end
     end
     
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
@@ -405,10 +410,14 @@ gParam = struct('taskType', taskType ,'jitter', jitter,...
     'concentration', concentration, 'haz', haz,...
     'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
     trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials,...
-    'controlTrials', controlTrials, 'safe', safe, 'rewMag', rewMag,...
-    'screensize', screensize, 'zero', zero,'window', window,...
-    'windowRect', windowRect, 'practiceTrialCriterion',...
-    practiceTrialCriterion, 'askSubjInfo', askSubjInfo);
+    'chinesePractTrials', chinesePractTrials, 'controlTrials',...
+    controlTrials,'nContexts', nContexts, 'nStates', nStates,...
+    'safe', safe, 'rewMag', rewMag, 'screensize', screensize, ...
+    'contextHaz', contextHaz, 'stateHaz', stateHaz,...
+    'safeContext', safeContext, 'safeState', safeState,...
+    'zero', zero,'window', window, 'windowRect', windowRect,...
+    'practiceTrialCriterion', practiceTrialCriterion,...
+    'askSubjInfo', askSubjInfo);
 
 predSpotRad         = 10;
 shieldAngle         = 30;
@@ -416,6 +425,7 @@ outcSize            = 10;
 cannonEnd           = 5;
 meanPoint           = 1;
 rotationRad         = 150;
+chineseCannonRad    = 300;
 tendencyThreshold   = 15;
 predSpotDiam        = predSpotRad * 2;
 outcDiam            = outcSize * 2;
@@ -440,7 +450,8 @@ rotAngle            = initialRotAngle;
 circle = struct('shieldAngle', shieldAngle, 'cannonEndCent',...
     cannonEndCent, 'outcCentSpotRect', outcCentSpotRect,...
     'predSpotRad', predSpotRad, 'outcSize', outcSize, 'meanRad',...
-    meanPoint, 'rotationRad', rotationRad, 'tendencyThreshold',...
+    meanPoint, 'rotationRad', rotationRad,...
+    'chineseCannonRad', chineseCannonRad, 'tendencyThreshold',...
     tendencyThreshold, 'predSpotDiam', predSpotDiam, 'outcDiam',...
     outcDiam, 'spotDiamMean', spotDiamMean, 'predSpotRect',...
     predSpotRect, 'outcRect', outcRect, 'spotRectMean',...
@@ -454,8 +465,9 @@ gold    = [255 215 0];
 blue    = [0 0 255];
 silver  = [160 160 160];
 green   = [0 255 0];
+black   = [0 0 0]; 
 colors  = struct('gold', gold, 'blue', blue, 'silver', silver,...
-    'green', green);
+    'green', green, 'black', black);
 
 % parameters related to keyboard
 KbName('UnifyKeyNames')
@@ -566,7 +578,7 @@ elseif isequal(taskType, 'dresden')
 elseif isequal(taskType, 'reversal')
     
     txtPressEnter = 'Press Enter to continue';
-
+    
 elseif isequal(taskType, 'chinese')
     
     txtPressEnter = 'Press Enter to continue';
@@ -677,6 +689,8 @@ elseif isequal(taskType, 'oddball')
     totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
 elseif isequal(taskType, 'reversal')
     totWin = DataReversal.accPerf(end);
+elseif isequal(taskType, 'chinese')
+    totWin = DataChinese.accPerf(end);
 end
 
 if isequal(taskType, 'dresden')
@@ -871,7 +885,7 @@ Screen('CloseAll');
         
         [~, DataFollowOutcome] = Main(taskParam, haz(1),...
             concentration(1), 'followOutcome', Subject);
-
+        
     end
 
     function DataFollowCannon = FollowCannonCondition
@@ -886,8 +900,8 @@ Screen('CloseAll');
                     'die meisten Kugeln ab, wenn du den orangenen '...
                     'Punkt auf die Stelle bewegst, auf die die Kanone '...
                     'zielt (schwarze Nadel). Dieses Mal kannst du die '...
-                    'Kanone sehen.\n\nViel Erfolg!'];      
-            else 
+                    'Kanone sehen.\n\nViel Erfolg!'];
+            else
                 txtStartTask = ['Sie haben die Übungsphase '...
                     'abgeschlossen. Kurz zusammengefasst wehren Sie '...
                     'die meisten Kugeln ab, wenn Sie den orangenen '...
@@ -951,11 +965,24 @@ Screen('CloseAll');
     end
 
     function DataChinese = ChineseCondition
-    %CHINESECONDITION   Runs the chinese condition of the cannon task
-    
-     [~, DataChinese] = Main(taskParam, haz(1), concentration(1),...
+        %CHINESECONDITION   Runs the chinese condition of the cannon task
+        
+        if runIntro && ~unitTest
+            
+            Instructions(taskParam, 'chinese', Subject);
+            Data = Main(taskParam, haz(1), concentration(1),...
+                'chinesePractice', Subject);
+            header = 'Anfang der Aufgabe';
+            txtStartTask = ['Text...'];
+            feedback = false;
+            BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                feedback);
+            
+        end
+        
+        [~, DataChinese] = Main(taskParam, haz(1), concentration(1),...
             'chinese', Subject);
-    
+        
     end
 
     function [window, windowRect, textures] = OpenWindow
@@ -972,18 +999,31 @@ Screen('CloseAll');
         imageRect = [0 0 120 120];
         dstRect = CenterRect(imageRect, windowRect);
         [cannonPic, ~, alpha]  = imread('cannon.png');
+        [rocketPic_lighting, ~, rocketAlpha_lightning]  = imread('rocket_lightning.png');
+        [rocketPic_star, ~, rocketAlpha_star]  = imread('rocket_star.png');
+        [rocketPic_swirl, ~, rocketAlpha_swirl]  = imread('rocket_swirl.png');
         cannonPic(:,:,4) = alpha(:,:);
+        rocketPic_lightning(:,:,4) = rocketAlpha_lightning(:,:);
+        rocketPic_star(:,:,4) = rocketAlpha_star(:,:);
+        rocketPic_swirl(:,:,4) = rocketAlpha_swirl(:,:);
         Screen('BlendFunction', window, GL_SRC_ALPHA,...
             GL_ONE_MINUS_SRC_ALPHA);
         cannonTxt = Screen('MakeTexture', window, cannonPic);
+        rocketTxt_lightning = Screen('MakeTexture', window, rocketPic_lightning);
+        rocketTxt_star = Screen('MakeTexture', window, rocketPic_star);
+        rocketTxt_swirl = Screen('MakeTexture', window, rocketPic_swirl);
         [shieldPic, ~, alpha]  = imread('shield.png');
         shieldPic(:,:,4) = alpha(:,:);
         shieldTxt = Screen('MakeTexture', window, shieldPic);
         [basketPic, ~, alpha]  = imread('basket.png');
         basketPic(:,:,4) = alpha(:,:);
         basketTxt = Screen('MakeTexture', window, basketPic);
-        textures = struct('cannonTxt', cannonTxt, 'shieldTxt',...
-            shieldTxt, 'basketTxt', basketTxt, 'dstRect', dstRect);
+        textures = struct('cannonTxt', cannonTxt,...
+            'rocketTxt_lightning', rocketTxt_lightning,...
+            'rocketTxt_star', rocketTxt_star,...
+            'rocketTxt_swirl', rocketTxt_swirl,...
+            'shieldTxt', shieldTxt, 'basketTxt', basketTxt,...
+            'dstRect', dstRect);
         %ListenChar(2);
         %HideCursor;
         
@@ -991,7 +1031,7 @@ Screen('CloseAll');
 
     function window = CloseScreenAndOpenAgain
         %CLOSESCREENANDOPENAGAIN   Opens and closes psychtoolbox screen
-        %at the end of a condition in order to signal participants that 
+        %at the end of a condition in order to signal participants that
         %new task will begin
         
         if ~unitTest
@@ -1050,7 +1090,7 @@ Screen('CloseAll');
                 header = 'End of task!';
                 txt = sprintf(['Thank you for participating!'...
                     '\n\n\nYou earned $ %.2f'], totWin);
-            elseif isequal(taskType, 'dresden')
+            elseif isequal(taskType, 'dresden') || isequal(taskType, 'chinese')
                 header = 'Ende des Versuchs!';
                 if isequal(Subject.group, '1')
                     txt = sprintf(['Vielen Dank für deine Teilnahme!'
@@ -1070,7 +1110,7 @@ Screen('CloseAll');
                 taskParam.gParam.screensize(4)*0.8, 5);
             Screen('FillRect', taskParam.gParam.window.onScreen,...
                 [0 25 51],...
-       [0, (taskParam.gParam.screensize(4)*0.16)+3,...
+                [0, (taskParam.gParam.screensize(4)*0.16)+3,...
                 taskParam.gParam.screensize(3),...
                 (taskParam.gParam.screensize(4)*0.8)-2]);
             Screen('TextSize', taskParam.gParam.window.onScreen, 30);
