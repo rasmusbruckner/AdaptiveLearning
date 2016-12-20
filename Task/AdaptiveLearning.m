@@ -1,4 +1,4 @@
-function Data = AdaptiveLearning(unitTest)
+function Data = adaptiveLearning(unitTest)
 %ADAPTIVELEARNING   Master function for the cannon task
 %   AdaptiveLearning(false) or AdaptiveLearning runs the cannon task.
 %   AdaptiveLearning(true) is part of a unit test to control task
@@ -127,6 +127,12 @@ elseif strcmp(taskType, 'ARC')
     controlTrials       = nan;
     concentration       = [12 12 99999999];
     textSize            = 19;
+    nContexts           = nan;
+    nStates             = nan;
+    contextHaz          = nan;
+    stateHaz            = nan;
+    safeContext         = nan;
+    safeState           = nan;
     
     % Check number of trials
     if  (trials > 1 && mod(trials, 2)) == 1
@@ -613,7 +619,7 @@ elseif isequal(taskType, 'dresden')
             'ausgezahlt.\n\nViel Erfolg!'];
     end
     
-elseif isequal(taskType, 'reversal')
+elseif isequal(taskType, 'reversal') || isequal(taskType, 'ARC')
     
     txtPressEnter = 'Press Enter to continue';
     
@@ -714,6 +720,14 @@ elseif isequal(taskType, 'chinese')
     
     DataChinese = ChineseCondition;
     
+elseif isequal(taskType, 'ARC')
+    
+    % ---------------------------------------------------------------------
+    % ARC version
+    % ---------------------------------------------------------------------
+    
+    DataMain = MainCondition;
+    
 end
 
 % ---------------------------------------------------------------------
@@ -729,6 +743,8 @@ elseif isequal(taskType, 'reversal')
     totWin = DataReversal.accPerf(end);
 elseif isequal(taskType, 'chinese')
     totWin = DataChinese.accPerf(end);
+elseif isequal(taskType, 'ARC')
+    totWin = DataMain.accPerf(end);
 end
 
 if isequal(taskType, 'dresden')
@@ -871,7 +887,7 @@ Screen('CloseAll');
             VolaIndication(taskParam,txtStartTask, txtPressEnter)
             
         end
-        [~, DataMain] = Main(taskParam, haz(1), concentration(1),...
+        [~, DataMain] = main(taskParam, haz(1), concentration(1),...
             'main', Subject);
         
     end
@@ -1146,7 +1162,8 @@ Screen('CloseAll');
         while 1
             
             if isequal(taskType, 'oddball') ||...
-                    isequal(taskType, 'reversal')
+                    isequal(taskType, 'reversal') ||...
+                    isequal(taskType, 'ARC')
                 header = 'End of task!';
                 txt = sprintf(['Thank you for participating!'...
                     '\n\n\nYou earned $ %.2f'], totWin);

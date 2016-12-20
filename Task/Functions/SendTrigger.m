@@ -239,7 +239,8 @@ elseif isequal(taskParam.gParam.taskType, 'reversal')
         
     %end
     
-elseif isequal(taskParam.gParam.taskType, 'chinese')
+elseif isequal(taskParam.gParam.taskType, 'chinese') ||...
+    isequal(taskParam.gParam.taskType, 'ARC')
     
     trigger = 255;
     

@@ -1,6 +1,5 @@
-function [txt, header] = Feedback(Data, taskParam, subject, condition, whichBlock)
+function [txt, header] = feedback(Data, taskParam, subject, condition, whichBlock)
 %FEEDBACK   Displays feedback at the end of a block
-%keyboard
 
 if ~exist('whichBlock', 'var')
     whichBlock = ones(length(Data.hit),1);
@@ -19,7 +18,8 @@ maxMon = (length(find(Data.shieldType(whichBlock == 1)))...
 if isequal(taskParam.gParam.taskType, 'oddball')...
         || isequal(taskParam.gParam.taskType, 'reversal')...
         || isequal(condition, 'reversalPractice')...
-        || isequal(condition, 'reversalPracticeNoise')
+        || isequal(condition, 'reversalPracticeNoise')...
+        || isequal(taskParam.gParam.taskType, 'ARC')
     header = 'Performance';
     if subject.rew == 1
         colRewCap = 'Blue';
@@ -117,17 +117,9 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
         txt = sprintf(['Raketen abgewehrt: %.0f von %.0f.\n\n'...
             'In diesem Block hättest du %.2f von maximal %.2f Euro gewonnen.'],...
             hits, length(Data.hit), max(Data.accPerf), maxMon);
-   
-            Data.accPerf
-            Data.hit
-            hits
             
     elseif isequal(condition, 'chinese') 
-        
-%         txt = sprintf(['Raketen abgewehrt: %.0f von %.0f.\n\n'...
-%             'In diesem Block hast du %.2f von maximal %.2f Euro gewonnen.'],...
-%             hits, length(Data.hit(whichBlock == 1)),  hits*taskParam.gParam.rewMag, maxMon);
-        
+           
         txt = sprintf(['Raketen abgewehrt: %.0f.\n\n'...
             'In diesem Block hast du %.2f von durchschnittlich 5.00 Euro gewonnen.'],...
             hits,  hits*taskParam.gParam.rewMag);

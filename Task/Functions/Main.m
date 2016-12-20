@@ -1,4 +1,4 @@
-function [taskData, Data] = Main(taskParam, haz, concentration, condition, Subject)
+function [taskData, Data] = main(taskParam, haz, concentration, condition, Subject)
 %MAIN   Runs the experimental part of the cannon task. You can specify
 %"main", "practice" or "control". This loop is optimized for triggering
 %accuracy
@@ -122,7 +122,7 @@ elseif ~taskParam.unitTest
         else
             trial = taskParam.gParam.trials;
         end
-        taskData = GenerateOutcomes...
+        taskData = generateOutcomes...
             (taskParam, haz, concentration, condition);
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
@@ -130,7 +130,7 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'chineseLastPractice')
         
         trial = taskParam.gParam.chinesePractTrials;
-        taskData = GenerateOutcomes...
+        taskData = generateOutcomes...
             (taskParam, haz, concentration, condition);
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
@@ -138,11 +138,18 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'chinese') 
         
         trial = taskParam.gParam.trials;
-        taskData = GenerateOutcomes...
+        taskData = generateOutcomes...
             (taskParam, haz, concentration, condition);
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
-        %keyboard
+        
+    elseif isequal(condition, 'main') 
+        
+        trial = taskParam.gParam.trials;
+        taskData = generateOutcomes...
+            (taskParam, haz, concentration, condition);
+        savedtickMark(1) = nan;
+        savedtickmarkPrevious(1) = nan;
         
     end
 end
@@ -250,7 +257,7 @@ for i=1:trial
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
     
-    taskData.triggers(i,1) = SendTrigger...
+    taskData.triggers(i,1) = sendTrigger...
         (taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
     taskData.timestampOnset(i,:) = GetSecs - ref;
     %keyboard
@@ -259,14 +266,14 @@ for i=1:trial
         if ~isequal(taskParam.gParam.taskType, 'reversal') && ~isequal(taskParam.gParam.taskType, 'reversalPractice') && ~isequal(taskParam.gParam.taskType, 'chinese')
             while 1
                 
-                DrawCircle(taskParam)
+                drawCircle(taskParam)
                 if isequal(taskParam.gParam.taskType, 'chinese')
-                    DrawContext(taskParam, taskData.currentContext(i))
-                    DrawCross(taskParam)
+                    drawContext(taskParam, taskData.currentContext(i))
+                    drawCross(taskParam)
                     
                 end
-                DrawCross(taskParam)
-                PredictionSpot(taskParam)
+                drawCross(taskParam)
+                predictionSpot(taskParam)
                 
                 if i ~= taskParam.gParam.blockIndices(1)...
                         && i ~= taskParam.gParam.blockIndices(2) + 1 ...
@@ -277,11 +284,11 @@ for i=1:trial
                     %                             TickMark(taskParam, taskData.outcome(i-1), 'outc')
                     %                             TickMark(taskParam, taskData.pred(i-1), 'pred')
                     %else
-                    TickMark(taskParam, taskData.outcome(i-1), 'outc')
-                    TickMark(taskParam, taskData.pred(i-1), 'pred')
+                    tickMark(taskParam, taskData.outcome(i-1), 'outc')
+                    tickMark(taskParam, taskData.pred(i-1), 'pred')
                     %end
                     if isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-                        TickMark(taskParam, savedTickmark(i-1), 'saved')
+                        tickMark(taskParam, savedtickMark(i-1), 'saved')
                     end
                     
                 end
@@ -389,20 +396,20 @@ for i=1:trial
                 
                 taskParam.circle.rotAngle = degree * taskParam.circle.unit;
                 
-                DrawCircle(taskParam)
+                drawCircle(taskParam)
                 if isequal(taskParam.gParam.taskType, 'chinese')
-                    DrawContext(taskParam,taskData.currentContext(i))
-                    DrawCross(taskParam)
+                    drawContext(taskParam,taskData.currentContext(i))
+                    drawCross(taskParam)
                     
                 end
-                DrawCross(taskParam)
+                drawCross(taskParam)
                 
                 hyp = sqrt(x^2 + y^2);
                 
                 if hyp <= 150
-                    PredictionSpotReversal(taskParam, x ,y*-1)
+                    predictionSpotReversal(taskParam, x ,y*-1)
                 else
-                    PredictionSpot(taskParam)
+                    predictionSpot(taskParam)
                 end
                 %keyboard
                 if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(i))
@@ -419,20 +426,20 @@ for i=1:trial
                             && i ~= taskParam.gParam.blockIndices(3) + 1 ...
                             && i ~= taskParam.gParam.blockIndices(4) + 1
                         
-                        savedTickmark(i) =...
+                        savedtickMark(i) =...
                             ((taskParam.circle.rotAngle)/taskParam.circle.unit);
                         WaitSecs(0.2);
                         press = 1;
                         
                     elseif i > 1 && press == 0
-                        savedTickmarkPrevious(i) = savedTickmarkPrevious(i - 1);
-                        savedTickmark(i) = savedTickmark(i - 1);
+                        savedtickMarkPrevious(i) = savedtickMarkPrevious(i - 1);
+                        savedtickMark(i) = savedtickMark(i - 1);
                     elseif i == 1
                         savedTickmarPrevious(i) = 0;
                     end
                     
                     if press == 1
-                        savedTickmarkPrevious(i) = savedTickmark(i-1);
+                        savedtickMarkPrevious(i) = savedtickMark(i-1);
                     end
                 end
                 
@@ -449,21 +456,21 @@ for i=1:trial
                         %
                         %                             if sum(ismember(unique(taskData.currentContext(1:i-1)), taskData.currentContext(i))) >=1
                         %
-                        %                                 TickMark(taskParam,taskData.outcome(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'outc');
-                        %                                 TickMark(taskParam,taskData.pred(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'pred');
+                        %                                 tickMark(taskParam,taskData.outcome(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'outc');
+                        %                                 tickMark(taskParam,taskData.pred(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'pred');
                         %
                         %                             end
                     else
-                        TickMark(taskParam, taskData.outcome(i-1), 'outc');
-                        TickMark(taskParam, taskData.pred(i-1), 'pred');
+                        tickMark(taskParam, taskData.outcome(i-1), 'outc');
+                        tickMark(taskParam, taskData.pred(i-1), 'pred');
                     end
                     
                     if ~isequal(taskParam.gParam.taskType, 'chinese')
                         if press == 1
-                            TickMark(taskParam, savedTickmarkPrevious(i),...
+                            tickMark(taskParam, savedtickMarkPrevious(i),...
                                 'update');
                         end
-                        TickMark(taskParam, savedTickmark(i), 'saved');
+                        tickMark(taskParam, savedtickMark(i), 'saved');
                     end
                     
                 end
@@ -492,24 +499,24 @@ for i=1:trial
         
         taskParam.circle.rotAngle = ...
             taskData.pred(i) * taskParam.circle.unit;
-        DrawCircle(taskParam)
+        drawCircle(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
-            DrawContext(taskParam,taskData.currentContext(i))
-            DrawCross(taskParam)
+            drawContext(taskParam,taskData.currentContext(i))
+            drawCross(taskParam)
             
         end
-        DrawCross(taskParam)
-        PredictionSpot(taskParam)
+        drawCross(taskParam)
+        predictionSpot(taskParam)
         
         if ~isequal(taskParam.gParam.taskType, 'chinese')
             if i ~= taskParam.gParam.blockIndices(1) && i ~=...
                     taskParam.gParam.blockIndices(2) + 1 && i ~=...
                     taskParam.gParam.blockIndices(3) + 1 && i ~=...
                     taskParam.gParam.blockIndices(4) + 1
-                TickMark(taskParam, taskData.outcome(i-1), 'outc')
-                TickMark(taskParam, taskData.pred(i-1), 'pred')
+                tickMark(taskParam, taskData.outcome(i-1), 'outc')
+                tickMark(taskParam, taskData.pred(i-1), 'pred')
                 if isequal(taskData.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-                    TickMark(taskParam, savedTickmark(i), 'saved')
+                    tickMark(taskParam, savedtickMark(i), 'saved')
                 end
             end
         end
@@ -534,11 +541,11 @@ for i=1:trial
     end
     t = GetSecs;
     
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
+    drawCross(taskParam)
+    drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        DrawContext(taskParam,taskData.currentContext(i))
-        DrawCross(taskParam)
+        drawContext(taskParam,taskData.currentContext(i))
+        drawCross(taskParam)
         
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
@@ -546,22 +553,22 @@ for i=1:trial
         Beampos(i)] =...
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
     taskData.triggers(i,2) = ...
-        SendTrigger(taskParam, taskData, condition, haz, i, 2);
+        sendTrigger(taskParam, taskData, condition, haz, i, 2);
     taskData.timestampPrediction(i,:) = GetSecs - ref;
     
     RT_Flip(i) = GetSecs-time;
     
     taskData.predErr(i) = Diff(taskData.outcome(i), taskData.pred(i));
     
-    DrawCircle(taskParam)
+    drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        DrawContext(taskParam,taskData.currentContext(i))
-        DrawCross(taskParam)
+        drawContext(taskParam,taskData.currentContext(i))
+        drawCross(taskParam)
         
     end
     
-    PredictionSpot(taskParam)
-    DrawOutcome(taskParam, taskData.outcome(i))
+    predictionSpot(taskParam)
+    drawOutcome(taskParam, taskData.outcome(i))
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     
@@ -617,53 +624,53 @@ for i=1:trial
     
     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
     taskData.triggers(i,3) = ...
-        SendTrigger(taskParam, taskData, condition, haz, i, 3);
+        sendTrigger(taskParam, taskData, condition, haz, i, 3);
     
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
+    drawCross(taskParam)
+    drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        DrawContext(taskParam, taskData.currentContext(i))
-        DrawCross(taskParam)
+        drawContext(taskParam, taskData.currentContext(i))
+        drawCross(taskParam)
         
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
     taskData.triggers(i,4) = ...
-        SendTrigger(taskParam, taskData, condition, haz, i, 4);
+        sendTrigger(taskParam, taskData, condition, haz, i, 4);
     
-    DrawCircle(taskParam)
+    drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        DrawContext(taskParam, taskData.currentContext(i))
-        DrawCross(taskParam)
+        drawContext(taskParam, taskData.currentContext(i))
+        drawCross(taskParam)
         
     end
-    Shield(taskParam, taskData.allASS(i),...
+    shield(taskParam, taskData.allASS(i),...
         taskData.pred(i), taskData.shieldType(i))
     
-    DrawOutcome(taskParam, taskData.outcome(i))
+    drawOutcome(taskParam, taskData.outcome(i))
     
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);
     taskData.triggers(i,5) = ...
-        SendTrigger(taskParam, taskData, condition, haz, i, 5);
+        sendTrigger(taskParam, taskData, condition, haz, i, 5);
     WaitSecs(.5);
     
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
+    drawCross(taskParam)
+    drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        DrawContext(taskParam,taskData.currentContext(i))
-        DrawCross(taskParam)
+        drawContext(taskParam,taskData.currentContext(i))
+        drawCross(taskParam)
         
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
     taskData.triggers(i,6) = ...
-        SendTrigger(taskParam, taskData, condition, haz, i, 6);             % this is fixation 3
+        sendTrigger(taskParam, taskData, condition, haz, i, 6);             % this is fixation 3
     
     WaitSecs(.5);
     taskData.triggers(i,7) = ...
-        SendTrigger(taskParam, taskData, condition, haz, i, 16);            % this is the trial summary trigger
+        sendTrigger(taskParam, taskData, condition, haz, i, 16);            % this is the trial summary trigger
     
     WaitSecs(.5);
     taskData.timestampOffset(i,:) = GetSecs - ref;
@@ -696,14 +703,16 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
         
     end
     
-elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
+elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
+        isequal(taskParam.gParam.taskType, 'reversalPractice') ||...
+        isequal(taskParam.gParam.taskType, 'ARC')
     header = 'Performance';
-    [txt, header] = Feedback(taskData, taskParam, Subject, condition);
+    [txt, header] = feedback(taskData, taskParam, Subject, condition);
     
 end
 
 %feedback = true;
-fw = BigScreen(taskParam, taskParam.strings.txtPressEnter,...
+fw = bigScreen(taskParam, taskParam.strings.txtPressEnter,...
     header, txt, true);
 
 KbReleaseWait();
@@ -727,8 +736,8 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     {taskData.cond}, 'cBal',{taskData.cBal}, 'trial', taskData.trial,...
     'haz', haz, 'concentration', concentration,'outcome',...
     taskData.outcome, 'distMean', taskData.distMean, 'cp',...
-    taskData.cp, 'reversal', taskData.reversal, 'savedTickmark',...
-    savedTickmark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
+    taskData.cp, 'reversal', taskData.reversal, 'savedtickMark',...
+    savedtickMark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
     'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers,...
     'pred', taskData.pred,'predErr', taskData.predErr, 'memErr',...
     taskData.memErr, 'UP',taskData.UP, 'hit', taskData.hit, 'perf',....
