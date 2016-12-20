@@ -13,9 +13,9 @@ function Data = AdaptiveLearning(unitTest)
 %   "Reversal version":     Change point task with occasional reversals to
 %                           previous change point location
 %   "Chinese restaurant":   Learning of a state space
-%   "ARC version":          Owen's Cambridge version 
+%   "ARC version":          Owen's Cambridge version
 %                               - different noise conditions
-%                               - tickmark on vs. off    
+%                               - tickmark on vs. off
 %
 %  Current task conditions:
 %   - shield
@@ -60,8 +60,8 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine; if you have internet!
-computer = identifyPC;
-% computer = 'Macbook';
+%computer = identifyPC;
+computer = 'Macbook';
 
 % Choose task type:
 %   - 'oddball'
@@ -111,8 +111,8 @@ elseif strcmp(taskType, 'chinese')
     
     trials          = 5; % 400
     controlTrials   = nan;
-    nContexts       = 2; % planets 
-    nStates         = 2; % enemies 
+    nContexts       = 2; % planets
+    nStates         = 2; % enemies
     contextHaz      = 1;
     stateHaz        = 0.15;
     safeContext     = 0;
@@ -121,13 +121,26 @@ elseif strcmp(taskType, 'chinese')
     DataOddball     = nan;
     textSize        = 19;
     
+elseif strcmp(taskType, 'ARC')
+    
+    trials              = 2; % 240
+    controlTrials       = nan;
+    concentration       = [12 12 99999999];
+    textSize            = 19;
+    
+    % Check number of trials
+    if  (trials > 1 && mod(trials, 2)) == 1
+        msgbox('All trials must be even or equal to 1!');
+        return
+    end
+    
 end
 
 % version independent parameters
 runIntro                = false;
 askSubjInfo             = true;
 sendTrigger             = false;
-randomize               = false;
+randomize               = true;
 shieldTrials            = 1; % 4 why not 5?
 practTrials             = 5; % 20 % 20 in reversal muliplied by 2!
 chinesePractTrials      = 5; % 200
@@ -154,6 +167,8 @@ elseif isequal(computer, 'Lennart')
     cd('/Users/Lenni/Dropbox/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden1')
     cd('C:\Users\ma_epsy\Desktop\AdaptiveLearning\DataDirectory');
+elseif isequal(computer, 'ARC')
+    cd(' please indicate your path here ');
 end
 
 % -------------------------------------------------------------------------
@@ -171,12 +186,13 @@ if askSubjInfo == false
     cBal = 1;
     reward = 1;
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'chinese')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'chinese') ||...
+            strcmp(taskType, 'ARC')
         group = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group',...
             group, 'cBal', cBal, 'rew', reward, 'date', date,...
             'session', '1');
-    elseif strcmp(taskType, 'oddball') 
+    elseif strcmp(taskType, 'oddball')
         session = '1';
         Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session',...
             session, 'cBal', cBal, 'rew', reward, 'date', date);
@@ -184,7 +200,7 @@ if askSubjInfo == false
     
 elseif askSubjInfo == true
     
-    if strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
         prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
     elseif strcmp(taskType, 'oddball')
         prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
@@ -200,7 +216,7 @@ elseif askSubjInfo == true
         
         if strcmp(taskType, 'dresden')
             cBal = num2str(round(unifrnd(1,6)));
-        elseif strcmp(taskType, 'oddball')
+        elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'ARC')
             cBal = num2str(round(unifrnd(1,2)));
         end
         
@@ -213,7 +229,8 @@ elseif askSubjInfo == true
     
     % checken, dass das für alle bedingungen stimmt
     if strcmp(taskType, 'dresden')...
-            || strcmp(taskType, 'oddball')
+            || strcmp(taskType, 'oddball')...
+            || strcmp(taskType, 'ARC')
         defaultanswer = {'99999','99', '1', 'm', cBal, reward};
     elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
         defaultanswer = {'99999','99', 'm', reward};
@@ -222,7 +239,8 @@ elseif askSubjInfo == true
     end
     
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball') ||...
+            strcmp(taskType, 'ARC')
         subjInfo{7} = date;
     elseif strcmp(taskType, 'reversal')
         subjInfo{5} = date;
@@ -240,7 +258,7 @@ elseif askSubjInfo == true
         return
     end
     
-    if strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')  
         if subjInfo{3} ~= '1'...
                 && subjInfo{3} ~= '2'
             msgbox('Group: "1" or "2"?');
@@ -256,7 +274,7 @@ elseif askSubjInfo == true
     end
     
     if strcmp(taskType, 'dresden')...
-            || strcmp(taskType, 'oddball')
+            || strcmp(taskType, 'oddball') || strcmp(taskType, 'ARC')
         if subjInfo{4} ~= 'm'...
                 && subjInfo{4} ~= 'f'
             msgbox('Sex: "m" or "f"?');
@@ -282,7 +300,7 @@ elseif askSubjInfo == true
             msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
-    elseif strcmp(taskType, 'oddball')
+    elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'ARC')
         if subjInfo{5} ~= '1'...
                 && subjInfo{5} ~= '2'
             msgbox('cBal: 1 or 2 ?');
@@ -296,7 +314,8 @@ elseif askSubjInfo == true
         %         end
     end
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball') ||...
+            strcmp(taskType, 'ARC')
         if subjInfo{6} ~= '1'...
                 && subjInfo{6} ~= '2'
             msgbox('Reward: 1 or 2?');
@@ -310,7 +329,7 @@ elseif askSubjInfo == true
         end
     end
     
-    if strcmp(taskType, 'dresden')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
         
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'group', subjInfo(3), 'cBal',...
@@ -325,14 +344,14 @@ elseif askSubjInfo == true
             str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
         
-    elseif strcmp(taskType, 'reversal') 
-         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+    elseif strcmp(taskType, 'reversal')
+        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))),...
             'date',subjInfo(5), 'session', '1', 'cBal', nan);
         
     elseif strcmp(taskType, 'chinese')
         
-
+        
         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5),...
             'date',subjInfo(6), 'session', '1', 'cBal', nan);
@@ -341,7 +360,8 @@ elseif askSubjInfo == true
     
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'reversal')...
-            || strcmp(taskType, 'chinese')
+            || strcmp(taskType, 'chinese')...
+            || strcmp(taskType, 'ARC')
         checkIdInData = dir(sprintf('*%s*',...
             num2str(cell2mat((subjInfo(1))))));
     elseif strcmp(taskType, 'oddball')
@@ -356,7 +376,9 @@ elseif askSubjInfo == true
         if strcmp(taskType, 'dresden')
             msgbox('Diese ID wird bereits verwendet!');
         elseif strcmp(taskType, 'oddball') ||...
-                strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
+                strcmp(taskType, 'reversal') ||...
+                strcmp(taskType, 'chinese') ||...
+                strcmp(taskType, 'ARC')
             msgbox('ID and session have already been used!');
         end
         return
@@ -418,9 +440,6 @@ else
     sentenceLength = 85;
 end
 
-% wofür?
-% startTime wird am Ende des Skripts vermutlich genutzt, um die
-% Gesamtdauer des Experiments zu berechnen
 startTime = GetSecs;
 ref = GetSecs;
 
@@ -484,12 +503,10 @@ circle = struct('shieldAngle', shieldAngle, 'cannonEndCent',...
 
 % parameters related to color
 gold    = [255 215 0];
-% blue    = [0 0 255];
 blue    = [122,96,215];
 silver  = [160 160 160];
-% green   = [0 255 0];
 green   = [169,227,153];
-black   = [0 0 0]; 
+black   = [0 0 0];
 colors  = struct('gold', gold, 'blue', blue, 'silver', silver,...
     'green', green, 'black', black);
 
@@ -529,12 +546,7 @@ if sendTrigger == true
     config_io;
 end
 
-% matt fragen ob es nicht 500 war
 sampleRate = 500; % sample rate
-%fPort = 'port'; port = 53328; % LPT port (Dresden)
-%LPT1address = hex2dec('E050'); %standard location of LPT1 port % copied
-%from heliEEG_main
-%fPort = 'port';
 port = hex2dec('E050'); % LPT port
 triggers = struct('sampleRate', sampleRate, 'port', port);
 
@@ -1050,9 +1062,6 @@ Screen('CloseAll');
         rocketPic_lightning(:,:,4) = rocketAlpha_lightning(:,:);
         rocketPic_star(:,:,4) = rocketAlpha_star(:,:);
         rocketPic_swirl(:,:,4) = rocketAlpha_swirl(:,:);
-        %spacebattleAlpha
-        %rocketPic
-        %spacebattlePic(:,:,4) = spacebattleAlpha(:,:);
         Screen('BlendFunction', window, GL_SRC_ALPHA,...
             GL_ONE_MINUS_SRC_ALPHA);
         cannonTxt = Screen('MakeTexture', window, cannonPic);
@@ -1142,7 +1151,7 @@ Screen('CloseAll');
                 txt = sprintf(['Thank you for participating!'...
                     '\n\n\nYou earned $ %.2f'], totWin);
             elseif isequal(taskType, 'dresden') || isequal(taskType, 'chinese')
-               
+                
                 header = 'Ende des Versuchs!';
                 if isequal(Subject.group, '1')
                     txt = sprintf(['Vielen Dank für deine Teilnahme!',...
