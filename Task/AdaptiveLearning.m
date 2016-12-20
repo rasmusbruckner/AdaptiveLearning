@@ -12,7 +12,10 @@ function Data = AdaptiveLearning(unitTest)
 %   "Oddball version":      Change point task with oddball condition
 %   "Reversal version":     Change point task with occasional reversals to
 %                           previous change point location
-%   "Chinese restaurant":   Change point task with multiple contexts
+%   "Chinese restaurant":   Learning of a state space
+%   "ARC version":          Owen's Cambridge version 
+%                               - different noise conditions
+%                               - tickmark on vs. off    
 %
 %  Current task conditions:
 %   - shield
@@ -57,15 +60,16 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine; if you have internet!
-%computer = identifyPC;
-computer = 'Macbook';
+computer = identifyPC;
+% computer = 'Macbook';
 
 % Choose task type:
 %   - 'oddball'
 %   - 'dresden'
 %   - 'reversal'
 %   - 'chinese'
-taskType = 'chinese';
+%   - 'ARC'
+taskType = 'ARC';
 
 % version specific parameters
 if strcmp(taskType, 'dresden')
@@ -105,15 +109,15 @@ elseif strcmp(taskType, 'reversal')
     
 elseif strcmp(taskType, 'chinese')
     
-    trials          = 4;
+    trials          = 5; % 400
     controlTrials   = nan;
-    nContexts       = 3; % planets 
-    nStates         = 3; % enemies
-    contextHaz      = 0.5;
-    stateHaz        = 0.5;
+    nContexts       = 2; % planets 
+    nStates         = 2; % enemies 
+    contextHaz      = 1;
+    stateHaz        = 0.15;
     safeContext     = 0;
-    safeState       = 3;
-    concentration   = [10 12 99999999];
+    safeState       = 0;
+    concentration   = [12 12 99999999];
     DataOddball     = nan;
     textSize        = 19;
     
@@ -121,13 +125,13 @@ end
 
 % version independent parameters
 runIntro                = false;
-askSubjInfo             = false;
+askSubjInfo             = true;
 sendTrigger             = false;
-randomize               = true;
-shieldTrials            = 1; % 4
-practTrials             = 4; % 20 in reversal muliplied by 2!
-chinesePractTrials      = 4; 
-blockIndices            = [1 60 120 180];
+randomize               = false;
+shieldTrials            = 1; % 4 why not 5?
+practTrials             = 5; % 20 % 20 in reversal muliplied by 2!
+chinesePractTrials      = 5; % 200
+blockIndices            = [1 101 201 301];
 haz                     = [.25 1 0];
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
@@ -135,8 +139,8 @@ driftConc               = [30 99999999];
 safe                    = [3 0];
 rewMag                  = 0.1;
 jitter                  = 0.2;
-practiceTrialCriterion  = 10;
-debug                   = true;
+practiceTrialCriterion  = 10; % 10
+debug                   = false;
 
 % savedirectory
 if isequal(computer, 'Macbook')
@@ -146,6 +150,10 @@ elseif isequal(computer, 'Dresden')
         '\\DataDirectory']);
 elseif isequal(computer, 'Brown')
     cd('C:\Users\lncc\Dropbox\ReversalTask\data');
+elseif isequal(computer, 'Lennart')
+    cd('/Users/Lenni/Dropbox/AdaptiveLearning/DataDirectory');
+elseif isequal(computer, 'Dresden1')
+    cd('C:\Users\ma_epsy\Desktop\AdaptiveLearning\DataDirectory');
 end
 
 % -------------------------------------------------------------------------
@@ -182,7 +190,7 @@ elseif askSubjInfo == true
         prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
     elseif isequal(taskType, 'reversal')...
             || isequal(taskType, 'chinese')
-        prompt = {'ID:','Age:', 'Sex:', 'Reward'};
+        prompt = {'ID:','Age:', 'Sex:'};
     end
     
     name = 'SubjInfo';
@@ -218,6 +226,10 @@ elseif askSubjInfo == true
         subjInfo{7} = date;
     elseif strcmp(taskType, 'reversal')
         subjInfo{5} = date;
+    elseif  strcmp(taskType, 'chinese')
+        subjInfo{4} = 1; % reward
+        subjInfo{5} = '1'; % group
+        subjInfo{6} = date;
     else
         subjInfo{6} = date;
     end
@@ -253,7 +265,7 @@ elseif askSubjInfo == true
         end
     else
         if subjInfo{3} ~= 'm'...
-                && subjInfo{4} ~= 'f'
+                && subjInfo{3} ~= 'f'
             msgbox('Sex: "m" or "f"?');
             return
             
@@ -313,11 +325,17 @@ elseif askSubjInfo == true
             str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
         
-    elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
-        
-        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+    elseif strcmp(taskType, 'reversal') 
+         Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))),...
             'date',subjInfo(5), 'session', '1', 'cBal', nan);
+        
+    elseif strcmp(taskType, 'chinese')
+        
+
+        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+            subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5),...
+            'date',subjInfo(6), 'session', '1', 'cBal', nan);
         
     end
     
@@ -392,13 +410,17 @@ fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
 % set sentence length for text printed on screen
 if isequal(computer, 'Dresden')
     sentenceLength = 70;
-elseif isequal(computer, 'Brown')
+elseif isequal(computer, 'Brown') || isequal(computer, 'Dresden1')
+    sentenceLength = 75;
+elseif isequal(computer, 'Lennart')
     sentenceLength = 75;
 else
     sentenceLength = 85;
 end
 
 % wofür?
+% startTime wird am Ende des Skripts vermutlich genutzt, um die
+% Gesamtdauer des Experiments zu berechnen
 startTime = GetSecs;
 ref = GetSecs;
 
@@ -462,9 +484,11 @@ circle = struct('shieldAngle', shieldAngle, 'cannonEndCent',...
 
 % parameters related to color
 gold    = [255 215 0];
-blue    = [0 0 255];
+% blue    = [0 0 255];
+blue    = [122,96,215];
 silver  = [160 160 160];
-green   = [0 255 0];
+% green   = [0 255 0];
+green   = [169,227,153];
 black   = [0 0 0]; 
 colors  = struct('gold', gold, 'blue', blue, 'silver', silver,...
     'green', green, 'black', black);
@@ -480,14 +504,16 @@ rightSlowKey = KbName('h');
 leftSlowKey = KbName('g');
 space = KbName('Space');
 
-if isequal(computer, 'Macbook')
+if isequal(computer, 'Macbook') || isequal(computer, 'Lennart')
     enter = 40;
     s = 22;
     t = 23;
     z = 28;
-elseif isequal(computer, 'Dresden')
+elseif isequal(computer, 'Dresden') || isequal(computer, 'Dresden1')
     enter = 13;
     s = 83;
+    t = 23;
+    z = 28;
 elseif isequal(computer, 'Brown')
     enter = 13;
     s = 83;
@@ -504,7 +530,7 @@ if sendTrigger == true
 end
 
 % matt fragen ob es nicht 500 war
-sampleRate = 512; % sample rate
+sampleRate = 500; % sample rate
 %fPort = 'port'; port = 53328; % LPT port (Dresden)
 %LPT1address = hex2dec('E050'); %standard location of LPT1 port % copied
 %from heliEEG_main
@@ -581,7 +607,7 @@ elseif isequal(taskType, 'reversal')
     
 elseif isequal(taskType, 'chinese')
     
-    txtPressEnter = 'Press Enter to continue';
+    txtPressEnter = 'Weiter mit Enter';
     
 end
 
@@ -971,9 +997,24 @@ Screen('CloseAll');
             
             Instructions(taskParam, 'chinese', Subject);
             Data = Main(taskParam, haz(1), concentration(1),...
-                'chinesePractice', Subject);
+                'chineseLastPractice', Subject);
             header = 'Anfang der Aufgabe';
-            txtStartTask = ['Text...'];
+            txtStartTask = ['Du hast die Übungsphase abgeschlossen. Du '...
+                'kannst jetzt echtes Geld in Abhängigkeit von deiner '...
+                'Leistung verdienen. Jeder Aufgabendurchgang läuft genau '...
+                'so ab, wie du es vorher in der Übung gelernt hast.\n\n'...
+                'Deine Aufgabe ist es, deine Planeten vor den Kanongenkugeln '...
+                'zweier Gegner zu beschützen, indem du sie mit deinem Schild '...
+                'abwehrst. Dabei hat jeder Gegner auf jeden deiner Planeten '...
+                'genau eine Kanone gerichtet. Die Positionen der Kanonen '...
+                'bleiben während eines Aufgabenblocks gleich. Die Planeten '...
+                'werden immer nur von einem Gegner zurzeit beschossen.\n\n'...
+                'Die Kanonen sind unsichtbar. Deshalb solltest du dir merken '...
+                'auf welche Stelle der jeweilige Gegner auf dem jeweiligen '...
+                'Planeten seine Kanone gerichtet hat. Du kannst dann bei einem '...
+                'Wechsel des Gegners oder des Planeten dein Schild direkt '...
+                'an dieser Stelle positionieren.\n\n'...
+                'Wenn du noch Fragen hast, wende dich bitte jetzt an den Versuchsleiter.'];
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
@@ -999,19 +1040,27 @@ Screen('CloseAll');
         imageRect = [0 0 120 120];
         dstRect = CenterRect(imageRect, windowRect);
         [cannonPic, ~, alpha]  = imread('cannon.png');
-        [rocketPic_lighting, ~, rocketAlpha_lightning]  = imread('rocket_lightning.png');
+        [rocketPic, ~, rocketAlpha]  = imread('rocket_empty.png');
+        [rocketPic_lightning, ~, rocketAlpha_lightning]  = imread('rocket_lightning.png');
         [rocketPic_star, ~, rocketAlpha_star]  = imread('rocket_star.png');
         [rocketPic_swirl, ~, rocketAlpha_swirl]  = imread('rocket_swirl.png');
+        [spacebattlePic, ~, spacebattleAlpha]  = imread('spacebattle_intro1.jpg');
         cannonPic(:,:,4) = alpha(:,:);
+        rocketPic(:,:,4) = rocketAlpha(:,:);
         rocketPic_lightning(:,:,4) = rocketAlpha_lightning(:,:);
         rocketPic_star(:,:,4) = rocketAlpha_star(:,:);
         rocketPic_swirl(:,:,4) = rocketAlpha_swirl(:,:);
+        %spacebattleAlpha
+        %rocketPic
+        %spacebattlePic(:,:,4) = spacebattleAlpha(:,:);
         Screen('BlendFunction', window, GL_SRC_ALPHA,...
             GL_ONE_MINUS_SRC_ALPHA);
         cannonTxt = Screen('MakeTexture', window, cannonPic);
+        rocketTxt = Screen('MakeTexture', window, rocketPic);
         rocketTxt_lightning = Screen('MakeTexture', window, rocketPic_lightning);
         rocketTxt_star = Screen('MakeTexture', window, rocketPic_star);
         rocketTxt_swirl = Screen('MakeTexture', window, rocketPic_swirl);
+        spacebattleTxt = Screen('MakeTexture', window, spacebattlePic);
         [shieldPic, ~, alpha]  = imread('shield.png');
         shieldPic(:,:,4) = alpha(:,:);
         shieldTxt = Screen('MakeTexture', window, shieldPic);
@@ -1019,13 +1068,15 @@ Screen('CloseAll');
         basketPic(:,:,4) = alpha(:,:);
         basketTxt = Screen('MakeTexture', window, basketPic);
         textures = struct('cannonTxt', cannonTxt,...
+            'rocketTxt', rocketTxt,...
             'rocketTxt_lightning', rocketTxt_lightning,...
             'rocketTxt_star', rocketTxt_star,...
             'rocketTxt_swirl', rocketTxt_swirl,...
+            'spacebattleTxt', spacebattleTxt,...
             'shieldTxt', shieldTxt, 'basketTxt', basketTxt,...
             'dstRect', dstRect);
-        %ListenChar(2);
-        %HideCursor;
+        ListenChar(2);
+        HideCursor;
         
     end
 
@@ -1091,13 +1142,14 @@ Screen('CloseAll');
                 txt = sprintf(['Thank you for participating!'...
                     '\n\n\nYou earned $ %.2f'], totWin);
             elseif isequal(taskType, 'dresden') || isequal(taskType, 'chinese')
+               
                 header = 'Ende des Versuchs!';
                 if isequal(Subject.group, '1')
-                    txt = sprintf(['Vielen Dank für deine Teilnahme!'
-                        '\n\n\nDu hast %.2f Euro verdient'], totWin);
+                    txt = sprintf(['Vielen Dank für deine Teilnahme!',...
+                        '\n\n\nDu hast %.2f Euro verdient.'], totWin);
                 else
                     txt = sprintf(['Vielen Dank für Ihre Teilnahme!'...
-                        '\n\n\nSie haben %.2f Euro verdient'], totWin);
+                        '\n\n\nSie haben %.2f Euro verdient.'], totWin);
                 end
             end
             Screen('DrawLine', taskParam.gParam.window.onScreen,...

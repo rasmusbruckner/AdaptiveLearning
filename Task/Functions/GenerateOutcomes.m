@@ -9,6 +9,7 @@ function taskData = GenerateOutcomes(taskParam, haz, concentration, condition)
 
 if isequal(condition, 'main') || isequal(condition, 'oddball') ||...
         isequal(condition, 'reversal') || isequal(condition, 'chinese')
+        
     try
     trials = taskParam.gParam.trials;
     catch
@@ -23,6 +24,8 @@ elseif isequal(condition, 'mainPractice')...
     || isequal(condition, 'reversalPractice')...
     || isequal(condition, 'reversalPracticeNoise')...
     || isequal(condition, 'reversalPracticeNoiseInv2')...
+    || isequal(condition, 'chinesePractice')...
+    || isequal(condition, 'chinesePracticeNoise') 
         
     trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'shield')
@@ -34,7 +37,8 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
     trials = 4;
 elseif isequal(condition, 'reversalPracticeNoiseInv3')
     trials = taskParam.gParam.practTrials * 2;
-elseif isequal(condition, 'chinesePractice') || isequal(condition, 'chinesePracticeNoise') || isequal(condition, 'chinesePracticeStateSpace')
+elseif isequal(condition, 'chineseLastPractice')...
+        || isequal(condition, 'chinesePracticeStateSpace')
     trials = taskParam.gParam.chinesePractTrials;
 end
 contextTypes = 0;
@@ -56,7 +60,6 @@ distMean=nan(trials, 1);
 cp = zeros(trials, 1);
 reversal = zeros(trials, 1);
 TAC=nan(trials, 1);
-TAC_Chinese = nan(trials,3);
 oddBall = zeros(trials, 1);
 catchTrial = zeros(trials, 1);
 triggers = zeros(trials, 7);
@@ -157,7 +160,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
         end
         allASS(i)=ASS;
     end
-    
+        latentState(i) = 0;
     
 elseif isequal(condition, 'oddball')...
         || isequal(condition, 'practiceNoOddball')...
@@ -314,7 +317,11 @@ elseif isequal(condition, 'reversal')...
         allASS(i) = ASS;
     end
     
-elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice') || isequal(condition, 'chinesePracticeNoise') || isequal(condition, 'chinesePracticeStateSpace')
+elseif isequal(condition, 'chinese') ||...
+       isequal(condition, 'chinesePractice') ||...
+       isequal(condition, 'chineseLastPractice') ||...
+       isequal(condition, 'chinesePracticeNoise') ||...
+       isequal(condition, 'chinesePracticeStateSpace')
     
         %% nContexts
         % contextHaz = 1/nContexts;
@@ -336,13 +343,13 @@ elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice') ||
         
         %% überlegen wie viele Blöcke wir wollen
         if i >= taskParam.gParam.blockIndices(1)...
-                && i <= taskParam.gParam.blockIndices(2)
+                && i < taskParam.gParam.blockIndices(2)
             block(i) = 1;
         elseif i >= taskParam.gParam.blockIndices(2)...
-                && i <= taskParam.gParam.blockIndices(3)
+                && i < taskParam.gParam.blockIndices(3)
             block(i) = 2;
         elseif i >= taskParam.gParam.blockIndices(3)...
-                && i <= taskParam.gParam.blockIndices(4)
+                && i < taskParam.gParam.blockIndices(4)
             block(i) = 3;
         elseif i >= taskParam.gParam.blockIndices(4)
             block(i) = 4;
@@ -390,7 +397,9 @@ elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice') ||
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
                 || i == taskParam.gParam.blockIndices(4) + 1 
           
+              
             latentState(i) = randi(nContexts); % observierbarer kontext
+            
             stateCp(i) = 1;
             sState = safeState;
             TAC_State(i) = 0; %TAC(i)=1;
@@ -504,10 +513,11 @@ elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice') ||
     
 end
 
-if trials > 1
-    shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
-else shieldType = 1;
-end
+%if trials > 1
+%    shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
+%else
+shieldType = ones(trials,1); %always reward
+%end
 %keyboard
 %% Save data
 taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...

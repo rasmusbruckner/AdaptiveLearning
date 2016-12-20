@@ -28,6 +28,10 @@ elseif strcmp(sid, ['.F5B0D5445F09.8888888600000000.88A8B78070C3.'...
     computer = 'Dresden_Rene';
 elseif strcmp(sid, '.0928C78F12F8')
     computer = 'Macbook';
+elseif strcmp(sid, '.E2EC7188D14A')
+    computer = 'Lennart';
+elseif strcmp(sid, '.F5B50944568F.8888888600000000.8888888600000000')
+    computer = 'Dresden1';
 elseif strcmp(sid, '??')
     computer = 'Matt';
 else

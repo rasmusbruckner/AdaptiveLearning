@@ -163,7 +163,7 @@ else
         
         if cannon == true
             
-            Cannon(taskParam, distMean)
+            Cannon(taskParam, distMean, 0)
         end
         
         if isequal(button, 'arrow')

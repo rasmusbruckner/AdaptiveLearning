@@ -69,18 +69,25 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
         practData.savedTickmark = reversalPackage.savedTickmark;
         practData.pred = reversalPackage.pred;
         
-    end
+    end 
+    
 else
     
     practData = GenerateOutcomes(taskParam, vola, sigma, condition);
+    
+    taskParam.condition = condition;
     if isequal(condition, 'shield')
         trials = practData.trial;
+    elseif isequal(condition, 'chinesePracticeStateSpace')
+        trials = taskParam.gParam.chinesePractTrials;
     else
         trials = taskParam.gParam.practTrials;
+
     end
     
     practData.savedTickmark(1) = nan;
     practData.savedTickmarkPrevious(1) = nan;
+    
 end
 
 leaveLoop = 0;
@@ -109,7 +116,7 @@ for i = 1:trials
             end
             DrawCircle(taskParam);
             PredictionSpot(taskParam);
-            if i > 1
+            if i > 1 
                 TickMark(taskParam, practData.pred(i-1), 'pred')
                 TickMark(taskParam, practData.outcome(i-1), 'outc')
             end
@@ -207,7 +214,7 @@ for i = 1:trials
                 DrawContext(taskParam, practData.currentContext(i))
                 DrawCross(taskParam);
             end
-            practData
+            
             if cannon == true
                 Cannon(taskParam, practData.distMean(i),practData.latentState(i))
             else
@@ -249,7 +256,9 @@ for i = 1:trials
                 if i ~= taskParam.gParam.blockIndices(1) &&...
                         i ~= taskParam.gParam.blockIndices(2) + 1 &&...
                         i ~= taskParam.gParam.blockIndices(3) + 1 &&...
-                        i ~= taskParam.gParam.blockIndices(4) + 1
+                        i ~= taskParam.gParam.blockIndices(4) + 1 &&...
+                         ~isequal(taskParam.gParam.taskType, 'chinese')
+                    
                     TickMark(taskParam, practData.pred(i-1), 'pred');
                     TickMark(taskParam, practData.outcome(i-1), 'outc');
                     if press == 1
@@ -394,7 +403,10 @@ for i = 1:trials
             || isequal(condition, 'reversalPractice')...
             || isequal(condition, 'reversalPracticeNoise')...
             || isequal(condition, 'reversalPracticeNoiseInv')...
-            || isequal(condition, 'reversalPracticeNoiseInv2')
+            || isequal(condition, 'reversalPracticeNoiseInv2')...
+            || isequal(condition, 'chinesePractice')...
+            || isequal(condition, 'chinesePracticeNoise')...
+            || isequal(condition, 'chinesePracticeStateSpace')
         if abs(practData.predErr(i)) <= practData.allASS(i)/2
             practData.hit(i) = 1;
         end
@@ -472,7 +484,7 @@ for i = 1:trials
         practData.perf(i) = taskParam.gParam.rewMag;
     end
     
-    % Calculate accumulated performance.
+    % Calculate accumulated performance
     practData.accPerf(i) = sum(practData.perf);
     WaitSecs(1);
    

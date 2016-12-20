@@ -1,14 +1,20 @@
-function [txt, header] = Feedback(Data, taskParam, subject, condition)
+function [txt, header] = Feedback(Data, taskParam, subject, condition, whichBlock)
 %FEEDBACK   Displays feedback at the end of a block
+%keyboard
 
+if ~exist('whichBlock', 'var')
+    whichBlock = ones(length(Data.hit),1);
+end
+%keyboard    
 % unpack variables
-hits = sum(Data.hit == 1);
-rewTrials = sum(Data.actRew == 1);
-noRewTrials = sum(Data.actRew == 2);
-rewCatches = round(max(Data.accPerf)/taskParam.gParam.rewMag);
+hits = sum(Data.hit(whichBlock == 1));
+rewTrials = sum(Data.actRew(whichBlock == 1));
+noRewTrials = sum(Data.actRew(whichBlock == 2));
+rewCatches = round(max(Data.accPerf(whichBlock))/taskParam.gParam.rewMag);
 noRewCatches = hits - rewCatches;
-maxMon = (length(find(Data.shieldType == 1))...
+maxMon = (length(find(Data.shieldType(whichBlock == 1)))...
     * taskParam.gParam.rewMag);
+
 
 if isequal(taskParam.gParam.taskType, 'oddball')...
         || isequal(taskParam.gParam.taskType, 'reversal')...
@@ -92,22 +98,41 @@ elseif isequal(taskParam.gParam.taskType, 'dresden')
         else
             wouldHave = 'haben';
         end
+        
         txt = sprintf(['Weil Sie %.0f von %.0f Kugeln mit dem %s %s '...
             '%s haben,\n\n%s Sie %.2f von maximal %.2f Euro gewonnen.'],...
             rewCatches,...
             rewTrials, colRewCap, schildVsKorb, gefangenVsGesammelt,...
             wouldHave, max(Data.accPerf), maxMon);
     end
-   
+    
 elseif isequal(taskParam.gParam.taskType, 'chinese')
-     
+    
     header = 'Ergebnis';
-     
-    txt = sprintf(['Raketen gefangen: %.0f von %.0f.\n\n'...
-        'In diesem Block hättest du %.2f von maximal %.2f Euro gewonnen'],...
-        rewCatches, rewTrials, max(Data.accPerf), maxMon);
-end
-
+    
+    if isequal(condition, 'chinesePractice') ||...
+            isequal(condition, 'chinesePracticeNoise') ||...
+            isequal(condition, 'chinesePracticeStateSpace') ||...
+            isequal(condition, 'chineseLastPractice')
+        txt = sprintf(['Raketen abgewehrt: %.0f von %.0f.\n\n'...
+            'In diesem Block hättest du %.2f von maximal %.2f Euro gewonnen.'],...
+            hits, length(Data.hit), max(Data.accPerf), maxMon);
+   
+            Data.accPerf
+            Data.hit
+            hits
+            
+    elseif isequal(condition, 'chinese') 
+        
+%         txt = sprintf(['Raketen abgewehrt: %.0f von %.0f.\n\n'...
+%             'In diesem Block hast du %.2f von maximal %.2f Euro gewonnen.'],...
+%             hits, length(Data.hit(whichBlock == 1)),  hits*taskParam.gParam.rewMag, maxMon);
+        
+        txt = sprintf(['Raketen abgewehrt: %.0f.\n\n'...
+            'In diesem Block hast du %.2f von durchschnittlich 5.00 Euro gewonnen.'],...
+            hits,  hits*taskParam.gParam.rewMag);
+    end
+    
 end
 
 

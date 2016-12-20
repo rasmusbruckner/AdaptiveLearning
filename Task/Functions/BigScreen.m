@@ -57,15 +57,17 @@ while 1
     Screen('Flip', taskParam.gParam.window.onScreen, time + 0.1);
     
     [ ~, ~, keyCode ] = KbCheck;
+    %keyboard
     if keyCode(taskParam.keys.enter) && ~taskParam.unitTest
-        fw = 1;
+        fw = 1
+        %keyboard
         break
     elseif taskParam.unitTest
         WaitSecs(1);
         break
     end
 end
-
+%keyboard
 KbReleaseWait();
 
 end

@@ -52,8 +52,13 @@ for i = 1:nFrames
     DrawCircle(taskParam)
     Cannon(taskParam, distMean, latentState)
     PredictionSpot(taskParam)
-    Screen('FillOval', taskParam.gParam.window.onScreen, [0 0 0],...
-        OutcSpotAct);
+    if isequal(taskParam.gParam.taskType, 'chinese')
+        Screen('FillOval', taskParam.gParam.window.onScreen, [165 42 42],...
+            OutcSpotAct);
+    else
+         Screen('FillOval', taskParam.gParam.window.onScreen, [0 0 0],...
+            OutcSpotAct);
+    end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.01);

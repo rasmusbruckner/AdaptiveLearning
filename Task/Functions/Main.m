@@ -110,24 +110,32 @@ elseif ~taskParam.unitTest
         taskData.initiationRTs = nan(trial,1);
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
-
+        
     elseif isequal(condition, 'reversal')...
             || isequal(condition, 'reversalPractice')
-    %% 08.09.16: gucken dass hier alle bedingungen spezifiziert werden    
+        %% 08.09.16: gucken dass hier alle bedingungen spezifiziert werden
         
         if isequal(condition, 'reversalPractice')
             taskParam.gParam.practTrials = taskParam.gParam.practTrials * 2;
             trial = taskParam.gParam.practTrials;
-
+            
         else
-             trial = taskParam.gParam.trials;
+            trial = taskParam.gParam.trials;
         end
         taskData = GenerateOutcomes...
             (taskParam, haz, concentration, condition);
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
         
-    elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice')
+    elseif isequal(condition, 'chineseLastPractice')
+        
+        trial = taskParam.gParam.chinesePractTrials;
+        taskData = GenerateOutcomes...
+            (taskParam, haz, concentration, condition);
+        savedTickmark(1) = nan;
+        savedTickmarkPrevious(1) = nan;
+        
+    elseif isequal(condition, 'chinese') 
         
         trial = taskParam.gParam.trials;
         taskData = GenerateOutcomes...
@@ -143,34 +151,74 @@ end
 
 for i=1:trial
     
-    if i == taskParam.gParam.blockIndices(2) + 1 ...
-            || i == taskParam.gParam.blockIndices(3) + 1 ...
-            || i == taskParam.gParam.blockIndices(4) + 1
+    %     if i == taskParam.gParam.blockIndices(2) + 1 ...
+    %             || i == taskParam.gParam.blockIndices(3) + 1 ...
+    %             || i == taskParam.gParam.blockIndices(4) + 1
+    if (i == taskParam.gParam.blockIndices(2) ...
+            || i == taskParam.gParam.blockIndices(3) ...
+            || i == taskParam.gParam.blockIndices(4)) ...
+            && ~isequal(condition, 'chineseLastPractice')
         
-        while 1
-            if isequal(taskParam.gParam.taskType, 'oddball') ...
-                    || isequal(taskParam.gParam.taskType, 'reversal')...
-                    || isequal(taskParam.gParam.taskType, 'reversalPractice')...
-                    || isequal(taskParam.gParam.taskType, 'chinese')
+        if isequal(taskParam.gParam.taskType, 'oddball') ...
+                || isequal(taskParam.gParam.taskType, 'reversal')...
+                || isequal(taskParam.gParam.taskType, 'reversalPractice')...
                 txt = 'Take a break!';
-            else
-                txt = 'Kurze Pause!';
-            end
-            DrawFormattedText(taskParam.gParam.window.onScreen,...
-                txt, 'center', 'center', [255 255 255]);
+            header = ' ';
+        elseif isequal(taskParam.gParam.taskType, 'chinese')
+            %keyboard
+            whichBlock = taskData.block == taskData.block(i-1);
+            txt = Feedback(taskData, taskParam, Subject, condition, whichBlock);
+            header = sprintf(['Ende Block %.0f von 4. Du kannst jetzt eine kurze Pause machen.\n\n'...
+                'Beachte, dass die Gegner ihre Kanonen jetzt neu ausrichten!'], taskData.block(i-1));
             
-            DrawFormattedText(taskParam.gParam.window.onScreen,...
-                taskParam.strings.txtPressEnter,'center',...
-                taskParam.gParam.screensize(4)*0.9);
-            Screen('Flip', taskParam.gParam.window.onScreen);
-            [~, ~, keyCode] = KbCheck;
-            if find(keyCode) == taskParam.keys.enter
-                
-                break
-            end
+        else
+            txt = 'Kurze Pause!';
+            header = ' ';
         end
         
+        BigScreen(taskParam, taskParam.strings.txtPressEnter,...
+            header, txt, true);
+        
+        KbReleaseWait();
     end
+    
+    %         while 1
+    %             if isequal(taskParam.gParam.taskType, 'oddball') ...
+    %                     || isequal(taskParam.gParam.taskType, 'reversal')...
+    %                     || isequal(taskParam.gParam.taskType, 'reversalPractice')...
+    %                     txt = 'Take a break!';
+    %                 header = ' ';
+    %             elseif isequal(taskParam.gParam.taskType, 'chinese')
+    %
+    %                 [txtFeedback, header] = Feedback(taskData, taskParam, Subject, condition);
+    %                 txt = '';
+    %                 header = '';
+    %
+    %             else
+    %                 txt = 'Kurze Pause!';
+    %                 header = ' ';
+    %             end
+    %
+    %             DrawFormattedText(taskParam.gParam.window.onScreen,...
+    %                 txt, 'center', 'center', [255 255 255]);
+    %
+    %             DrawFormattedText(taskParam.gParam.window.onScreen,...
+    %                 txtFeedback, 'center', 'center', [255 255 255]);
+    %
+    %             DrawFormattedText(taskParam.gParam.window.onScreen,...
+    %                 taskParam.strings.txtPressEnter,'center',...
+    %                 taskParam.gParam.screensize(4)*0.9);
+    %             Screen('Flip', taskParam.gParam.window.onScreen);
+    %
+    %
+    %             [~, ~, keyCode] = KbCheck;
+    %             if find(keyCode) == taskParam.keys.enter
+    %
+    %                 break
+    %             end
+    %         end
+    
+    %end
     
     taskData.trial(i) = i;
     taskData.age(i) = str2double(Subject.age);
@@ -215,27 +263,28 @@ for i=1:trial
                 if isequal(taskParam.gParam.taskType, 'chinese')
                     DrawContext(taskParam, taskData.currentContext(i))
                     DrawCross(taskParam)
-
+                    
                 end
                 DrawCross(taskParam)
                 PredictionSpot(taskParam)
                 
-                    if i ~= taskParam.gParam.blockIndices(1)...
-                            && i ~= taskParam.gParam.blockIndices(2) + 1 ...
-                            && i ~= taskParam.gParam.blockIndices(3) + 1 ...
-                            && i ~= taskParam.gParam.blockIndices(4) + 1
-                        if isequal(taskParam.gParam.taskType, 'chinese')
-                            TickMark(taskParam, taskData.outcome(i-1), 'outc')
-                            TickMark(taskParam, taskData.pred(i-1), 'pred')
-                        else
-                            TickMark(taskParam, taskData.outcome(i-1), 'outc')
-                            TickMark(taskParam, taskData.pred(i-1), 'pred')
-                        end
-                        if isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-                            TickMark(taskParam, savedTickmark(i-1), 'saved')
-                        end
-
+                if i ~= taskParam.gParam.blockIndices(1)...
+                        && i ~= taskParam.gParam.blockIndices(2) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(3) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(4) + 1 ...
+                        && ~isequal(taskParam.gParam.taskType, 'chinese')
+                    %                         if isequal(taskParam.gParam.taskType, 'chinese')
+                    %                             TickMark(taskParam, taskData.outcome(i-1), 'outc')
+                    %                             TickMark(taskParam, taskData.pred(i-1), 'pred')
+                    %else
+                    TickMark(taskParam, taskData.outcome(i-1), 'outc')
+                    TickMark(taskParam, taskData.pred(i-1), 'pred')
+                    %end
+                    if isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
+                        TickMark(taskParam, savedTickmark(i-1), 'saved')
                     end
+                    
+                end
                 
                 if (taskData.catchTrial(i) == 1 ...
                         && isequal(taskParam.gParam.taskType, 'dresden'))...
@@ -344,7 +393,7 @@ for i=1:trial
                 if isequal(taskParam.gParam.taskType, 'chinese')
                     DrawContext(taskParam,taskData.currentContext(i))
                     DrawCross(taskParam)
-
+                    
                 end
                 DrawCross(taskParam)
                 
@@ -359,7 +408,7 @@ for i=1:trial
                 if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(i))
                     taskData.initialTendency(i) = degree;
                     taskData.initiationRTs(i,:) =...
-                            GetSecs() - initRT_Timestamp;
+                        GetSecs() - initRT_Timestamp;
                     %initialTendencyLogged = true;
                 end
                 
@@ -386,37 +435,38 @@ for i=1:trial
                         savedTickmarkPrevious(i) = savedTickmark(i-1);
                     end
                 end
+                
+                if i ~= taskParam.gParam.blockIndices(1)...
+                        && i ~= taskParam.gParam.blockIndices(2) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(3) + 1 ...
+                        && i ~= taskParam.gParam.blockIndices(4) + 1
+                    if isequal(taskParam.gParam.taskType, 'chinese')
+                        
+                        %                             %keyboard
+                        %                             if ~isequal(taskData.currentContext(i-1),taskData.currentContext(i))
+                        %                                     %keyboard
+                        %                             end
+                        %
+                        %                             if sum(ismember(unique(taskData.currentContext(1:i-1)), taskData.currentContext(i))) >=1
+                        %
+                        %                                 TickMark(taskParam,taskData.outcome(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'outc');
+                        %                                 TickMark(taskParam,taskData.pred(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'pred');
+                        %
+                        %                             end
+                    else
+                        TickMark(taskParam, taskData.outcome(i-1), 'outc');
+                        TickMark(taskParam, taskData.pred(i-1), 'pred');
+                    end
                     
-                    if i ~= taskParam.gParam.blockIndices(1)...
-                            && i ~= taskParam.gParam.blockIndices(2) + 1 ...
-                            && i ~= taskParam.gParam.blockIndices(3) + 1 ...
-                            && i ~= taskParam.gParam.blockIndices(4) + 1
-                        if isequal(taskParam.gParam.taskType, 'chinese')
-                           
-                            %keyboard
-                            if ~isequal(taskData.currentContext(i-1),taskData.currentContext(i))
-                                    %keyboard
-                            end
-                            
-                            if sum(ismember(unique(taskData.currentContext(1:i-1)), taskData.currentContext(i))) >=1
-                                
-                                TickMark(taskParam,taskData.outcome(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'outc');
-                                TickMark(taskParam,taskData.pred(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'pred');
-                           
-                            end
-                        else 
-                            TickMark(taskParam, taskData.outcome(i-1), 'outc');
-                            TickMark(taskParam, taskData.pred(i-1), 'pred');
-                        end
-                        if ~isequal(taskParam.gParam.taskType, 'chinese')
+                    if ~isequal(taskParam.gParam.taskType, 'chinese')
                         if press == 1
                             TickMark(taskParam, savedTickmarkPrevious(i),...
                                 'update');
                         end
                         TickMark(taskParam, savedTickmark(i), 'saved');
-                        end
-                        
                     end
+                    
+                end
                 %end
                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
                 t = GetSecs;
@@ -446,12 +496,12 @@ for i=1:trial
         if isequal(taskParam.gParam.taskType, 'chinese')
             DrawContext(taskParam,taskData.currentContext(i))
             DrawCross(taskParam)
-
+            
         end
         DrawCross(taskParam)
         PredictionSpot(taskParam)
         
-        %if ~isequal(taskParam.gParam.taskType, 'chinese')
+        if ~isequal(taskParam.gParam.taskType, 'chinese')
             if i ~= taskParam.gParam.blockIndices(1) && i ~=...
                     taskParam.gParam.blockIndices(2) + 1 && i ~=...
                     taskParam.gParam.blockIndices(3) + 1 && i ~=...
@@ -462,7 +512,7 @@ for i=1:trial
                     TickMark(taskParam, savedTickmark(i), 'saved')
                 end
             end
-        %end
+        end
         
         if (taskData.catchTrial(i) == 1 ...
                 && isequal(taskParam.gParam.taskType, 'dresden')) ...
@@ -489,7 +539,7 @@ for i=1:trial
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam,taskData.currentContext(i))
         DrawCross(taskParam)
-
+        
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i)...
@@ -507,7 +557,7 @@ for i=1:trial
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam,taskData.currentContext(i))
         DrawCross(taskParam)
-
+        
     end
     
     PredictionSpot(taskParam)
@@ -534,6 +584,7 @@ for i=1:trial
         end
     end
     
+    %keyboard
     if isequal(condition,'main')...
             || isequal(condition,'mainPractice')...
             || isequal(condition, 'oddballPractice')...
@@ -541,7 +592,9 @@ for i=1:trial
             || isequal(condition,'followCannon')...
             || isequal(condition,'followCannonPractice')...
             || isequal(condition,'reversal')...
-            || isequal(condition, 'reversalPractice')
+            || isequal(condition, 'reversalPractice')...
+            || isequal(condition, 'chineseLastPractice')...
+            || isequal(condition, 'chinese')
         if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
             taskData.hit(i) = 1;
         end
@@ -571,7 +624,7 @@ for i=1:trial
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam, taskData.currentContext(i))
         DrawCross(taskParam)
-
+        
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
@@ -582,7 +635,7 @@ for i=1:trial
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam, taskData.currentContext(i))
         DrawCross(taskParam)
-
+        
     end
     Shield(taskParam, taskData.allASS(i),...
         taskData.pred(i), taskData.shieldType(i))
@@ -601,7 +654,7 @@ for i=1:trial
     if isequal(taskParam.gParam.taskType, 'chinese')
         DrawContext(taskParam,taskData.currentContext(i))
         DrawCross(taskParam)
-
+        
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
@@ -616,12 +669,23 @@ for i=1:trial
     taskData.timestampOffset(i,:) = GetSecs - ref;
 end
 
-if isequal(taskParam.gParam.taskType, 'dresden') || isequal(taskParam.gParam.taskType, 'chinese')
+if isequal(taskParam.gParam.taskType, 'dresden')
     [txt, header] = Feedback(taskData, taskParam, Subject, condition);
+    
+elseif isequal(taskParam.gParam.taskType, 'chinese')
+    
+    whichBlock = taskData.block == taskData.block(i);
+    txt = Feedback(taskData, taskParam, Subject, condition, whichBlock);
+    
+    if isequal(condition,'chinese')
+        header = sprintf('Ende Block %.0f von 4', taskData.block(i-1));
+    elseif isequal(condition, 'chineseLastPractice')
+        header = 'Ergebnis';
+    end
+    
     
 elseif isequal(taskParam.gParam.taskType, 'oddball')
     
-    header = 'Performance';
     if isequal(condition, 'oddballPractice')
         
         [txt, header] = Feedback(taskData, taskParam, Subject, condition);
@@ -638,9 +702,9 @@ elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gPara
     
 end
 
-feedback = true;
+%feedback = true;
 fw = BigScreen(taskParam, taskParam.strings.txtPressEnter,...
-    header, txt, feedback);
+    header, txt, true);
 
 KbReleaseWait();
 
@@ -669,7 +733,10 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     'pred', taskData.pred,'predErr', taskData.predErr, 'memErr',...
     taskData.memErr, 'UP',taskData.UP, 'hit', taskData.hit, 'perf',....
     taskData.perf, 'accPerf',taskData.accPerf,'initialTendency',...
-    taskData.initialTendency, 'RT', taskData.RT, 'Date', {taskData.Date});
+    taskData.initialTendency, 'RT', taskData.RT, 'Date', {taskData.Date},...
+    'currentContext', taskData.currentContext,...
+    'hiddenContext', taskData.hiddenContext, 'contextTypes', taskData.contextTypes,...
+    'latentState', taskData.latentState,'taskParam',taskParam);
 
 Data = catstruct(Subject, Data);
 
@@ -677,7 +744,7 @@ if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome'))...
         || (taskParam.gParam.askSubjInfo && isequal(condition, 'main'))...
         || (taskParam.gParam.askSubjInfo && isequal(condition, 'oddball'))...
         || (taskParam.gParam.askSubjInfo && isequal(condition, 'followCannon'))...
-        || (taskParam.gParam.askSubjInfo && isequal(condition, 'reversal')) 
+        || (taskParam.gParam.askSubjInfo && isequal(condition, 'reversal'))
     
     if isequal(taskParam.gParam.taskType, 'dresden')
         if Subject.rew == 1
@@ -696,6 +763,12 @@ if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome'))...
     if ~taskParam.unitTest
         savename = sprintf('ReversalTask_%s_%s',...
             rewName, Subject.ID);
+        save(savename, 'Data')
+    end
+    
+elseif (taskParam.gParam.askSubjInfo && isequal(condition, 'chinese'))
+    if ~taskParam.unitTest
+        savename = sprintf('chinese_%s', Subject.ID);
         save(savename, 'Data')
     end
 end
