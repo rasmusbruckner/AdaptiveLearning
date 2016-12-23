@@ -1,4 +1,4 @@
-function Cannon(taskParam, distMean, latentState, symbol)
+function drawCannon(taskParam, distMean, latentState, symbol)
 %CANNON   Prints the cannon image
 
 if nargin == 3

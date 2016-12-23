@@ -1,4 +1,4 @@
-function taskData = GenerateOutcomes(taskParam, haz, concentration, condition)
+function taskData = generateOutcomes(taskParam, haz, concentration, condition)
 
 % This funtion generates the outcomes of the cannon task
 % -------------------------------------------------------------------------

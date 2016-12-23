@@ -1,4 +1,4 @@
-function [taskParam, practData, leaveLoop] = PractLoop(taskParam, subject, vola,...
+function [taskParam, practData, leaveLoop] = practLoop(taskParam, subject, vola,...
     sigma, cannon, condition, LoadData, reversalPackage)
 %PRACTLOOP Runs the practice blocks. Depending on the condition, the
 %cannon is visible.
@@ -18,14 +18,22 @@ elseif nargin == 7 && isequal(LoadData, 'CP_NoNoise')
         practData = load('CP_NoNoise_drugstudy');
     end
     practData = practData.practData;
+    practData.latentState = zeros(20,1);
+    practData.currentContext = nan(20,1);
+    practData.savedTickmark = nan(20,1);
+
+
     trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'CP_Noise')
-    if ~taskParam.gParam.oddball
+    if ~isequal(taskParam.gParam.taskType, 'oddball')
         practData = load('CP_Noise');
     elseif taskParam.gParam.oddball
         practData = load('CP_Noise_drugstudy');
     end
     practData = practData.practData;
+    practData.latentState = zeros(20,1);
+    practData.currentContext = nan(20,1);
+    practData.savedTickmark = nan(20,1);
     trials = taskParam.gParam.practTrials;
 elseif nargin == 7 && isequal(LoadData, 'reversalVisibleNoNoise')
     practData = load(LoadData);
@@ -73,7 +81,7 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
     
 else
     
-    practData = GenerateOutcomes(taskParam, vola, sigma, condition);
+    practData = generateOutcomes(taskParam, vola, sigma, condition);
     
     taskParam.condition = condition;
     if isequal(condition, 'shield')
@@ -106,22 +114,23 @@ for i = 1:trials
     end
     
     if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
-            ~isequal(taskParam.gParam.taskType, 'chinese')
+            ~isequal(taskParam.gParam.taskType, 'chinese') &&...
+             ~isequal(taskParam.gParam.taskType, 'ARC')
         
         while 1
             
             if cannon == true
                 
-                Cannon(taskParam, practData.distMean(i))
+                drawCannon(taskParam, practData.distMean(i))
             end
-            DrawCircle(taskParam);
-            PredictionSpot(taskParam);
+            drawCircle(taskParam);
+            predictionSpot(taskParam);
             if i > 1 
                 TickMark(taskParam, practData.pred(i-1), 'pred')
                 TickMark(taskParam, practData.outcome(i-1), 'outc')
             end
-            DrawCross(taskParam);
-            Aim(taskParam, practData.distMean(i))
+            drawCross(taskParam);
+            aim(taskParam, practData.distMean(i))
             
             
             t = GetSecs;
@@ -183,7 +192,7 @@ for i = 1:trials
         
         SetMouse(720, 450, taskParam.gParam.window.onScreen)
         press = 0;
-        %keyboard
+
         while 1
             [x,y,buttons,focus,valuators,valinfo] =...
                 GetMouse(taskParam.gParam.window.onScreen);
@@ -200,33 +209,32 @@ for i = 1:trials
             
             taskParam.circle.rotAngle = degree * taskParam.circle.unit;
                         
-            DrawCircle(taskParam)
-            DrawCross(taskParam)
+            drawCircle(taskParam)
+            drawCross(taskParam)
             if ~isequal(condition, 'reversalPracticeNoiseInv') &&...
                     ~isequal(condition, 'reversalPracticeNoiseInv2') &&...
                     ~isequal(condition, 'reversalPracticeNoiseInv3')
-                Aim(taskParam, practData.distMean(i))
+                aim(taskParam, practData.distMean(i))
             end
             
             if isequal(taskParam.gParam.taskType, 'chinese')
-                %practData.currentContext
-                %currentContext = 1;
+                
                 DrawContext(taskParam, practData.currentContext(i))
-                DrawCross(taskParam);
+                drawCross(taskParam);
             end
             
             if cannon == true
-                Cannon(taskParam, practData.distMean(i),practData.latentState(i))
+                drawCannon(taskParam, practData.distMean(i),practData.latentState(i))
             else
-                DrawCross(taskParam)
+                drawCross(taskParam)
             end
             
             hyp = sqrt(x^2 + y^2);
             
             if hyp <= 150
-                PredictionSpotReversal(taskParam, x ,y*-1)
+                predictionSpotReversal(taskParam, x ,y*-1)
             else
-                PredictionSpot(taskParam)
+                predictionSpot(taskParam)
             end
             
             if ~isequal(condition, 'reversalPracticeNoiseInv')
@@ -246,7 +254,8 @@ for i = 1:trials
                         practData.savedTickmarkPrevious(i - 1);
                     practData.savedTickmark(i) = practData.savedTickmark(i - 1);
                 elseif i == 1
-                    savedTickmarkPrevious(i) = 0;
+                    %savedTickmarkPrevious(i) = 0;
+                    practData.savedTickmarkPrevious(i) = 0;
                 end
                 
                 if press == 1
@@ -259,66 +268,66 @@ for i = 1:trials
                         i ~= taskParam.gParam.blockIndices(4) + 1 &&...
                          ~isequal(taskParam.gParam.taskType, 'chinese')
                     
-                    TickMark(taskParam, practData.pred(i-1), 'pred');
-                    TickMark(taskParam, practData.outcome(i-1), 'outc');
+                    tickMark(taskParam, practData.pred(i-1), 'pred');
+                    tickMark(taskParam, practData.outcome(i-1), 'outc');
                     if press == 1
-                        TickMark(taskParam,...
+                        tickMark(taskParam,...
                             practData.savedTickmarkPrevious(i), 'update');
                     end
-                    TickMark(taskParam, practData.savedTickmark(i), 'saved');
+                    tickMark(taskParam, practData.savedTickmark(i), 'saved');
                 end
                 
             else
                 
                 if buttons(2) == 1
                    
-                    practData.savedTickmark(i) =...
+                    practData.savedtickMark(i) =...
                         ((taskParam.circle.rotAngle) /...
                         taskParam.circle.unit);
                     WaitSecs(0.2);
                     press = 1;
                     
-                    if abs(Diff(practData.savedTickmark(i),reversalPackage.savedTickmark)) > 0.01
+                    if abs(Diff(practData.savedtickmark(i),reversalPackage.savedtickmark)) > 0.01
                         
                         leaveLoop = true;
  
                     end
                              
                 elseif i == 1 && press == 0
-                    practData.savedTickmarkPrevious(i) = practData.savedTickmark(i);
+                    practData.savedtickmarkPrevious(i) = practData.savedtickmark(i);
                 elseif i > 1 && press == 0
                     
-                    practData.savedTickmarkPrevious(i) = ...
-                        practData.savedTickmarkPrevious(i - 1);
-                    practData.savedTickmark(i) = practData.savedTickmark(i - 1);
+                    practData.savedtickmarkPrevious(i) = ...
+                        practData.savedtickmarkPrevious(i - 1);
+                    practData.savedtickmark(i) = practData.savedtickmark(i - 1);
                 
                 end
                 
                 if press == 1
                     if i == 1
-                        practData.savedTickmarkPrevious(i) = practData.savedTickmark;
+                        practData.savedtickmarkPrevious(i) = practData.savedtickmark;
                         
                     else
-                        practData.savedTickmarkPrevious(i) = practData.savedTickmark(i-1);
+                        practData.savedtickmarkPrevious(i) = practData.savedtickmark(i-1);
                     end
                 end
                 
                 if i == 1
-                    TickMark(taskParam, practData.pred(i), 'pred');
-                    TickMark(taskParam, practData.outcome(i), 'outc');
+                    tickMark(taskParam, practData.pred(i), 'pred');
+                    tickMark(taskParam, practData.outcome(i), 'outc');
                     if press == 1
-                        TickMark(taskParam,...
-                            practData.savedTickmarkPrevious(i), 'update');
+                        tickMark(taskParam,...
+                            practData.savedtickmarkPrevious(i), 'update');
                     end
-                    TickMark(taskParam, practData.savedTickmark(i), 'saved');
+                    tickMark(taskParam, practData.savedtickmark(i), 'saved');
                 else
-                    TickMark(taskParam, practData.pred(i-1), 'pred');
-                    TickMark(taskParam, practData.outcome(i-1), 'outc');
+                    tickMark(taskParam, practData.pred(i-1), 'pred');
+                    tickMark(taskParam, practData.outcome(i-1), 'outc');
                     if press == 1
-                        TickMark(taskParam,...
-                            practData.savedTickmarkPrevious(i), 'update');
+                        tickMark(taskParam,...
+                            practData.savedtickMarkPrevious(i), 'update');
                     end
-                    TickMark(taskParam, practData.savedTickmark(i), 'saved');
+                    tickMark(taskParam, practData.savedtickmark(i), 'saved');
                 end
                 
             end
@@ -371,7 +380,7 @@ for i = 1:trials
             || isequal(condition, 'chinesePractice')...
             || isequal(condition, 'chinesePracticeNoise')...
             || isequal(condition, 'chinesePracticeStateSpace')
-        Cannonball(taskParam, practData.distMean(i),...
+        cannonball(taskParam, practData.distMean(i),...
             practData.outcome(i), background, practData.currentContext(i),...
             practData.latentState(i))
     end
@@ -380,20 +389,19 @@ for i = 1:trials
     
     % Show outcome
     if isequal(taskParam.gParam.taskType, 'chinese')
-        %currentContext = 1;
         DrawContext(taskParam, practData.currentContext(i))
-        DrawCross(taskParam);
+        drawCross(taskParam);
     end
     
-    DrawCircle(taskParam);
+    drawCircle(taskParam);
     if cannon == true
-        Cannon(taskParam, practData.distMean(i),practData.latentState(i))
+        drawCannon(taskParam, practData.distMean(i),practData.latentState(i))
     else
-        DrawCross(taskParam)
+        drawCross(taskParam)
         
     end
-    PredictionSpot(taskParam);
-    DrawOutcome(taskParam, practData.outcome(i));
+    predictionSpot(taskParam);
+    drawOutcome(taskParam, practData.outcome(i));
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     if isequal(condition, 'mainPractice')...
@@ -424,12 +432,11 @@ for i = 1:trials
     end
     
     if isequal(taskParam.gParam.taskType, 'chinese')
-        %currentContext = 1;
         DrawContext(taskParam, practData.currentContext(i))
-        DrawCross(taskParam);
+        drawCross(taskParam);
     end
-    DrawCircle(taskParam)
-    DrawCross(taskParam)
+    drawCircle(taskParam)
+    drawCross(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     
     if practData.oddBall(i) == false
@@ -438,23 +445,22 @@ for i = 1:trials
         Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1);
     end
     
-    DrawCircle(taskParam)
+    drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        %currentContext = 1;
         DrawContext(taskParam, practData.currentContext(i))
-        DrawCross(taskParam);
+        drawCross(taskParam);
     end
-    Shield(taskParam, practData.allASS(i),...
+    shield(taskParam, practData.allASS(i),...
         practData.pred(i), practData.shieldType(i))
     
     if cannon == true
-        Cannon(taskParam, practData.distMean(i), practData.latentState(i))
+        drawCannon(taskParam, practData.distMean(i), practData.latentState(i))
     else
-        DrawCross(taskParam)
+        drawCross(taskParam)
         
     end
     
-    DrawOutcome(taskParam, practData.outcome(i))
+    drawOutcome(taskParam, practData.outcome(i))
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     
@@ -467,12 +473,11 @@ for i = 1:trials
     
     % Show baseline 3
     if isequal(taskParam.gParam.taskType, 'chinese')
-        %currentContext = 1;
         DrawContext(taskParam, practData.currentContext(i))
-        DrawCross(taskParam);
+        drawCross(taskParam);
     end
-    DrawCross(taskParam)
-    DrawCircle(taskParam)
+    drawCross(taskParam)
+    drawCircle(taskParam)
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     if practData.oddBall(i) == false
         Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);

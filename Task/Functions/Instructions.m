@@ -1,4 +1,4 @@
-function Instructions(taskParam, whichPractice, subject)
+function instructions(taskParam, whichPractice, subject)
 %INSTRUCTIONS runs instructions for the cannon task.
 
 % shift this
@@ -90,7 +90,10 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
         
     end
     
-elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'chinese')
+elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
+        isequal(taskParam.gParam.taskType, 'chinese') ||...
+        isequal(taskParam.gParam.taskType, 'ARC')
+
     
     SharedInstructions_MainOddballFollowCannon
     
@@ -256,7 +259,8 @@ end
                         txt=['Move the orange spot to the part of the '...
                             'circle, where the cannon is aimed and '...
                             'press SPACE.'];
-                    elseif isequal(taskParam.gParam.taskType, 'reversal')
+                    elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
+                            isequal(taskParam.gParam.taskType, 'ARC')
                         txt=['Move the orange spot to the part of the '...
                             'circle, where the cannon is aimed and '...
                             'press the left mouse button.'];
@@ -419,7 +423,8 @@ end
                     
                     [screenIndex, Data] = ShieldPractice...
                         (screenIndex, whichPractice);
-                    if isequal(taskParam.gParam.taskType, 'chinese')
+                    if isequal(taskParam.gParam.taskType, 'chinese') ||...
+                            isequal(taskParam.gParam.taskType, 'ARC')
                         screenIndex = 25;
                     end
                     
@@ -810,7 +815,7 @@ end
                         
                     end
                     feedback = false;
-                    fw = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     
@@ -823,15 +828,15 @@ end
                     
                     condition = 'mainPractice';
                     LoadData = 'CP_NoNoise';
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(3),...
                         cannon, condition, LoadData);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     
@@ -989,7 +994,7 @@ end
                     end
                     
                     feedback = false;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     if fw == 1
@@ -1011,16 +1016,16 @@ end
                     elseif isequal(whichPractice, 'followOutcomePractice')
                         condition = 'followOutcomePractice';
                     end
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
                         cannon, condition,LoadData);
                     
-                    [txt, header] = Feedback(practData,...
+                    [txt, header] = AL_feedback(practData,...
                         taskParam, subject, condition);
                     
                     feedback = true;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     
@@ -1072,7 +1077,7 @@ end
                         'move unpredictably.'];
                     
                     feedback = false;
-                    [fw, bw] = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     if fw == 1
@@ -1088,15 +1093,15 @@ end
                     %LoadData = 'NoNoise';
                     LoadData = 'None';
                     
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(3),...
                         taskParam.gParam.concentration(3),...
                         cannon, condition, LoadData);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
                         txt,feedback);
                     sumCannonDev = sum(practData.cannonDev >= 10);
@@ -1123,7 +1128,7 @@ end
                             'best way to earn money. Now try again. '];
                         
                         feedback = false;
-                        [fw, bw] = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -1147,7 +1152,7 @@ end
                             'of this.'];
                         %end
                         feedback = false;
-                        [fw, bw] = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -1239,15 +1244,15 @@ end
                     end
                     condition = 'practiceOddball';
                     LoadData = 'NoNoise';
-                    [taskParam, practData] = PractLoop...
+                    [taskParam, practData] = practLoop...
                         (taskParam, subject, taskParam.gParam.haz(3),...
                         taskParam.gParam.concentration(3), cannon,...
                         condition, LoadData);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     
@@ -1277,7 +1282,7 @@ end
                                 'again.'];
                         end
                         feedback = false;
-                        [fw, bw] = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -1305,7 +1310,7 @@ end
                         'occasionally be shot by another randomly '...
                         'aimed cannon.'];
                     feedback = false;
-                    [fw, bw] = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     if fw == 1
@@ -1319,26 +1324,26 @@ end
                     
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         LoadOddballPracticeNoNoise = true;
-                        [taskParam, practData] = PractLoop(taskParam,...
+                        [taskParam, practData] = practLoop(taskParam,...
                             subject, taskParam.gParam.haz(1),...
                             taskParam.gParam.concentration(1),...
                             cannon, condition, LoadOddballPracticeNoNoise);
                     elseif isequal(taskParam.gParam.taskType, 'oddball')
                         condition = 'practiceOddball';
                         LoadData = 'Noise';
-                        [taskParam, practData] = PractLoop...
+                        [taskParam, practData] = practLoop...
                             (taskParam, subject,...
                             taskParam.gParam.haz(3),...
                             taskParam.gParam.concentration(1),...
                             cannon, condition, LoadData);
                     end
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     
                     
                     feedback = true;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     
@@ -1360,7 +1365,7 @@ end
                             'best way to earn money. Now try again.'];
                         
                         feedback = false;
-                        [fw, bw] = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -1390,7 +1395,7 @@ end
                     
                     % end
                     feedback = false;
-                    [fw, bw] = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     if fw == 1
@@ -1432,7 +1437,7 @@ end
                         'is aimed.'];
                     
                     feedback = false;
-                    fw = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     if fw == 1
@@ -1446,15 +1451,15 @@ end
                     LoadData = 'reversalVisibleNoNoise';
                     
                     
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(3), cannon,...
                         condition, LoadData);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    fw = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
@@ -1476,7 +1481,7 @@ end
                             'where the cannon is aimed will be the '...
                             'best way to earn money. Now try again.'];
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -1499,7 +1504,7 @@ end
                             'still go back to its previous aim.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -1516,15 +1521,15 @@ end
                     condition = 'reversalPracticeNoise';
                     LoadData = 'reversalVisibleNoise';
                     
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1), cannon,...
                         condition, LoadData);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    fw = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
                         txt,feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
@@ -1547,7 +1552,7 @@ end
                             'best way to earn money. Now try again.' ];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -1578,7 +1583,7 @@ end
                             '\n\nPress Enter to see an example of this.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -1636,7 +1641,7 @@ end
                         end
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         
@@ -1737,7 +1742,7 @@ end
                         reversalPackage = struct('savedTickmark',...
                             savedTickmark, 'pred', Data.pred,...
                             'outcome', outcome);
-                        [taskParam, practData, leaveLoop] = PractLoop(taskParam,...
+                        [taskParam, practData, leaveLoop] = practLoop(taskParam,...
                             subject, taskParam.gParam.haz(3),...
                             taskParam.gParam.concentration(1),...
                             cannon, condition, LoadData, reversalPackage);
@@ -1751,7 +1756,7 @@ end
                                 'the tickmark while the cannon does not change.'];
                             
                             feedback = false;
-                            fw = BigScreen(taskParam,...
+                            fw = bigScreen(taskParam,...
                                 taskParam.strings.txtPressEnter, header, txt,...
                                 feedback);
                             screenIndex = 5;
@@ -1844,7 +1849,7 @@ end
                             'to mark the previous aim of the cannon.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -1861,7 +1866,7 @@ end
                             'this time!.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         
@@ -1878,7 +1883,7 @@ end
                             'in mind to use the tickmark this time!'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         
@@ -1899,15 +1904,15 @@ end
                     cannon = false;
                     savedTickmark = nan;
                     
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
                         cannon, condition, LoadData);
                     
-                    [txt, header] = Feedback(practData,...
+                    [txt, header] = AL_feedback(practData,...
                         taskParam, subject, condition);
                     feedback = true;
-                    fw = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
@@ -1931,7 +1936,7 @@ end
                         
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -1955,7 +1960,7 @@ end
                             'whether it is aiming at a new location.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -2014,7 +2019,7 @@ end
                         'der Gegner mit seiner Kanone zielt.'];
                     
                     feedback = false;
-                    fw = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     
@@ -2030,15 +2035,15 @@ end
                     
                     taskParam.gParam.nContexts = 1;
                     taskParam.gParam.nStates = 2;
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(3),...
                         cannon, condition);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    fw = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     
@@ -2066,7 +2071,7 @@ end
                             'üben. Wenn du noch Fragen hast, kannst du '...
                             'dich auch an den Versuchsleiter wenden.'];
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -2099,7 +2104,7 @@ end
                             'Übung wiederholt.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -2116,15 +2121,15 @@ end
                     taskParam.gParam.nContexts = 1;
                     taskParam.gParam.nStates = 2;
                     
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1), cannon,...
                         condition);
                     
-                    [txt, header] = Feedback(practData, taskParam,...
+                    [txt, header] = AL_feedback(practData, taskParam,...
                         subject, condition);
                     feedback = true;
-                    fw = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header,...
                         txt,feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
@@ -2149,7 +2154,7 @@ end
                             'dich auch an den Versuchsleiter wenden.' ];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -2185,7 +2190,7 @@ end
                             'direkt an dieser Stelle positionieren.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -2205,15 +2210,15 @@ end
                     taskParam.symbol = true;
                     taskParam.gParam.nContexts = 2;
                     taskParam.gParam.nStates = 2;
-                    [taskParam, practData] = PractLoop(taskParam,...
+                    [taskParam, practData] = practLoop(taskParam,...
                         subject, taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(1),...
                         cannon, condition);
                     
-                    [txt, header] = Feedback(practData,...
+                    [txt, header] = AL_feedback(practData,...
                         taskParam, subject, condition);
                     feedback = true;
-                    fw = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter,...
                         header, txt, feedback);
                     sumCannonDev = sum(abs(practData.cannonDev) >= 10);
@@ -2238,7 +2243,7 @@ end
                             'dich auch an den Versuchsleiter wenden.' ];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header,txt,...
                             feedback);
                         if fw == 1
@@ -2275,7 +2280,7 @@ end
                             'Stelle positionieren.'];
                         
                         feedback = false;
-                        fw = BigScreen(taskParam,...
+                        fw = bigScreen(taskParam,...
                             taskParam.strings.txtPressEnter, header, txt,...
                             feedback);
                         if fw == 1
@@ -2344,7 +2349,7 @@ end
                         
                         
                         feedback = false;
-                        fw = BigScreen...
+                        fw = bigScreen...
                             (taskParam,taskParam.strings.txtPressEnter, ...
                             header, txt, feedback);
                         if fw == 1
@@ -2420,7 +2425,7 @@ end
                     end
                     
                     feedback = false;
-                    fw = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,...
                         feedback);
                     if fw == 1
@@ -2482,7 +2487,7 @@ end
                         
                         
                         feedback = false;
-                        fw = BigScreen...
+                        fw = bigScreen...
                             (taskParam, taskParam.strings.txtPressEnter,...
                             header, txt, feedback);
                         if fw == 1
@@ -2571,7 +2576,7 @@ end
                     end
                     
                     feedback = false;
-                    fw = BigScreen(taskParam,...
+                    fw = bigScreen(taskParam,...
                         taskParam.strings.txtPressEnter, header, txt,...
                         feedback);
                     if fw == 1
@@ -2759,7 +2764,7 @@ end
                     
                 case 10
                     
-                    screenIndex = TrialOutcomes(screenIndex);
+                        screenIndex = TrialOutcomes(screenIndex);
                     
                 case 11
                     
@@ -2927,7 +2932,7 @@ end
                     end
                     
                     feedback = false;
-                    fw = BigScreen(taskParam, ...
+                    fw = bigScreen(taskParam, ...
                         taskParam.strings.txtPressEnter, header,...
                         txt, feedback);
                     if fw == 1
@@ -3045,7 +3050,8 @@ end
                 'You can move the orange spot with the green and yellow '...
                 'buttons. Green is for fast movements and yellow is '...
                 'for slow movements.'];
-        elseif isequal(taskParam.gParam.taskType, 'reversal')
+        elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
+                isequal(taskParam.gParam.taskType, 'ARC')
             txt=['A cannon is aimed at the circle. Indicate where '...
                 'you would like to place your shield to catch '...
                 'cannonballs with the orange spot. '...
@@ -3074,7 +3080,7 @@ end
         DrawFormattedText(taskParam.gParam.window.onScreen,...
             taskParam.strings.txtPressEnter,'center',...
             taskParam.gParam.screensize(4)*0.9);
-        [taskParam, fw, Data, ~] = InstrLoopTxt(taskParam,...
+        [taskParam, fw, Data, ~] = instrLoopTxt(taskParam,...
             txt, cannon, 'arrow', distMean, tickInstruction);
         if fw == 1
             screenIndex = screenIndex + 1;
@@ -3088,13 +3094,13 @@ end
             MoveSpotToCannonAim(screenIndex, txt, distMean, Data)
         
         t = GetSecs;
-        LineAndBack(taskParam)
+        lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
             DrawContext(taskParam, currentContext)
         end
-        DrawCross(taskParam)
-        DrawCircle(taskParam)
+        drawCross(taskParam)
+        drawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
         WaitSecs(0.5);
@@ -3103,7 +3109,7 @@ end
         Data.distMean = distMean;
         tickInstruction.savedTickmark = nan;
         tickInstruction.previousOutcome = nan;
-        [taskParam, fw, Data, savedTickmark] = InstrLoopTxt(taskParam,...
+        [taskParam, fw, Data, savedTickmark] = instrLoopTxt(taskParam,...
             txt, cannon, 'space', distMean, tickInstruction, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
@@ -3117,7 +3123,7 @@ end
         outcome = distMean;
         Data.outcome = distMean;
         background = true;
-        Cannonball(taskParam, distMean, outcome, background, 1, 0)
+        cannonball(taskParam, distMean, outcome, background, 1, 0)
         if (isequal(whichPractice, 'mainPractice')...
                 && Data.predErr >= 9)...
                 || (isequal(whichPractice, 'followCannonPractice')...
@@ -3144,14 +3150,14 @@ end
                     txt=['Du hast die Kanonenkugel verfehlt. Versuche es nochmal!'];
             end
             
-            LineAndBack(taskParam)
+            lineAndBack(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
                 DrawContext(taskParam, currentContext)
             end
             
-            DrawCircle(taskParam);
-            DrawCross(taskParam);
+            drawCircle(taskParam);
+            drawCross(taskParam);
             PredictionSpot(taskParam);
             DrawOutcome(taskParam, outcome);
             Cannon(taskParam, distMean, 0)
@@ -3190,45 +3196,45 @@ end
             (screenIndex, Data, txt, distMean, win)
            
         outcome = distMean;
-        LineAndBack(taskParam)
-        DrawCircle(taskParam);
+        lineAndBack(taskParam)
+        drawCircle(taskParam);
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
             DrawContext(taskParam, currentContext)
         end
-        DrawCross(taskParam);
-        PredictionSpot(taskParam);
-        DrawOutcome(taskParam, outcome);
-        Cannon(taskParam, distMean, 0)
+        drawCross(taskParam);
+        predictionSpot(taskParam);
+        drawOutcome(taskParam, outcome);
+        drawCannon(taskParam, distMean, 0)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen);
         t = GetSecs;
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
-        LineAndBack(taskParam)
+        lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
             DrawContext(taskParam, currentContext)
         end
-        DrawCross(taskParam)
-        DrawCircle(taskParam)
+        drawCross(taskParam)
+        drawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6, 1);
         while 1
             
-            LineAndBack(taskParam)
-            Cannon(taskParam, distMean, 0)
-            DrawCircle(taskParam)
+            lineAndBack(taskParam)
+            drawCannon(taskParam, distMean, 0)
+            drawCircle(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
                 DrawContext(taskParam, currentContext)
-                DrawCross(taskParam);
+                drawCross(taskParam);
             end
             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
-                Shield(taskParam, 20, Data.pred, 1)
+                shield(taskParam, 20, Data.pred, 1)
             elseif (subject.rew == 2 && win) || (subject.rew == 1 && ~win)
-                Shield(taskParam, 20, Data.pred, 0)
+                shield(taskParam, 20, Data.pred, 0)
                 
             end
-            DrawOutcome(taskParam, outcome)
+            drawOutcome(taskParam, outcome)
             DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
                 taskParam.gParam.screensize(3)*0.1,...
                 taskParam.gParam.screensize(4)*0.05,...
@@ -3259,14 +3265,14 @@ end
             (screenIndex, Data, txt, distMean)
         
         t = GetSecs;
-        LineAndBack(taskParam)
+        lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
             DrawContext(taskParam, currentContext)
-            DrawCross(taskParam);
+            drawCross(taskParam);
         end
-        DrawCross(taskParam)
-        DrawCircle(taskParam)
+        drawCross(taskParam)
+        drawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
         WaitSecs(0.5);
@@ -3276,7 +3282,7 @@ end
         Data.tickMark = true;
         tickInstruction.savedTickmark = nan;
         tickInstruction.previousOutcome = nan;
-        [taskParam, fw, Data] = InstrLoopTxt(taskParam, txt,...
+        [taskParam, fw, Data] = instrLoopTxt(taskParam, txt,...
             cannon, 'space', distMean, tickInstruction, Data);
         if fw == 1
             screenIndex = screenIndex + 1;
@@ -3290,7 +3296,7 @@ end
         
         outcome = Data.outcome;
         background = true;
-        Cannonball(taskParam, distMean, outcome, background, 1, 0)
+        cannonball(taskParam, distMean, outcome, background, 1, 0)
         
         if abs(Data.predErr) <= 9
             while 1
@@ -3307,15 +3313,16 @@ end
                             'bitte zu verpassen!'];
                     end
                 elseif isequal(taskParam.gParam.taskType, 'oddball')...
-                        || isequal(taskParam.gParam.taskType, 'reversal')
+                        || isequal(taskParam.gParam.taskType, 'reversal')...
+                        || isequal(taskParam.gParam.taskType, 'ARC')
                     txt=['You caught the cannonball. '...
                         'Try to miss it!'];
                 elseif isequal(taskParam.gParam.taskType, 'chinese')
                     txt=['Du hast die Kanonenkugel abgewehrt! '...
                         'Versuche sie zu verfehlen!'];
                 end
-                LineAndBack(taskParam)
-                DrawCircle(taskParam);
+                lineAndBack(taskParam)
+                drawCircle(taskParam);
                 
                
                 if isequal(taskParam.gParam.taskType, 'chinese')
@@ -3323,10 +3330,10 @@ end
                     DrawContext(taskParam, currentContext)
                     
                 end
-                DrawCross(taskParam);
-                PredictionSpot(taskParam);
-                DrawOutcome(taskParam, outcome);
-                Cannon(taskParam, distMean, 0)
+                drawCross(taskParam);
+                predictionSpot(taskParam);
+                drawOutcome(taskParam, outcome);
+                drawCannon(taskParam, distMean, 0)
                 DrawFormattedText(taskParam.gParam.window.onScreen,...
                     taskParam.strings.txtPressEnter,'center',...
                     taskParam.gParam.screensize(4)*0.9, [255 255 255]);
@@ -3365,17 +3372,17 @@ end
                     'wie weit die Kanonenkugel von deinem '...
                     'Punkt entfernt war. Daraufhin siehst du dann...'];
             end
-            LineAndBack(taskParam)
-            DrawCircle(taskParam);
+            lineAndBack(taskParam)
+            drawCircle(taskParam);
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
                 DrawContext(taskParam, currentContext)
-                DrawCross(taskParam);
+                drawCross(taskParam);
             end
-            DrawCross(taskParam);
-            PredictionSpot(taskParam);
-            DrawOutcome(taskParam, outcome);
-            Cannon(taskParam, distMean, 0)
+            drawCross(taskParam);
+            predictionSpot(taskParam);
+            drawOutcome(taskParam, outcome);
+            drawCannon(taskParam, distMean, 0)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
@@ -3391,32 +3398,32 @@ end
             distMean, win)
         
         outcome = distMean;
-        LineAndBack(taskParam)
+        lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
             DrawContext(taskParam, currentContext)
-            DrawCross(taskParam);
+            drawCross(taskParam);
         end
-        DrawCross(taskParam)
-        DrawCircle(taskParam)
+        drawCross(taskParam)
+        drawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6, 1);
         while 1
             
-            LineAndBack(taskParam)
+            lineAndBack(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
                 DrawContext(taskParam, currentContext)
-                DrawCross(taskParam);
+                drawCross(taskParam);
             end
-            Cannon(taskParam, distMean, 0)
-            DrawCircle(taskParam)
+            drawCannon(taskParam, distMean, 0)
+            drawCircle(taskParam)
             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
-                Shield(taskParam, 20, Data.pred, 1)
+                shield(taskParam, 20, Data.pred, 1)
             elseif (subject.rew == 2 && win) || (subject.rew == 1 && ~win)
-                Shield(taskParam, 20, Data.pred, 0)
+                shield(taskParam, 20, Data.pred, 0)
             end
-            DrawOutcome(taskParam, outcome)
+            drawOutcome(taskParam, outcome)
             DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
                 taskParam.gParam.screensize(3)*0.1,...
                 taskParam.gParam.screensize(4)*0.05,...
@@ -3451,7 +3458,8 @@ end
             end
             
         elseif isequal(taskParam.gParam.taskType, 'oddball')...
-                || isequal(taskParam.gParam.taskType, 'reversal')
+                || isequal(taskParam.gParam.taskType, 'reversal')...
+                || isequal(taskParam.gParam.taskType, 'ARC')
             header = 'Your Shield';
             if subject.rew == 1
                 colRew = 'blue';
@@ -3504,7 +3512,7 @@ end
         end
         
         feedback = false;
-        fw = BigScreen(taskParam,...
+        fw = bigScreen(taskParam,...
             taskParam.strings.txtPressEnter, header, txt, feedback);
         if fw == 1
             screenIndex = screenIndex + 1;
@@ -3529,7 +3537,7 @@ end
             haz = taskParam.gParam.haz(2);
         end
         
-        [taskParam, Data] = PractLoop(taskParam, subject,...
+        [taskParam, Data] = practLoop(taskParam, subject,...
             haz, taskParam.gParam.concentration(3), cannon, condition);
         screenIndex = screenIndex + 1;
         WaitSecs(0.1);
@@ -3549,14 +3557,15 @@ end
                     'durch.'];
             end
         elseif isequal(taskParam.gParam.taskType, 'oddball')...
-                || isequal(taskParam.gParam.taskType, 'reversal')
+                || isequal(taskParam.gParam.taskType, 'reversal')...
+                || isequal(taskParam.gParam.taskType, 'ARC')
             header = 'Trial Outcomes';
             txt = sprintf(['Now lets see what happens when you hit '...
                 'or miss the ball with a %s or %s shield...'],...
                 colRew, colNoRew);
         end
         feedback = false;
-        fw = BigScreen(taskParam,...
+        fw = bigScreen(taskParam,...
             taskParam.strings.txtPressEnter, header, txt, feedback);
         if fw == 1
             screenIndex = screenIndex + 1;
@@ -3586,10 +3595,11 @@ end
                     
                 end
                 
-            elseif isequal(taskParam.gParam.taskType, 'oddball')
+            elseif isequal(taskParam.gParam.taskType, 'oddball') 
                 txt = ['The aim of the cannon is indicated with the '...
                     'black line. Hit SPACE to initiate a cannon shot.'];
-            elseif isequal(taskParam.gParam.taskType, 'reversal')
+            elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
+                    isequal(taskParam.gParam.taskType, 'ARC')
                 txt = ['The aim of the cannon is indicated with the '...
                     'black line. Hit the left mouse button to '...
                     'initiate a cannon shot.'];
@@ -3615,14 +3625,14 @@ end
         outcome = 240;
         tickInstruction.savedTickmark = nan;
         tickInstruction.previousOutcome = nan;
-        [taskParam, fw, Data] = InstrLoopTxt(taskParam,...
+        [taskParam, fw, Data] = instrLoopTxt(taskParam,...
             txt, cannon, 'space', distMean, tickInstruction);
         
         if fw == 1
             
             outcome = distMean;
             background = true;
-            Cannonball(taskParam, distMean, outcome, background, 1, 0)
+            cannonball(taskParam, distMean, outcome, background, 1, 0)
             screenIndex = screenIndex + 1;
             
             return
@@ -3634,14 +3644,14 @@ end
     function [screenIndex, Data] = MoveSpotToLastOutcome...
             (screenIndex, Data, txt)
         t = GetSecs;
-        LineAndBack(taskParam)
-        DrawCross(taskParam)
-        DrawCircle(taskParam)
+        lineAndBack(taskParam)
+        drawCross(taskParam)
+        drawCircle(taskParam)
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
         WaitSecs(0.5);
         Data.tickMark = true;
-        [taskParam, fw, Data] = InstrLoopTxt(taskParam,...
+        [taskParam, fw, Data] = instrLoopTxt(taskParam,...
             txt, cannon, 'space', Data.distMean, Data);
         
         if fw == 1
@@ -3653,12 +3663,12 @@ end
             (screenIndex, Data, distMean, txt)
         
         background = true;
-        Cannonball(taskParam, Data.distMean, Data.outcome, background)
+        cannonball(taskParam, Data.distMean, Data.outcome, background)
         if Data.memErr >=9
             
-            LineAndBack(taskParam)
-            DrawCross(taskParam)
-            DrawCircle(taskParam)
+            lineAndBack(taskParam)
+            drawCross(taskParam)
+            drawCircle(taskParam)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.5, 1);
@@ -3672,12 +3682,12 @@ end
                         'aufgesammelt. Versuchen Sie es bitte nochmal!'];
                 end
                 
-                LineAndBack(taskParam)
-                DrawCircle(taskParam);
-                DrawCross(taskParam);
-                PredictionSpot(taskParam);
-                DrawOutcome(taskParam, Data.outcome);
-                Cannon(taskParam, Data.distMean)
+                lineAndBack(taskParam)
+                drawCircle(taskParam);
+                drawCross(taskParam);
+                predictionSpot(taskParam);
+                drawOutcome(taskParam, Data.outcome);
+                drawCannon(taskParam, Data.distMean)
                 TickMark(taskParam, Data.outcome, 'outc')
                 TickMark(taskParam, Data.pred, 'pred')
                 DrawFormattedText(taskParam.gParam.window.onScreen,...
@@ -3701,33 +3711,33 @@ end
                 end
             end
         else
-            LineAndBack(taskParam)
-            DrawCircle(taskParam);
-            DrawCross(taskParam);
-            PredictionSpot(taskParam);
-            DrawOutcome(taskParam, Data.outcome);
-            Cannon(taskParam, Data.distMean)
+            lineAndBack(taskParam)
+            drawCircle(taskParam);
+            drawCross(taskParam);
+            predictionSpot(taskParam);
+            drawOutcome(taskParam, Data.outcome);
+            drawCannon(taskParam, Data.distMean)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
-            LineAndBack(taskParam)
-            DrawCross(taskParam)
-            DrawCircle(taskParam)
+            lineAndBack(taskParam)
+            drawCross(taskParam)
+            drawCircle(taskParam)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6, 1);
             while 1
                 
-                LineAndBack(taskParam)
-                Cannon(taskParam, Data.distMean)
-                DrawCircle(taskParam)
+                lineAndBack(taskParam)
+                drawCannon(taskParam, Data.distMean)
+                drawCircle(taskParam)
                 
                 if subject.rew == 1
-                    Shield(taskParam, 20, Data.pred, 1)
+                    shield(taskParam, 20, Data.pred, 1)
                 elseif subject.rew == 2
-                    Shield(taskParam, 20, Data.pred, 0)
+                    shield(taskParam, 20, Data.pred, 0)
                     
                 end
-                DrawOutcome(taskParam, Data.outcome)
+                drawOutcome(taskParam, Data.outcome)
                 DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
@@ -3757,7 +3767,7 @@ end
             YouCollectedTheCannonball_TryToMissIt(screenIndex, Data, win)
         
         background = true;
-        Cannonball(taskParam, Data.distMean, Data.outcome, background)
+        cannonball(taskParam, Data.distMean, Data.outcome, background)
         
         if Data.memErr <= 9
             
@@ -3773,12 +3783,12 @@ end
                         'aufzusammeln!'];
                 end
                 
-                LineAndBack(taskParam)
-                DrawCircle(taskParam);
-                DrawCross(taskParam);
-                PredictionSpot(taskParam);
-                DrawOutcome(taskParam, Data.outcome);
-                Cannon(taskParam, Data.distMean)
+                lineAndBack(taskParam)
+                drawCircle(taskParam);
+                drawCross(taskParam);
+                predictionSpot(taskParam);
+                drawOutcome(taskParam, Data.outcome);
+                drawCannon(taskParam, Data.distMean)
                 DrawFormattedText(taskParam.gParam.window.onScreen,...
                     taskParam.strings.txtPressEnter,'center',...
                     taskParam.gParam.screensize(4)*0.9, [255 255 255]);
@@ -3805,18 +3815,18 @@ end
             
         else
             
-            LineAndBack(taskParam)
-            DrawCircle(taskParam);
-            DrawCross(taskParam);
-            PredictionSpot(taskParam);
-            DrawOutcome(taskParam, Data.outcome);
-            Cannon(taskParam, Data.distMean)
+            lineAndBack(taskParam)
+            drawCircle(taskParam);
+            drawCross(taskParam);
+            predictionSpot(taskParam);
+            drawOutcome(taskParam, Data.outcome);
+            drawCannon(taskParam, Data.distMean)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
-            LineAndBack(taskParam)
-            DrawCross(taskParam)
-            DrawCircle(taskParam)
+            lineAndBack(taskParam)
+            drawCross(taskParam)
+            drawCircle(taskParam)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6, 1);
             while 1
@@ -3831,17 +3841,17 @@ end
                     
                 end
                 
-                LineAndBack(taskParam)
-                Cannon(taskParam, Data.distMean)
-                DrawCircle(taskParam)
+                lineAndBack(taskParam)
+                drawCannon(taskParam, Data.distMean)
+                drawCircle(taskParam)
                 if (subject.rew == 1 && win)...
                         || (subject.rew == 2 && ~win)
-                    Shield(taskParam, 20, Data.pred, 1)
+                    shield(taskParam, 20, Data.pred, 1)
                 elseif (subject.rew == 2 && win)...
                         || (subject.rew == 1 && ~win)
-                    Shield(taskParam, 20, Data.pred, 0)
+                    shield(taskParam, 20, Data.pred, 0)
                 end
-                DrawOutcome(taskParam, Data.outcome)
+                drawOutcome(taskParam, Data.outcome)
                 DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
@@ -3876,21 +3886,21 @@ end
         background = true;
         Data.distMean = 160;
         Data.outcome = 160;
-        Cannonball(taskParam, Data.distMean, Data.outcome, background)
+        cannonball(taskParam, Data.distMean, Data.outcome, background)
         if Data.memErr <= 9
             
-            LineAndBack(taskParam)
-            DrawCircle(taskParam);
-            DrawCross(taskParam);
-            PredictionSpot(taskParam);
-            DrawOutcome(taskParam, Data.outcome);
-            Cannon(taskParam, Data.distMean)
+            lineAndBack(taskParam)
+            drawCircle(taskParam);
+            drawCross(taskParam);
+            predictionSpot(taskParam);
+            drawOutcome(taskParam, Data.outcome);
+            drawCannon(taskParam, Data.distMean)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
-            LineAndBack(taskParam)
-            DrawCross(taskParam)
-            DrawCircle(taskParam)
+            lineAndBack(taskParam)
+            drawCross(taskParam)
+            drawCircle(taskParam)
             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6, 1);
             while 1
@@ -3918,15 +3928,15 @@ end
                         
                     end
                 end
-                LineAndBack(taskParam)
-                Cannon(taskParam, Data.distMean)
-                DrawCircle(taskParam)
+                lineAndBack(taskParam)
+                drawCannon(taskParam, Data.distMean)
+                drawCircle(taskParam)
                 if subject.rew == 1
-                    Shield(taskParam, 20, Data.pred, 0)
+                    shield(taskParam, 20, Data.pred, 0)
                 elseif subject.rew == 2
-                    Shield(taskParam, 20, Data.pred, 1)
+                    shield(taskParam, 20, Data.pred, 1)
                 end
-                DrawOutcome(taskParam, Data.outcome)
+                drawOutcome(taskParam, Data.outcome)
                 DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
                     taskParam.gParam.screensize(3)*0.1,...
                     taskParam.gParam.screensize(4)*0.05,...
@@ -3964,12 +3974,12 @@ end
                         'noch einmal!'];
                 end
                 
-                LineAndBack(taskParam)
-                DrawCircle(taskParam);
-                DrawCross(taskParam);
-                PredictionSpot(taskParam);
-                DrawOutcome(taskParam, Data.outcome);
-                Cannon(taskParam, Data.distMean)
+                lineAndBack(taskParam)
+                drawCircle(taskParam);
+                drawCross(taskParam);
+                predictionSpot(taskParam);
+                drawOutcome(taskParam, Data.outcome);
+                drawCannon(taskParam, Data.distMean)
                 DrawFormattedText(taskParam.gParam.window.onScreen,...
                     taskParam.strings.txtPressEnter,'center',...
                     taskParam.gParam.screensize(4)*0.9, [255 255 255]);
@@ -4070,7 +4080,7 @@ end
                     'dich auch an den Versuchsleiter wenden.'];
             end
             feedback = false;
-            fw = BigScreen(taskParam,...
+            fw = bigScreen(taskParam,...
                 taskParam.strings.txtPressEnter, header, txt,...
                 feedback);
             if fw == 1

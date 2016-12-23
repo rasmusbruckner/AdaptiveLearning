@@ -1,4 +1,4 @@
-function Cannonball(taskParam, distMean, outcome, background, currentContext, latentState)
+function cannonball(taskParam, distMean, outcome, background, currentContext, latentState)
 %CANNONBALL   Animates the cannonball shot
 
 % number of times that cannonball is printed between cannon and aim
@@ -40,7 +40,7 @@ OutcSpotAct = BallStart;
 for i = 1:nFrames
     
     if background == true
-        LineAndBack(taskParam)
+        lineAndBack(taskParam)
     end
     
     OutcSpotAct = OutcSpotAct + Step;
@@ -49,9 +49,9 @@ for i = 1:nFrames
             DrawContext(taskParam, currentContext)
             DrawCross(taskParam)
     end
-    DrawCircle(taskParam)
-    Cannon(taskParam, distMean, latentState)
-    PredictionSpot(taskParam)
+    drawCircle(taskParam)
+    drawCannon(taskParam, distMean, latentState)
+    predictionSpot(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         Screen('FillOval', taskParam.gParam.window.onScreen, [165 42 42],...
             OutcSpotAct);

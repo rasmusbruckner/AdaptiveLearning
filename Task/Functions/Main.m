@@ -108,8 +108,17 @@ elseif ~taskParam.unitTest
         taskData.cBal = nan(trial,1);
         taskData.rew = nan(trial,1);
         taskData.initiationRTs = nan(trial,1);
+        taskData.initialTendency = nan(trial,1);
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
+        savedTickmark(1) = nan;
+        savedTickmarkPrevious(1) = nan;
+        taskData.reversal = nan(length(trial),1);
+        taskData.currentContext = nan(length(trial),1);
+        taskData.hiddenContext = nan(length(trial),1);
+        taskData.contextTypes = nan(length(trial),1);
+        taskData.latentState = nan(length(trial),1);
+
         
     elseif isequal(condition, 'reversal')...
             || isequal(condition, 'reversalPractice')
@@ -135,7 +144,7 @@ elseif ~taskParam.unitTest
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
         
-    elseif isequal(condition, 'chinese') 
+    elseif isequal(condition, 'chinese')
         
         trial = taskParam.gParam.trials;
         taskData = generateOutcomes...
@@ -143,14 +152,19 @@ elseif ~taskParam.unitTest
         savedTickmark(1) = nan;
         savedTickmarkPrevious(1) = nan;
         
-    elseif isequal(condition, 'main') 
+    elseif isequal(condition, 'main')
         
         trial = taskParam.gParam.trials;
         taskData = generateOutcomes...
             (taskParam, haz, concentration, condition);
-        savedtickMark(1) = nan;
-        savedtickmarkPrevious(1) = nan;
-        
+        savedTickmark(1) = nan;
+        savedTickmarkPrevious(1) = nan;
+        taskData.reversal = nan(length(trial),1);
+        taskData.currentContext = nan(length(trial),1);
+        taskData.hiddenContext = nan(length(trial),1);
+        taskData.contextTypes = nan(length(trial),1);
+        taskData.latentState = nan(length(trial),1);
+
     end
 end
 
@@ -158,9 +172,6 @@ end
 
 for i=1:trial
     
-    %     if i == taskParam.gParam.blockIndices(2) + 1 ...
-    %             || i == taskParam.gParam.blockIndices(3) + 1 ...
-    %             || i == taskParam.gParam.blockIndices(4) + 1
     if (i == taskParam.gParam.blockIndices(2) ...
             || i == taskParam.gParam.blockIndices(3) ...
             || i == taskParam.gParam.blockIndices(4)) ...
@@ -260,10 +271,13 @@ for i=1:trial
     taskData.triggers(i,1) = sendTrigger...
         (taskParam, taskData, condition, haz, i, 1); % this is the trial onset trigger
     taskData.timestampOnset(i,:) = GetSecs - ref;
-    %keyboard
+
     if ~taskParam.unitTest
         
-        if ~isequal(taskParam.gParam.taskType, 'reversal') && ~isequal(taskParam.gParam.taskType, 'reversalPractice') && ~isequal(taskParam.gParam.taskType, 'chinese')
+        if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
+                ~isequal(taskParam.gParam.taskType, 'reversalPractice') &&...
+                ~isequal(taskParam.gParam.taskType, 'chinese') &&...
+                ~isequal(taskParam.gParam.taskType, 'ARC')
             while 1
                 
                 drawCircle(taskParam)
@@ -280,15 +294,11 @@ for i=1:trial
                         && i ~= taskParam.gParam.blockIndices(3) + 1 ...
                         && i ~= taskParam.gParam.blockIndices(4) + 1 ...
                         && ~isequal(taskParam.gParam.taskType, 'chinese')
-                    %                         if isequal(taskParam.gParam.taskType, 'chinese')
-                    %                             TickMark(taskParam, taskData.outcome(i-1), 'outc')
-                    %                             TickMark(taskParam, taskData.pred(i-1), 'pred')
-                    %else
+                    
                     tickMark(taskParam, taskData.outcome(i-1), 'outc')
                     tickMark(taskParam, taskData.pred(i-1), 'pred')
-                    %end
                     if isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-                        tickMark(taskParam, savedtickMark(i-1), 'saved')
+                        tickMark(taskParam, savedTickmark(i-1), 'saved')
                     end
                     
                 end
@@ -377,7 +387,7 @@ for i=1:trial
             
             SetMouse(720, 450, taskParam.gParam.window.onScreen)
             press = 0;
-            %initialTendencyLogged = false;
+
             while 1
                 [x,y,buttons,focus,valuators,valinfo] =...
                     GetMouse(taskParam.gParam.window.onScreen);
@@ -411,12 +421,11 @@ for i=1:trial
                 else
                     predictionSpot(taskParam)
                 end
-                %keyboard
+                
                 if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(i))
                     taskData.initialTendency(i) = degree;
                     taskData.initiationRTs(i,:) =...
                         GetSecs() - initRT_Timestamp;
-                    %initialTendencyLogged = true;
                 end
                 
                 if ~isequal(taskParam.gParam.taskType, 'chinese')
@@ -426,20 +435,20 @@ for i=1:trial
                             && i ~= taskParam.gParam.blockIndices(3) + 1 ...
                             && i ~= taskParam.gParam.blockIndices(4) + 1
                         
-                        savedtickMark(i) =...
+                        savedTickmark(i) =...
                             ((taskParam.circle.rotAngle)/taskParam.circle.unit);
                         WaitSecs(0.2);
                         press = 1;
                         
                     elseif i > 1 && press == 0
-                        savedtickMarkPrevious(i) = savedtickMarkPrevious(i - 1);
-                        savedtickMark(i) = savedtickMark(i - 1);
+                        savedTickmarkPrevious(i) = savedTickmarkPrevious(i - 1);
+                        savedTickmark(i) = savedTickmark(i - 1);
                     elseif i == 1
-                        savedTickmarPrevious(i) = 0;
+                        savedTickmarkPrevious(i) = 0;
                     end
                     
                     if press == 1
-                        savedtickMarkPrevious(i) = savedtickMark(i-1);
+                        savedTickmarkPrevious(i) = savedTickmark(i-1);
                     end
                 end
                 
@@ -449,17 +458,6 @@ for i=1:trial
                         && i ~= taskParam.gParam.blockIndices(4) + 1
                     if isequal(taskParam.gParam.taskType, 'chinese')
                         
-                        %                             %keyboard
-                        %                             if ~isequal(taskData.currentContext(i-1),taskData.currentContext(i))
-                        %                                     %keyboard
-                        %                             end
-                        %
-                        %                             if sum(ismember(unique(taskData.currentContext(1:i-1)), taskData.currentContext(i))) >=1
-                        %
-                        %                                 tickMark(taskParam,taskData.outcome(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'outc');
-                        %                                 tickMark(taskParam,taskData.pred(find(taskData.currentContext(1:i-1) == taskData.currentContext(i),1,'last')), 'pred');
-                        %
-                        %                             end
                     else
                         tickMark(taskParam, taskData.outcome(i-1), 'outc');
                         tickMark(taskParam, taskData.pred(i-1), 'pred');
@@ -467,10 +465,10 @@ for i=1:trial
                     
                     if ~isequal(taskParam.gParam.taskType, 'chinese')
                         if press == 1
-                            tickMark(taskParam, savedtickMarkPrevious(i),...
+                            tickMark(taskParam, savedTickmarkPrevious(i),...
                                 'update');
                         end
-                        tickMark(taskParam, savedtickMark(i), 'saved');
+                        tickMark(taskParam, savedTickmark(i), 'saved');
                     end
                     
                 end
@@ -516,7 +514,7 @@ for i=1:trial
                 tickMark(taskParam, taskData.outcome(i-1), 'outc')
                 tickMark(taskParam, taskData.pred(i-1), 'pred')
                 if isequal(taskData.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-                    tickMark(taskParam, savedtickMark(i), 'saved')
+                    tickMark(taskParam, savedTickmark(i), 'saved')
                 end
             end
         end
@@ -591,7 +589,6 @@ for i=1:trial
         end
     end
     
-    %keyboard
     if isequal(condition,'main')...
             || isequal(condition,'mainPractice')...
             || isequal(condition, 'oddballPractice')...
@@ -707,11 +704,10 @@ elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
         isequal(taskParam.gParam.taskType, 'reversalPractice') ||...
         isequal(taskParam.gParam.taskType, 'ARC')
     header = 'Performance';
-    [txt, header] = feedback(taskData, taskParam, Subject, condition);
+    [txt, header] = AL_feedback(taskData, taskParam, Subject, condition);
     
 end
 
-%feedback = true;
 fw = bigScreen(taskParam, taskParam.strings.txtPressEnter,...
     header, txt, true);
 
@@ -736,8 +732,8 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     {taskData.cond}, 'cBal',{taskData.cBal}, 'trial', taskData.trial,...
     'haz', haz, 'concentration', concentration,'outcome',...
     taskData.outcome, 'distMean', taskData.distMean, 'cp',...
-    taskData.cp, 'reversal', taskData.reversal, 'savedtickMark',...
-    savedtickMark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
+    taskData.cp, 'reversal', taskData.reversal, 'savedTickmark',...
+    savedTickmark, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,...
     'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers,...
     'pred', taskData.pred,'predErr', taskData.predErr, 'memErr',...
     taskData.memErr, 'UP',taskData.UP, 'hit', taskData.hit, 'perf',....
