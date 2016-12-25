@@ -1,11 +1,11 @@
 function [txt, header] = AL_feedback(Data, taskParam, subject, condition, whichBlock)
-%FEEDBACK   Displays feedback at the end of a block
+%AL_FEEDBACK   Displays feedback at the end of a block
 
 if ~exist('whichBlock', 'var')
     whichBlock = ones(length(Data.hit),1);
 end
-%keyboard    
-% unpack variables
+    
+% compute hits etc.
 hits = sum(Data.hit(whichBlock == 1));
 rewTrials = sum(Data.actRew(whichBlock == 1));
 noRewTrials = sum(Data.actRew(whichBlock == 2));
@@ -14,12 +14,11 @@ noRewCatches = hits - rewCatches;
 maxMon = (length(find(Data.shieldType(whichBlock == 1)))...
     * taskParam.gParam.rewMag);
 
-
 if isequal(taskParam.gParam.taskType, 'oddball')...
         || isequal(taskParam.gParam.taskType, 'reversal')...
         || isequal(condition, 'reversalPractice')...
-        || isequal(condition, 'reversalPracticeNoise')...
-        || isequal(taskParam.gParam.taskType, 'ARC')
+        || isequal(condition, 'reversalPracticeNoise')
+    
     header = 'Performance';
     if subject.rew == 1
         colRewCap = 'Blue';
@@ -124,6 +123,21 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
             'In diesem Block hast du %.2f von durchschnittlich 5.00 Euro gewonnen.'],...
             hits,  hits*taskParam.gParam.rewMag);
     end
+    
+elseif isequal(taskParam.gParam.taskType, 'ARC')
+    
+    header = 'Performance';
+    condition
+    if isequal(condition, 'mainPractice')...
+        wouldHave = ' would have ';
+    else
+        wouldHave = ' ';
+    end
+    
+    txt = sprintf(['Catches: %.0f of '...
+        '%.0f\n\nIn this block you%searned %.2f of '...
+        'possible $ %.2f.'], hits, length(whichBlock),...
+        wouldHave, max(Data.accPerf), hits*taskParam.gParam.rewMag);
     
 end
 

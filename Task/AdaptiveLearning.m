@@ -1,7 +1,7 @@
 function Data = adaptiveLearning(unitTest)
 %ADAPTIVELEARNING   Master function for the cannon task
-%   AdaptiveLearning(false) or AdaptiveLearning runs the cannon task.
-%   AdaptiveLearning(true) is part of a unit test to control task
+%   AdaptiveLearning(false) or adaptiveLearning runs the cannon task.
+%   adaptiveLearning(true) is part of a unit test to control task
 %   output after task changes. Scripts for unit test:
 %   ~/AdaptiveLearning/DataScripts
 %
@@ -34,17 +34,9 @@ function Data = adaptiveLearning(unitTest)
 %       - followOutcomePractice
 %       - followCannonPractice
 %
-%   Changes in the task (relative to first data collection at Brown):
-%   renamed variables:
-%       - boatType -> shieldType
-%       - sigma -> concentration
-%       - vola -> haz
-%   added trialsS1 = XX, trialsS2S3 = XX
-%
-%   29.06.16
-%   reversal task
-%       - added "initialTendency": inital angle when orange dot is moved
-%       - added "RT": reaction time when prediction is made
+%   Written by RB
+%   Version 12/2016
+
 
 if nargin == 0
     unitTest = false;
@@ -125,7 +117,8 @@ elseif strcmp(taskType, 'ARC')
     
     trials              = 2; % 240
     controlTrials       = nan;
-    concentration       = [12 12 99999999];
+    concentration       = [8 12 99999999];
+    showTickmark        = false;
     textSize            = 19;
     nContexts           = nan;
     nStates             = nan;
@@ -143,12 +136,12 @@ elseif strcmp(taskType, 'ARC')
 end
 
 % version independent parameters
-runIntro                = true;
+runIntro                = false;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
-shieldTrials            = 1; % 4 why not 5?
-practTrials             = 1; % 20 % 20 in reversal muliplied by 2!
+shieldTrials            = 1; % 4
+practTrials             = 1; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 5; % 200
 blockIndices            = [1 101 201 301];
 haz                     = [.25 1 0];
@@ -177,13 +170,15 @@ elseif isequal(computer, 'ARC')
     cd(' please indicate your path here ');
 end
 
+% reset clock
+a = clock;
+rand('twister', a(6).*10000);
+
 % -------------------------------------------------------------------------
 % User Input
 % -------------------------------------------------------------------------
 
-a = clock;
-rand('twister', a(6).*10000);
-
+% for no user input
 if askSubjInfo == false
     
     ID = '99999';
@@ -195,58 +190,64 @@ if askSubjInfo == false
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'chinese') ||...
             strcmp(taskType, 'ARC')
         group = '1';
-        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'group',...
+        subject = struct('ID', ID, 'age', age, 'sex', sex, 'group',...
             group, 'cBal', cBal, 'rew', reward, 'date', date,...
             'session', '1');
     elseif strcmp(taskType, 'oddball')
         session = '1';
-        Subject = struct('ID', ID, 'age', age, 'sex', sex, 'session',...
+        subject = struct('ID', ID, 'age', age, 'sex', sex, 'session',...
             session, 'cBal', cBal, 'rew', reward, 'date', date);
     end
     
+    % for user input
 elseif askSubjInfo == true
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
+    if strcmp(taskType, 'dresden')
         prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
     elseif strcmp(taskType, 'oddball')
         prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
     elseif isequal(taskType, 'reversal')...
             || isequal(taskType, 'chinese')
         prompt = {'ID:','Age:', 'Sex:'};
+    elseif strcmp(taskType, 'ARC')
+        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal'};
     end
     
     name = 'SubjInfo';
     numlines = 1;
     
+    % you can choose to randomize input, i.e., random cBal
     if randomize
         
         if strcmp(taskType, 'dresden')
             cBal = num2str(round(unifrnd(1,6)));
-        elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'ARC')
+            reward = num2str(round(unifrnd(1,2)));
+        elseif strcmp(taskType, 'oddball')
             cBal = num2str(round(unifrnd(1,2)));
+            reward = num2str(round(unifrnd(1,2)));
+        elseif strcmp(taskType, 'ARC')
+            cBal = num2str(round(unifrnd(1,2)));
+            reward = 1;
         end
-        
-        reward = num2str(round(unifrnd(1,2)));
         
     else
         cBal = '1';
         reward = '1';
     end
     
-    % checken, dass das für alle bedingungen stimmt
+    % specify default that is shown on screen
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'oddball')...
-            || strcmp(taskType, 'ARC')
-        defaultanswer = {'99999','99', '1', 'm', cBal, reward};
+            defaultanswer = {'99999','99', '1', 'm', cBal, reward};
     elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
         defaultanswer = {'99999','99', 'm', reward};
-    else
-        defaultanswer = {'99999','99', 'm', cBal, reward};
+    elseif strcmp(taskType, 'ARC')
+        defaultanswer = {'99999','99', '1', 'm', cBal};
     end
     
+    % add information that is not specified by user
     subjInfo = inputdlg(prompt,name,numlines,defaultanswer);
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball') ||...
-            strcmp(taskType, 'ARC')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
         subjInfo{7} = date;
     elseif strcmp(taskType, 'reversal')
         subjInfo{5} = date;
@@ -254,16 +255,20 @@ elseif askSubjInfo == true
         subjInfo{4} = 1; % reward
         subjInfo{5} = '1'; % group
         subjInfo{6} = date;
-    else
-        subjInfo{6} = date;
+    elseif strcmp(taskType, 'ARC')
+        subjInfo{6} = 1;
+        subjInfo{7} = date;
     end
     
+    % check is user input makes sense
+    % check ID
     if numel(subjInfo{1}) < 5 ...
             || numel(subjInfo{1}) > 5
         msgbox('ID: must consist of five numbers!');
         return
     end
     
+    % check group and session
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
         if subjInfo{3} ~= '1'...
                 && subjInfo{3} ~= '2'
@@ -279,6 +284,7 @@ elseif askSubjInfo == true
         
     end
     
+    % check sex
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'oddball') || strcmp(taskType, 'ARC')
         if subjInfo{4} ~= 'm'...
@@ -296,6 +302,7 @@ elseif askSubjInfo == true
         end
     end
     
+    % check cBal
     if strcmp(taskType, 'dresden')
         if subjInfo{5} ~= '1'...
                 && subjInfo{5} ~= '2'...
@@ -320,8 +327,8 @@ elseif askSubjInfo == true
         %         end
     end
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball') ||...
-            strcmp(taskType, 'ARC')
+    % check reward
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'oddball')
         if subjInfo{6} ~= '1'...
                 && subjInfo{6} ~= '2'
             msgbox('Reward: 1 or 2?');
@@ -337,7 +344,7 @@ elseif askSubjInfo == true
     
     if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
         
-        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+        subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'group', subjInfo(3), 'cBal',...
             str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date',...
@@ -345,25 +352,26 @@ elseif askSubjInfo == true
         
     elseif strcmp(taskType, 'oddball')
         
-        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+        subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'session', subjInfo(3), 'cBal',...
             str2double(cell2mat(subjInfo(5))), 'rew',...
             str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
         
     elseif strcmp(taskType, 'reversal')
-        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+        
+        subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))),...
             'date',subjInfo(5), 'session', '1', 'cBal', nan);
         
     elseif strcmp(taskType, 'chinese')
         
-        
-        Subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
+        subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5),...
             'date',subjInfo(6), 'session', '1', 'cBal', nan);
         
     end
     
+    % check whether ID exists in save folder
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'reversal')...
             || strcmp(taskType, 'chinese')...
@@ -391,9 +399,10 @@ elseif askSubjInfo == true
     end
 end
 
-if isequal(taskType, 'oddball') && isequal(Subject.session, '1')
+% for oddball check how many trials should be selected
+if isequal(taskType, 'oddball') && isequal(subject.session, '1')
     trials = trialsS1;
-elseif isequal(taskType, 'oddball') && isequal(Subject.session, '3')
+elseif isequal(taskType, 'oddball') && isequal(subject.session, '3')
     trials = trialsS2S3;
 end
 
@@ -464,7 +473,7 @@ gParam = struct('taskType', taskType ,'jitter', jitter,...
     'safeContext', safeContext, 'safeState', safeState,...
     'zero', zero,'window', window, 'windowRect', windowRect,...
     'practiceTrialCriterion', practiceTrialCriterion,...
-    'askSubjInfo', askSubjInfo);
+    'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark);
 
 predSpotRad         = 10;
 shieldAngle         = 30;
@@ -552,8 +561,8 @@ if sendTrigger == true
     config_io;
 end
 
-sampleRate = 500; % sample rate
-port = hex2dec('E050'); % LPT port
+sampleRate = 500;
+port = hex2dec('E050');
 triggers = struct('sampleRate', sampleRate, 'port', port);
 
 % -------------------------------------------------------------------------
@@ -568,7 +577,7 @@ if isequal(taskType, 'oddball')
     
     header = 'Real Task!';
     txtPressEnter = 'Press Enter to continue';
-    if Subject.cBal == 1
+    if subject.cBal == 1
         txtStartTask = ['This is the beginning of the real task. '...
             'During this block you will earn real money for your '...
             'performance. The trials will be exactly the same as those '...
@@ -598,7 +607,7 @@ elseif isequal(taskType, 'dresden')
     
     txtPressEnter = 'Weiter mit Enter';
     header = 'Anfang der Studie';
-    if Subject.cBal == 1
+    if subject.cBal == 1
         txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz '...
             'zusammengefasst fängst du also die meisten '...
             'Kugeln, wenn du den orangenen Punkt auf die Stelle '...
@@ -641,14 +650,15 @@ if isequal(taskType, 'dresden')
     % Dresden version
     % ---------------------------------------------------------------------
     
-    if Subject.cBal == 1
+    if subject.cBal == 1
+        
         DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowCannon = FollowCannonCondition;
         
-    elseif Subject.cBal == 2
+    elseif subject.cBal == 2
         
         DataMain = MainCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
@@ -656,7 +666,7 @@ if isequal(taskType, 'dresden')
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowOutcome = FollowOutcomeCondition;
         
-    elseif Subject.cBal == 3
+    elseif subject.cBal == 3
         
         DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
@@ -664,7 +674,7 @@ if isequal(taskType, 'dresden')
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowCannon = FollowCannonCondition;
         
-    elseif Subject.cBal == 4
+    elseif subject.cBal == 4
         
         DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
@@ -672,7 +682,7 @@ if isequal(taskType, 'dresden')
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataFollowOutcome = FollowOutcomeCondition;
         
-    elseif Subject.cBal == 5
+    elseif subject.cBal == 5
         
         DataFollowOutcome = FollowOutcomeCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
@@ -680,7 +690,7 @@ if isequal(taskType, 'dresden')
         taskParam.gParam.window = CloseScreenAndOpenAgain;
         DataMain = MainCondition;
         
-    elseif Subject.cBal == 6
+    elseif subject.cBal == 6
         
         DataFollowCannon = FollowCannonCondition;
         taskParam.gParam.window = CloseScreenAndOpenAgain;
@@ -696,10 +706,10 @@ elseif isequal(taskType, 'oddball')
     % Oddball version
     % ---------------------------------------------------------------------
     
-    if Subject.cBal == 1
+    if subject.cBal == 1
         DataOddball = OddballCondition;
         DataMain = MainCondition;
-    elseif Subject.cBal == 2
+    elseif subject.cBal == 2
         DataMain = MainCondition;
         DataOddball = OddballCondition;
     end
@@ -725,14 +735,17 @@ elseif isequal(taskType, 'ARC')
     % ---------------------------------------------------------------------
     % ARC version
     % ---------------------------------------------------------------------
-    
+    % session 1
+    DataMain = MainCondition;
+    % session 2
+    subject.session = '2';
     DataMain = MainCondition;
     
 end
 
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 % Translate performance into monetary reward
-% ---------------------------------------------------------------------
+% -------------------------------------------------------------------------
 
 if isequal(taskType, 'dresden')
     totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
@@ -776,12 +789,12 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            if isequal(Subject.session, '1')
+            if isequal(subject.session, '1')
                 
-                Instructions(taskParam, 'oddballPractice', Subject);
+                Instructions(taskParam, 'oddballPractice', subject);
                 
-            elseif isequal(Subject.session, '2') ||...
-                    isequal(Subject.session, '3')
+            elseif isequal(subject.session, '2') ||...
+                    isequal(subject.session, '3')
                 header = 'Oddball Task';
                 txtStartTask = ['This is the beginning of the ODDBALL '...
                     'TASK. During this block you will earn real money '...
@@ -804,7 +817,7 @@ Screen('CloseAll');
             
         end
         [~, DataOddball] = Main(taskParam, haz(1), concentration(1),...
-            'oddball', Subject);
+            'oddball', subject);
         
     end
 
@@ -816,7 +829,7 @@ Screen('CloseAll');
             if strcmp(taskType, 'dresden')
                 
                 
-                if isequal(Subject.group, '1')
+                if isequal(subject.group, '1')
                     
                     txtStartTask = ['Du hast die Übungsphase '...
                         'abgeschlossen. Kurz zusammengefasst '...
@@ -846,16 +859,16 @@ Screen('CloseAll');
                     
                 end
                 
-                instructions(taskParam, 'mainPractice', Subject);
+                instructions(taskParam, 'mainPractice', subject);
                 Main(taskParam, haz(3), concentration(1),...
-                    'mainPractice', Subject);
+                    'mainPractice', subject);
                 feedback = false;
                 BigScreen(taskParam, txtPressEnter, header,...
                     txtStartTask, feedback);
                 
             elseif strcmp(taskType, 'oddball')
                 
-                if isequal(Subject.session, '1')
+                if isequal(subject.session, '1')
                     header = 'Change Point Task';
                     txt = ['This is the beginning of the CHANGE POINT '...
                         'TASK. During this block you will earn real money '...
@@ -873,8 +886,8 @@ Screen('CloseAll');
                     feedback = false;
                     bigScreen(taskParam, txtPressEnter, header, txt, feedback);
                     
-                elseif isequal(Subject.session, '2') ||...
-                        isequal(Subject.session, '3')
+                elseif isequal(subject.session, '2') ||...
+                        isequal(subject.session, '3')
                     
                     Screen('TextSize', taskParam.gParam.window, 30);
                     Screen('TextFont', taskParam.gParam.window, 'Arial');
@@ -884,31 +897,99 @@ Screen('CloseAll');
                 
             elseif strcmp(taskType, 'ARC')
                 
-                header = 'Change Point Task';
-                txtStartTask = ['This is the beginning of the experiment. '...
-                    'Now you will earn real money '...
-                    'for your performance. The trials will be exactly '...
-                    'the same as those in the previous session.\n\n'...
-                    'On each trial a cannon will aim at a location on '...
-                    'the circle. On all trials the cannon will '...
-                    'fire a ball somewhere near the point of aim. '...
-                    'Most of the time the cannon will remain aimed at '...
-                    'the same location, but occasionally the cannon '...
-                    'will be reaimed. Like in the previous '...
-                    'session you will not see the cannon, but still '...
-                    'have to infer its aim in order to catch balls and '...
-                    'earn money.'];
                 
-                instructions(taskParam, 'mainPractice', Subject)
-                main(taskParam, haz(3),concentration(1),...
-                'mainPractice', Subject);
-                feedback = false;
-                bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
-                feedback);
+                if strcmp(subject.session,'1')
+                    
+                    instructions(taskParam, 'mainPractice', subject)
+                    
+                    if strcmp(cBal,'1')
+                        
+                        ARC_indicateCondition('lowNoise')
+                        main(taskParam, haz(3),concentration(1),...
+                            'mainPractice', subject);
+                        
+                        ARC_indicateCondition('highNoise')
+                        main(taskParam, haz(3),concentration(2),...
+                            'mainPractice', subject);
+                        
+                    elseif strcmp(cBal,'2')
+                        
+                        ARC_indicateCondition('highNoise')
+                        main(taskParam, haz(3),concentration(2),...
+                            'mainPractice', subject);
+                        
+                        ARC_indicateCondition('lowNoise')
+                        main(taskParam, haz(3),concentration(1),...
+                            'mainPractice', subject);
+                        
+                    end
+                    
+                    
+                    
+                    % experimental blocks
+                    header = 'Beginning of the experiment';
+                    txtStartTask = ['This is the beginning of the experiment. '...
+                        'Now you will earn real money '...
+                        'for your performance. The trials will be exactly '...
+                        'the same as those in the previous session.\n\n'...
+                        'On each trial a cannon will aim at a location on '...
+                        'the circle. On all trials the cannon will '...
+                        'fire a ball somewhere near the point of aim. '...
+                        'Most of the time the cannon will remain aimed at '...
+                        'the same location, but occasionally the cannon '...
+                        'will be reaimed. Like in the previous '...
+                        'session you will not see the cannon, but still '...
+                        'have to infer its aim in order to catch balls and '...
+                        'earn money.'];
+                    
+                    feedback = false;
+                    bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                        feedback);
+                    
+                    if strcmp(cBal,'1')
+                        
+                        ARC_indicateCondition('lowNoise')
+                        
+                    elseif strcmp(cBal,'2')
+                        
+                        ARC_indicateCondition('highNoise')
+                        
+                    end
+                    
+                    
+                elseif strcmp(subject.session,'2')
+                    
+                    if strcmp(cBal, '1')
+                        
+                        ARC_indicateCondition('highNoise')
+                        
+                    elseif strcmp(cBal, '2')
+                        
+                        ARC_indicateCondition('lowNoise')
+                        
+                    end
+                end
             end
-            [~, DataMain] = main(taskParam, haz(1), concentration(1),...
-                'main', Subject);
+            
         end
+        
+        
+        if (strcmp(taskType, 'ARC') && cBal == 1 &&...
+                strcmp(subject.session, '2'))...
+                || (strcmp(taskType, 'ARC') && cBal == 2 &&...
+                strcmp(subject.session, '1'))...
+                
+            currentConcentration = concentration(2);
+            
+        else
+            
+            currentConcentration = concentration(1);
+            
+        end
+        
+        [~, DataMain] = main(taskParam, haz(1), currentConcentration,...
+            'main', subject);
+        
     end
 
     function DataFollowOutcome = FollowOutcomeCondition
@@ -917,7 +998,7 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            if isequal(Subject.group, '1')
+            if isequal(subject.group, '1')
                 
                 txtStartTask = ['Du hast die Übungsphase '...
                     'abgeschlossen. Kurz zusammengefasst ist es deine '...
@@ -941,9 +1022,9 @@ Screen('CloseAll');
                 
             end
             
-            instructions(taskParam, 'followOutcomePractice', Subject)
+            instructions(taskParam, 'followOutcomePractice', subject)
             Main(taskParam, haz(3),concentration(1),...
-                'followOutcomePractice', Subject);
+                'followOutcomePractice', subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
@@ -957,7 +1038,7 @@ Screen('CloseAll');
         end
         
         [~, DataFollowOutcome] = Main(taskParam, haz(1),...
-            concentration(1), 'followOutcome', Subject);
+            concentration(1), 'followOutcome', subject);
         
     end
 
@@ -967,7 +1048,7 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            if isequal(Subject.group, '1')
+            if isequal(subject.group, '1')
                 txtStartTask = ['Du hast die Übungsphase '...
                     'abgeschlossen. Kurz zusammengefasst wehrst du '...
                     'die meisten Kugeln ab, wenn du den orangenen '...
@@ -983,9 +1064,9 @@ Screen('CloseAll');
                     'Kanone sehen.\n\nViel Erfolg!'];
             end
             
-            instructions(taskParam, 'followCannonPractice', Subject)
+            instructions(taskParam, 'followCannonPractice', subject)
             Main(taskParam, haz(3),concentration(1),...
-                'followCannonPractice', Subject);
+                'followCannonPractice', subject);
             feedback = false;
             BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
@@ -999,7 +1080,7 @@ Screen('CloseAll');
         end
         
         [~, DataFollowCannon] = Main(taskParam, haz(1),...
-            concentration(1), 'followCannon', Subject);
+            concentration(1), 'followCannon', subject);
         
     end
 
@@ -1008,9 +1089,9 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            instructions(taskParam, 'reversal', Subject);
+            instructions(taskParam, 'reversal', subject);
             Data = Main(taskParam, haz(1), concentration(1),...
-                'reversalPractice', Subject);
+                'reversalPractice', subject);
             
             header = 'Beginning of the Task';
             txtStartTask = ['This is the beginning of the task. During '...
@@ -1032,7 +1113,7 @@ Screen('CloseAll');
         end
         
         [~, DataReversal] = Main(taskParam, haz(1), concentration(1),...
-            'reversal', Subject);
+            'reversal', subject);
         
     end
 
@@ -1041,9 +1122,9 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            instructions(taskParam, 'chinese', Subject);
+            instructions(taskParam, 'chinese', subject);
             Data = Main(taskParam, haz(1), concentration(1),...
-                'chineseLastPractice', Subject);
+                'chineseLastPractice', subject);
             header = 'Anfang der Aufgabe';
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Du '...
                 'kannst jetzt echtes Geld in Abhängigkeit von deiner '...
@@ -1068,7 +1149,7 @@ Screen('CloseAll');
         end
         
         [~, DataChinese] = Main(taskParam, haz(1), concentration(1),...
-            'chinese', Subject);
+            'chinese', subject);
         
     end
 
@@ -1174,6 +1255,25 @@ Screen('CloseAll');
         window = taskParam.gParam.window;
     end
 
+    function ARC_indicateCondition(condition)
+        
+        if strcmp(condition, 'lowNoise')
+            header = 'More accurate cannon';
+            txtStartTask = ['In this block of trials the cannon'...
+                'will be relatively accurate.'];
+            
+        elseif strcmp(condition, 'highNoise')
+            header = 'Less accurate cannon';
+            txtStartTask = ['In this block of trials the cannon'...
+                'will be less accurate.'];
+        end
+        
+        feedback = false;
+        bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            feedback);
+        
+    end
+
     function EndOfTask
         %ENDOFTASK   Screen that shows collected amount of money
         
@@ -1188,7 +1288,7 @@ Screen('CloseAll');
             elseif isequal(taskType, 'dresden') || isequal(taskType, 'chinese')
                 
                 header = 'Ende des Versuchs!';
-                if isequal(Subject.group, '1')
+                if isequal(subject.group, '1')
                     txt = sprintf(['Vielen Dank für deine Teilnahme!',...
                         '\n\n\nDu hast %.2f Euro verdient.'], totWin);
                 else
@@ -1234,7 +1334,7 @@ Screen('CloseAll');
         
     end
 
-sprintf('total time: %s minutes', (GetSecs - startTime)/60)
+sprintf('total time: %.1f minutes', str2mat((GetSecs - startTime)/60))
 
 end
 
