@@ -150,8 +150,11 @@ reversalProb            = [.5 1];
 driftConc               = [30 99999999];
 safe                    = [3 0];
 rewMag                  = 0.1;
-jitter                  = 0.2;
 practiceTrialCriterion  = 10; % 10
+fixCrossLength          = 0.5;
+outcomeLength           = 0.5;
+jitter                  = 0.2;
+fixedITI                = 1;
 debug                   = false;
 
 % savedirectory
@@ -260,7 +263,7 @@ elseif askSubjInfo == true
         subjInfo{7} = date;
     end
     
-    % check is user input makes sense
+    % check if user input makes sense
     % check ID
     if numel(subjInfo{1}) < 5 ...
             || numel(subjInfo{1}) > 5
@@ -374,14 +377,23 @@ elseif askSubjInfo == true
     % check whether ID exists in save folder
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'reversal')...
-            || strcmp(taskType, 'chinese')...
-            || strcmp(taskType, 'ARC')
+            || strcmp(taskType, 'chinese')
+        
         checkIdInData = dir(sprintf('*%s*',...
             num2str(cell2mat((subjInfo(1))))));
     elseif strcmp(taskType, 'oddball')
         checkIdInData = dir(sprintf('*%s_session%s*',...
             num2str(cell2mat((subjInfo(1)))),...
             num2str(cell2mat((subjInfo(3))))));
+    elseif strcmp(taskType, 'ARC') 
+        
+        if showTickmark
+            checkIdInData = dir(sprintf('*_TM_%s*',...
+                num2str(cell2mat((subjInfo(1))))));
+        elseif ~showTickmark
+            checkIdInData = dir(sprintf('*_NTM_%s*',...
+                num2str(cell2mat((subjInfo(1))))));
+        end
     end
     
     fileNames = {checkIdInData.name};
@@ -459,7 +471,7 @@ startTime = GetSecs;
 ref = GetSecs;
 
 % general task parameters
-gParam = struct('taskType', taskType ,'jitter', jitter,...
+gParam = struct('taskType', taskType ,...
     'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
     sentenceLength, 'driftConc', driftConc,...
     'oddballProb', oddballProb, 'reversalProb', reversalProb,...
@@ -565,6 +577,10 @@ sampleRate = 500;
 port = hex2dec('E050');
 triggers = struct('sampleRate', sampleRate, 'port', port);
 
+% parameters related to timing
+timingParam = struct('fixCrossLength', fixCrossLength, 'outcomeLength',...
+    outcomeLength, 'jitter', jitter, 'fixedITI', fixedITI);
+
 % -------------------------------------------------------------------------
 % Start task
 % -------------------------------------------------------------------------
@@ -640,9 +656,9 @@ end
 
 strings = struct(fTxtPressEnter, txtPressEnter);
 taskParam = struct('gParam', gParam, 'circle', circle, 'keys', keys,...
-    'fieldNames', fieldNames, 'triggers', triggers,...
-    'colors', colors, 'strings', strings, 'textures', textures,...
-    'unitTest', unitTest);
+    'fieldNames', fieldNames, 'triggers', triggers, 'timingParam',...
+    timingParam,'colors', colors, 'strings', strings, 'textures',...
+    textures, 'unitTest', unitTest);
 
 if isequal(taskType, 'dresden')
     

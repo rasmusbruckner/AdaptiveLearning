@@ -5,22 +5,26 @@ function [taskData, Data] = main(taskParam, haz, concentration, condition, subje
 %
 % Events
 % Trigger 1: Trial Onset
-% Trigger 2: Prediction/Fixation1 (500ms): Subject sees fixation cross
-% Trigger 3: Outcome (500ms): Subject sees outcome
-% Trigger 4: Fixation2 (500 ms)
-% Trigger 5: Shield (500ms)
-% Trigger 6: Fixation3 (500 ms)
+% Trigger 2: Prediction/Fixation1 (500 ms)
+% Trigger 3: Outcome              (500 ms)
+% Trigger 4: Fixation2            (500 ms)
+% Trigger 5: Shield               (500 ms)
+% Trigger 6: Fixation3            (500 ms)
 % Trigger 7: Trial Summary
-% Jitter: 0-200ms
+% Jitter:                         (0-200 ms)
 
-%%-------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 % initiate task
 %--------------------------------------------------------------------------
 
 KbReleaseWait();
 
 % time for???
-ref = taskParam.gParam.ref;
+ref             = taskParam.gParam.ref;
+fixCrossLength  = taskParam.timingParam.fixCrossLength;
+outcomeLength   = taskParam.timingParam.outcomeLength;
+jitter          = taskParam.timingParam.jitter;
+fixedITI        = taskParam.timingParam.fixedITI;
 
 % textsize
 if isequal(taskParam.gParam.taskType, 'dresden')
@@ -31,7 +35,7 @@ end
 Screen('TextSize', taskParam.gParam.window.onScreen, textSize);
 Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
 
-%%-------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 % load data if specified
 %--------------------------------------------------------------------------
 
@@ -127,7 +131,7 @@ elseif ~taskParam.unitTest
         
     elseif isequal(condition, 'reversal')...
             || isequal(condition, 'reversalPractice')
-        %% 08.09.16: gucken dass hier alle bedingungen spezifiziert werden
+        warning('gucken dass hier alle bedingungen spezifiziert werden')
         
         if isequal(condition, 'reversalPractice')
             taskParam.gParam.practTrials = taskParam.gParam.practTrials * 2;
@@ -174,7 +178,7 @@ elseif ~taskParam.unitTest
     end
 end
 
-%%-------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 % Loop through trials
 %--------------------------------------------------------------------------
 
@@ -213,14 +217,14 @@ for i=1:trial
     end
     
     % save constant variables
-    taskData.trial(i) = i;
-    taskData.age(i) = str2double(subject.age);
-    taskData.ID{i} = subject.ID;
-    taskData.sex{i} = subject.sex;
-    taskData.Date{i} = subject.date;
-    taskData.cond{i} = condition;
-    taskData.cBal(i) = subject.cBal;
-    taskData.rew(i) = subject.rew;
+    taskData.trial(i)   = i;
+    taskData.age(i)     = str2double(subject.age);
+    taskData.ID{i}      = subject.ID;
+    taskData.sex{i}     = subject.sex;
+    taskData.Date{i}    = subject.date;
+    taskData.cond{i}    = condition;
+    taskData.cBal(i)    = subject.cBal;
+    taskData.rew(i)     = subject.rew;
     
     % determine actRew
     if taskData.rew(i) == 1 && taskData.shieldType(i) == 1
@@ -242,7 +246,7 @@ for i=1:trial
     end
     
     % take jitter into account and get timestamps
-    taskData.actJitter(i) = rand*taskParam.gParam.jitter;
+    taskData.actJitter(i) = rand*jitter;
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
     
@@ -253,10 +257,10 @@ for i=1:trial
     
     if ~taskParam.unitTest
         
-        %%-----------------------------------------------------------------
+        %% ----------------------------------------------------------------
         % Versions with keyboard
         %------------------------------------------------------------------
-
+        
         if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
                 ~isequal(taskParam.gParam.taskType, 'reversalPractice') &&...
                 ~isequal(taskParam.gParam.taskType, 'chinese') &&...
@@ -375,10 +379,10 @@ for i=1:trial
             
         else
             
-        %%-----------------------------------------------------------------
-        % Versions with mouse
-        %------------------------------------------------------------------
-
+            %% ----------------------------------------------------------------
+            % Versions with mouse
+            %------------------------------------------------------------------
+            
             
             SetMouse(720, 450, taskParam.gParam.window.onScreen)
             press = 0;
@@ -494,9 +498,9 @@ for i=1:trial
         
     else
         
-    %%---------------------------------------------------------------------
-    % Unit test
-    %----------------------------------------------------------------------
+        %% --------------------------------------------------------------------
+        % Unit test
+        %----------------------------------------------------------------------
         
         taskParam.circle.rotAngle = ...
             taskData.pred(i) * taskParam.circle.unit;
@@ -541,7 +545,7 @@ for i=1:trial
         time = GetSecs;
     end
     
-    %%---------------------------------------------------------------------
+    %% --------------------------------------------------------------------
     % Fixation cross 1
     %----------------------------------------------------------------------
     
@@ -554,9 +558,10 @@ for i=1:trial
     end
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
+    tUpdated = t + 0.1;
     [VBLTimestamp(i) StimulusOnsetTime(i) FlipTimestamp(i) Missed(i)...
         Beampos(i)] =...
-        Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1, 1);
+        Screen('Flip', taskParam.gParam.window.onScreen, tUpdated, 1);
     
     % send fixation cross 1 trigger
     taskData.triggers(i,2) = ...
@@ -564,9 +569,9 @@ for i=1:trial
     taskData.timestampPrediction(i,:) = GetSecs - ref;
     
     % unnecessary?
-    RT_Flip(i) = GetSecs-time;
+    %RT_Flip(i) = GetSecs-time;
     
-    %%---------------------------------------------------------------------
+    % ---------------------------------------------------------------------
     % Outcome 1
     %----------------------------------------------------------------------
     
@@ -632,12 +637,15 @@ for i=1:trial
         taskData.UP(i) = Diff(taskData.pred(i), taskData.pred(i-1));
     end
     
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
+    %Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
+    tUpdated = tUpdated + fixCrossLength;
+    Screen('Flip', taskParam.gParam.window.onScreen, tUpdated);
+    
     % send outcome 1 trigger
     taskData.triggers(i,3) = ...
         sendTrigger(taskParam, taskData, condition, haz, i, 3);
     
-    %%---------------------------------------------------------------------
+    %% --------------------------------------------------------------------
     % Fixation cross 2
     %----------------------------------------------------------------------
     
@@ -648,33 +656,39 @@ for i=1:trial
         drawCross(taskParam)
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
+    %Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
+    tUpdated = tUpdated + outcomeLength; 
+    Screen('Flip', taskParam.gParam.window.onScreen, tUpdated, 1);
     
     % send fixation cross 2 trigger
     taskData.triggers(i,4) = ...
         sendTrigger(taskParam, taskData, condition, haz, i, 4);
     
-    %%---------------------------------------------------------------------
+    %% --------------------------------------------------------------------
     % Outcome 2
     %----------------------------------------------------------------------
     
     drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         drawContext(taskParam, taskData.currentContext(i))
-        drawCross(taskParam) 
+        drawCross(taskParam)
     end
     shield(taskParam, taskData.allASS(i),...
         taskData.pred(i), taskData.shieldType(i))
     drawOutcome(taskParam, taskData.outcome(i))
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);
+    %Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);
+    
+    tUpdated = tUpdated + fixCrossLength;
+    Screen('Flip', taskParam.gParam.window.onScreen, tUpdated);
+
     % send outcome 2 trigger
     taskData.triggers(i,5) = ...
         sendTrigger(taskParam, taskData, condition, haz, i, 5);
-    WaitSecs(.5);
+    %WaitSecs(.5);
     
-    %%---------------------------------------------------------------------
+    %% --------------------------------------------------------------------
     % Fixation cross 3
     %----------------------------------------------------------------------
     
@@ -685,22 +699,27 @@ for i=1:trial
         drawCross(taskParam)
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
     
+    %Screen('Flip', taskParam.gParam.window.onScreen, t + 2.6);
+    tUpdated = tUpdated + outcomeLength;
+    Screen('Flip', taskParam.gParam.window.onScreen, tUpdated);
+
     % send fixation cross 3 trigger
     taskData.triggers(i,6) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 6);           
-    WaitSecs(.5);
+        sendTrigger(taskParam, taskData, condition, haz, i, 6);
+    %WaitSecs();
+    WaitSecs(fixedITI / 2)
     
     % send trial summary trigger
     taskData.triggers(i,7) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 16);            
+        sendTrigger(taskParam, taskData, condition, haz, i, 16);
     
-    WaitSecs(.5);
+    %WaitSecs(.5);
+    WaitSecs(fixedITI / 2)
     taskData.timestampOffset(i,:) = GetSecs - ref;
 end
 
-%%-------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 % Give feedback
 %--------------------------------------------------------------------------
 
@@ -745,7 +764,7 @@ bigScreen(taskParam, taskParam.strings.txtPressEnter,...
 % necessary?
 KbReleaseWait();
 
-%%-------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 % Save data
 %--------------------------------------------------------------------------
 
@@ -781,50 +800,38 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
 
 Data = catstruct(subject, Data);
 
-if (taskParam.gParam.askSubjInfo && isequal(condition, 'followOutcome'))...
-        || (taskParam.gParam.askSubjInfo...
-        && isequal(condition, 'main'))...
-        || (taskParam.gParam.askSubjInfo...
-        && isequal(condition, 'oddball'))...
-        || (taskParam.gParam.askSubjInfo...
-        && isequal(condition, 'followCannon'))...
-        || (taskParam.gParam.askSubjInfo...
-        && isequal(condition, 'reversal'))
+% save is currently only specified for reversal, chinese and ARC!
+
+if taskParam.gParam.askSubjInfo && ~taskParam.unitTest
     
-    if isequal(taskParam.gParam.taskType, 'dresden')
-        if subject.rew == 1
-            rewName = 'G';
-        elseif subject.rew == 2
-            rewName = 'S';
-        end
-    else
+    if isequal(condition, 'reversal')
+        
         if subject.rew == 1
             rewName = 'B';
         elseif subject.rew == 2
             rewName = 'G';
         end
-    end
-    
-    if ~taskParam.unitTest
-        if (taskParam.gParam.askSubjInfo &&...
-                isequal(condition, 'reversal'))
-            savename = sprintf('ReversalTask_%s_%s',...
-                rewName, subject.ID);
-        elseif  (taskParam.gParam.askSubjInfo &&...
-                isequal(taskParam.gParam.taskType, 'ARC'))
-            savename = sprintf('ARC_cannon%s_%s', subject.session,...
-                subject.ID);
+        
+        savename = sprintf('ReversalTask_%s_%s',...
+            rewName, subject.ID);
+        
+    elseif isequal(condition, 'chinese')
+        
+        savename = sprintf('chinese_%s', subject.ID);
+        
+    elseif isequal(taskParam.gParam.taskType, 'ARC')
+        
+        if taskParam.gParam.showTickmark
+            savename = sprintf('ARC_cannon_TM_%s_s%s', subject.ID,...
+                subject.session);
+        elseif ~taskParam.gParam.showTickmark
+            savename = sprintf('ARC_cannon_NTM_%s_s%s', subject.ID,...
+                subject.session);
         end
         
-        save(savename, 'Data')
     end
     
-elseif (taskParam.gParam.askSubjInfo && isequal(condition, 'chinese'))
-    
-    if ~taskParam.unitTest
-        savename = sprintf('chinese_%s', subject.ID);
-        save(savename, 'Data')
-    end
+    save(savename, 'Data')
     
 end
 

@@ -3934,7 +3934,6 @@ end
                         txt=sprintf(['Du hast die Kanonenkugel '...
                             'aufgesammelt, aber das Schild war %s. '...
                             'Daher hättest du nichts verdient.'],colNoRew);
-                        
                     end
                 else
                     if isequal(whichPractice, 'followOutcomePractice')
@@ -3944,8 +3943,7 @@ end
                     else
                         txt=sprintf(['Du hast die Kanonenkugel '...
                             'aufgesammelt, aber das Schild war %s. '...
-                            'Daher hätten Sie nichts verdient.'],colNoRew);
-                        
+                            'Daher hätten Sie nichts verdient.'],colNoRew); 
                     end
                 end
                 lineAndBack(taskParam)
@@ -4029,7 +4027,7 @@ end
     end
 
     function [screenIndex] = performanceCriterion(screenIndex, practData)
-        whichPractice
+        
         if isequal(whichPractice, 'mainPractice')...
                 || isequal(whichPractice, 'followCannonPractice')...
                 || isequal(whichPractice, 'chinese')
