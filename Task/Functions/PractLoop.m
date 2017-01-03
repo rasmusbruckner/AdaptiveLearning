@@ -101,6 +101,7 @@ end
 leaveLoop = 0;
 for i = 1:trials
     
+    taskParam.gParam.jitter = 0.2;
     WaitSecs(rand*taskParam.gParam.jitter);
     
     if subject.rew == 1 && practData.shieldType(i) == 1

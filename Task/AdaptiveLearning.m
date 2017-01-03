@@ -19,10 +19,10 @@ function Data = adaptiveLearning(unitTest)
 %
 %  Current task conditions:
 %   - shield
-%       - oddballPractice
-%       - oddballPractice_NoOddball
-%       - main
-%       - mainPractice
+%   - oddballPractice
+%   - oddballPractice_NoOddball
+%   - main
+%   - mainPractice
 %   - followOutcome
 %       - followOutcomePractice
 %   - followCannon
@@ -83,13 +83,13 @@ if strcmp(taskType, 'dresden')
 elseif strcmp(taskType, 'oddball')
     
     % trials first session
-    trialsS1      = 50; % 40
+    trialsS1        = 50; % 40
     % trials second session
-    trialsS2S3    = 50; % 240
-    controlTrials = nan;
-    concentration = [10 12 99999999];
-    DataOddball   = nan;
-    textSize      = 30;
+    trialsS2S3      = 50; % 240
+    controlTrials   = nan;
+    concentration   = [10 12 99999999];
+    DataOddball     = nan;
+    textSize        = 30;
     
 elseif strcmp(taskType, 'reversal')
     
@@ -115,17 +115,17 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials              = 2; % 240
-    controlTrials       = nan;
-    concentration       = [8 12 99999999];
-    showTickmark        = false;
-    textSize            = 19;
-    nContexts           = nan;
-    nStates             = nan;
-    contextHaz          = nan;
-    stateHaz            = nan;
-    safeContext         = nan;
-    safeState           = nan;
+    trials          = 4; % 240
+    controlTrials   = nan;
+    concentration   = [8 12 99999999];
+    showTickmark    = true;
+    textSize        = 19;
+    nContexts       = nan;
+    nStates         = nan;
+    contextHaz      = nan;
+    stateHaz        = nan;
+    safeContext     = nan;
+    safeState       = nan;
     
     % Check number of trials
     if  (trials > 1 && mod(trials, 2)) == 1
@@ -135,8 +135,8 @@ elseif strcmp(taskType, 'ARC')
     
 end
 
-% version independent parameters
-runIntro                = false;
+% version independent parametersclear all
+runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
@@ -159,7 +159,7 @@ debug                   = false;
 
 % savedirectory
 if isequal(computer, 'Macbook')
-    cd('/Users/Bruckner/Dropbox/MATLAB/AdaptiveLearning/DataDirectory');
+    cd('~/Dropbox/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
     cd(['C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning'...
         '\\DataDirectory']);
@@ -467,7 +467,7 @@ else
     sentenceLength = 85;
 end
 
-startTime = GetSecs;
+% start time for triggers etc.
 ref = GetSecs;
 
 % general task parameters
@@ -832,7 +832,7 @@ Screen('CloseAll');
             end
             
         end
-        [~, DataOddball] = Main(taskParam, haz(1), concentration(1),...
+        [~, DataOddball] = main(taskParam, haz(1), concentration(1),...
             'oddball', subject);
         
     end
@@ -922,25 +922,23 @@ Screen('CloseAll');
                         
                         ARC_indicateCondition('lowNoise')
                         main(taskParam, haz(3),concentration(1),...
-                            'mainPractice', subject);
+                            'mainPractice_3', subject);
                         
                         ARC_indicateCondition('highNoise')
                         main(taskParam, haz(3),concentration(2),...
-                            'mainPractice', subject);
+                            'mainPractice_3', subject);
                         
                     elseif strcmp(cBal,'2')
                         
                         ARC_indicateCondition('highNoise')
                         main(taskParam, haz(3),concentration(2),...
-                            'mainPractice', subject);
+                            'mainPractice_3', subject);
                         
                         ARC_indicateCondition('lowNoise')
                         main(taskParam, haz(3),concentration(1),...
-                            'mainPractice', subject);
+                            'mainPractice_3', subject);
                         
                     end
-                    
-                    
                     
                     % experimental blocks
                     header = 'Beginning of the experiment';
@@ -1350,7 +1348,7 @@ Screen('CloseAll');
         
     end
 
-sprintf('total time: %.1f minutes', str2mat((GetSecs - startTime)/60))
+sprintf('total time: %.1f minutes', str2mat((GetSecs - ref)/60))
 
 end
 

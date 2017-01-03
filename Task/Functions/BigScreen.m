@@ -34,7 +34,7 @@ while 1
     
     if isequal(taskParam.gParam.computer, 'Dresden')
         Screen('TextSize', taskParam.gParam.window.onScreen, 19);
-    else
+        elseclear al
         Screen('TextSize', taskParam.gParam.window.onScreen, 30);
     end
     
@@ -56,12 +56,17 @@ while 1
     time = GetSecs;
     Screen('Flip', taskParam.gParam.window.onScreen, time + 0.1);
     
-    [ ~, ~, keyCode ] = KbCheck;
-    %keyboard
+    [ ~, ~, keyCode] = KbCheck;
+
     if keyCode(taskParam.keys.enter) && ~taskParam.unitTest
-        fw = 1
+   
+        
+        fw = 1;
         %keyboard
+        
+        
         break
+       
     elseif taskParam.unitTest
         WaitSecs(1);
         break
@@ -70,5 +75,5 @@ end
 %keyboard
 KbReleaseWait();
 
-end
+%end
 

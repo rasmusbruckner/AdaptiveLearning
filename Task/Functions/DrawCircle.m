@@ -1,4 +1,4 @@
-function DrawCircle(taskParam)
+function drawCircle(taskParam)
 % DRAWCIRCLE Draws the circle in the cannon task
 
 rotRad = taskParam.circle.rotationRad;

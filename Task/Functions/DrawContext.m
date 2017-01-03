@@ -1,4 +1,4 @@
-function DrawContext(taskParam, currentContext)
+function drawContext(taskParam, currentContext)
 % DRAWCONTEXT Indicates the current context in the cannon task
 
 rotRad = taskParam.circle.rotationRad;

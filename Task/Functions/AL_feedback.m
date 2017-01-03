@@ -127,7 +127,6 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
 elseif isequal(taskParam.gParam.taskType, 'ARC')
     
     header = 'Performance';
-    condition
     if isequal(condition, 'mainPractice')...
         wouldHave = ' would have ';
     else

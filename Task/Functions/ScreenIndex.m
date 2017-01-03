@@ -1,4 +1,4 @@
-function [screenIndex] = ScreenIndex(taskParam, screenIndex)
+function [screenIndex] = screenIndex(taskParam, screenIndex)
 %SCREENINDEX   Tests whether the participant pressed a button to go 
 %forward
 

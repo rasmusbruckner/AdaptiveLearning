@@ -1,4 +1,4 @@
-function DrawCross(taskParam)
+function drawCross(taskParam)
 %DRAWCROSS   Draws the fixation cross
 
 zero = taskParam.gParam.zero;
