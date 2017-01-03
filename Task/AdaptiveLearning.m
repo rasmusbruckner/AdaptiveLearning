@@ -120,7 +120,7 @@ elseif strcmp(taskType, 'ARC')
     concentration   = [8 12 99999999];
     showTickmark    = true;
     textSize        = 19;
-    nContexts       = nan;
+    nContexts       = 1;
     nStates         = nan;
     contextHaz      = nan;
     stateHaz        = nan;

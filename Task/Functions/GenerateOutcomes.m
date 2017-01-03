@@ -1,7 +1,5 @@
 function taskData = generateOutcomes(taskParam, haz, concentration, condition)
-
-% This funtion generates the outcomes of the cannon task
-% -------------------------------------------------------------------------
+%GENERATEOUTCOMES    generates the outcomes for the different tasks
 
 % -------------------------------------------------------------------------
 % Select number of trials
@@ -9,12 +7,10 @@ function taskData = generateOutcomes(taskParam, haz, concentration, condition)
 
 if isequal(condition, 'main') || isequal(condition, 'oddball') ||...
         isequal(condition, 'reversal') || isequal(condition, 'chinese')
-        
     try
     trials = taskParam.gParam.trials;
     catch
-        keyboard
-        
+        keyboard  
     end
 elseif isequal(condition, 'mainPractice')... 
     || isequal(condition, 'practiceNoOddball')...
@@ -47,59 +43,68 @@ contextTypes = 0;
 % Preallocate variables
 % -------------------------------------------------------------------------
 
-fieldNames = taskParam.fieldNames;
-ID = cell(trials, 1);
-age = zeros(trials, 1);
-sex = cell(trials, 1);
-rew = nan(trials, 1);
-actRew = nan(trials,1);
-Date = cell(trials, 1);
-cond = cell(trials, 1);
-outcome = nan(trials, 1);
-distMean=nan(trials, 1);
-cp = zeros(trials, 1);
-reversal = zeros(trials, 1);
-TAC=nan(trials, 1);
-oddBall = zeros(trials, 1);
-catchTrial = zeros(trials, 1);
-triggers = zeros(trials, 7);
-pred = zeros(trials, 1);
-predErr = nan(trials, 1);
-memErr = zeros(trials, 1);
-UP = zeros(trials, 1);
-hit = zeros(trials, 1);
-cBal = nan(trials, 1);
+%fieldnames          = taskParam.fieldNames;
+ID                      = cell(trials, 1);
+age                     = zeros(trials, 1);
+sex                     = cell(trials, 1);
+rew                     = nan(trials, 1);
+actRew                  = nan(trials,1);
+Date                    = cell(trials, 1);
+cond                    = cell(trials, 1);
+outcome                 = nan(trials, 1);
+distMean                = nan(trials, 1);
+warning('check this')
+%cp                      = zeros(trials, 1);
+reversal                = zeros(trials,1);
+TAC                     = nan(trials,1);
+oddBall                 = zeros(trials,1);
+catchTrial              = zeros(trials,1);
+triggers                = zeros(trials,7);
+pred                    = zeros(trials,1);
+predErr                 = nan(trials,1);
+memErr                  = zeros(trials,1);
+UP                      = zeros(trials,1);
+hit                     = zeros(trials,1);
+cBal                    = nan(trials,1);
+perf                    = zeros(trials,1); 
+accPerf                 = zeros(trials,1); 
+timestampOnset          = nan(trials,1);
+timestampPrediction     = nan(trials,1);
+timestampOffset         = nan(trials,1);
+initiationRT            = nan(trials,1);
+RT                      = nan(trials,1);
+initialTendency         = nan(trials,1);
+block                   = nan(trials,1);
+actJitter               = nan(trials,1);
+allASS                  = zeros(trials,1);
+currentContext          = nan(trials,1);
+hiddenContext           = nan(trials,1);
+latentState             = nan(trials,1);
+TAC_Context             = nan(trials,1);
+TAC_State               = nan(trials,1);
+sContext                = nan;
+sState                  = nan;
 if isequal(condition,'shield')
-    s=taskParam.gParam.safe(2);
+    s                   = taskParam.gParam.safe(2);
 else
-    s=taskParam.gParam.safe(1);
+    s                   = taskParam.gParam.safe(1);
 end
-perf = zeros(trials, 1); 
-accPerf = zeros(trials, 1); 
-timestampOnset = nan(trials,1);
-timestampPrediction = nan(trials,1);
-timestampOffset = nan(trials, 1);
-initiationRT = nan(trials,1);
-RT = nan(trials,1);
-initialTendency = nan(trials,1);
-block = nan(trials,1);
-actJitter = nan(trials,1);
-a = clock;
-rand('twister', a(6).*10000);
-%% in hauptskript verschieben
-mu = 15;
-minASS = 10;
-maxASS = 180;
-allASS = zeros(trials,1);
-
-currentContext = nan(trials,1);
-hiddenContext = nan(trials,1);
-
+mu                      = 15;
+minASS                  = 10;
+maxASS                  = 180;
+nContexts               = taskParam.gParam.nContexts;
+cp                      = zeros(trials, nContexts);
+nStates                 = taskParam.gParam.nStates;
+contextHaz              = taskParam.gParam.contextHaz;
+stateHaz                = taskParam.gParam.stateHaz;
+safeContext             = taskParam.gParam.safeContext;
+safeState               = taskParam.gParam.safeState;
 % -------------------------------------------------------------------------
-% Generate outcomes for current condition
+% Generate outcomes for CP condition
 % -------------------------------------------------------------------------
 
-if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
+if isequal(condition, 'main') ||...
+        isequal(condition, 'followOutcome') ||...
         isequal(condition, 'mainPractice') ||...
         isequal(condition, 'followCannon') ||...
         isequal(condition, 'shield') ||...
@@ -162,6 +167,10 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') ||...
     end
         latentState(i) = 0;
     
+% -------------------------------------------------------------------------
+% Generate outcomes for Oddball condition
+% -------------------------------------------------------------------------
+        
 elseif isequal(condition, 'oddball')...
         || isequal(condition, 'practiceNoOddball')...
         || isequal(condition, 'practiceOddball')
@@ -243,6 +252,11 @@ elseif isequal(condition, 'oddball')...
         allASS(i)=ASS.*2;
     end
     
+    
+% -------------------------------------------------------------------------
+% Generate outcomes for reversal condition
+% -------------------------------------------------------------------------
+    
 elseif isequal(condition, 'reversal')...
         || isequal(condition, 'reversalPractice')...
         || isequal(condition, 'reversalPracticeNoise')...
@@ -317,31 +331,28 @@ elseif isequal(condition, 'reversal')...
         allASS(i) = ASS;
     end
     
+% -------------------------------------------------------------------------
+% Generate outcomes for Chinese condition
+% -------------------------------------------------------------------------
+    
 elseif isequal(condition, 'chinese') ||...
        isequal(condition, 'chinesePractice') ||...
        isequal(condition, 'chineseLastPractice') ||...
        isequal(condition, 'chinesePracticeNoise') ||...
        isequal(condition, 'chinesePracticeStateSpace')
-    
-        %% nContexts
-        % contextHaz = 1/nContexts;
-        % sContext = 3
-        %keyboard
-        nContexts = taskParam.gParam.nContexts;% 1;
-        nStates = taskParam.gParam.nStates;%3;
-        contextHaz = taskParam.gParam.contextHaz;%0.5;%1/nContexts;
-        stateHaz = taskParam.gParam.stateHaz;% 0.5;
-        safeContext =  taskParam.gParam.safeContext;% 0;
-        safeState = taskParam.gParam.safeState;%;0;
-        sContext = nan;
-        sState = nan;
-        %contextMean = nan(trials, nContexts);
-        %firstVisit = zeros(trials,1);
-        cp = zeros(trials, nContexts);
+       warning('checken')
+%        nContexts = taskParam.gParam.nContexts;% 1;
+%         nStates = taskParam.gParam.nStates;%3;
+%         contextHaz = taskParam.gParam.contextHaz;%0.5;%1/nContexts;
+%         stateHaz = taskParam.gParam.stateHaz;% 0.5;
+%         safeContext =  taskParam.gParam.safeContext;% 0;
+%         safeState = taskParam.gParam.safeState;%;0;
+%         sContext = nan;
+%         sState = nan;
+%         cp = zeros(trials, nContexts);
     
     for i = 1:trials
         
-        %% überlegen wie viele Blöcke wir wollen
         if i >= taskParam.gParam.blockIndices(1)...
                 && i < taskParam.gParam.blockIndices(2)
             block(i) = 1;
@@ -359,36 +370,10 @@ elseif isequal(condition, 'chinese') ||...
                 || i == taskParam.gParam.blockIndices(2)...
                 || i == taskParam.gParam.blockIndices(3)...
                 || i == taskParam.gParam.blockIndices(4)
-            
-            %% alte version
-%             x = randi(3);
-%             if x == 1
-%                 
-%                 contextTypes = [1 1 1]; % all equal
-%                 
-%             elseif x == 2 
-%                 
-%                 contextTypes = [1 1 2]; % two equal, one distinct
-%                 
-%                 % shuffle that we get differences between blocks
-%                 contextTypes = Shuffle(contextTypes);
-%                 
-%             elseif x == 3
-%                 
-%                 contextTypes = [1 2 3]; % all distinct
-%                 
-%             end
-            %% neue version
-            
-            % determine state space
-            % row = latent state
-            % column = color
+           
             stateSpace = randi(360,3,3);
             
-            
-            
         end
-        %keyboard
         
         % determine latent state
         if (rand < stateHaz && sState == 0)...
@@ -396,108 +381,44 @@ elseif isequal(condition, 'chinese') ||...
                 || i == taskParam.gParam.blockIndices(2) + 1 ...
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
                 || i == taskParam.gParam.blockIndices(4) + 1 
-          
-              
-            latentState(i) = randi(nContexts); % observierbarer kontext
-            
-            stateCp(i) = 1;
+
+            latentState(i) = randi(nContexts); 
+            %stateCp(i) = 1;
             sState = safeState;
-            TAC_State(i) = 0; %TAC(i)=1;
+            TAC_State(i) = 0; 
         else
             TAC_State(i) = TAC_State(i-1) + 1;
             sState = max([sState-1, 0]);
             latentState(i) = latentState(i-1);
         end
         
-        
-        
-        
-        %keyboard
         % determine current context 
         if (rand < contextHaz && sContext == 0)...
                 || i == taskParam.gParam.blockIndices(1)...
                 || i == taskParam.gParam.blockIndices(2) + 1 ...
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
                 || i == taskParam.gParam.blockIndices(4) + 1 
-            %keyboard
-            currentContext(i) = randi(nStates); % observierbarer kontext
-            %hiddenContext(i) = contextTypes(currentContext(i));
-%             if hiddenContext(i) == 1
-%                 keyboard
-%             end
+           
+            currentContext(i) = randi(nStates); 
             
-            contextCp(i) = 1;
+            %contextCp(i) = 1;
             sContext = safeContext;
-            TAC_Context(i) = 0; %TAC(i)=1;
+            TAC_Context(i) = 0; 
         else
             TAC_Context(i) = TAC_Context(i-1) + 1;
             sContext = max([sContext-1, 0]);
             currentContext(i) = currentContext(i-1);
-            %hiddenContext(i) = hiddenContext(i-1);
         end
         
-        %if sum(currentContext == currentContext(i)) == 1
-%         if sum(hiddenContext == hiddenContext(i)) == 1
-%             firstVisit(i) = 1;
-%         end
-        
-         %sameButDifferent(i) = contextTypes(currentContext(i)); % ist das gleich hidden context?
-%         
-%          if (rand < haz && s==0)...
-%                 || i == taskParam.gParam.blockIndices(1)...
-%                 || i == taskParam.gParam.blockIndices(2) + 1 ...
-%                 || i == taskParam.gParam.blockIndices(3) + 1 ...
-%                 || i == taskParam.gParam.blockIndices(4) + 1 ...
-%                 || firstVisit(i) == 1
-%             %mean = randi(359);%round(rand(1).*359); 
-%             
-%             %sameButDifferent(i) = contextTypes(currentContext(i));
-%             
-%             %cp(i,currentContext(i)) = 1;
-% %             try
-% %             cp(i,contextTypes == hiddenContext(i)) = 1;
-% %             catch
-% %                 
-% %                 keyboard
-% %                 
-% %             end
-% %             %keyboard
-%             %contextMean(i,cp(i,:) == 1) = randi(359);
-%             %contextMean(i,contextTypes == hiddenContext(i)) = randi(359);
-%             %keyboard
-%             %if i > 1
-%             %    contextMean(i,cp(i,:) == 0) = contextMean(i-1,cp(i,:) == 0);
-%             %end
-%             
-%             if isequal(condition,'shield')
-%                 s=taskParam.gParam.safe(2);
-%             else
-%                 s=taskParam.gParam.safe(1);
-%             end
-%             
-%            % keyboard
-%             %TAC_Chinese(i,contextTypes == hiddenContext(i)) = 0; %TAC(i)=1;
-%            
-%             %TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = nan;
-%         else
-%             TAC_Chinese(i,contextTypes == hiddenContext(i)) = TAC_Chinese(i-1,contextTypes == hiddenContext(i)) + 1;
-%             TAC_Chinese(i,contextTypes ~= hiddenContext(i)) = TAC_Chinese(i-1,contextTypes ~= hiddenContext(i));
-% 
-%             s=max([s-1, 0]);
-%             contextMean(i,:) = contextMean(i-1,:);
-%         end
-        
         outcome(i) =...
-            round(180+rad2deg(circ_vmrnd(deg2rad(stateSpace(latentState(i), currentContext(i))-180),...
+            round(180+rad2deg(circ_vmrnd(deg2rad(...
+            stateSpace(latentState(i), currentContext(i))-180),...
             concentration, 1)));
-        
-       
-        
+
         distMean(i) = stateSpace(latentState(i), currentContext(i));
         
         oddBall(i) = nan;
         
-        %CatchTrial
         if rand <= .10 && cp(i) == 0;
             catchTrial(i) = 1;
         else
@@ -513,12 +434,9 @@ elseif isequal(condition, 'chinese') ||...
     
 end
 
-%if trials > 1
-%    shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
-%else
+warning('does this work with other versions?')
 shieldType = ones(trials,1); %always reward
-%end
-%keyboard
+
 %% Save data
 taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     block, fieldNames.initiationRTs, initiationRT, ...
