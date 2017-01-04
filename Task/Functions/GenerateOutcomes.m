@@ -20,8 +20,8 @@ elseif isequal(condition, 'mainPractice')...
     || isequal(condition, 'reversalPractice')...
     || isequal(condition, 'reversalPracticeNoise')...
     || isequal(condition, 'reversalPracticeNoiseInv2')...
-    || isequal(condition, 'chinesePractice')...
-    || isequal(condition, 'chinesePracticeNoise') 
+    || isequal(condition, 'chinesePractice_1')...
+    || isequal(condition, 'chinesePractice_2') 
         
     trials = taskParam.gParam.practTrials;
 elseif isequal(condition, 'shield')
@@ -33,8 +33,8 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
     trials = 4;
 elseif isequal(condition, 'reversalPracticeNoiseInv3')
     trials = taskParam.gParam.practTrials * 2;
-elseif isequal(condition, 'chineseLastPractice')...
-        || isequal(condition, 'chinesePracticeStateSpace')
+elseif isequal(condition, 'chinesePractice_4')...
+        || isequal(condition, 'chinesePractice_3')
     trials = taskParam.gParam.chinesePractTrials;
 end
 contextTypes = 0;
@@ -43,7 +43,7 @@ contextTypes = 0;
 % Preallocate variables
 % -------------------------------------------------------------------------
 
-%fieldnames          = taskParam.fieldNames;
+fieldNames              = taskParam.fieldNames;
 ID                      = cell(trials, 1);
 age                     = zeros(trials, 1);
 sex                     = cell(trials, 1);
@@ -82,6 +82,8 @@ hiddenContext           = nan(trials,1);
 latentState             = nan(trials,1);
 TAC_Context             = nan(trials,1);
 TAC_State               = nan(trials,1);
+savedTickmark           = nan(trials,1);
+savedTickmarkPrevious   = nan(trials,1);
 sContext                = nan;
 sState                  = nan;
 if isequal(condition,'shield')
@@ -139,7 +141,7 @@ if isequal(condition, 'main') ||...
                 s=taskParam.gParam.safe(1);
             end
             
-            TAC(i)=0; %TAC(i)=1;
+            TAC(i)=0;
         else
             TAC(i)=TAC(i-1)+1;
             s=max([s-1, 0]);
@@ -152,14 +154,13 @@ if isequal(condition, 'main') ||...
         oddBall(i) = nan;
         
         %CatchTrial
-        
         if rand <= .10 && cp(i) == 0;
             catchTrial(i) = 1;
         else
             catchTrial(i) = 0;
         end
-        ASS=nan;
         
+        ASS=nan;
         while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
             ASS=exprnd(mu);
         end
@@ -184,8 +185,8 @@ elseif isequal(condition, 'oddball')...
         driftConc = taskParam.gParam.driftConc(1);
     end
     
-    s = 0;
-    mu=10; % for ODDBALL = 10
+    s  = 0;
+    mu = 10; % for ODDBALL = 10
     
     for i=1:trials
         
@@ -336,10 +337,10 @@ elseif isequal(condition, 'reversal')...
 % -------------------------------------------------------------------------
     
 elseif isequal(condition, 'chinese') ||...
-       isequal(condition, 'chinesePractice') ||...
-       isequal(condition, 'chineseLastPractice') ||...
-       isequal(condition, 'chinesePracticeNoise') ||...
-       isequal(condition, 'chinesePracticeStateSpace')
+       isequal(condition, 'chinesePractice_1') ||...
+       isequal(condition, 'chinesePractice_4') ||...
+       isequal(condition, 'chinesePractice_2') ||...
+       isequal(condition, 'chinesePractice_3')
        warning('checken')
 %        nContexts = taskParam.gParam.nContexts;% 1;
 %         nStates = taskParam.gParam.nStates;%3;
@@ -435,7 +436,15 @@ elseif isequal(condition, 'chinese') ||...
 end
 
 warning('does this work with other versions?')
-shieldType = ones(trials,1); %always reward
+if isequal(taskParam.gParam.taskType, 'ARC') ||...
+        isequal(taskParam.gParam.taskType, 'chinese')
+
+        shieldType = ones(trials,1); %always reward
+else
+    %keyboard
+    warning('ShieldType nicht spezifiziert')
+    
+end
 
 %% Save data
 taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
@@ -456,5 +465,6 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     {Date},'reversal', reversal, 'initialTendency', initialTendency,...
     'RT', RT, 'currentContext', currentContext,...
     'hiddenContext', hiddenContext, 'contextTypes', contextTypes,...
-    'latentState', latentState);
+    'latentState', latentState, 'savedTickmark', savedTickmark,...
+    'savedTickmarkPrevious', savedTickmarkPrevious);
 end

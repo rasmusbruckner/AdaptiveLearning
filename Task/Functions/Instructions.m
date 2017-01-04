@@ -2089,7 +2089,7 @@ end
                     
                 case 2
                     
-                    condition = 'chinesePractice';
+                    condition = 'chinesePractice_1';
                     %LoadData = 'CP_NoNoise';
                     
                     taskParam.gParam.nContexts = 1;
@@ -2099,30 +2099,31 @@ end
 %                         taskParam.gParam.concentration(3),...
 %                         cannon, condition);
                     % added this (02.01.17) to get rid of practLoop
-                    [taskParam, practData] =  main(taskParam,...
+                   % keyboard
+                    [taskData, Data] =  main(taskParam,...
                         taskParam.gParam.haz(1),...
                         taskParam.gParam.concentration(3),...
                             condition, subject);
                     
-                    [txt, header] = AL_feedback(practData, taskParam,...
-                        subject, condition);
-                    feedback = true;
-                    fw = bigScreen(taskParam,...
-                        taskParam.strings.txtPressEnter,...
-                        header, txt, feedback);
+%                     [txt, header] = AL_feedback(practData, taskParam,...
+%                         subject, condition);
+%                     feedback = true;
+%                     fw = bigScreen(taskParam,...
+%                         taskParam.strings.txtPressEnter,...
+%                         header, txt, feedback);
                     
-                    if fw == 1
+                   % if fw == 1
                         screenIndex = screenIndex + 1;
-                    elseif bw == 1
-                        screenIndex = screenIndex - 1;
-                    end
+                    %elseif bw == 1
+                     %   screenIndex = screenIndex - 1;
+                    %end
                     WaitSecs(0.1);
                     
                 case 3
                     
                     %screenIndex = performanceCriterion...
                     %    (screenIndex, practData);
-                    sumCannonDev = sum(abs(practData.cannonDev) >= 10);
+                    sumCannonDev = sum(abs(taskData.cannonDev) >= 10);
                     
                     if sumCannonDev >= 4
                         
@@ -2180,7 +2181,8 @@ end
                     
                 case 4
                      
-                    condition = 'chinesePracticeNoise';
+                    %condition = 'chinesePracticeNoise';
+                    condition = 'chinesePractice_2';
                     %LoadData = 'reversalVisibleNoise';
                     taskParam.gParam.nContexts = 1;
                     taskParam.gParam.nStates = 2;
@@ -2191,24 +2193,26 @@ end
 %                         condition);
 
                     % added this (02.01.17) to get rid of practLoop
-                    [taskParam, practData] =  main(taskParam,...
+                    [taskData, Data] =  main(taskParam,...
                         taskParam.gParam.haz(1),...
-                        taskParam.gParam.concentration(3),...
+                        taskParam.gParam.concentration(1),...
                             condition, subject);
                     
-                    [txt, header] = AL_feedback(practData, taskParam,...
-                        subject, condition);
-                    feedback = true;
-                    fw = bigScreen(taskParam,...
-                        taskParam.strings.txtPressEnter, header,...
-                        txt,feedback);
-                    sumCannonDev = sum(abs(practData.cannonDev) >= 10);
-                    if fw == 1
+%                     [txt, header] = AL_feedback(practData, taskParam,...
+%                         subject, condition);
+%                     feedback = true;
+%                     fw = bigScreen(taskParam,...
+%                         taskParam.strings.txtPressEnter, header,...
+%                         txt,feedback);
+                    %sumCannonDev = sum(abs(taskData.memErr) >= 10);
+                    sumCannonDev = sum(abs(taskData.cannonDev) >= 10);
+
+                    %if fw == 1
                         
                         screenIndex = screenIndex + 1;
                         
                         
-                    end
+                    %end
                     WaitSecs(0.1);
                     
                 case 5
@@ -2273,7 +2277,9 @@ end
                     WaitSecs(0.1);
                     
                 case 6
-                    condition = 'chinesePracticeStateSpace';
+                    %condition = 'chinesePracticeStateSpace';
+                    condition = 'chinesePractice_3';
+
                     %LoadData = 'reversalNotVisibleNoise';
                     
                     cannon = true;
@@ -2285,23 +2291,23 @@ end
 %                         taskParam.gParam.concentration(1),...
 %                         cannon, condition);
                     % added this (02.01.17) to get rid of practLoop
-                    [taskParam, practData] =  main(taskParam,...
+                    [taskData, Data] =  main(taskParam,...
                         taskParam.gParam.haz(1),...
-                        taskParam.gParam.concentration(3),...
+                        taskParam.gParam.concentration(1),...
                             condition, subject);
                     
-                    [txt, header] = AL_feedback(practData,...
-                        taskParam, subject, condition);
-                    feedback = true;
-                    fw = bigScreen(taskParam, ...
-                        taskParam.strings.txtPressEnter,...
-                        header, txt, feedback);
-                    sumCannonDev = sum(abs(practData.cannonDev) >= 10);
+%                     [txt, header] = AL_feedback(practData,...
+%                         taskParam, subject, condition);
+%                     feedback = true;
+%                     fw = bigScreen(taskParam, ...
+%                         taskParam.strings.txtPressEnter,...
+%                         header, txt, feedback);
+                    sumCannonDev = sum(abs(taskData.cannonDev) >= 10);
                     
                     
-                    if fw == 1
+                    %if fw == 1
                         screenIndex = screenIndex + 1;
-                    end
+                    %end
                     WaitSecs(0.1);
                     
                 case 7
@@ -3172,7 +3178,7 @@ end
         lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            DrawContext(taskParam, currentContext)
+            drawContext(taskParam, currentContext)
         end
         drawCross(taskParam)
         drawCircle(taskParam)
@@ -3275,7 +3281,7 @@ end
         drawCircle(taskParam);
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            DrawContext(taskParam, currentContext)
+            drawContext(taskParam, currentContext)
         end
         drawCross(taskParam);
         predictionSpot(taskParam);
@@ -3287,7 +3293,7 @@ end
         lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            DrawContext(taskParam, currentContext)
+            drawContext(taskParam, currentContext)
         end
         drawCross(taskParam)
         drawCircle(taskParam)
@@ -3300,7 +3306,7 @@ end
             drawCircle(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
-                DrawContext(taskParam, currentContext)
+                drawContext(taskParam, currentContext)
                 drawCross(taskParam);
             end
             if (subject.rew == 1 && win) || (subject.rew == 2 && ~win)
@@ -3343,7 +3349,7 @@ end
         lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            DrawContext(taskParam, currentContext)
+            drawContext(taskParam, currentContext)
             drawCross(taskParam);
         end
         drawCross(taskParam)
@@ -3402,7 +3408,7 @@ end
                
                 if isequal(taskParam.gParam.taskType, 'chinese')
                     currentContext = 1;
-                    DrawContext(taskParam, currentContext)
+                    drawContext(taskParam, currentContext)
                     
                 end
                 drawCross(taskParam);
@@ -3451,7 +3457,7 @@ end
             drawCircle(taskParam);
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
-                DrawContext(taskParam, currentContext)
+                drawContext(taskParam, currentContext)
                 drawCross(taskParam);
             end
             drawCross(taskParam);
@@ -3476,7 +3482,7 @@ end
         lineAndBack(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            DrawContext(taskParam, currentContext)
+            drawContext(taskParam, currentContext)
             drawCross(taskParam);
         end
         drawCross(taskParam)
@@ -3488,7 +3494,7 @@ end
             lineAndBack(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese')
                 currentContext = 1;
-                DrawContext(taskParam, currentContext)
+                drawContext(taskParam, currentContext)
                 drawCross(taskParam);
             end
             drawCannon(taskParam, distMean, 0)

@@ -153,7 +153,7 @@ else
 
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            DrawContext(taskParam, currentContext)
+            drawContext(taskParam, currentContext)
         end
         
         drawCircle(taskParam)

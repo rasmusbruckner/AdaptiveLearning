@@ -61,7 +61,7 @@ computer = 'Macbook';
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
-taskType = 'ARC';
+taskType = 'chinese';
 
 % version specific parameters
 if strcmp(taskType, 'dresden')
@@ -93,32 +93,32 @@ elseif strcmp(taskType, 'oddball')
     
 elseif strcmp(taskType, 'reversal')
     
-    trials          = 20;
-    controlTrials   = nan;
-    concentration   = [10 12 99999999];
-    DataOddball     = nan;
-    textSize        = 19;
+    trials              = 20;
+    controlTrials       = nan;
+    concentration       = [10 12 99999999];
+    DataOddball         = nan;
+    textSize            = 19;
     
 elseif strcmp(taskType, 'chinese')
     
-    trials          = 5; % 400
-    controlTrials   = nan;
-    nContexts       = 2; % planets
-    nStates         = 2; % enemies
-    contextHaz      = 1;
-    stateHaz        = 0.15;
-    safeContext     = 0;
-    safeState       = 0;
-    concentration   = [12 12 99999999];
-    DataOddball     = nan;
-    textSize        = 19;
+    warning('irgendwas mit trial zahl stimmt noch nicht')
+    trials              = 2; % 400
+    controlTrials       = nan;
+    nContexts           = 2; % planets
+    nStates             = 2; % enemies
+    contextHaz          = 1;
+    stateHaz            = 0.15;
+    safeContext         = 0;
+    safeState           = 0;
+    concentration       = [12 12 99999999];
+    DataOddball         = nan;
+    textSize            = 19;
     
 elseif strcmp(taskType, 'ARC')
     
     trials          = 4; % 240
     controlTrials   = nan;
     concentration   = [8 12 99999999];
-    showTickmark    = true;
     textSize        = 19;
     nContexts       = 1;
     nStates         = nan;
@@ -140,9 +140,10 @@ runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
+showTickmark            = true;
 shieldTrials            = 1; % 4
-practTrials             = 1; % 20 in reversal muliplied by 2!
-chinesePractTrials      = 5; % 200
+practTrials             = 2; % 20 in reversal muliplied by 2!
+chinesePractTrials      = 2; % 200
 blockIndices            = [1 101 201 301];
 haz                     = [.25 1 0];
 oddballProb             = [.25 0];
@@ -242,8 +243,10 @@ elseif askSubjInfo == true
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'oddball')...
             defaultanswer = {'99999','99', '1', 'm', cBal, reward};
-    elseif strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
+    elseif strcmp(taskType, 'reversal') 
         defaultanswer = {'99999','99', 'm', reward};
+    elseif strcmp(taskType, 'chinese')
+        defaultanswer = {'99999','99', 'm', 1};
     elseif strcmp(taskType, 'ARC')
         defaultanswer = {'99999','99', '1', 'm', cBal};
     end
@@ -1137,8 +1140,8 @@ Screen('CloseAll');
         if runIntro && ~unitTest
             
             instructions(taskParam, 'chinese', subject);
-            Data = Main(taskParam, haz(1), concentration(1),...
-                'chineseLastPractice', subject);
+            Data = main(taskParam, haz(1), concentration(1),...
+                'chinesePractice_4', subject);
             header = 'Anfang der Aufgabe';
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Du '...
                 'kannst jetzt echtes Geld in Abhängigkeit von deiner '...
@@ -1157,12 +1160,12 @@ Screen('CloseAll');
                 'an dieser Stelle positionieren.\n\n'...
                 'Wenn du noch Fragen hast, wende dich bitte jetzt an den Versuchsleiter.'];
             feedback = false;
-            BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
             
         end
         
-        [~, DataChinese] = Main(taskParam, haz(1), concentration(1),...
+        [~, DataChinese] = main(taskParam, haz(1), concentration(1),...
             'chinese', subject);
         
     end
