@@ -61,7 +61,7 @@ computer = 'Macbook';
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
-taskType = 'chinese';
+taskType = 'reversal';
 
 % version specific parameters
 if strcmp(taskType, 'dresden')
@@ -93,26 +93,32 @@ elseif strcmp(taskType, 'oddball')
     
 elseif strcmp(taskType, 'reversal')
     
-    trials              = 20;
-    controlTrials       = nan;
-    concentration       = [10 12 99999999];
-    DataOddball         = nan;
-    textSize            = 19;
+    trials          = 20;
+    controlTrials   = nan;
+    concentration   = [10 12 99999999];
+    nContexts       = 1;
+    nStates         = nan;
+    contextHaz      = nan;
+    stateHaz        = nan;
+    safeContext     = nan;
+    safeState       = nan;
+    DataOddball     = nan;
+    textSize        = 19;
     
 elseif strcmp(taskType, 'chinese')
     
     warning('irgendwas mit trial zahl stimmt noch nicht')
-    trials              = 2; % 400
-    controlTrials       = nan;
-    nContexts           = 2; % planets
-    nStates             = 2; % enemies
-    contextHaz          = 1;
-    stateHaz            = 0.15;
-    safeContext         = 0;
-    safeState           = 0;
-    concentration       = [12 12 99999999];
-    DataOddball         = nan;
-    textSize            = 19;
+    trials          = 2; % 400
+    controlTrials   = nan;
+    nContexts       = 2; % planets
+    nStates         = 2; % enemies
+    contextHaz      = 1;
+    stateHaz        = 0.15;
+    safeContext     = 0;
+    safeState       = 0;
+    concentration   = [12 12 99999999];
+    DataOddball     = nan;
+    textSize        = 19;
     
 elseif strcmp(taskType, 'ARC')
     
@@ -207,14 +213,15 @@ if askSubjInfo == false
 elseif askSubjInfo == true
     
     if strcmp(taskType, 'dresden')
-        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal', 'Reward'};
+        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal:', 'Reward:'};
     elseif strcmp(taskType, 'oddball')
-        prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal', 'Reward'};
+        prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal:', 'Reward:'};
     elseif isequal(taskType, 'reversal')...
-            || isequal(taskType, 'chinese')
+        prompt = {'ID:','Age:', 'Sex:','Reward:'};
+    elseif isequal(taskType, 'chinese')
         prompt = {'ID:','Age:', 'Sex:'};
     elseif strcmp(taskType, 'ARC')
-        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal'};
+        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal:'};
     end
     
     name = 'SubjInfo';
@@ -228,6 +235,9 @@ elseif askSubjInfo == true
             reward = num2str(round(unifrnd(1,2)));
         elseif strcmp(taskType, 'oddball')
             cBal = num2str(round(unifrnd(1,2)));
+            reward = num2str(round(unifrnd(1,2)));
+        elseif strcmp(taskType, 'reversal')
+            cBal = nan;
             reward = num2str(round(unifrnd(1,2)));
         elseif strcmp(taskType, 'ARC')
             cBal = num2str(round(unifrnd(1,2)));
@@ -341,8 +351,7 @@ elseif askSubjInfo == true
             return
         end
     elseif strcmp(taskType, 'reversal')
-        if subjInfo{4} ~= '1'...
-                && subjInfo{4} ~= '2'
+        if subjInfo{4} ~= '1' && subjInfo{4} ~= '2'
             msgbox('Reward: 1 or 2?');
             return
         end

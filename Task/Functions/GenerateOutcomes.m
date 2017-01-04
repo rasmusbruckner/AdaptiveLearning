@@ -443,7 +443,7 @@ if isequal(taskParam.gParam.taskType, 'ARC') ||...
 else
     %keyboard
     warning('ShieldType nicht spezifiziert')
-    
+    shieldType = ones(trials,1);
 end
 
 %% Save data
