@@ -1,4 +1,4 @@
-function [taskParam, fw, Data, savedTickmark] = instrLoopTxt...
+function [taskParam, fw, Data, savedTickmark] = al_instrLoopTxt...
     (taskParam, txt, cannon, button, distMean, tickInstruction, Data)
 %INSTRLOOPTXT   Participant is able to perform parts of the task
 %while seeing instructions on the screen
@@ -37,27 +37,27 @@ if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
         ~isequal(taskParam.gParam.taskType, 'ARC')
    
     while 1    
-        lineAndBack(taskParam)
+        al_lineAndBack(taskParam)
         sentenceLength = taskParam.gParam.sentenceLength;
         DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
             taskParam.gParam.screensize(3)*0.1,...
             taskParam.gParam.screensize(4)*0.05, [255 255 255],...
             sentenceLength);
         if cannon == true   
-            drawCannon(taskParam, distMean);
+            al_drawCannon(taskParam, distMean);
         end
         
-        drawCircle(taskParam)
-        predictionSpot(taskParam)
+        al_drawCircle(taskParam)
+        al_predictionSpot(taskParam)
 
         if Data.tickMark == true
             
             TickMark(taskParam, Data.outcome(end), 'outc')
             TickMark(taskParam, Data.pred(end), 'pred')
         end
-        drawCross(taskParam)
+        al_drawCross(taskParam)
         
-        aim(taskParam, Data.distMean)
+        al_aim(taskParam, Data.distMean)
         
         if isequal(button, 'arrow')
             txtPressEnter='Zurück mit Löschen - Weiter mit Enter';
@@ -144,7 +144,7 @@ else
         
         taskParam.circle.rotAngle = degree * taskParam.circle.unit;
         
-        lineAndBack(taskParam)
+        al_lineAndBack(taskParam)
         sentenceLength = taskParam.gParam.sentenceLength;
         DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
             taskParam.gParam.screensize(3)*0.1,...
@@ -156,15 +156,14 @@ else
             drawContext(taskParam, currentContext)
         end
         
-        drawCircle(taskParam)
-        drawCross(taskParam)
+        al_drawCircle(taskParam)
+        al_drawCross(taskParam)
         if isnan(tickInstruction.savedTickmark)
-            aim(taskParam, Data.distMean)
+            al_aim(taskParam, Data.distMean)
         end
         
         if cannon == true
-            
-            drawCannon(taskParam, distMean, 0)
+            al_drawCannon(taskParam, distMean, 0)
         end
         
         if isequal(button, 'arrow')
@@ -175,16 +174,16 @@ else
         hyp = sqrt(x^2 + y^2);
         
         if hyp <= 150
-            predictionSpotReversal(taskParam, x ,y*-1)
+            al_predictionSpotReversal(taskParam, x ,y*-1)
         else
-            predictionSpot(taskParam)
+            al_predictionSpot(taskParam)
         end
         
         if buttons(2) == 1 
             
             savedTickmark(i) = ((taskParam.circle.rotAngle) /...
                 taskParam.circle.unit);
-            Data.tickCannonDev = Diff(distMean, savedTickmark);
+            Data.tickCannonDev = al_diff(distMean, savedTickmark);
             
             WaitSecs(0.2);
             press = 1;
@@ -218,7 +217,7 @@ else
     
 end
 
-Data.predErr = Diff(distMean, Data.pred);
-Data.memErr = Diff(Data.outcome, Data.pred);
+Data.predErr = al_diff(distMean, Data.pred);
+Data.memErr = al_diff(Data.outcome, Data.pred);
 
 end

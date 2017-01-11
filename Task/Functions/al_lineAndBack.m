@@ -1,4 +1,4 @@
-function lineAndBack(taskParam)
+function al_lineAndBack(taskParam)
 %LINEANDBACK   Draws background for intructions in the cannon task
 
 if ~isequal(taskParam.gParam.taskType, 'chinese')

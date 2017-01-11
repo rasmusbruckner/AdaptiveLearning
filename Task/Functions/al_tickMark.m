@@ -1,4 +1,4 @@
-function tickMark(taskParam, parameter, type)
+function al_tickMark(taskParam, parameter, type)
 %TICKMARK   Draws the tickmark in the cannon task
 
 if isequal(type, 'pred')

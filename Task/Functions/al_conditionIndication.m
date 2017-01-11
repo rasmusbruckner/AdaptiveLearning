@@ -1,4 +1,4 @@
-function conditionIndication(taskParam, txtNoise, txtPressEnter)
+function al_conditionIndication(taskParam, txtNoise, txtPressEnter)
 %CONDITIONINDICATION displays the current task condition
 
 DrawFormattedText(taskParam.gParam.window, txtNoise, 'center','center',...

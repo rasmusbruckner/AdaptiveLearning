@@ -1,4 +1,4 @@
-function predictionSpot(taskParam)
+function al_predictionSpot(taskParam)
 %PREDICTIONSPOT   Prints the prediction spot
 
 xPredS = ((taskParam.circle.rotationRad-5)...

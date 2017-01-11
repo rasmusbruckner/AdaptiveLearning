@@ -1,4 +1,4 @@
-function aim(taskParam, parameter)
+function al_aim(taskParam, parameter)
 %AIM   Prints the aim (as a needle) of the cannon
 
 if ~isequal(taskParam.gParam.taskType, 'chinese')

@@ -35,7 +35,7 @@ function Data = adaptiveLearning(unitTest)
 %       - followCannonPractice
 %
 %   Written by RB
-%   Version 12/2016
+%   Version 01/2016
 
 
 if nargin == 0
@@ -61,7 +61,7 @@ computer = 'Macbook';
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
-taskType = 'reversal';
+taskType = 'ARC';
 
 % version specific parameters
 if strcmp(taskType, 'dresden')
@@ -147,7 +147,7 @@ askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
 showTickmark            = true;
-shieldTrials            = 1; % 4
+shieldTrials            = 2; % 4
 practTrials             = 2; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 blockIndices            = [1 101 201 301];
@@ -819,7 +819,7 @@ Screen('CloseAll');
             
             if isequal(subject.session, '1')
                 
-                Instructions(taskParam, 'oddballPractice', subject);
+                al_instructions(taskParam, 'oddballPractice', subject);
                 
             elseif isequal(subject.session, '2') ||...
                     isequal(subject.session, '3')
@@ -838,13 +838,13 @@ Screen('CloseAll');
                     'but still have to infer its aim in order to catch '...
                     'balls and earn money.'];
                 feedback = false;
-                BigScreen(taskParam, txtPressEnter, header,...
+                al_bigScreen(taskParam, txtPressEnter, header,...
                     txtStartTask, feedback);
                 
             end
             
         end
-        [~, DataOddball] = main(taskParam, haz(1), concentration(1),...
+        [~, DataOddball] = al_mainLoop(taskParam, haz(1), concentration(1),...
             'oddball', subject);
         
     end
@@ -887,11 +887,11 @@ Screen('CloseAll');
                     
                 end
                 
-                instructions(taskParam, 'mainPractice', subject);
-                Main(taskParam, haz(3), concentration(1),...
+                al_instructions(taskParam, 'mainPractice', subject);
+                al_mainLoop(taskParam, haz(3), concentration(1),...
                     'mainPractice', subject);
                 feedback = false;
-                BigScreen(taskParam, txtPressEnter, header,...
+                al_bigScreen(taskParam, txtPressEnter, header,...
                     txtStartTask, feedback);
                 
             elseif strcmp(taskType, 'oddball')
@@ -912,7 +912,7 @@ Screen('CloseAll');
                         'have to infer its aim in order to catch balls and '...
                         'earn money.'];
                     feedback = false;
-                    bigScreen(taskParam, txtPressEnter, header, txt, feedback);
+                    al_bigScreen(taskParam, txtPressEnter, header, txt, feedback);
                     
                 elseif isequal(subject.session, '2') ||...
                         isequal(subject.session, '3')
@@ -928,26 +928,26 @@ Screen('CloseAll');
                 
                 if strcmp(subject.session,'1')
                     
-                    instructions(taskParam, 'mainPractice', subject)
+                    al_instructions(taskParam, 'mainPractice', subject)
                     
                     if strcmp(cBal,'1')
                         
                         ARC_indicateCondition('lowNoise')
-                        main(taskParam, haz(3),concentration(1),...
+                        al_mainLoop(taskParam, haz(3),concentration(1),...
                             'mainPractice_3', subject);
                         
                         ARC_indicateCondition('highNoise')
-                        main(taskParam, haz(3),concentration(2),...
+                        al_mainLoop(taskParam, haz(3),concentration(2),...
                             'mainPractice_3', subject);
                         
                     elseif strcmp(cBal,'2')
                         
                         ARC_indicateCondition('highNoise')
-                        main(taskParam, haz(3),concentration(2),...
+                        al_mainLoop(taskParam, haz(3),concentration(2),...
                             'mainPractice_3', subject);
                         
                         ARC_indicateCondition('lowNoise')
-                        main(taskParam, haz(3),concentration(1),...
+                        al_mainLoop(taskParam, haz(3),concentration(1),...
                             'mainPractice_3', subject);
                         
                     end
@@ -969,7 +969,7 @@ Screen('CloseAll');
                         'earn money.'];
                     
                     feedback = false;
-                    bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                    al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                         feedback);
                     
                     if strcmp(cBal,'1')
@@ -1013,7 +1013,7 @@ Screen('CloseAll');
             
         end
         
-        [~, DataMain] = main(taskParam, haz(1), currentConcentration,...
+        [~, DataMain] = al_mainLoop(taskParam, haz(1), currentConcentration,...
             'main', subject);
         
     end
@@ -1048,11 +1048,11 @@ Screen('CloseAll');
                 
             end
             
-            instructions(taskParam, 'followOutcomePractice', subject)
-            Main(taskParam, haz(3),concentration(1),...
+            al_instructions(taskParam, 'followOutcomePractice', subject)
+            al_mainLoop(taskParam, haz(3),concentration(1),...
                 'followOutcomePractice', subject);
             feedback = false;
-            BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
             
         else
@@ -1063,7 +1063,7 @@ Screen('CloseAll');
             
         end
         
-        [~, DataFollowOutcome] = Main(taskParam, haz(1),...
+        [~, DataFollowOutcome] = al_mainLoop(taskParam, haz(1),...
             concentration(1), 'followOutcome', subject);
         
     end
@@ -1090,11 +1090,11 @@ Screen('CloseAll');
                     'Kanone sehen.\n\nViel Erfolg!'];
             end
             
-            instructions(taskParam, 'followCannonPractice', subject)
-            Main(taskParam, haz(3),concentration(1),...
+            al_instructions(taskParam, 'followCannonPractice', subject)
+            al_mainLoop(taskParam, haz(3),concentration(1),...
                 'followCannonPractice', subject);
             feedback = false;
-            BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
             
         else
@@ -1105,7 +1105,7 @@ Screen('CloseAll');
             
         end
         
-        [~, DataFollowCannon] = Main(taskParam, haz(1),...
+        [~, DataFollowCannon] = al_mainLoop(taskParam, haz(1),...
             concentration(1), 'followCannon', subject);
         
     end
@@ -1115,8 +1115,8 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            instructions(taskParam, 'reversal', subject);
-            Data = Main(taskParam, haz(1), concentration(1),...
+            al_instructions(taskParam, 'reversal', subject);
+            Data = al_mainLoop(taskParam, haz(1), concentration(1),...
                 'reversalPractice', subject);
             
             header = 'Beginning of the Task';
@@ -1133,12 +1133,12 @@ Screen('CloseAll');
                 'see the cannon, but have to infer its aim in order '...
                 'to catch balls and earn money.'];
             feedback = false;
-            BigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
             
         end
         
-        [~, DataReversal] = Main(taskParam, haz(1), concentration(1),...
+        [~, DataReversal] = al_mainLoop(taskParam, haz(1), concentration(1),...
             'reversal', subject);
         
     end
@@ -1148,8 +1148,8 @@ Screen('CloseAll');
         
         if runIntro && ~unitTest
             
-            instructions(taskParam, 'chinese', subject);
-            Data = main(taskParam, haz(1), concentration(1),...
+            al_instructions(taskParam, 'chinese', subject);
+            Data = al_mainLoop(taskParam, haz(1), concentration(1),...
                 'chinesePractice_4', subject);
             header = 'Anfang der Aufgabe';
             txtStartTask = ['Du hast die Übungsphase abgeschlossen. Du '...
@@ -1169,12 +1169,12 @@ Screen('CloseAll');
                 'an dieser Stelle positionieren.\n\n'...
                 'Wenn du noch Fragen hast, wende dich bitte jetzt an den Versuchsleiter.'];
             feedback = false;
-            bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                 feedback);
             
         end
         
-        [~, DataChinese] = main(taskParam, haz(1), concentration(1),...
+        [~, DataChinese] = al_mainLoop(taskParam, haz(1), concentration(1),...
             'chinese', subject);
         
     end
@@ -1295,7 +1295,7 @@ Screen('CloseAll');
         end
         
         feedback = false;
-        bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+        al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
             feedback);
         
     end

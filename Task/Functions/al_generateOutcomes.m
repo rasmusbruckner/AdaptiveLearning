@@ -1,4 +1,4 @@
-function taskData = generateOutcomes(taskParam, haz, concentration, condition)
+function taskData = al_generateOutcomes(taskParam, haz, concentration, condition)
 %GENERATEOUTCOMES    generates the outcomes for the different tasks
 
 % -------------------------------------------------------------------------
@@ -435,7 +435,7 @@ elseif isequal(condition, 'chinese') ||...
     
 end
 
-warning('does this work with other versions?')
+
 if isequal(taskParam.gParam.taskType, 'ARC') ||...
         isequal(taskParam.gParam.taskType, 'chinese')
 
@@ -443,7 +443,7 @@ if isequal(taskParam.gParam.taskType, 'ARC') ||...
 else
     %keyboard
     warning('ShieldType nicht spezifiziert')
-    shieldType = ones(trials,1);
+    shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 end
 
 %% Save data

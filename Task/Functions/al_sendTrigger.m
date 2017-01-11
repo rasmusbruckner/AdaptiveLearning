@@ -1,4 +1,4 @@
-function trigger = sendTrigger(taskParam, taskData, condition, ~, trial, Tevent)
+function trigger = al_sendTrigger(taskParam, taskData, condition, ~, trial, Tevent)
 % This function sends the EEG triggers.
 % 12.05.15: komische triggererfahrung: wenn man mit brown version triggert
 % kann man in while schleife triggern und es wird nur einer gesendet

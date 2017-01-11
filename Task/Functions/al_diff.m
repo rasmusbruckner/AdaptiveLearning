@@ -1,4 +1,4 @@
-function diff = Diff(parameter1, parameter2)
+function diff = al_diff(parameter1, parameter2)
 %DIFF   Calculates the difference of two variables on a circle
 %   DIFF is used to compute prediction error, memory error
 %   or update in the cannon task

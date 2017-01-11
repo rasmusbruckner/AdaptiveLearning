@@ -1,4 +1,4 @@
-function predictionSpotReversal(taskParam, xPredS,yPredS)
+function al_predictionSpotReversal(taskParam, xPredS,yPredS)
 
 
 taskParam.circle.predCentSpotRect;

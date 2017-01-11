@@ -1,4 +1,4 @@
-function fw = bigScreen(taskParam, txtPressEnter, header, txt, feedback)
+function fw = al_bigScreen(taskParam, txtPressEnter, header, txt, feedback)
 %BIGSCREEN   Draws background during the instructions
 %   output: fw = participant pressed "go forward to next slide"
 

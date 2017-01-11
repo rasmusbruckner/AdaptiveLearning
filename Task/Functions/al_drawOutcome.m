@@ -1,4 +1,4 @@
-function drawOutcome(taskParam, outcome)
+function al_drawOutcome(taskParam, outcome)
 %DRAWOUTCOME Prints the outcome spot
 
 xPredS = ((taskParam.circle.rotationRad-5)...

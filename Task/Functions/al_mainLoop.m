@@ -1,4 +1,4 @@
-function [taskData, Data] = main(taskParam, haz, concentration, condition, subject)
+function [taskData, Data] = al_mainLoop(taskParam, haz, concentration, condition, subject)
 %MAIN   Runs the experimental part of the cannon task. You can specify
 %"main", "practice" or "control". This loop is optimized for triggering
 %accuracy
@@ -119,7 +119,7 @@ elseif ~taskParam.unitTest
         taskData.initialTendency = nan(trial,1);
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
-        %savedTickmark(1) = nan;
+        taskData.savedTickmark(1) = nan;
         % savedTickmarkPrevious(1) = nan;
         taskData.reversal = nan(length(trial),1);
         taskData.currentContext = nan(length(trial),1);
@@ -161,7 +161,7 @@ elseif ~taskParam.unitTest
         
     elseif isequal(condition, 'shield')
         
-        taskData = generateOutcomes(taskParam, haz, concentration, condition);
+        taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
         taskParam.condition = condition;
         trial = taskData.trial;
         taskData.initialTendency = nan(trial,1);
@@ -178,7 +178,7 @@ elseif ~taskParam.unitTest
         else
             trial = taskParam.gParam.trials;
         end
-        taskData = generateOutcomes...
+        taskData = al_generateOutcomes...
             (taskParam, haz, concentration, condition);
         %savedTickmark(1) = nan;
         %savedTickmarkPrevious(1) = nan;
@@ -186,7 +186,7 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'chinesePractice_4')
         
         trial = taskParam.gParam.chinesePractTrials;
-        taskData = generateOutcomes...
+        taskData = al_generateOutcomes...
             (taskParam, haz, concentration, condition);
         %savedTickmark(1) = nan;
         %savedTickmarkPrevious(1) = nan;
@@ -194,7 +194,7 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'chinese') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
         
         trial = taskParam.gParam.trials;
-        taskData = generateOutcomes...
+        taskData = al_generateOutcomes...
             (taskParam, haz, concentration, condition);
         %savedTickmark(1) = nan;
         %savedTickmarkPrevious(1) = nan;
@@ -202,7 +202,7 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'main') 
         
         trial = taskParam.gParam.trials;
-        taskData = generateOutcomes...
+        taskData = al_generateOutcomes...
             (taskParam, haz, concentration, condition);
         %savedTickmark(1) = nan;
         %savedTickmarkPrevious(1) = nan;
@@ -247,7 +247,7 @@ for i = 1:trial
             header = ' ';
         end
         
-        BigScreen(taskParam, taskParam.strings.txtPressEnter,...
+        al_bigScreen(taskParam, taskParam.strings.txtPressEnter,...
             header, txt, true);
         
         KbReleaseWait();
@@ -288,7 +288,7 @@ for i = 1:trial
     initRT_Timestamp = GetSecs();
     
     % send trial onset trigger
-    taskData.triggers(i,1) = sendTrigger...
+    taskData.triggers(i,1) = al_sendTrigger...
         (taskParam, taskData, condition, haz, i, 1);
     taskData.timestampOnset(i,:) = GetSecs - ref;
     
@@ -305,14 +305,14 @@ for i = 1:trial
             
             while 1
                 
-                drawCircle(taskParam)
+                al_drawCircle(taskParam)
                 if isequal(taskParam.gParam.taskType, 'chinese')
                     drawContext(taskParam, taskData.currentContext(i))
-                    drawCross(taskParam)
+                    al_drawCross(taskParam)
                     
                 end
-                drawCross(taskParam)
-                predictionSpot(taskParam)
+                al_drawCross(taskParam)
+                al_predictionSpot(taskParam)
                 
                 if i ~= taskParam.gParam.blockIndices(1)...
                         && i ~= taskParam.gParam.blockIndices(2) + 1 ...
@@ -320,11 +320,11 @@ for i = 1:trial
                         && i ~= taskParam.gParam.blockIndices(4) + 1 ...
                         && ~isequal(taskParam.gParam.taskType, 'chinese')
                     
-                    tickMark(taskParam, taskData.outcome(i-1), 'outc')
-                    tickMark(taskParam, taskData.pred(i-1), 'pred')
+                    al_tickMark(taskParam, taskData.outcome(i-1), 'outc')
+                    al_tickMark(taskParam, taskData.pred(i-1), 'pred')
                     if isequal(taskParam.gParam.taskType, 'reversal') ||...
                             isequal(taskParam.gParam.taskType, 'reversalPractice')
-                        tickMark(taskParam, taskParam.savedTickmark(i-1), 'saved')
+                        al_tickMark(taskParam, taskParam.savedTickmark(i-1), 'saved')
                     end
                     
                 end
@@ -341,7 +341,7 @@ for i = 1:trial
                         || isequal(condition, 'chinesePractice_3')
                     
                     Cannon(taskParam, taskData.distMean(i))
-                    Aim(taskParam, taskData.distMean(i))
+                    al_aim(taskParam, taskData.distMean(i))
                 elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
                         isequal(taskParam.gParam.taskType, 'reversalPractice')
                     
@@ -456,10 +456,10 @@ for i = 1:trial
                 
                 taskParam.circle.rotAngle = degree * taskParam.circle.unit;
                 
-                drawCircle(taskParam)
+                al_drawCircle(taskParam)
                 if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
                     drawContext(taskParam,taskData.currentContext(i))
-                    drawCross(taskParam)
+                    al_drawCross(taskParam)
                 elseif isequal(condition,'shield') ||...
                         isequal(condition, 'mainPractice_1') ||...
                         isequal(condition, 'mainPractice_2') ||...
@@ -469,19 +469,19 @@ for i = 1:trial
                     
                     if isequal(taskParam.gParam.taskType, 'chinese')
                         drawContext(taskParam,taskData.currentContext(i))
-                        drawCross(taskParam)
+                        al_drawCross(taskParam)
                     end
-                    drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
-                    aim(taskParam, taskData.distMean(i))
+                    al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
+                    al_aim(taskParam, taskData.distMean(i))
                 else
-                    drawCross(taskParam)
+                    al_drawCross(taskParam)
                 end
                 
                 hyp = sqrt(x^2 + y^2);
                 if hyp <= 150
-                    predictionSpotReversal(taskParam, x ,y*-1)
+                    al_predictionSpotReversal(taskParam, x ,y*-1)
                 else
-                    predictionSpot(taskParam)
+                    al_predictionSpot(taskParam)
                 end
                 
                 if hyp >= taskParam.circle.tendencyThreshold &&...
@@ -525,16 +525,16 @@ for i = 1:trial
                         if ~isequal(taskParam.gParam.taskType, 'chinese')
                             
                         %else
-                            tickMark(taskParam, taskData.outcome(i-1), 'outc');
-                            tickMark(taskParam, taskData.pred(i-1), 'pred');
+                            al_tickMark(taskParam, taskData.outcome(i-1), 'outc');
+                            al_tickMark(taskParam, taskData.pred(i-1), 'pred');
                         end
                         
                         if ~isequal(taskParam.gParam.taskType, 'chinese')
                             if press == 1
-                                tickMark(taskParam, taskData.savedTickmarkPrevious(i),...
+                                al_tickMark(taskParam, taskData.savedTickmarkPrevious(i),...
                                     'update');
                             end
-                            tickMark(taskParam, taskData.savedTickmark(i), 'saved');
+                            al_tickMark(taskParam, taskData.savedTickmark(i), 'saved');
                         end
                         
                     end
@@ -569,25 +569,25 @@ for i = 1:trial
         
         taskParam.circle.rotAngle = ...
             taskData.pred(i) * taskParam.circle.unit;
-        drawCircle(taskParam)
+        al_drawCircle(taskParam)
         
         if isequal(taskParam.gParam.taskType, 'chinese')
             drawContext(taskParam,taskData.currentContext(i))
-            drawCross(taskParam)
+            al_drawCross(taskParam)
         end
-        drawCross(taskParam)
-        predictionSpot(taskParam)
+        al_drawCross(taskParam)
+        al_predictionSpot(taskParam)
         
         if ~isequal(taskParam.gParam.taskType, 'chinese')
             if i ~= taskParam.gParam.blockIndices(1) && i ~=...
                     taskParam.gParam.blockIndices(2) + 1 && i ~=...
                     taskParam.gParam.blockIndices(3) + 1 && i ~=...
                     taskParam.gParam.blockIndices(4) + 1
-                tickMark(taskParam, taskData.outcome(i-1), 'outc')
-                tickMark(taskParam, taskData.pred(i-1), 'pred')
+                al_tickMark(taskParam, taskData.outcome(i-1), 'outc')
+                al_tickMark(taskParam, taskData.pred(i-1), 'pred')
                 if isequal(taskData.gParam.taskType, 'reversal') ||...
                         isequal(taskParam.gParam.taskType, 'reversalPractice')
-                    tickMark(taskParam, taskData.savedTickmark(i), 'saved')
+                    al_tickMark(taskParam, taskData.savedTickmark(i), 'saved')
                 end
             end
         end
@@ -597,7 +597,7 @@ for i = 1:trial
                 || isequal(condition,'followCannon') ...
                 || isequal(condition,'followCannonPractice')
             Cannon(taskParam, taskData.distMean(i))
-            Aim(taskParam, taskData.distMean(i))
+            al_aim(taskParam, taskData.distMean(i))
         end
         Screen('DrawingFinished', taskParam.gParam.window.onScreen);
         t = GetSecs;
@@ -619,11 +619,11 @@ for i = 1:trial
     
     if ~isequal(condition, 'shield') && ~isequal(condition, 'mainPractice_1') && ~isequal(condition, 'mainPractice_2') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
         
-        drawCross(taskParam)
-        drawCircle(taskParam)
+        al_drawCross(taskParam)
+        al_drawCircle(taskParam)
         if isequal(taskParam.gParam.taskType, 'chinese')
             drawContext(taskParam,taskData.currentContext(i))
-            drawCross(taskParam)
+            al_drawCross(taskParam)
         end
         
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
@@ -633,11 +633,9 @@ for i = 1:trial
         
         % send fixation cross 1 trigger
         taskData.triggers(i,2) = ...
-            sendTrigger(taskParam, taskData, condition, haz, i, 2);
+            al_sendTrigger(taskParam, taskData, condition, haz, i, 2);
         taskData.timestampPrediction(i,:) = GetSecs - ref;
         
-        % unnecessary?
-        %RT_Flip(i) = GetSecs-time;
     end
     
     % ---------------------------------------------------------------------
@@ -645,10 +643,10 @@ for i = 1:trial
     %----------------------------------------------------------------------
     
     % deviation from cannon to compute performance criterion in practice
-    taskData.cannonDev(i) = Diff(taskData.distMean(i), taskData.pred(i)); 
+    taskData.cannonDev(i) = al_diff(taskData.distMean(i), taskData.pred(i)); 
     
     % predError and memory error
-    taskData.predErr(i) = Diff(taskData.outcome(i), taskData.pred(i));
+    taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
     if isequal(condition,'main')...
             || isequal(condition,'mainPractice_3')...
             || isequal(condition, 'followCannon')...
@@ -661,7 +659,7 @@ for i = 1:trial
         taskData.memErrMin(i) = 999;
     else
         if i > 1
-            taskData.memErr(i) = Diff(taskData.pred(i),...
+            taskData.memErr(i) = al_diff(taskData.pred(i),...
                 taskData.outcome(i-1));
         else
             taskData.memErr(i) = 999;
@@ -701,31 +699,33 @@ for i = 1:trial
     taskData.accPerf(i) = sum(taskData.perf);
     
     if i > 1
-        taskData.UP(i) = Diff(taskData.pred(i), taskData.pred(i-1));
+        taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
-    drawCircle(taskParam)
+    al_drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        drawContext(taskParam,taskData.currentContext(i))
-        drawCross(taskParam)
+        al_drawContext(taskParam,taskData.currentContext(i))
+        al_drawCross(taskParam)
     end
     
-    tUpdated = tUpdated + fixCrossLength;
+    %tUpdated = tUpdated + fixCrossLength;
     
     if isequal(condition, 'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
         
         background = false;
-        cannonball(taskParam, taskData.distMean(i),...
+        al_cannonball(taskParam, taskData.distMean(i),...
             taskData.outcome(i), background, taskData.currentContext(i),...
             taskData.latentState(i))
+        waitingTime = 0.2;
+        WaitSecs(waitingTime)
         
+       tUpdated = tUpdated + fixCrossLength + waitingTime;
+      % tUpdated = tUpdated + fixCrossLength;
     else
         
-        predictionSpot(taskParam)
-        drawOutcome(taskParam, taskData.outcome(i))
+        al_predictionSpot(taskParam)
+        al_drawOutcome(taskParam, taskData.outcome(i))
         
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-        
-        
         
         %Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
         tUpdated = tUpdated + fixCrossLength;
@@ -735,18 +735,18 @@ for i = 1:trial
     
     % send outcome 1 trigger
     taskData.triggers(i,3) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 3);
+        al_sendTrigger(taskParam, taskData, condition, haz, i, 3);
     
     
     %% --------------------------------------------------------------------
     % Fixation cross 2
     %----------------------------------------------------------------------
     
-    drawCross(taskParam)
-    drawCircle(taskParam)
+    al_drawCross(taskParam)
+    al_drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        drawContext(taskParam, taskData.currentContext(i))
-        drawCross(taskParam)
+        al_drawContext(taskParam, taskData.currentContext(i))
+        al_drawCross(taskParam)
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     %Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
@@ -755,27 +755,27 @@ for i = 1:trial
     
     % send fixation cross 2 trigger
     taskData.triggers(i,4) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 4);
+        al_sendTrigger(taskParam, taskData, condition, haz, i, 4);
     
     %% --------------------------------------------------------------------
     % Outcome 2
     %----------------------------------------------------------------------
     
-    drawCircle(taskParam)
+    al_drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        drawContext(taskParam, taskData.currentContext(i))
-        drawCross(taskParam)
+        al_drawContext(taskParam, taskData.currentContext(i))
+        al_drawCross(taskParam)
     end
-    shield(taskParam, taskData.allASS(i),...
+    al_shield(taskParam, taskData.allASS(i),...
         taskData.pred(i), taskData.shieldType(i))
     
     if isequal(condition,'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
-        drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
+        al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
     else
-        drawCross(taskParam)
+        al_drawCross(taskParam)
     end
     
-    drawOutcome(taskParam, taskData.outcome(i))
+    al_drawOutcome(taskParam, taskData.outcome(i))
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
     %Screen('Flip', taskParam.gParam.window.onScreen, t + 2.1);
@@ -785,18 +785,18 @@ for i = 1:trial
     
     % send outcome 2 trigger
     taskData.triggers(i,5) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 5);
+        al_sendTrigger(taskParam, taskData, condition, haz, i, 5);
     %WaitSecs(.5);
     
     %% --------------------------------------------------------------------
     % Fixation cross 3
     %----------------------------------------------------------------------
     
-    drawCross(taskParam)
-    drawCircle(taskParam)
+    al_drawCross(taskParam)
+    al_drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        drawContext(taskParam,taskData.currentContext(i))
-        drawCross(taskParam)
+        al_drawContext(taskParam,taskData.currentContext(i))
+        al_drawCross(taskParam)
     end
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     
@@ -806,13 +806,13 @@ for i = 1:trial
     
     % send fixation cross 3 trigger
     taskData.triggers(i,6) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 6);
+        al_sendTrigger(taskParam, taskData, condition, haz, i, 6);
     %WaitSecs();
     WaitSecs(fixedITI / 2)
     
     % send trial summary trigger
     taskData.triggers(i,7) = ...
-        sendTrigger(taskParam, taskData, condition, haz, i, 16);
+        al_sendTrigger(taskParam, taskData, condition, haz, i, 16);
     
     %WaitSecs(.5);
     WaitSecs(fixedITI / 2)
@@ -854,11 +854,11 @@ if ~isequal(condition,'shield')
     elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
             isequal(taskParam.gParam.taskType, 'reversalPractice') ||...
             isequal(taskParam.gParam.taskType, 'ARC')
-        [txt, header] = AL_feedback(taskData, taskParam, subject, condition);
+        [txt, header] = al_feedback(taskData, taskParam, subject, condition);
         
     end
     
-    bigScreen(taskParam, taskParam.strings.txtPressEnter,...
+    al_bigScreen(taskParam, taskParam.strings.txtPressEnter,...
         header, txt, true);
     
     

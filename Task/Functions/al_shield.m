@@ -1,4 +1,4 @@
-function shield(taskParam, allASS, pred, color)
+function al_shield(taskParam, allASS, pred, color)
 %SHIELD   Draws the shield in the cannon task
 
 

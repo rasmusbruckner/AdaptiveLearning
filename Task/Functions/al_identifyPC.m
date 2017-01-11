@@ -1,4 +1,4 @@
-function [computer, Computer2] = identifyPC()
+function [computer, Computer2] = al_identifyPC()
 %IDENTIFYPC   Identifies the computer the task is running on by checking
 %the software identifier of its network card.
 

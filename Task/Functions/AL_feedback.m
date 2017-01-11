@@ -1,4 +1,4 @@
-function [txt, header] = AL_feedback(Data, taskParam, subject, condition, whichBlock)
+function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichBlock)
 %AL_FEEDBACK   Displays feedback at the end of a block
 
 if ~exist('whichBlock', 'var')
