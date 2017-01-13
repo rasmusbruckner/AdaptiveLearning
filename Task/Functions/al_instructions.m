@@ -1003,15 +1003,15 @@ end
                         
                     end
                     
-%                     feedback = false;
-%                     fw = al_bigScreen(taskParam,...
-%                         taskParam.strings.txtPressEnter,...
-%                         header, txt, feedback);
-                    %if fw == 1
+                    feedback = false;
+                    fw = al_bigScreen(taskParam,...
+                        taskParam.strings.txtPressEnter,...
+                        header, txt, feedback);
+                    if fw == 1
                         screenIndex = screenIndex + 1;
                     %elseif bw == 1
                     %    screenIndex = screenIndex - 3;
-                    %end
+                    end
                     
                     
                     WaitSecs(0.1);
@@ -1039,19 +1039,19 @@ end
                             condition, subject);
                     
                     
-                    [txt, header] = al_feedback(taskData,...
-                        taskParam, subject, condition);
-                    
-                    feedback = true;
-                    fw = al_bigScreen(taskParam,...
-                        taskParam.strings.txtPressEnter,...
-                        header, txt, feedback);
-                    
-                    if fw == 1
+%                     [txt, header] = al_feedback(taskData,...
+%                         taskParam, subject, condition);
+%                     
+%                     feedback = true;
+%                     fw = al_bigScreen(taskParam,...
+%                         taskParam.strings.txtPressEnter,...
+%                         header, txt, feedback);
+%                     
+%                     if fw == 1
                         screenIndex = screenIndex + 1;
-                    elseif bw == 1
-                        screenIndex = screenIndex - 1;
-                    end
+                   % elseif bw == 1
+                        %screenIndex = screenIndex - 1;
+                    %end
                     WaitSecs(0.1);
                     
                 case 3
@@ -4169,7 +4169,8 @@ end
                     end
                 end
                 
-            elseif isequal(taskParam.gParam.taskType, 'oddball')
+            elseif isequal(taskParam.gParam.taskType, 'oddball') ||...
+                    isequal(taskParam.gParam.taskType, 'ARC')
                 header = 'Try it again!';
                 txt = ['In that block your shield was not always '...
                     'placed where the cannon was aiming. Remember: '...

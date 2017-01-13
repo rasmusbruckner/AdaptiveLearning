@@ -1,8 +1,6 @@
 function al_shield(taskParam, allASS, pred, color)
-%SHIELD   Draws the shield in the cannon task
+%AL_SHIELD   Draws the shield in the cannon task
 
-
-%if taskParam.gParam.oddball == false
 if isequal(taskParam.gParam.taskType, 'dresden')
     if color == 1
         shieldColor = taskParam.colors.gold;

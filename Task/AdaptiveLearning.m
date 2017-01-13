@@ -122,7 +122,7 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 4; % 240
+    trials          = 10; % 240
     controlTrials   = nan;
     concentration   = [8 12 99999999];
     textSize        = 19;
@@ -141,14 +141,14 @@ elseif strcmp(taskType, 'ARC')
     
 end
 
-% version independent parametersclear all
+% version independent parameters
 runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
 showTickmark            = true;
-shieldTrials            = 2; % 4
-practTrials             = 2; % 20 in reversal muliplied by 2!
+shieldTrials            = 4; % 4
+practTrials             = 10; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 blockIndices            = [1 101 201 301];
 haz                     = [.25 1 0];
@@ -241,7 +241,7 @@ elseif askSubjInfo == true
             reward = num2str(round(unifrnd(1,2)));
         elseif strcmp(taskType, 'ARC')
             cBal = num2str(round(unifrnd(1,2)));
-            reward = 1;
+            reward = '1';
         end
         
     else
@@ -272,7 +272,7 @@ elseif askSubjInfo == true
         subjInfo{5} = '1'; % group
         subjInfo{6} = date;
     elseif strcmp(taskType, 'ARC')
-        subjInfo{6} = 1;
+        subjInfo{6} = reward;
         subjInfo{7} = date;
     end
     

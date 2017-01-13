@@ -8,7 +8,7 @@ end
 % compute hits etc.
 hits = sum(Data.hit(whichBlock == 1));
 rewTrials = sum(Data.actRew(whichBlock == 1));
-noRewTrials = sum(Data.actRew(whichBlock == 2));
+noRewTrials = sum(Data.actRew(whichBlock == 1));
 rewCatches = round(max(Data.accPerf(whichBlock))/taskParam.gParam.rewMag);
 noRewCatches = hits - rewCatches;
 maxMon = (length(find(Data.shieldType(whichBlock == 1)))...
@@ -127,16 +127,18 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
 elseif isequal(taskParam.gParam.taskType, 'ARC')
     
     header = 'Performance';
-    if isequal(condition, 'mainPractice')...
+    if isequal(condition, 'mainPractice_1') ||...
+            isequal(condition, 'mainPractice_2') ||...
+            isequal(condition, 'mainPractice_3') 
         wouldHave = ' would have ';
     else
         wouldHave = ' ';
     end
     
     txt = sprintf(['Catches: %.0f of '...
-        '%.0f\n\nIn this block you%searned %.2f of '...
-        'possible $ %.2f.'], hits, length(whichBlock),...
-        wouldHave, max(Data.accPerf), hits*taskParam.gParam.rewMag);
+        '%.0f\n\nIn this block you%searned £%.2f of '...
+        'possible £%.2f.'], hits, length(whichBlock),...
+        wouldHave, max(Data.accPerf), maxMon);
     
 end
 

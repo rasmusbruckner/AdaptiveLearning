@@ -142,6 +142,7 @@ elseif ~taskParam.unitTest
         taskData.hiddenContext = nan(20,1);
         taskData.contextTypes = nan(20,1);
         taskData.latentState = nan(20,1);
+        taskData.shieldType = ones(20,1);
         
     elseif isequal(condition, 'mainPractice_2')
         
@@ -158,7 +159,8 @@ elseif ~taskParam.unitTest
         taskData.hiddenContext = nan(20,1);
         taskData.contextTypes = nan(20,1);
         taskData.latentState = nan(20,1);
-        
+        taskData.shieldType = ones(20,1);
+
     elseif isequal(condition, 'shield')
         
         taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
@@ -517,7 +519,7 @@ for i = 1:trial
                 end
                 
                 % manage tickmarks
-                if taskParam.gParam.showTickmark == true && ~isequal(condition,'shield') && ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
+                if taskParam.gParam.showTickmark == true && ~isequal(condition,'shield') %&& ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
                     if i ~= taskParam.gParam.blockIndices(1)...
                             && i ~= taskParam.gParam.blockIndices(2) + 1 ...
                             && i ~= taskParam.gParam.blockIndices(3) + 1 ...
@@ -613,7 +615,7 @@ for i = 1:trial
     %% --------------------------------------------------------------------
     % Fixation cross 1
     %----------------------------------------------------------------------
-    
+    %keyboard
     t = GetSecs;
     tUpdated = t + 0.1;
     
@@ -659,8 +661,12 @@ for i = 1:trial
         taskData.memErrMin(i) = 999;
     else
         if i > 1
-            taskData.memErr(i) = al_diff(taskData.pred(i),...
-                taskData.outcome(i-1));
+            warning('adjust this')
+%             taskData.memErr(i) = al_diff(taskData.pred(i),...
+%                 taskData.outcome(i-1));
+              taskData.memErr(i) = al_diff(taskData.pred(i),...
+                 taskData.distMean(i));
+
         else
             taskData.memErr(i) = 999;
         end
@@ -716,7 +722,7 @@ for i = 1:trial
             taskData.outcome(i), background, taskData.currentContext(i),...
             taskData.latentState(i))
         waitingTime = 0.2;
-        WaitSecs(waitingTime)
+        WaitSecs(waitingTime);
         
        tUpdated = tUpdated + fixCrossLength + waitingTime;
       % tUpdated = tUpdated + fixCrossLength;
@@ -768,7 +774,7 @@ for i = 1:trial
     end
     al_shield(taskParam, taskData.allASS(i),...
         taskData.pred(i), taskData.shieldType(i))
-    
+
     if isequal(condition,'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
         al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
     else
@@ -808,14 +814,14 @@ for i = 1:trial
     taskData.triggers(i,6) = ...
         al_sendTrigger(taskParam, taskData, condition, haz, i, 6);
     %WaitSecs();
-    WaitSecs(fixedITI / 2)
+    WaitSecs(fixedITI / 2);
     
     % send trial summary trigger
     taskData.triggers(i,7) = ...
         al_sendTrigger(taskParam, taskData, condition, haz, i, 16);
     
     %WaitSecs(.5);
-    WaitSecs(fixedITI / 2)
+    WaitSecs(fixedITI / 2);
     taskData.timestampOffset(i,:) = GetSecs - ref;
 end
 
@@ -838,7 +844,6 @@ if ~isequal(condition,'shield')
             header = 'Ergebnis';
         end
         
-        
     elseif isequal(taskParam.gParam.taskType, 'oddball')
         
         if isequal(condition, 'oddballPractice')
@@ -854,6 +859,7 @@ if ~isequal(condition,'shield')
     elseif isequal(taskParam.gParam.taskType, 'reversal') ||...
             isequal(taskParam.gParam.taskType, 'reversalPractice') ||...
             isequal(taskParam.gParam.taskType, 'ARC')
+
         [txt, header] = al_feedback(taskData, taskParam, subject, condition);
         
     end
@@ -938,4 +944,5 @@ if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 's
     
 end
 
+KbReleaseWait();
 end
