@@ -35,7 +35,7 @@ function Data = adaptiveLearning(unitTest)
 %       - followCannonPractice
 %
 %   Written by RB
-%   Version 01/2016
+%   Version 02/2017
 
 
 if nargin == 0
@@ -122,7 +122,7 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 10; % 240
+    trials          = 2; % 240
     controlTrials   = nan;
     concentration   = [8 12 99999999];
     textSize        = 19;
@@ -146,9 +146,9 @@ runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
-showTickmark            = true;
+%showTickmark            = true; now linked to cBal
 shieldTrials            = 4; % 4
-practTrials             = 10; % 20 in reversal muliplied by 2!
+practTrials             = 2; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 blockIndices            = [1 101 201 301];
 haz                     = [.25 1 0];
@@ -217,11 +217,13 @@ elseif askSubjInfo == true
     elseif strcmp(taskType, 'oddball')
         prompt = {'ID:','Age:', 'Session:', 'Sex:', 'cBal:', 'Reward:'};
     elseif isequal(taskType, 'reversal')...
-        prompt = {'ID:','Age:', 'Sex:','Reward:'};
+            prompt = {'ID:','Age:', 'Sex:','Reward:'};
     elseif isequal(taskType, 'chinese')
         prompt = {'ID:','Age:', 'Sex:'};
     elseif strcmp(taskType, 'ARC')
-        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal:'};
+        %prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal:'};
+        prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal:', 'day:'};
+        
     end
     
     name = 'SubjInfo';
@@ -231,34 +233,36 @@ elseif askSubjInfo == true
     if randomize
         
         if strcmp(taskType, 'dresden')
-            cBal = num2str(round(unifrnd(1,6)));
-            reward = num2str(round(unifrnd(1,2)));
+            cBal = num2str(randi(6));
+            reward = num2str(randi(2));
         elseif strcmp(taskType, 'oddball')
-            cBal = num2str(round(unifrnd(1,2)));
-            reward = num2str(round(unifrnd(1,2)));
+            cBal = num2str(randi(2));
+            reward = num2str(randi(2));
         elseif strcmp(taskType, 'reversal')
             cBal = nan;
-            reward = num2str(round(unifrnd(1,2)));
+            reward = num2str(randi(2));
         elseif strcmp(taskType, 'ARC')
-            cBal = num2str(round(unifrnd(1,2)));
+            cBal = num2str(randi(4));
             reward = '1';
+            testDay = num2str(randi(2));
         end
         
     else
         cBal = '1';
         reward = '1';
+        testDay = '1';
     end
     
     % specify default that is shown on screen
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'oddball')...
             defaultanswer = {'99999','99', '1', 'm', cBal, reward};
-    elseif strcmp(taskType, 'reversal') 
+    elseif strcmp(taskType, 'reversal')
         defaultanswer = {'99999','99', 'm', reward};
     elseif strcmp(taskType, 'chinese')
         defaultanswer = {'99999','99', 'm', 1};
     elseif strcmp(taskType, 'ARC')
-        defaultanswer = {'99999','99', '1', 'm', cBal};
+        defaultanswer = {'99999','99', '1', 'm', cBal, testDay};
     end
     
     % add information that is not specified by user
@@ -272,8 +276,8 @@ elseif askSubjInfo == true
         subjInfo{5} = '1'; % group
         subjInfo{6} = date;
     elseif strcmp(taskType, 'ARC')
-        subjInfo{6} = reward;
-        subjInfo{7} = date;
+        subjInfo{7} = reward;
+        subjInfo{8} = date;
     end
     
     % check if user input makes sense
@@ -329,10 +333,10 @@ elseif askSubjInfo == true
             msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
             return
         end
-    elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'ARC')
+    elseif strcmp(taskType, 'oddball')
         if subjInfo{5} ~= '1'...
                 && subjInfo{5} ~= '2'
-            msgbox('cBal: 1 or 2 ?');
+            msgbox('cBal: 1 or 2?');
             return
         end
         %     elseif strcmp(taskType, 'reversal')
@@ -341,6 +345,15 @@ elseif askSubjInfo == true
         %             msgbox('cBal: 1 or 2 ?');
         %             return
         %         end
+    elseif strcmp(taskType, 'ARC')
+        
+        if subjInfo{5} ~= '1'...
+                && subjInfo{5} ~= '2'...
+                && subjInfo{5} ~= '3'...
+                && subjInfo{5} ~= '4'
+            msgbox('cBal: 1,2,3 or 4?');
+            return
+        end
     end
     
     % check reward
@@ -357,7 +370,16 @@ elseif askSubjInfo == true
         end
     end
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
+    % check test day for ARC
+    if strcmp(taskType, 'ARC')
+        if subjInfo{6} ~= '1' ...
+                && subjInfo{6} ~= '2'
+            msgbox('Day: 1 or 2?')
+            return
+        end
+    end
+    
+    if strcmp(taskType, 'dresden')
         
         subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
             subjInfo(4), 'group', subjInfo(3), 'cBal',...
@@ -384,9 +406,36 @@ elseif askSubjInfo == true
             subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5),...
             'date',subjInfo(6), 'session', '1', 'cBal', nan);
         
+    elseif strcmp(taskType, 'ARC')
+        
+        subject = struct('ID', subjInfo(1), 'age', subjInfo(2),...
+            'sex', subjInfo(4), 'group', subjInfo(3),...
+            'cBal', str2double(cell2mat(subjInfo(5))),...
+            'rew', str2double(cell2mat(subjInfo(7))),...
+            'testDay',str2double(cell2mat(subjInfo(6))),...
+            'date', subjInfo(8), 'session', '1');
+        
     end
     
-    % check whether ID exists in save folder
+    % for ARC: check if tickmark on or off
+    % cbal = 1,2: day1 - tickmark on, day2 - tickmark off
+    % cbal = 3,4: day1 - tickmark off, day2 - tickmark on
+    cBal = subject.cBal;
+    testDay = subject.testDay;
+    
+    if (isequal(taskType, 'ARC') && cBal == 1 && testDay == 1) ||...
+            (isequal(taskType, 'ARC') && cBal == 2 && testDay == 1) ||...
+            (isequal(taskType, 'ARC') && cBal == 3 && testDay == 2) ||...
+            (isequal(taskType, 'ARC') && cBal == 4 && testDay == 2)
+        showTickmark = true;
+    elseif (isequal(taskType, 'ARC') && cBal == 1 && testDay == 2) ||...
+            (isequal(taskType, 'ARC') && cBal == 2 && testDay == 2) ||...
+            (isequal(taskType, 'ARC') && cBal == 3 && testDay == 1) ||...
+            (isequal(taskType, 'ARC') && cBal == 4 && testDay == 1)
+        showTickmark = false;
+    end
+    
+    % check if ID exists in save folder
     if strcmp(taskType, 'dresden')...
             || strcmp(taskType, 'reversal')...
             || strcmp(taskType, 'chinese')
@@ -397,7 +446,7 @@ elseif askSubjInfo == true
         checkIdInData = dir(sprintf('*%s_session%s*',...
             num2str(cell2mat((subjInfo(1)))),...
             num2str(cell2mat((subjInfo(3))))));
-    elseif strcmp(taskType, 'ARC') 
+    elseif strcmp(taskType, 'ARC')
         
         if showTickmark
             checkIdInData = dir(sprintf('*_TM_%s*',...
@@ -423,7 +472,7 @@ elseif askSubjInfo == true
     end
 end
 
-% for oddball check how many trials should be selected
+% for oddball: check how many trials should be selected
 if isequal(taskType, 'oddball') && isequal(subject.session, '1')
     trials = trialsS1;
 elseif isequal(taskType, 'oddball') && isequal(subject.session, '3')
@@ -763,7 +812,9 @@ elseif isequal(taskType, 'ARC')
     % ---------------------------------------------------------------------
     % ARC version
     % ---------------------------------------------------------------------
+    
     % session 1
+    subject.session = '1';
     DataMain = MainCondition;
     % session 2
     subject.session = '2';
@@ -928,9 +979,58 @@ Screen('CloseAll');
                 
                 if strcmp(subject.session,'1')
                     
-                    al_instructions(taskParam, 'mainPractice', subject)
+                    if testDay == 1
+                        al_instructions(taskParam, 'mainPractice', subject)
+                    elseif testDay == 2
+                        % text settings
+                        Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
+                        Screen('TextSize', taskParam.gParam.window.onScreen, 50);
+                        sentenceLength = taskParam.gParam.sentenceLength;
+                        header = 'Day 2: Practice Session';
+                        if showTickmark
+                            txtStartTask = ['Welcome to the second part of '...
+                                'the experiment. As yesterday, you will '...
+                                'start with a practice session. On each '...
+                                'trial a cannon will aim at a location on '...
+                                'the circle. On all trials the cannon will '...
+                                'fire a ball somewhere near the point of '...
+                                'aim. Most of the time the cannon will '...
+                                'remain aimed at the same location, but '...
+                                'occasionally the cannon will be reaimed. '...
+                                'You will not see the cannon, but have to '...
+                                'infer its aim in order to catch balls and '...
+                                'earn money.\n\n However, this time you '...
+                                'will no longer see the orange and the '...
+                                'black line that marked the location of '...
+                                'the previous orange spot and the '...
+                                'previous position of the ball.'];
+                        elseif ~showTickmark
+                            txtStartTask = ['Welcome to the second part of '...
+                                'the experiment. As yesterday, you will '...
+                                'start with a practice session. On each '...
+                                'trial a cannon will aim at a location on '...
+                                'the circle. On all trials the cannon will '...
+                                'fire a ball somewhere near the point of '...
+                                'aim. Most of the time the cannon will '...
+                                'remain aimed at the same location, but '...
+                                'occasionally the cannon will be reaimed. '...
+                                'You will not see the cannon, but have to '...
+                                'infer its aim in order to catch balls and '...
+                                'earn money.\n\nHowever, this time the '...
+                                'location of the ball fired on the '...
+                                'previous trial will be marked with '...
+                                'a black line.\n\nMoreover, the '...
+                                'location of the orange spot from the '...
+                                'previous trial will be marked with an '...
+                                'orange line.'];
+                        end
+                        
+                        feedback = false;
+                        al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                            feedback);
+                    end
                     
-                    if strcmp(cBal,'1')
+                    if cBal == 1 || cBal == 3
                         
                         ARC_indicateCondition('lowNoise')
                         al_mainLoop(taskParam, haz(3),concentration(1),...
@@ -940,7 +1040,7 @@ Screen('CloseAll');
                         al_mainLoop(taskParam, haz(3),concentration(2),...
                             'mainPractice_3', subject);
                         
-                    elseif strcmp(cBal,'2')
+                    elseif cBal == 2 || cBal == 4
                         
                         ARC_indicateCondition('highNoise')
                         al_mainLoop(taskParam, haz(3),concentration(2),...
@@ -972,11 +1072,11 @@ Screen('CloseAll');
                     al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
                         feedback);
                     
-                    if strcmp(cBal,'1')
+                    if cBal == 1 || cBal == 3
                         
                         ARC_indicateCondition('lowNoise')
                         
-                    elseif strcmp(cBal,'2')
+                    elseif cBal == 2 || cBal == 4
                         
                         ARC_indicateCondition('highNoise')
                         
@@ -985,11 +1085,11 @@ Screen('CloseAll');
                     
                 elseif strcmp(subject.session,'2')
                     
-                    if strcmp(cBal, '1')
+                    if  cBal == 1 || cBal == 3
                         
                         ARC_indicateCondition('highNoise')
                         
-                    elseif strcmp(cBal, '2')
+                    elseif cBal == 2 || cBal == 4
                         
                         ARC_indicateCondition('lowNoise')
                         
@@ -999,17 +1099,19 @@ Screen('CloseAll');
             
         end
         
-        
-        if (strcmp(taskType, 'ARC') && cBal == 1 &&...
-                strcmp(subject.session, '2'))...
-                || (strcmp(taskType, 'ARC') && cBal == 2 &&...
-                strcmp(subject.session, '1'))...
+        if (strcmp(taskType, 'ARC') && cBal == 1 && strcmp(subject.session, '1'))...
+                || (strcmp(taskType, 'ARC') && cBal == 3 && strcmp(subject.session, '1'))...
+                || (strcmp(taskType, 'ARC') && cBal == 2 && strcmp(subject.session, '2'))...
+                || (strcmp(taskType, 'ARC') && cBal == 4 && strcmp(subject.session, '2'))
                 
-            currentConcentration = concentration(2);
-            
-        else
-            
             currentConcentration = concentration(1);
+            
+        elseif (strcmp(taskType, 'ARC') && cBal == 1 && strcmp(subject.session, '2'))...
+                || (strcmp(taskType, 'ARC') && cBal == 3 && strcmp(subject.session, '2'))...
+                || (strcmp(taskType, 'ARC') && cBal == 2 && strcmp(subject.session, '1'))...
+                || (strcmp(taskType, 'ARC') && cBal == 4 && strcmp(subject.session, '1'))
+            
+            currentConcentration = concentration(2);
             
         end
         

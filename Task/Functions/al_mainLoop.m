@@ -931,11 +931,11 @@ if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 's
     elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'main')
         
         if taskParam.gParam.showTickmark
-            savename = sprintf('ARC_cannon_TM_%s_s%s', subject.ID,...
-                subject.session);
+            savename = sprintf('ARC_cannon_TM_%s_conc%s', subject.ID,...
+                concentration);
         elseif ~taskParam.gParam.showTickmark
-            savename = sprintf('ARC_cannon_NTM_%s_s%s', subject.ID,...
-                subject.session);
+            savename = sprintf('ARC_cannon_NTM_%s_conc%s', subject.ID,...
+                concentration);
         end
         
     end
