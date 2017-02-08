@@ -929,13 +929,12 @@ if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 's
         savename = sprintf('chinese_%s', subject.ID);
         
     elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'main')
-        
         if taskParam.gParam.showTickmark
-            savename = sprintf('ARC_cannon_gr%s_TM_%s_conc%1.f',subject.group, subject.ID,...
-                concentration);
+            savename = sprintf('cannon_ARC_g%s_%s_TM_c%.0f',subject.group,...
+                subject.ID,unique(concentration));
         elseif ~taskParam.gParam.showTickmark
-            savename = sprintf('ARC_cannon_gr%s_NTM_%s_conc%1.f',subject.group, subject.ID,...
-                concentration);
+            savename = sprintf('cannon_ARC_g%s_%s_NTM_c%.0f',subject.group,...
+                subject.ID,unique(concentration));
         end
         
     end

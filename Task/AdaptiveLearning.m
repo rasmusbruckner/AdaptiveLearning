@@ -68,7 +68,7 @@ if strcmp(taskType, 'dresden')
     
     trials              = 2; % 240
     controlTrials       = 1; % 120
-    concentration       = [12 12 99999999];
+    concentration       = [8 12 99999999];
     DataFollowOutcome   = nan;
     DataFollowCannon    = nan;
     textSize            = 19;
@@ -124,7 +124,8 @@ elseif strcmp(taskType, 'ARC')
     
     trials          = 2; % 240
     controlTrials   = nan;
-    concentration   = [8 12 99999999];
+    concentration   = [8 121 99999999];
+    blockIndices    = [1 121 nan nan];
     textSize        = 19;
     nContexts       = 1;
     nStates         = nan;
@@ -142,7 +143,7 @@ elseif strcmp(taskType, 'ARC')
 end
 
 % version independent parameters
-runIntro                = true;
+runIntro                = false;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
@@ -150,7 +151,7 @@ randomize               = true;
 shieldTrials            = 4; % 4
 practTrials             = 2; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
-blockIndices            = [1 101 201 301];
+%blockIndices            = [1 101 201 301];
 haz                     = [.25 1 0];
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
@@ -289,7 +290,7 @@ elseif askSubjInfo == true
     end
     
     % check group and session
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'ARC')
+    if strcmp(taskType, 'dresden')
         if subjInfo{3} ~= '1'...
                 && subjInfo{3} ~= '2'
             msgbox('Group: "1" or "2"?');
@@ -301,7 +302,12 @@ elseif askSubjInfo == true
             msgbox('Session: "1", "2" or "3"?');
             return
         end
-        
+    elseif strcmp(taskType, 'ARC')
+        if subjInfo{3} ~= '1'...
+                && subjInfo{3} ~= '2'
+            msgbox('Group: "0" or "1"?');
+            return
+        end
     end
     
     % check sex
@@ -449,10 +455,10 @@ elseif askSubjInfo == true
     elseif strcmp(taskType, 'ARC')
         
         if showTickmark
-            checkIdInData = dir(sprintf('*_TM_%s*',...
+            checkIdInData = dir(sprintf('*%s_TM*',...
                 num2str(cell2mat((subjInfo(1))))));
         elseif ~showTickmark
-            checkIdInData = dir(sprintf('*_NTM_%s*',...
+            checkIdInData = dir(sprintf('*%s_NTM*',...
                 num2str(cell2mat((subjInfo(1))))));
         end
     end
