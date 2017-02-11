@@ -1,4 +1,4 @@
-function Data = adaptiveLearning(unitTest)
+function DataMain = adaptiveLearning(unitTest)
 %ADAPTIVELEARNING   Master function for the cannon task
 %   AdaptiveLearning(false) or adaptiveLearning runs the cannon task.
 %   adaptiveLearning(true) is part of a unit test to control task
@@ -122,9 +122,9 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 2; % 240
+    trials          = 1; % 240
     controlTrials   = nan;
-    concentration   = [8 121 99999999];
+    concentration   = [8 12 99999999];
     blockIndices    = [1 121 nan nan];
     textSize        = 19;
     nContexts       = 1;
@@ -143,16 +143,16 @@ elseif strcmp(taskType, 'ARC')
 end
 
 % version independent parameters
-runIntro                = false;
+runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = true;
 %showTickmark            = true; now linked to cBal
-shieldTrials            = 4; % 4
-practTrials             = 2; % 20 in reversal muliplied by 2!
+shieldTrials            = 1; % 4
+practTrials             = 1; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 %blockIndices            = [1 101 201 301];
-haz                     = [.25 1 0];
+haz                     = [.125 1 0];
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
 driftConc               = [30 99999999];
@@ -820,11 +820,14 @@ elseif isequal(taskType, 'ARC')
     % ---------------------------------------------------------------------
     
     % session 1
+    
     subject.session = '1';
     DataMain = MainCondition;
-    % session 2
-    subject.session = '2';
-    DataMain = MainCondition;
+    if ~unitTest
+        % session 2
+        subject.session = '2';
+        DataMain = MainCondition;
+    end
     
 end
 
@@ -1414,8 +1417,8 @@ Screen('CloseAll');
         while 1
             
             if isequal(taskType, 'oddball') ||...
-                    isequal(taskType, 'reversal') ||...
-                    isequal(taskType, 'ARC')
+                    isequal(taskType, 'reversal')
+                    
                 header = 'End of task!';
                 txt = sprintf(['Thank you for participating!'...
                     '\n\n\nYou earned $ %.2f'], totWin);
@@ -1429,6 +1432,10 @@ Screen('CloseAll');
                     txt = sprintf(['Vielen Dank für Ihre Teilnahme!'...
                         '\n\n\nSie haben %.2f Euro verdient.'], totWin);
                 end
+            elseif isequal(taskType, 'ARC')
+                header = 'End of task!';
+                txt = sprintf(['Thank you for participating!'...
+                    '\n\n\nYou earned %.2f points'], totWin);
             end
             Screen('DrawLine', taskParam.gParam.window.onScreen,...
                 [0 0 0], 0, taskParam.gParam.screensize(4)*0.16,...

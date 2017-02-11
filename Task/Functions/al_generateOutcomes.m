@@ -53,8 +53,6 @@ Date                    = cell(trials, 1);
 cond                    = cell(trials, 1);
 outcome                 = nan(trials, 1);
 distMean                = nan(trials, 1);
-warning('check this')
-%cp                      = zeros(trials, 1);
 reversal                = zeros(trials,1);
 TAC                     = nan(trials,1);
 oddBall                 = zeros(trials,1);

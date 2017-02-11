@@ -88,6 +88,29 @@ if taskParam.unitTest
         taskData.perf = zeros(trial,1);
         taskData.gParam.taskType = 'reversal';
         %savedTickmark = taskData.savedTickmark;
+        
+    elseif isequal(condition, 'main')
+        
+        taskData = load('unitTest_TestDataARC');
+        taskData = taskData.taskData;
+        trial = taskParam.gParam.trials;
+%         taskData.cBal = nan(trial,1);
+%         taskData.rew = nan(trial,1);
+%         taskData.initiationRTs = nan(trial,1);
+%         taskData.actJitter = nan(trial,1);
+%         taskData.block = ones(trial,1);
+%         taskData.accPerf = nan(trial,1);
+%         taskData.perf = zeros(trial,1);
+%         taskData.gParam.taskType = 'ARC';
+%         taskData.reversal = zeros(trial,1);
+%         taskData.savedTickmark = zeros(trial,1);
+%         taskData.initialTendency = zeros(trial,1);
+%         taskData.RT = zeros(trial,1);
+%         taskData.currentContext = zeros(trial,1);
+%         taskData.hiddenContext = zeros(trial,1);
+%         taskData.contextTypes = zeros(trial,1);
+%         taskData.latentState = zeros(trial,1);
+        %savedTickmark = taskData.savedTickmark;
     end
     
     % data for regular runs
@@ -569,45 +592,56 @@ for i = 1:trial
         % Unit test
         %----------------------------------------------------------------------
         
-        taskParam.circle.rotAngle = ...
-            taskData.pred(i) * taskParam.circle.unit;
-        al_drawCircle(taskParam)
-        
-        if isequal(taskParam.gParam.taskType, 'chinese')
-            drawContext(taskParam,taskData.currentContext(i))
-            al_drawCross(taskParam)
-        end
-        al_drawCross(taskParam)
-        al_predictionSpot(taskParam)
-        
-        if ~isequal(taskParam.gParam.taskType, 'chinese')
-            if i ~= taskParam.gParam.blockIndices(1) && i ~=...
-                    taskParam.gParam.blockIndices(2) + 1 && i ~=...
-                    taskParam.gParam.blockIndices(3) + 1 && i ~=...
-                    taskParam.gParam.blockIndices(4) + 1
-                al_tickMark(taskParam, taskData.outcome(i-1), 'outc')
-                al_tickMark(taskParam, taskData.pred(i-1), 'pred')
-                if isequal(taskData.gParam.taskType, 'reversal') ||...
-                        isequal(taskParam.gParam.taskType, 'reversalPractice')
-                    al_tickMark(taskParam, taskData.savedTickmark(i), 'saved')
-                end
-            end
-        end
-        
-        if (taskData.catchTrial(i) == 1 ...
-                && isequal(taskParam.gParam.taskType, 'dresden'))...
-                || isequal(condition,'followCannon') ...
-                || isequal(condition,'followCannonPractice')
-            Cannon(taskParam, taskData.distMean(i))
-            al_aim(taskParam, taskData.distMean(i))
-        end
-        Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-        t = GetSecs;
-        
-        Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
-        taskData.timestampOnset(i,:) = GetSecs - ref;
-        
-        WaitSecs(0.5);
+%         taskParam.circle.rotAngle = ...
+%             taskData.pred(i) * taskParam.circle.unit;
+%         al_drawCircle(taskParam)
+%         
+%         if isequal(taskParam.gParam.taskType, 'chinese')
+%             drawContext(taskParam,taskData.currentContext(i))
+%             al_drawCross(taskParam)
+%         end
+%         al_drawCross(taskParam)
+%         al_predictionSpot(taskParam)
+%         
+%          if ~isequal(taskParam.gParam.taskType, 'chinese')...
+%                         || ~isequal(taskParam.gParam.taskType, 'ARC')
+%                     if buttons(2) == 1 && i ~=...
+%                             taskParam.gParam.blockIndices(1)...
+%                             && i ~= taskParam.gParam.blockIndices(2) + 1 ...
+%                             && i ~= taskParam.gParam.blockIndices(3) + 1 ...
+%                             && i ~= taskParam.gParam.blockIndices(4) + 1
+%                         
+%                         taskData.savedTickmark(i) =...
+%                             ((taskParam.circle.rotAngle)/taskParam.circle.unit);
+%                         WaitSecs(0.2);
+%                         press = 1;
+%                         
+%                     elseif i > 1 && press == 0
+%                         taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
+%                         taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
+%                     elseif i == 1
+%                         taskData.savedTickmarkPrevious(i) = 0;
+%                     end
+%                     
+%                     if press == 1
+%                         taskData.savedTickmarkPrevious(i) = taskData.savedTickmark(i-1);
+%                     end
+%                 end
+%         
+%         if (taskData.catchTrial(i) == 1 ...
+%                 && isequal(taskParam.gParam.taskType, 'dresden'))...
+%                 || isequal(condition,'followCannon') ...
+%                 || isequal(condition,'followCannonPractice')
+%             Cannon(taskParam, taskData.distMean(i))
+%             al_aim(taskParam, taskData.distMean(i))
+%         end
+%         Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+%         t = GetSecs;
+%         
+%         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
+%         taskData.timestampOnset(i,:) = GetSecs - ref;
+%         
+%         WaitSecs(0.5);
         
         %time = GetSecs;
     end
