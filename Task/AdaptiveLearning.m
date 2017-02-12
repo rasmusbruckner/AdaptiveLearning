@@ -14,25 +14,8 @@ function DataMain = adaptiveLearning(unitTest)
 %                           previous change point location
 %   "Chinese restaurant":   Learning of a state space
 %   "ARC version":          Owen's Cambridge version
-%                               - different noise conditions
-%                               - tickmark on vs. off
-%
-%  Current task conditions:
-%   - shield
-%   - oddballPractice
-%   - oddballPractice_NoOddball
-%   - main
-%   - mainPractice
-%   - followOutcome
-%       - followOutcomePractice
-%   - followCannon
-%       - followCannonPractice
-%
-%   Current practice conditions (whichPractice):
-%       - oddballPractice
-%       - cpPractice
-%       - followOutcomePractice
-%       - followCannonPractice
+%                               - Different noise conditions
+%                               - Tickmark on vs. off
 %
 %   Written by RB
 %   Version 02/2017
@@ -68,7 +51,7 @@ if strcmp(taskType, 'dresden')
     
     trials              = 2; % 240
     controlTrials       = 1; % 120
-    concentration       = [8 12 99999999];
+    concentration       = [12 8 99999999];
     DataFollowOutcome   = nan;
     DataFollowCannon    = nan;
     textSize            = 19;
@@ -122,10 +105,10 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 1; % 240
+    trials          = 240; % 240
     controlTrials   = nan;
-    concentration   = [8 12 99999999];
-    blockIndices    = [1 121 nan nan];
+    concentration   = [12 8 99999999];
+    blockIndices    = [1 121 999 999];%[1 121 999 999];
     textSize        = 19;
     nContexts       = 1;
     nStates         = nan;
@@ -146,12 +129,10 @@ end
 runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
-randomize               = true;
-%showTickmark            = true; now linked to cBal
-shieldTrials            = 1; % 4
-practTrials             = 1; % 20 in reversal muliplied by 2!
+randomize               = false;
+shieldTrials            = 4; % 4
+practTrials             = 20; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
-%blockIndices            = [1 101 201 301];
 haz                     = [.125 1 0];
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
@@ -160,9 +141,9 @@ safe                    = [3 0];
 rewMag                  = 0.1;
 practiceTrialCriterion  = 10; % 10
 fixCrossLength          = 0.5;
-outcomeLength           = 0.5;
+outcomeLength           = 1;
 jitter                  = 0.2;
-fixedITI                = 1;
+fixedITI                = 0.9;
 debug                   = false;
 
 % savedirectory
@@ -303,8 +284,8 @@ elseif askSubjInfo == true
             return
         end
     elseif strcmp(taskType, 'ARC')
-        if subjInfo{3} ~= '1'...
-                && subjInfo{3} ~= '2'
+        if subjInfo{3} ~= '0'...
+                && subjInfo{3} ~= '1'
             msgbox('Group: "0" or "1"?');
             return
         end
@@ -472,7 +453,7 @@ elseif askSubjInfo == true
                 strcmp(taskType, 'reversal') ||...
                 strcmp(taskType, 'chinese') ||...
                 strcmp(taskType, 'ARC')
-            msgbox('ID and session have already been used!');
+            msgbox('ID and day have already been used!');
         end
         return
     end
@@ -823,10 +804,12 @@ elseif isequal(taskType, 'ARC')
     
     subject.session = '1';
     DataMain = MainCondition;
+    blockWin(1) = DataMain.accPerf(end);
     if ~unitTest
         % session 2
         subject.session = '2';
         DataMain = MainCondition;
+        blockWin(2) = DataMain.accPerf(end);
     end
     
 end
@@ -845,7 +828,7 @@ elseif isequal(taskType, 'reversal')
 elseif isequal(taskType, 'chinese')
     totWin = DataChinese.accPerf(end);
 elseif isequal(taskType, 'ARC')
-    totWin = DataMain.accPerf(end);
+    totWin = sum(blockWin);
 end
 
 if isequal(taskType, 'dresden')
@@ -996,7 +979,7 @@ Screen('CloseAll');
                         Screen('TextSize', taskParam.gParam.window.onScreen, 50);
                         sentenceLength = taskParam.gParam.sentenceLength;
                         header = 'Day 2: Practice Session';
-                        if showTickmark
+                        if ~showTickmark
                             txtStartTask = ['Welcome to the second part of '...
                                 'the experiment. As yesterday, you will '...
                                 'start with a practice session. On each '...
@@ -1008,12 +991,12 @@ Screen('CloseAll');
                                 'occasionally the cannon will be reaimed. '...
                                 'You will not see the cannon, but have to '...
                                 'infer its aim in order to catch balls and '...
-                                'earn money.\n\n However, this time you '...
+                                'earn money.\n\nHowever, this time you '...
                                 'will no longer see the orange and the '...
                                 'black line that marked the location of '...
                                 'the previous orange spot and the '...
                                 'previous position of the ball.'];
-                        elseif ~showTickmark
+                        elseif showTickmark
                             txtStartTask = ['Welcome to the second part of '...
                                 'the experiment. As yesterday, you will '...
                                 'start with a practice session. On each '...
@@ -1047,13 +1030,13 @@ Screen('CloseAll');
                         
                         ARC_indicateCondition('highNoise')
                         al_mainLoop(taskParam, haz(3),concentration(2),...
-                            'mainPractice_3', subject);
+                            'mainPractice_4', subject);
                         
                     elseif cBal == 2 || cBal == 4
                         
                         ARC_indicateCondition('highNoise')
                         al_mainLoop(taskParam, haz(3),concentration(2),...
-                            'mainPractice_3', subject);
+                            'mainPractice_4', subject);
                         
                         ARC_indicateCondition('lowNoise')
                         al_mainLoop(taskParam, haz(3),concentration(1),...
@@ -1064,8 +1047,7 @@ Screen('CloseAll');
                     % experimental blocks
                     header = 'Beginning of the experiment';
                     txtStartTask = ['This is the beginning of the experiment. '...
-                        'Now you will earn real money '...
-                        'for your performance. The trials will be exactly '...
+                        'The trials will be exactly '...
                         'the same as those in the previous session.\n\n'...
                         'On each trial a cannon will aim at a location on '...
                         'the circle. On all trials the cannon will '...
@@ -1074,8 +1056,8 @@ Screen('CloseAll');
                         'the same location, but occasionally the cannon '...
                         'will be reaimed. Like in the previous '...
                         'session you will not see the cannon, but still '...
-                        'have to infer its aim in order to catch balls and '...
-                        'earn money.'];
+                        'have to infer its aim in order to catch the '...
+                        'cannonballs.'];
                     
                     feedback = false;
                     al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
@@ -1396,12 +1378,12 @@ Screen('CloseAll');
         
         if strcmp(condition, 'lowNoise')
             header = 'More accurate cannon';
-            txtStartTask = ['In this block of trials the cannon'...
+            txtStartTask = ['In this block of trials the cannon '...
                 'will be relatively accurate.'];
             
         elseif strcmp(condition, 'highNoise')
             header = 'Less accurate cannon';
-            txtStartTask = ['In this block of trials the cannon'...
+            txtStartTask = ['In this block of trials the cannon '...
                 'will be less accurate.'];
         end
         
@@ -1435,7 +1417,7 @@ Screen('CloseAll');
             elseif isequal(taskType, 'ARC')
                 header = 'End of task!';
                 txt = sprintf(['Thank you for participating!'...
-                    '\n\n\nYou earned %.2f points'], totWin);
+                    '\n\n\nYou earned %.0f points.'], totWin*10);
             end
             Screen('DrawLine', taskParam.gParam.window.onScreen,...
                 [0 0 0], 0, taskParam.gParam.screensize(4)*0.16,...

@@ -130,59 +130,90 @@ elseif ~taskParam.unitTest
         taskData.block = ones(trial,1);
         
     elseif isequal(condition, 'followOutcomePractice')...
-            ||isequal(condition, 'mainPractice_3')...
             ||isequal(condition, 'followCannonPractice')
-        taskData = load('CPInvisible');
-        taskData = taskData.taskData;
-        clear taskData.cBal taskData.rew
-        trial = taskParam.gParam.practTrials;
-        taskData.cBal = nan(trial,1);
-        taskData.rew = nan(trial,1);
-        taskData.initiationRTs = nan(trial,1);
-        taskData.initialTendency = nan(trial,1);
-        taskData.actJitter = nan(trial,1);
-        taskData.block = ones(trial,1);
-        taskData.savedTickmark(1) = nan;
-        % savedTickmarkPrevious(1) = nan;
-        taskData.reversal = nan(length(trial),1);
-        taskData.currentContext = nan(length(trial),1);
-        taskData.hiddenContext = nan(length(trial),1);
-        taskData.contextTypes = nan(length(trial),1);
-        taskData.latentState = nan(length(trial),1);
         
-    elseif isequal(condition, 'mainPractice_1')
         
-        taskData = load('CP_NoNoise');
-        taskData = taskData.practData;
-        taskData.latentState = zeros(20,1);
-        taskData.currentContext = nan(20,1);
-        taskData.savedTickmark = nan(20,1);
-        trial = taskParam.gParam.practTrials;
-        taskData.initialTendency = nan(trial,1);
-        %savedTickmark(1) = nan;
-        taskData.reversal = nan(20,1);
-        taskData.currentContext = nan(20,1);
-        taskData.hiddenContext = nan(20,1);
-        taskData.contextTypes = nan(20,1);
-        taskData.latentState = nan(20,1);
-        taskData.shieldType = ones(20,1);
+        
+            taskData = load('CPInvisible');
+            taskData = taskData.taskData;
+            clear taskData.cBal taskData.rew
+            trial = taskParam.gParam.practTrials;
+            taskData.cBal = nan(trial,1);
+            taskData.rew = nan(trial,1);
+            taskData.initiationRTs = nan(trial,1);
+            taskData.initialTendency = nan(trial,1);
+            taskData.actJitter = nan(trial,1);
+            taskData.block = ones(trial,1);
+            taskData.savedTickmark(1) = nan;
+            % savedTickmarkPrevious(1) = nan;
+            taskData.reversal = nan(length(trial),1);
+            taskData.currentContext = nan(length(trial),1);
+            taskData.hiddenContext = nan(length(trial),1);
+            taskData.contextTypes = nan(length(trial),1);
+            taskData.latentState = nan(length(trial),1);
+            
+        
+
+        
+        
+    elseif isequal(condition, 'mainPractice_1') 
+        
+        if isequal(taskParam.gParam.taskType, 'ARC')
+            taskData = load('pract1');
+            taskData = taskData.taskData;
+            trial = taskParam.gParam.practTrials;
+        else
+            taskData = load('CP_NoNoise');
+            taskData = taskData.practData;
+            taskData.latentState = zeros(20,1);
+            taskData.currentContext = nan(20,1);
+            taskData.savedTickmark = nan(20,1);
+            trial = taskParam.gParam.practTrials;
+            taskData.initialTendency = nan(trial,1);
+            %savedTickmark(1) = nan;
+            taskData.reversal = nan(20,1);
+            taskData.currentContext = nan(20,1);
+            taskData.hiddenContext = nan(20,1);
+            taskData.contextTypes = nan(20,1);
+            taskData.latentState = nan(20,1);
+            taskData.shieldType = ones(20,1);
+        end
         
     elseif isequal(condition, 'mainPractice_2')
         
-        taskData = load('CP_Noise');
-        taskData = taskData.practData;
-        taskData.latentState = zeros(20,1);
-        taskData.currentContext = nan(20,1);
-        taskData.savedTickmark = nan(20,1);
+        if isequal(taskParam.gParam.taskType, 'ARC')
+            taskData = load('pract2');
+            taskData = taskData.taskData;
+            trial = taskParam.gParam.practTrials;
+        else
+            
+            taskData = load('CP_Noise');
+            taskData = taskData.practData;
+            taskData.latentState = zeros(20,1);
+            taskData.currentContext = nan(20,1);
+            taskData.savedTickmark = nan(20,1);
+            trial = taskParam.gParam.practTrials;
+            taskData.initialTendency = nan(trial,1);
+            %savedTickmark(1) = nan;
+            taskData.reversal = nan(20,1);
+            taskData.currentContext = nan(20,1);
+            taskData.hiddenContext = nan(20,1);
+            taskData.contextTypes = nan(20,1);
+            taskData.latentState = nan(20,1);
+            taskData.shieldType = ones(20,1);
+        end
+        
+    elseif isequal(condition, 'mainPractice_3')
+        
+        taskData = load('pract3');
+        taskData = taskData.taskData;
         trial = taskParam.gParam.practTrials;
-        taskData.initialTendency = nan(trial,1);
-        %savedTickmark(1) = nan;
-        taskData.reversal = nan(20,1);
-        taskData.currentContext = nan(20,1);
-        taskData.hiddenContext = nan(20,1);
-        taskData.contextTypes = nan(20,1);
-        taskData.latentState = nan(20,1);
-        taskData.shieldType = ones(20,1);
+            
+    elseif isequal(condition, 'mainPractice_4')
+        
+        taskData = load('pract4');
+        taskData = taskData.taskData;
+        trial = taskParam.gParam.practTrials;
 
     elseif isequal(condition, 'shield')
         
@@ -229,13 +260,6 @@ elseif ~taskParam.unitTest
         trial = taskParam.gParam.trials;
         taskData = al_generateOutcomes...
             (taskParam, haz, concentration, condition);
-        %savedTickmark(1) = nan;
-        %savedTickmarkPrevious(1) = nan;
-        %taskData.reversal = nan(length(trial),1);
-        %taskData.currentContext = nan(length(trial),1);
-        %taskData.hiddenContext = nan(length(trial),1);
-        %taskData.contextTypes = nan(length(trial),1);
-        %taskData.latentState = nan(length(trial),1);
         
     end
 end
@@ -255,6 +279,7 @@ for i = 1:trial
         if isequal(taskParam.gParam.taskType, 'oddball') ...
                 || isequal(taskParam.gParam.taskType, 'reversal')...
                 || isequal(taskParam.gParam.taskType, 'reversalPractice')...
+                || isequal(taskParam.gParam.taskType, 'ARC')...
                 
             txt = 'Take a break!';
             header = ' ';
@@ -542,11 +567,11 @@ for i = 1:trial
                 end
                 
                 % manage tickmarks
-                if taskParam.gParam.showTickmark == true && ~isequal(condition,'shield') %&& ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
+                if taskParam.gParam.showTickmark == true %&& ~isequal(condition,'shield') %&& ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
                     if i ~= taskParam.gParam.blockIndices(1)...
-                            && i ~= taskParam.gParam.blockIndices(2) + 1 ...
-                            && i ~= taskParam.gParam.blockIndices(3) + 1 ...
-                            && i ~= taskParam.gParam.blockIndices(4) + 1
+                            && i ~= taskParam.gParam.blockIndices(2)... %+1
+                            && i ~= taskParam.gParam.blockIndices(3)... %+1 
+                            && i ~= taskParam.gParam.blockIndices(4)    %+1
                         if ~isequal(taskParam.gParam.taskType, 'chinese')
                             
                         %else
@@ -685,6 +710,7 @@ for i = 1:trial
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
     if isequal(condition,'main')...
             || isequal(condition,'mainPractice_3')...
+            || isequal(condition,'mainPractice_4')...
             || isequal(condition, 'followCannon')...
             || isequal(condition, 'oddball')...
             || isequal(taskParam.gParam.taskType, 'reversal')...
@@ -695,7 +721,9 @@ for i = 1:trial
         taskData.memErrMin(i) = 999;
     else
         if i > 1
-            warning('adjust this')
+            %warning('adjust this')
+            % falls nochmal "dresden" hier anpassen, weiß gerade
+            % nicht genau wofür das noch verwendet wird
 %             taskData.memErr(i) = al_diff(taskData.pred(i),...
 %                 taskData.outcome(i-1));
               taskData.memErr(i) = al_diff(taskData.pred(i),...
@@ -710,6 +738,7 @@ for i = 1:trial
             || isequal(condition,'mainPractice_1')...
             || isequal(condition,'mainPractice_2')...
             || isequal(condition,'mainPractice_3')...
+            || isequal(condition,'mainPractice_4')...
             || isequal(condition, 'oddballPractice')...
             || isequal(condition, 'oddball')...
             || isequal(condition,'followCannon')...
@@ -874,7 +903,10 @@ if ~isequal(condition,'shield')
         
         if isequal(condition,'chinese')
             header = sprintf('Ende Block %.0f von 4', taskData.block(i-1));
-        elseif isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3') || isequal(condition, 'chinesePractice_4')
+        elseif isequal(condition, 'chinesePractice_1')...
+                || isequal(condition, 'chinesePractice_2')...
+                || isequal(condition, 'chinesePractice_3')...
+                || isequal(condition, 'chinesePractice_4')
             header = 'Ergebnis';
         end
         
@@ -945,7 +977,17 @@ Data = catstruct(subject, Data);
 
 % save is currently only specified for reversal, chinese and ARC!
 
-if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 'shield') && ~isequal(condition, 'mainPractice_1')  && ~isequal(condition, 'mainPractice_2') && ~isequal(condition, 'mainPractice_3') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3') && ~isequal(condition, 'chinesePractice_4')
+if taskParam.gParam.askSubjInfo...
+        && ~taskParam.unitTest...
+        && ~isequal(condition, 'shield')...
+        && ~isequal(condition, 'mainPractice_1')...
+        && ~isequal(condition, 'mainPractice_2')...
+        && ~isequal(condition, 'mainPractice_3')...
+        && ~isequal(condition, 'mainPractice_4')...
+        && ~isequal(condition, 'chinesePractice_1')...
+        && ~isequal(condition, 'chinesePractice_2')...
+        && ~isequal(condition, 'chinesePractice_3')...
+        && ~isequal(condition, 'chinesePractice_4')
     
     if isequal(condition, 'reversal')
         

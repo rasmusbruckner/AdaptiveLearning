@@ -21,7 +21,7 @@ blockIndices = [1 60 120 180];
 haz = [.125 1 0]; 
 oddballProb = [.25 0];
 reversalProb = [0.5 1];
-concentration = [8 12 99999999];  %10
+concentration = [12 8 99999999];  %10
 driftConc = [30 99999999]; 
 safe = [3 0];
 rewMag = 0.2;
@@ -51,7 +51,7 @@ taskData = al_generateOutcomes(taskParam, haz(1), concentration(1), condition);
 
 end
 % manually add behavior
-taskData.pred = [81;112;109;102;114;90;109;131;93;102;200;200;200;200;200;200;200;200;200;200;]
+%taskData.pred = [81;112;109;102;114;90;109;131;93;102;200;200;200;200;200;200;200;200;200;200;]
 if isequal(condition,'reversal');
     taskData.savedTickmark = [0;100;0;50;2;50;360;50;0;0;0;0;0;0;0;50;50;50;50;50];
 
@@ -59,5 +59,5 @@ end
 hold on 
 plot(taskData.outcome, '.')
 plot(taskData.distMean, '--')
-plot(taskData.pred, 'r')
+%plot(taskData.pred, 'r')
 
