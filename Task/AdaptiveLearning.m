@@ -36,7 +36,8 @@ end
 
 % indentifies your machine; if you have internet!
 %computer = identifyPC;
-computer = 'Macbook';
+%computer = 'Macbook';
+computer = 'ARC';
 
 % Choose task type:
 %   - 'oddball'
@@ -159,7 +160,7 @@ elseif isequal(computer, 'Lennart')
 elseif isequal(computer, 'Dresden1')
     cd('C:\Users\ma_epsy\Desktop\AdaptiveLearning\DataDirectory');
 elseif isequal(computer, 'ARC')
-    cd(' please indicate your path here ');
+    cd('C:\Users\PsycchLab1\Documents\MATLAB\AdaptiveLearning\Task');
 end
 
 % reset clock
@@ -595,6 +596,9 @@ leftArrow = KbName('LeftArrow');
 rightSlowKey = KbName('h');
 leftSlowKey = KbName('g');
 space = KbName('Space');
+%enter = KbName('Return');
+
+
 
 if isequal(computer, 'Macbook') || isequal(computer, 'Lennart')
     enter = 40;
@@ -609,6 +613,11 @@ elseif isequal(computer, 'Dresden') || isequal(computer, 'Dresden1')
 elseif isequal(computer, 'Brown')
     enter = 13;
     s = 83;
+elseif isequal(computer, 'ARC')
+    enter = 13;
+    s = 83;
+    t = 84;
+    z = 90;  
 end
 
 keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
