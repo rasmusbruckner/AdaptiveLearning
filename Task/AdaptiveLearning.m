@@ -36,8 +36,8 @@ end
 
 % indentifies your machine; if you have internet!
 %computer = identifyPC;
-%computer = 'Macbook';
-computer = 'ARC';
+computer = 'Macbook';
+%computer = 'ARC';
 
 % Choose task type:
 %   - 'oddball'
@@ -106,7 +106,7 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 240; % 240
+    trials          = 2; % 240
     controlTrials   = nan;
     concentration   = [12 8 99999999];
     blockIndices    = [1 121 999 999];%[1 121 999 999];
@@ -132,7 +132,7 @@ askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = false;
 shieldTrials            = 4; % 4
-practTrials             = 20; % 20 in reversal muliplied by 2!
+practTrials             = 2; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 haz                     = [.125 1 0];
 oddballProb             = [.25 0];

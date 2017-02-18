@@ -174,9 +174,8 @@ end
         end
         
         while 1
+            
             screenIndex = 1;
-            
-            
             
               if ~isequal(whichPractice, 'chinese')
                     Screen('FillRect', taskParam.gParam.window.onScreen, []);
@@ -187,10 +186,8 @@ end
                     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
                     %[~, ~, keyCode] = KbCheck;
               else
-                  
                     YourTaskScreen(txt,...
-                        taskParam.textures.spacebattleTxt, screenIndex);
-                    
+                        taskParam.textures.spacebattleTxt, screenIndex);  
               end
                                 [~, ~, keyCode] = KbCheck;
 
@@ -210,11 +207,8 @@ end
         screenIndex = 1;
         
         while 1
-            
             switch(screenIndex)
-                
                 case 1
-                    
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         txt = 'Kanonenkugeln Abwehren';
                         
@@ -223,18 +217,12 @@ end
                     else
                         screenIndex = screenIndex + 1;
                     end
-                    
                 case 2
-                    
                     screenIndex = FirstCannonSlide(screenIndex);
-                    
                 case 3
-                    
                     [screenIndex, Data] =...
                         PressSpaceToInitiateCannonShot(screenIndex, true);
-                    
                     WaitSecs(0.1);
-                    
                 case 4
                     distMean = 290;
                     if isequal(taskParam.gParam.taskType, 'dresden')
@@ -271,15 +259,11 @@ end
                     end
                     [screenIndex, Data] = MoveSpotToCannonAim...
                         (screenIndex, txt, distMean, Data);
-                    
                 case 5
-                    
                     distMean = 290;
                     screenIndex = YouMissedTheCannonBall_TryAgain...
                         (screenIndex, Data, distMean);
-                    
                 case 6
-                    
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         if isequal(subject.group, '1')
                             txt=['Das Schild erscheint nach dem '...
@@ -315,9 +299,7 @@ end
                     [screenIndex, Data] =...
                         AfterCannonIsShotYouSeeTheShield...
                         (screenIndex, Data, txt, distMean, win);
-                    
                 case 7
-                    
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         if isequal(subject.group, '1')
                             txt = ['Steuere den orangenen Punkt '...
@@ -347,24 +329,19 @@ end
                     distMean = 65;
                     [screenIndex, Data] = TryToMissTheCannon...
                         (screenIndex, Data, txt, distMean);
-                    
                 case 8
-                    
                     Data.outcome = distMean;
                     [screenIndex, Data, t] =...
                         YouCaughtTheCannonball_TryToMissIt...
                         (screenIndex, Data, distMean);
-                    
                 case 9
-                    
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         if isequal(subject.group, '1')
                             txt=['In diesem Fall hast du die '...
                                 'Kanonenkugel verpasst.'];
                         else
                             txt=['In diesem Fall haben Sie die '...
-                                'Kanonenkugel verpasst.'];
-                            
+                                'Kanonenkugel verpasst.']; 
                         end
                     elseif isequal(taskParam.gParam.taskType, 'oddball')...
                             ||isequal(taskParam.gParam.taskType,'reversal')...
@@ -377,7 +354,6 @@ end
                     [screenIndex, Data, t] =...
                         InThisCaseYouMissedTheCannonball...
                         (screenIndex, Data, t, txt, distMean, win);
-                    
                 case 10
                     if isequal(taskParam.gParam.taskType, 'dresden')
                         if isequal(subject.group, '1')
@@ -423,21 +399,14 @@ end
                         (screenIndex, Data, txt);
                     
                 case 11
-                    
-
                     [screenIndex, Data] = ShieldPractice...
                         (screenIndex, whichPractice);
-                    
                     if isequal(taskParam.gParam.taskType, 'chinese') ||...
                             isequal(taskParam.gParam.taskType, 'ARC')
                         screenIndex = 25;
                     end
-                    
-                    
                 case 12
-                    
-                    screenIndex = TrialOutcomes(screenIndex);
-                    
+                    screenIndex = TrialOutcomes(screenIndex);                 
                 case 13
                     
                     distMean = 290;
@@ -3234,6 +3203,7 @@ end
         Data.outcome = distMean;
         background = true;
         al_cannonball(taskParam, distMean, outcome, background, 1, 0)
+        WaitSecs(taskParam.timingParam.outcomeLength);
         if (isequal(whichPractice, 'mainPractice')...
                 && abs(Data.predErr) >= 9)...
                 || (isequal(whichPractice, 'followCannonPractice')...
@@ -3783,7 +3753,7 @@ end
             background = true;
             al_cannonball(taskParam, distMean, outcome, background, 1, 0)
             screenIndex = screenIndex + 1;
-            
+            WaitSecs(taskParam.timingParam.outcomeLength);
             return
         end
         WaitSecs(0.1);
