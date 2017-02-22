@@ -106,8 +106,8 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 2; % 240
-    controlTrials   = nan;
+    trials          = 20; % 240
+    controlTrials   = 30; % this is the new control version!
     concentration   = [12 8 99999999];
     blockIndices    = [1 121 999 999];%[1 121 999 999];
     textSize        = 19;
@@ -810,7 +810,6 @@ elseif isequal(taskType, 'ARC')
     % ---------------------------------------------------------------------
     
     % session 1
-    
     subject.session = '1';
     DataMain = MainCondition;
     blockWin(1) = DataMain.accPerf(end);
@@ -819,6 +818,11 @@ elseif isequal(taskType, 'ARC')
         subject.session = '2';
         DataMain = MainCondition;
         blockWin(2) = DataMain.accPerf(end);
+    end
+    
+    if ~unitTest && testDay == 2
+        % control condition
+        Data = ARC_ControlCondition;
     end
     
 end
@@ -1279,6 +1283,40 @@ Screen('CloseAll');
         [~, DataChinese] = al_mainLoop(taskParam, haz(1), concentration(1),...
             'chinese', subject);
         
+    end
+
+    function Data = ARC_ControlCondition
+        
+        
+        header = 'Speed Task';
+            txtStartTask = ['This is almost the end of the experiment.'...
+                'In the last block, we ask you to respond as quickly as '...
+                'possible to the cannonballs... OWEN, PLEASE FILL IN'...
+                'THE INSTRUCTIONS HERE THAT YOU THINK ARE BEST SUITED'...
+                'FOR YOUR PARTICIPANTS. \n\n You start with a quick practice block.'];
+            feedback = false;
+            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                feedback);
+        
+        condition = 'ARC_controlPractice';
+        taskParam.gParam.showTickmark = false;
+        [~, Data] =  al_mainLoop(taskParam,...
+            taskParam.gParam.haz(2),...
+            taskParam.gParam.concentration(3),...
+            condition, subject);
+%         
+        header = 'Speed Task';
+            txtStartTask = ['This is the beginning of the speed task.'...
+                'AGAIN, MAYBE SOME MORE INSTRUCTIONS'];
+            feedback = false;
+            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                feedback);
+                condition = 'ARC_control';
+        taskParam.gParam.showTickmark = false;
+        [~, Data] =  al_mainLoop(taskParam,...
+            taskParam.gParam.haz(2),...
+            taskParam.gParam.concentration(3),...
+            condition, subject);
     end
 
     function [window, windowRect, textures] = OpenWindow
