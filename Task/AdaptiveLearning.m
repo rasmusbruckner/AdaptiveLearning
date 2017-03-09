@@ -35,7 +35,7 @@ end
 % -------------------------------------------------------------------------
 
 % indentifies your machine; if you have internet!
-%computer = identifyPC;
+%computer = al_identifyPC;
 computer = 'Macbook';
 %computer = 'ARC';
 
@@ -106,9 +106,9 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 20; % 240
+    trials          = 240; % 240
     controlTrials   = 30; % this is the new control version!
-    concentration   = [12 8 99999999];
+    concentration   = [12 8 99999999]; % check this
     blockIndices    = [1 121 999 999];%[1 121 999 999];
     textSize        = 19;
     nContexts       = 1;
@@ -132,7 +132,7 @@ askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = false;
 shieldTrials            = 4; % 4
-practTrials             = 2; % 20 in reversal muliplied by 2!
+practTrials             = 20; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 haz                     = [.125 1 0];
 oddballProb             = [.25 0];
@@ -617,7 +617,7 @@ elseif isequal(computer, 'ARC')
     enter = 13;
     s = 83;
     t = 84;
-    z = 90;  
+    z = 90;
 end
 
 keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
@@ -813,16 +813,25 @@ elseif isequal(taskType, 'ARC')
     subject.session = '1';
     DataMain = MainCondition;
     blockWin(1) = DataMain.accPerf(end);
+    
+    % control condition
+    if ~unitTest && testDay == 1
+        Data = ARC_ControlCondition('ARC_controlSpeed');
+    elseif ~unitTest && testDay == 2
+        ARC_ControlCondition('ARC_controlAccuracy');
+    end
+    % session 2
     if ~unitTest
-        % session 2
         subject.session = '2';
         DataMain = MainCondition;
         blockWin(2) = DataMain.accPerf(end);
     end
     
-    if ~unitTest && testDay == 2
-        % control condition
-        Data = ARC_ControlCondition;
+    % control condition
+    if ~unitTest && testDay == 1
+        Data = ARC_ControlCondition('ARC_controlAccuracy');
+    elseif ~unitTest && testDay == 2
+        ARC_ControlCondition('ARC_controlSpeed');
     end
     
 end
@@ -1107,7 +1116,7 @@ Screen('CloseAll');
                 || (strcmp(taskType, 'ARC') && cBal == 3 && strcmp(subject.session, '1'))...
                 || (strcmp(taskType, 'ARC') && cBal == 2 && strcmp(subject.session, '2'))...
                 || (strcmp(taskType, 'ARC') && cBal == 4 && strcmp(subject.session, '2'))
-                
+            
             currentConcentration = concentration(1);
             
         elseif (strcmp(taskType, 'ARC') && cBal == 1 && strcmp(subject.session, '2'))...
@@ -1285,38 +1294,71 @@ Screen('CloseAll');
         
     end
 
-    function Data = ARC_ControlCondition
+    function Data = ARC_ControlCondition(c_condition)
+        
+        if testDay == 1
+            daySpecificInstruction = 'Before you start the real experiment,';
+        elseif testDay == 2
+            daySpecificInstruction = 'As yesterday,';
+        end
         
         
-        header = 'Speed Task';
-            txtStartTask = ['This is almost the end of the experiment.'...
-                'In the last block, we ask you to respond as quickly as '...
-                'possible to the cannonballs... OWEN, PLEASE FILL IN'...
-                'THE INSTRUCTIONS HERE THAT YOU THINK ARE BEST SUITED'...
-                'FOR YOUR PARTICIPANTS. \n\n You start with a quick practice block.'];
-            feedback = false;
-            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
-                feedback);
+        if isequal(c_condition, 'ARC_controlSpeed')
+            header = 'Speed Task';
+            controlInstructions = '......Owen, please fill in the "speed instructions"';
+        elseif isequal(c_condition, 'ARC_controlAccuracy')
+            header = 'Accuracy Task';
+            controlInstructions = '......Owen, please fill in the "accuracy instructions"';
+        end
+        
+        txtStartTask = sprintf('%s we ask you to %s', daySpecificInstruction, controlInstructions);
+        
+        
+        feedback = false;
+        al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            feedback);
         
         condition = 'ARC_controlPractice';
         taskParam.gParam.showTickmark = false;
-        [~, Data] =  al_mainLoop(taskParam,...
+        [~, ~] =  al_mainLoop(taskParam,...
             taskParam.gParam.haz(2),...
             taskParam.gParam.concentration(3),...
             condition, subject);
-%         
-        header = 'Speed Task';
-            txtStartTask = ['This is the beginning of the speed task.'...
+        
+        condition = c_condition;
+        if isequal(condition, 'ARC_controlSpeed')
+            txtStartTask = ['This is the beginning of the Speed task.'...
                 'AGAIN, MAYBE SOME MORE INSTRUCTIONS'];
-            feedback = false;
-            al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
-                feedback);
-                condition = 'ARC_control';
+        elseif isequal(condition, 'ARC_controlAccuracy')
+            txtStartTask = ['This is the beginning of the Accuracy task.'...
+                'AGAIN, MAYBE SOME MORE INSTRUCTIONS'];
+        end
+        
+        feedback = false;
+        al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            feedback);
+        %condition = 'ARC_control';
         taskParam.gParam.showTickmark = false;
         [~, Data] =  al_mainLoop(taskParam,...
             taskParam.gParam.haz(2),...
             taskParam.gParam.concentration(3),...
             condition, subject);
+        
+        if isequal(condition, 'ARC_controlSpeed')
+            
+            taskIndex = 'speed task';
+            
+        elseif isequal(condition, 'ARC_controlAccuracy')
+            
+            taskIndex = 'accuracy task';
+            
+        end
+        feedback = false;
+        txtStartTask = sprintf('This is the end of the %s.', taskIndex); 
+        al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+            feedback);
+        % depending on cbal, turn tickmark on again
+        taskParam.gParam.showTickmark = showTickmark;
     end
 
     function [window, windowRect, textures] = OpenWindow
@@ -1447,7 +1489,7 @@ Screen('CloseAll');
             
             if isequal(taskType, 'oddball') ||...
                     isequal(taskType, 'reversal')
-                    
+                
                 header = 'End of task!';
                 txt = sprintf(['Thank you for participating!'...
                     '\n\n\nYou earned $ %.2f'], totWin);

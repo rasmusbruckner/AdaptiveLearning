@@ -202,13 +202,15 @@ elseif ~taskParam.unitTest
         taskData.initialTendency = nan(trial,1);
         %savedTickmark = nan(trial,1);
         
-    elseif isequal(condition, 'ARC_control') || isequal(condition, 'ARC_controlPractice')
+    elseif isequal(condition, 'ARC_controlSpeed')...
+            || isequal(condition, 'ARC_controlAccuracy')...
+            || isequal(condition, 'ARC_controlPractice')
         
         taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
         taskParam.condition = condition;
         
         %if isequal(condition, 'ARC_control')
-            trial = taskData.trial;
+        trial = taskData.trial;
         %elseif isequal(condition, 'ARC_controlPractice')
         %     trial = taskData.trial;
         %end
@@ -255,7 +257,9 @@ end
 % Loop through trials
 %--------------------------------------------------------------------------
 
-if ~isequal(condition,'ARC_control') && ~isequal(condition,'ARC_controlPractice')
+if ~isequal(condition,'ARC_controlSpeed') &&...
+        ~isequal(condition,'ARC_controlAccuracy') &&...
+        ~isequal(condition,'ARC_controlPractice')
     for i = 1:trial
         
         % manage breaks
@@ -933,12 +937,14 @@ if ~isequal(condition,'ARC_control') && ~isequal(condition,'ARC_controlPractice'
         
     end
     
-elseif isequal(condition,'ARC_control') || isequal(condition,'ARC_controlPractice');
-   
+elseif isequal(condition,'ARC_controlSpeed')...
+        || isequal(condition,'ARC_controlAccuracy')...
+        || isequal(condition,'ARC_controlPractice');
+    
     
     for i = 1:trial
         
-        warning('was muss man hier speichern?')
+        %warning('was muss man hier speichern?')
         % save constant variables
         taskData.trial(i)   = i;
         taskData.age(i)     = str2double(subject.age);
@@ -949,18 +955,14 @@ elseif isequal(condition,'ARC_control') || isequal(condition,'ARC_controlPractic
         taskData.cBal(i)    = subject.cBal;
         taskData.rew(i)     = subject.rew;
         taskData.actRew(i)  = nan;
-        taskData.cannonDev(i)  = nan; 
-        
-        
+        taskData.cannonDev(i)  = nan;
         
         % take jitter into account and get timestamps
         taskData.actJitter(i) = rand*jitter;
         WaitSecs(taskData.actJitter(i));
         
-        
         % send trial onset trigger
         taskData.triggers(i,1) = nan;
-        
         
         t = GetSecs;
         tUpdated = t + 0.1;
@@ -973,25 +975,25 @@ elseif isequal(condition,'ARC_control') || isequal(condition,'ARC_controlPractic
         
         al_drawCircle(taskParam)
         
-         al_drawOutcome(taskParam, taskData.outcome(i))
-            
-         
-         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-            
-         %Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
-         tUpdated = tUpdated + fixCrossLength;
-         Screen('Flip', taskParam.gParam.window.onScreen, tUpdated);
+        al_drawOutcome(taskParam, taskData.outcome(i))
+        
+        
+        Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
+        
+        %Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6);
+        tUpdated = tUpdated + fixCrossLength;
+        Screen('Flip', taskParam.gParam.window.onScreen, tUpdated);
         WaitSecs(1);
         
-         SetMouse(720, 450, taskParam.gParam.window.onScreen)
-         press = 0;
-         initRT_Timestamp = GetSecs();
-         mouseLoop
-         %taskData.outcome(i)
-         %taskData.pred(i)
-         taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
-         %taskData.predErr(i)
-         
+        SetMouse(720, 450, taskParam.gParam.window.onScreen)
+        press = 0;
+        initRT_Timestamp = GetSecs();
+        mouseLoop
+        %taskData.outcome(i)
+        %taskData.pred(i)
+        taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
+        %taskData.predErr(i)
+        
     end
     
 end
@@ -1075,9 +1077,12 @@ if taskParam.gParam.askSubjInfo...
                 subject.ID,unique(concentration));
         end
         
-    elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'ARC_control')
-        savename = sprintf('cannon_ARC_g%s_%s_Control_',subject.group,...
-                subject.ID);
+    elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'ARC_controlSpeed')
+        savename = sprintf('cannon_ARC_g%s_%s_ControlSpeed%.0f',subject.group,...
+            subject.ID, subject.testDay);
+    elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'ARC_controlAccuracy')
+        savename = sprintf('cannon_ARC_g%s_%s_ControlAccuracy%.0f',subject.group,...
+            subject.ID, subject.testDay);
     end
     
     save(savename, 'Data')
@@ -1198,8 +1203,10 @@ KbReleaseWait();
             
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
             
-            if ((~isequal(condition,'ARC_control') && buttons(1) == 1)...
-                    || (isequal(condition,'ARC_control') && hyp >= 150)) ||...
+            if ((~isequal(condition,'ARC_controlSpeed') && buttons(1) == 1)...
+                    || (isequal(condition,'ARC_controlSpeed') && hyp >= 150)) ||...
+                    ((~isequal(condition,'ARC_controlAccuracy') && buttons(1) == 1)...
+                    || (isequal(condition,'ARC_controlAccuracy') && hyp >= 150)) ||...
                     ((~isequal(condition,'ARC_controlPractice') && buttons(1) == 1)...
                     || (isequal(condition,'ARC_controlPractice') && hyp >= 150))
                 taskData.pred(i) =...
