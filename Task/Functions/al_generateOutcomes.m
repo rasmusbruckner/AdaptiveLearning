@@ -32,7 +32,7 @@ elseif isequal(condition, 'followCannon') ||...
         isequal(condition, 'ARC_controlAccuracy')
     trials = taskParam.gParam.controlTrials;
 elseif isequal(condition, 'ARC_controlPractice')
-    trials = taskParam.gParam.controlTrials/2;
+    trials = taskParam.gParam.controlTrials/4;
 elseif isequal(condition, 'reversalPracticeNoiseInv')
     trials = 4;
 elseif isequal(condition, 'reversalPracticeNoiseInv3')

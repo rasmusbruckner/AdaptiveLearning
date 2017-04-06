@@ -106,9 +106,9 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 240; % 240
-    controlTrials   = 30; % this is the new control version!
-    concentration   = [12 8 99999999]; % check this
+    trials          = 20; % 240
+    controlTrials   = 5; % this is the new control version!
+    concentration   = [2 2 99999999]; % check this
     blockIndices    = [1 121 999 999];%[1 121 999 999];
     textSize        = 19;
     nContexts       = 1;
@@ -127,12 +127,12 @@ elseif strcmp(taskType, 'ARC')
 end
 
 % version independent parameters
-runIntro                = true;
+runIntro                = false;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = false;
-shieldTrials            = 4; % 4
-practTrials             = 20; % 20 in reversal muliplied by 2!
+shieldTrials            = 1; % 4
+practTrials             = 1; % 20 in reversal muliplied by 2!
 chinesePractTrials      = 2; % 200
 haz                     = [.125 1 0];
 oddballProb             = [.25 0];
@@ -820,6 +820,7 @@ elseif isequal(taskType, 'ARC')
     elseif ~unitTest && testDay == 2
         ARC_ControlCondition('ARC_controlAccuracy');
     end
+    
     % session 2
     if ~unitTest
         subject.session = '2';
