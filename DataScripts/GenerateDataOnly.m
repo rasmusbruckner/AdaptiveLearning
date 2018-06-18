@@ -15,13 +15,13 @@ sendTrigger = false;
 randomize = true;
 shieldTrials = 1; % 6
 practTrials = 20; % 20
-trials = 20; % 240
+trials = 50; % 240
 controlTrials = 1; % 120 
 blockIndices = [1 60 120 180]; 
 haz = [.125 1 0]; 
 oddballProb = [.25 0];
 reversalProb = [0.5 1];
-concentration = [8 8 99999999];  %10
+concentration = [12 8 99999999];  %10
 driftConc = [30 99999999]; 
 safe = [3 0];
 rewMag = 0.2;
@@ -59,5 +59,6 @@ end
 hold on 
 plot(taskData.outcome, '.')
 plot(taskData.distMean, '--')
+plot(taskData.catchTrial.*180, 'or')
 %plot(taskData.pred, 'r')
 

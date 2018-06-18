@@ -38,7 +38,7 @@ while 1
         Screen('TextSize', taskParam.gParam.window.onScreen, 30);
     end
     
-    sentenceLength = taskParam.gParam.sentenceLength; 
+    sentenceLength = taskParam.gParam.sentenceLength;
     
     if feedback == true
         DrawFormattedText(taskParam.gParam.window.onScreen, txt,...
@@ -57,23 +57,17 @@ while 1
     Screen('Flip', taskParam.gParam.window.onScreen, time + 0.1);
     
     [ ~, ~, keyCode] = KbCheck;
-
+    
     if keyCode(taskParam.keys.enter) && ~taskParam.unitTest
-   
-        
         fw = 1;
-        %keyboard
-        
-        
         break
-       
+        
     elseif taskParam.unitTest
         WaitSecs(1);
         break
     end
 end
-%keyboard
+
 KbReleaseWait();
 
-%end
 

@@ -93,6 +93,7 @@ elseif strcmp(taskType, 'chinese')
     
     warning('irgendwas mit trial zahl stimmt noch nicht')
     trials          = 2; % 400
+    chinesePractTrials  = 2; % 200
     controlTrials   = nan;
     nContexts       = 2; % planets
     nStates         = 2; % enemies
@@ -106,10 +107,10 @@ elseif strcmp(taskType, 'chinese')
     
 elseif strcmp(taskType, 'ARC')
     
-    trials          = 20; % 240
-    controlTrials   = 5; % this is the new control version!
-    concentration   = [2 2 99999999]; % check this
-    blockIndices    = [1 121 999 999];%[1 121 999 999];
+    trials          = 1; % 240
+    controlTrials   = 60; % this is the new control version!
+    concentration   = [16 8 99999999]; % check this
+    blockIndices    = [1 101 999 999];%[1 121 999 999];
     textSize        = 19;
     nContexts       = 1;
     nStates         = nan;
@@ -117,6 +118,8 @@ elseif strcmp(taskType, 'ARC')
     stateHaz        = nan;
     safeContext     = nan;
     safeState       = nan;
+    chinesePractTrials = 2; % 200
+
     
     % Check number of trials
     if  (trials > 1 && mod(trials, 2)) == 1
@@ -133,7 +136,8 @@ sendTrigger             = false;
 randomize               = false;
 shieldTrials            = 1; % 4
 practTrials             = 1; % 20 in reversal muliplied by 2!
-chinesePractTrials      = 2; % 200
+onlinePractTrials       = 50;
+useCatchTrials          = true;
 haz                     = [.125 1 0];
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
@@ -527,14 +531,16 @@ gParam = struct('taskType', taskType ,...
     'concentration', concentration, 'haz', haz,...
     'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
     trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials,...
-    'chinesePractTrials', chinesePractTrials, 'controlTrials',...
+    'onlinePractTrials', onlinePractTrials, 'chinesePractTrials',...
+    chinesePractTrials, 'controlTrials',...
     controlTrials,'nContexts', nContexts, 'nStates', nStates,...
     'safe', safe, 'rewMag', rewMag, 'screensize', screensize, ...
     'contextHaz', contextHaz, 'stateHaz', stateHaz,...
     'safeContext', safeContext, 'safeState', safeState,...
     'zero', zero,'window', window, 'windowRect', windowRect,...
     'practiceTrialCriterion', practiceTrialCriterion,...
-    'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark);
+    'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark,...
+    'useCatchTrials', useCatchTrials);
 
 predSpotRad         = 10;
 shieldAngle         = 30;
@@ -814,18 +820,18 @@ elseif isequal(taskType, 'ARC')
     DataMain = MainCondition;
     blockWin(1) = DataMain.accPerf(end);
     
-    % control condition
-    if ~unitTest && testDay == 1
-        Data = ARC_ControlCondition('ARC_controlSpeed');
-    elseif ~unitTest && testDay == 2
-        ARC_ControlCondition('ARC_controlAccuracy');
-    end
-    
     % session 2
     if ~unitTest
         subject.session = '2';
         DataMain = MainCondition;
         blockWin(2) = DataMain.accPerf(end);
+    end
+    
+     % control condition
+    if ~unitTest && testDay == 1
+        Data = ARC_ControlCondition('ARC_controlSpeed');
+    elseif ~unitTest && testDay == 2
+        ARC_ControlCondition('ARC_controlAccuracy');
     end
     
     % control condition
@@ -1047,6 +1053,17 @@ Screen('CloseAll');
                     
                     if cBal == 1 || cBal == 3
                         
+                    % experimental blocks
+                    header = 'Third Practice';
+                    txtStartTask = ['This is the last practice session. '...
+                        'Here you will less frequently see the cannon. '...
+                        '\n\n'...
+                        'Like in the previous session you should try to'...
+                        'place your shield at the (hidden) aim of the cannon. '];
+                    
+                    feedback = false;
+                    al_bigScreen(taskParam, txtPressEnter, header, txtStartTask,...
+                        feedback);
                         ARC_indicateCondition('lowNoise')
                         al_mainLoop(taskParam, haz(3),concentration(1),...
                             'mainPractice_3', subject);
@@ -1078,8 +1095,9 @@ Screen('CloseAll');
                         'Most of the time the cannon will remain aimed at '...
                         'the same location, but occasionally the cannon '...
                         'will be reaimed. Like in the previous '...
-                        'session you will not see the cannon, but still '...
-                        'have to infer its aim in order to catch the '...
+                        'session you will only rarely see the cannon and '...
+                        'you should still try to '...
+                        'infer its aim in order to catch the '...
                         'cannonballs.'];
                     
                     feedback = false;

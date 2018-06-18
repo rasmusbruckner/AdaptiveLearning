@@ -24,6 +24,7 @@ elseif isequal(condition, 'mainPractice')...
     || isequal(condition, 'chinesePractice_2') 
         
     trials = taskParam.gParam.practTrials;
+
 elseif isequal(condition, 'shield')
     trials = taskParam.gParam.shieldTrials;
 elseif isequal(condition, 'followCannon') ||...
@@ -46,7 +47,7 @@ contextTypes = 0;
 % -------------------------------------------------------------------------
 % Preallocate variables
 % -------------------------------------------------------------------------
-
+%keyboard
 fieldNames              = taskParam.fieldNames;
 ID                      = cell(trials, 1);
 age                     = zeros(trials, 1);
@@ -165,10 +166,19 @@ if isequal(condition, 'main') ||...
         oddBall(i) = nan;
         
         %CatchTrial
-        if rand <= .10 && cp(i) == 0;
-            catchTrial(i) = 1;
+        if taskParam.gParam.useCatchTrials 
+            
+            if isequal('condition', 'onlinePractice')
+                if rand <= .2 && cp(i) == 0
+                    catchTrial(i:i+2) = 1;
+                end
+            elseif rand <= 0.1 && cp(i) == 0
+                catchTrial(i) = 1;
+            end
         else
+            
             catchTrial(i) = 0;
+            
         end
         
         ASS=nan;

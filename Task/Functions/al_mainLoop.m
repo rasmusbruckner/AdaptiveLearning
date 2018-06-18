@@ -87,7 +87,6 @@ if taskParam.unitTest
         taskData.accPerf = nan(trial,1);
         taskData.perf = zeros(trial,1);
         taskData.gParam.taskType = 'reversal';
-        %savedTickmark = taskData.savedTickmark;
         
     elseif isequal(condition, 'main')
         
@@ -113,9 +112,7 @@ elseif ~taskParam.unitTest
         taskData.block = ones(trial,1);
         
     elseif isequal(condition, 'followOutcomePractice')...
-            ||isequal(condition, 'followCannonPractice')
-        
-        
+            || isequal(condition, 'followCannonPractice')
         
         taskData = load('CPInvisible');
         taskData = taskData.taskData;
@@ -128,7 +125,6 @@ elseif ~taskParam.unitTest
         taskData.actJitter = nan(trial,1);
         taskData.block = ones(trial,1);
         taskData.savedTickmark(1) = nan;
-        % savedTickmarkPrevious(1) = nan;
         taskData.reversal = nan(length(trial),1);
         taskData.currentContext = nan(length(trial),1);
         taskData.hiddenContext = nan(length(trial),1);
@@ -149,7 +145,6 @@ elseif ~taskParam.unitTest
             taskData.savedTickmark = nan(20,1);
             trial = taskParam.gParam.practTrials;
             taskData.initialTendency = nan(trial,1);
-            %savedTickmark(1) = nan;
             taskData.reversal = nan(20,1);
             taskData.currentContext = nan(20,1);
             taskData.hiddenContext = nan(20,1);
@@ -158,7 +153,8 @@ elseif ~taskParam.unitTest
             taskData.shieldType = ones(20,1);
         end
         
-    elseif isequal(condition, 'mainPractice_2')
+    elseif isequal(condition, 'mainPractice_2')...
+           
         
         if isequal(taskParam.gParam.taskType, 'ARC')
             taskData = load('pract2');
@@ -173,7 +169,6 @@ elseif ~taskParam.unitTest
             taskData.savedTickmark = nan(20,1);
             trial = taskParam.gParam.practTrials;
             taskData.initialTendency = nan(trial,1);
-            %savedTickmark(1) = nan;
             taskData.reversal = nan(20,1);
             taskData.currentContext = nan(20,1);
             taskData.hiddenContext = nan(20,1);
@@ -182,8 +177,16 @@ elseif ~taskParam.unitTest
             taskData.shieldType = ones(20,1);
         end
         
-    elseif isequal(condition, 'mainPractice_3')
+    elseif isequal(condition, 'onlinePractice')
         
+        
+         taskData = load('onlinePractice');
+         taskData = taskData.taskData;
+         %taskData = structfun(@(v) v(2:5), taskData, 'UniformOutput',0);
+         trial = taskParam.gParam.onlinePractTrials;
+        
+    elseif isequal(condition, 'mainPractice_3')
+       
         taskData = load('pract3');
         taskData = taskData.taskData;
         trial = taskParam.gParam.practTrials;
@@ -200,7 +203,6 @@ elseif ~taskParam.unitTest
         taskParam.condition = condition;
         trial = taskData.trial;
         taskData.initialTendency = nan(trial,1);
-        %savedTickmark = nan(trial,1);
         
     elseif isequal(condition, 'ARC_controlSpeed')...
             || isequal(condition, 'ARC_controlAccuracy')...
@@ -208,12 +210,7 @@ elseif ~taskParam.unitTest
         
         taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
         taskParam.condition = condition;
-        
-        %if isequal(condition, 'ARC_control')
         trial = taskData.trial;
-        %elseif isequal(condition, 'ARC_controlPractice')
-        %     trial = taskData.trial;
-        %end
         taskData.initialTendency = nan(trial,1);
         
     elseif isequal(condition, 'reversal')...
@@ -229,8 +226,6 @@ elseif ~taskParam.unitTest
         end
         taskData = al_generateOutcomes...
             (taskParam, haz, concentration, condition);
-        %savedTickmark(1) = nan;
-        %savedTickmarkPrevious(1) = nan;
         
     elseif isequal(condition, 'chinesePractice_4')
         
@@ -260,6 +255,7 @@ end
 if ~isequal(condition,'ARC_controlSpeed') &&...
         ~isequal(condition,'ARC_controlAccuracy') &&...
         ~isequal(condition,'ARC_controlPractice')
+    
     for i = 1:trial
         
         % manage breaks
@@ -479,134 +475,7 @@ if ~isequal(condition,'ARC_controlSpeed') &&...
                 
                 SetMouse(720, 450, taskParam.gParam.window.onScreen)
                 press = 0;
-                %taskParam
-                %taskData
                 mouseLoop
-                %al_mouseLoop(taskParam, taskData, condition, press, i, initRT_Timestamp)
-                %            function mouseLoop
-                %
-                %             while 1
-                %
-                %                 [x,y,buttons] =...
-                %                     GetMouse(taskParam.gParam.window.onScreen);
-                %
-                %                 x = x-720;
-                %                 y = (y-450)*-1 ;
-                %
-                %                 currentDegree = ...
-                %                     mod( atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
-                %                 if currentDegree > 360
-                %                     degree = currentDegree - 360;
-                %                 else
-                %                     degree = currentDegree;
-                %                 end
-                %
-                %                 taskParam.circle.rotAngle = degree * taskParam.circle.unit;
-                %
-                %                 al_drawCircle(taskParam)
-                %                 if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
-                %                     drawContext(taskParam,taskData.currentContext(i))
-                %                     al_drawCross(taskParam)
-                %                 elseif isequal(condition,'shield') ||...
-                %                         isequal(condition, 'mainPractice_1') ||...
-                %                         isequal(condition, 'mainPractice_2') ||...
-                %                         isequal(condition, 'chinesePractice_1') ||...
-                %                         isequal(condition, 'chinesePractice_2') ||...
-                %                         isequal(condition, 'chinesePractice_3')
-                %
-                %                     if isequal(taskParam.gParam.taskType, 'chinese')
-                %                         drawContext(taskParam,taskData.currentContext(i))
-                %                         al_drawCross(taskParam)
-                %                     end
-                %                     al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
-                %                     al_aim(taskParam, taskData.distMean(i))
-                %                 else
-                %                     al_drawCross(taskParam)
-                %                 end
-                %
-                %                 hyp = sqrt(x^2 + y^2);
-                %                 if hyp <= 150
-                %                     al_predictionSpotReversal(taskParam, x ,y*-1)
-                %                 else
-                %                     al_predictionSpot(taskParam)
-                %                 end
-                %
-                %                 if hyp >= taskParam.circle.tendencyThreshold &&...
-                %                         isnan(taskData.initialTendency(i))
-                %                     taskData.initialTendency(i) = degree;
-                %                     taskData.initiationRTs(i,:) =...
-                %                         GetSecs() - initRT_Timestamp;
-                %                 end
-                %
-                %                 if ~isequal(taskParam.gParam.taskType, 'chinese')...
-                %                         || ~isequal(taskParam.gParam.taskType, 'ARC')
-                %                     if buttons(2) == 1 && i ~=...
-                %                             taskParam.gParam.blockIndices(1)...
-                %                             && i ~= taskParam.gParam.blockIndices(2) + 1 ...
-                %                             && i ~= taskParam.gParam.blockIndices(3) + 1 ...
-                %                             && i ~= taskParam.gParam.blockIndices(4) + 1
-                %
-                %                         taskData.savedTickmark(i) =...
-                %                             ((taskParam.circle.rotAngle)/taskParam.circle.unit);
-                %                         WaitSecs(0.2);
-                %                         press = 1;
-                %
-                %                     elseif i > 1 && press == 0
-                %                         taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
-                %                         taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
-                %                     elseif i == 1
-                %                         taskData.savedTickmarkPrevious(i) = 0;
-                %                     end
-                %
-                %                     if press == 1
-                %                         taskData.savedTickmarkPrevious(i) = taskData.savedTickmark(i-1);
-                %                     end
-                %                 end
-                %
-                %
-                %                 % manage tickmarks
-                %                 if taskParam.gParam.showTickmark == true %&& ~isequal(condition,'shield') %&& ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
-                %                     if i ~= taskParam.gParam.blockIndices(1)...
-                %                             && i ~= taskParam.gParam.blockIndices(2)... %+1
-                %                             && i ~= taskParam.gParam.blockIndices(3)... %+1
-                %                             && i ~= taskParam.gParam.blockIndices(4)    %+1
-                %                         if ~isequal(taskParam.gParam.taskType, 'chinese')
-                %
-                %                         %else
-                %                             al_tickMark(taskParam, taskData.outcome(i-1), 'outc');
-                %                             al_tickMark(taskParam, taskData.pred(i-1), 'pred');
-                %                         end
-                %
-                %                         if ~isequal(taskParam.gParam.taskType, 'chinese')
-                %                             if press == 1
-                %                                 al_tickMark(taskParam, taskData.savedTickmarkPrevious(i),...
-                %                                     'update');
-                %                             end
-                %                             al_tickMark(taskParam, taskData.savedTickmark(i), 'saved');
-                %                         end
-                %
-                %                     end
-                %                 end
-                %
-                %
-                %                 Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-                %                 t = GetSecs;
-                %
-                %                 Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
-                %
-                %                 if buttons(1) == 1
-                %                     taskData.pred(i) =...
-                %                         ((taskParam.circle.rotAngle) / taskParam.circle.unit);
-                %                     taskData.pred(i);
-                %
-                %                     time = GetSecs;
-                %                     taskData.RT(i) = GetSecs() - initRT_Timestamp;
-                %                     break
-                %
-                %                 end
-                %
-                %             end
-                %         end
                 
             end
             
@@ -887,12 +756,13 @@ if ~isequal(condition,'ARC_controlSpeed') &&...
         %WaitSecs(.5);
         WaitSecs(fixedITI / 2);
         taskData.timestampOffset(i,:) = GetSecs - ref;
+        
     end
     
     %% ------------------------------------------------------------------------
     % Give feedback
     %--------------------------------------------------------------------------
-    if ~isequal(condition,'shield')
+    if ~isequal(condition,'shield') && ~isequal(condition,'onlinePractice')
         
         if isequal(taskParam.gParam.taskType, 'dresden')
             [txt, header] = Feedback(taskData, taskParam, subject, condition);
@@ -939,7 +809,7 @@ if ~isequal(condition,'ARC_controlSpeed') &&...
     
 elseif isequal(condition,'ARC_controlSpeed')...
         || isequal(condition,'ARC_controlAccuracy')...
-        || isequal(condition,'ARC_controlPractice');
+        || isequal(condition,'ARC_controlPractice')
     
     
     for i = 1:trial
@@ -977,6 +847,7 @@ elseif isequal(condition,'ARC_controlSpeed')...
         
         al_drawOutcome(taskParam, taskData.outcome(i))
         
+      
         
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         
@@ -1047,6 +918,7 @@ if taskParam.gParam.askSubjInfo...
         && ~isequal(condition, 'mainPractice_2')...
         && ~isequal(condition, 'mainPractice_3')...
         && ~isequal(condition, 'mainPractice_4')...
+        && ~isequal(condition, 'onlinePractice')...
         && ~isequal(condition, 'chinesePractice_1')...
         && ~isequal(condition, 'chinesePractice_2')...
         && ~isequal(condition, 'chinesePractice_3')...
@@ -1132,7 +1004,60 @@ KbReleaseWait();
                 al_drawCross(taskParam)
             end
             
-            hyp = sqrt(x^2 + y^2);
+           %if (taskData.catchTrial(i) == 1 ...
+            %        && isequal(condition, 'onlinePractice')) || (isequal(whichPractice, 'mainPractice'))
+%            if isequal(condition, 'onlinePractice') || (isequal(condition, 'mainPractice_2'))
+%                 
+%                 
+%                  %% onlinePractice
+%                 %DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
+%                 %taskParam.gParam.screensize(3)*0.1,...
+%                 %taskParam.gParam.screensize(4)*0.05, [255 255 255],...
+%                 %sentenceLength);
+%                
+%             
+%                 normFactor = taskParam.gParam.screensize(3)/180;
+%                 if i > 5
+%                     meanPE = nanmean(abs(taskData.predErr(i-5:i))) * normFactor;
+%                 else 
+%                     meanPE = nanmean(abs(taskData.predErr)) * normFactor;
+%                 end
+%                     
+%                 meanPE / 180
+%                 
+%                 Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], taskParam.gParam.screensize(3)/3,...
+%                 taskParam.gParam.screensize(4)*1/4,  taskParam.gParam.screensize(3)/3 + meanPE,...
+%                 taskParam.gParam.screensize(4)*1/4, 5);
+%             
+%             
+%                 
+%                 Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], (taskParam.gParam.screensize(3)/3),...
+%                 (taskParam.gParam.screensize(4)*1/4)-10, (taskParam.gParam.screensize(3)/3),...
+%                 (taskParam.gParam.screensize(4)*1/4)+10, 5);
+%                 %%
+%                 
+%                 
+%            end
+            
+           if (taskData.catchTrial(i) == 1 && isequal(condition, 'onlinePractice')) 
+                al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
+                al_aim(taskParam, taskData.distMean(i))
+                txt = ['As you can now directly see the cannon, '...
+                'you should move your orange spot exactly to aim of the cannon!'];
+                sentenceLength = taskParam.gParam.sentenceLength;
+                 DrawFormattedText(taskParam.gParam.window.onScreen,...
+                txt, 'center', 50, [255 255 255], sentenceLength);
+            
+           elseif (taskData.catchTrial(i) == 1 ...
+                && isequal(taskParam.gParam.taskType, 'ARC'))...
+            
+                al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
+                al_aim(taskParam, taskData.distMean(i))
+        
+           end
+           
+           
+           hyp = sqrt(x^2 + y^2);
             if hyp <= 150
                 al_predictionSpotReversal(taskParam, x ,y*-1)
             else
@@ -1172,7 +1097,6 @@ KbReleaseWait();
                 end
             end
             
-            
             % manage tickmarks
             if taskParam.gParam.showTickmark == true %&& ~isequal(condition,'shield') %&& ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
                 if i ~= taskParam.gParam.blockIndices(1)...
@@ -1196,7 +1120,6 @@ KbReleaseWait();
                     
                 end
             end
-            
             
             Screen('DrawingFinished', taskParam.gParam.window.onScreen);
             t = GetSecs;
