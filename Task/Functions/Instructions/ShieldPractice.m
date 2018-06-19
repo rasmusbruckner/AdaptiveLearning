@@ -1,0 +1,26 @@
+function [screenIndex, Data] =...
+        ShieldPractice(taskParam, subject, screenIndex)
+
+    condition = 'shield';
+
+    %         if (isequal(whichPractice, 'mainPractice'))...
+    %                 || (isequal(whichPractice, 'followCannonPractice'))...
+    %                 || (isequal(whichPractice, 'oddballPractice'))...
+    %                 || (isequal(whichPractice, 'chinese'))
+    %             haz = taskParam.gParam.haz(3);
+    %         else
+    %             haz = taskParam.gParam.haz(2);
+    %         end
+
+    %         [taskParam, Data] = practLoop(taskParam, subject,...
+    %             haz, taskParam.gParam.concentration(3), cannon, condition);
+    % added this (02.01.17) to get rid of practLoop
+    % taskParam.gParam
+
+    [taskData, Data] =  al_mainLoop(taskParam,...
+        taskParam.gParam.haz(2),...
+        taskParam.gParam.concentration(3),...
+        condition, subject);
+    screenIndex = screenIndex + 1;
+    WaitSecs(0.1);
+end

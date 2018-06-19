@@ -1,9 +1,9 @@
-function al_drawCannon(taskParam, distMean, latentState, symbol)
+function al_drawCannon(taskParam, distMean, latentState, ~)
 %CANNON   Prints the cannon image
 
 if nargin == 3
     
-    symbol = true;
+    taskParam.symbol = true;
     
 end
 

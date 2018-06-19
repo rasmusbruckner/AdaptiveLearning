@@ -46,8 +46,8 @@ for i = 1:nFrames
     OutcSpotAct = OutcSpotAct + Step;
     if isequal(taskParam.gParam.taskType, 'chinese')
             %currentContext = 1;
-            drawContext(taskParam, currentContext)
-            drawCross(taskParam)
+            al_drawContext(taskParam, currentContext)
+            al_drawCross(taskParam)
     end
     al_drawCircle(taskParam)
     al_drawCannon(taskParam, distMean, latentState)

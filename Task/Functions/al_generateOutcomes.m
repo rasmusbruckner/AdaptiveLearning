@@ -47,7 +47,7 @@ contextTypes = 0;
 % -------------------------------------------------------------------------
 % Preallocate variables
 % -------------------------------------------------------------------------
-%keyboard
+
 fieldNames              = taskParam.fieldNames;
 ID                      = cell(trials, 1);
 age                     = zeros(trials, 1);
@@ -137,13 +137,13 @@ if isequal(condition, 'main') ||...
             block(i) = 4;
         end
         
-        if (rand < haz && s==0)...
+        if (rand < haz && s == 0)...
                 || i == taskParam.gParam.blockIndices(1)...
                 || i == taskParam.gParam.blockIndices(2)...
                 || i == taskParam.gParam.blockIndices(3)...
                 || i == taskParam.gParam.blockIndices(4) 
             mean=round(rand(1).*359); 
-            cp(i)=1;
+            cp(i) = 1;
             if isequal(condition,'shield') ||...
                     isequal(condition, 'ARC_controlSpeed') ||...
                     isequal(condition, 'ARC_controlAccuracy') ||...
@@ -153,10 +153,10 @@ if isequal(condition, 'main') ||...
                 s=taskParam.gParam.safe(1);
             end
             
-            TAC(i)=0;
+            TAC(i) = 0;
         else
-            TAC(i)=TAC(i-1)+1;
-            s=max([s-1, 0]);
+            TAC(i) = TAC(i-1)+1;
+            s = max([s-1, 0]);
         end
         
         outcome(i) =...
@@ -176,9 +176,7 @@ if isequal(condition, 'main') ||...
                 catchTrial(i) = 1;
             end
         else
-            
             catchTrial(i) = 0;
-            
         end
         
         ASS=nan;
@@ -362,7 +360,7 @@ elseif isequal(condition, 'chinese') ||...
        isequal(condition, 'chinesePractice_4') ||...
        isequal(condition, 'chinesePractice_2') ||...
        isequal(condition, 'chinesePractice_3')
-       warning('checken')
+       %warning('checken')
 %        nContexts = taskParam.gParam.nContexts;% 1;
 %         nStates = taskParam.gParam.nStates;%3;
 %         contextHaz = taskParam.gParam.contextHaz;%0.5;%1/nContexts;
@@ -441,7 +439,7 @@ elseif isequal(condition, 'chinese') ||...
         
         oddBall(i) = nan;
         
-        if rand <= .10 && cp(i) == 0;
+        if rand <= .10 && cp(i) == 0
             catchTrial(i) = 1;
         else
             catchTrial(i) = 0;
@@ -462,7 +460,6 @@ if isequal(taskParam.gParam.taskType, 'ARC') ||...
 
         shieldType = ones(trials,1); %always reward
 else
-    %keyboard
     warning('ShieldType nicht spezifiziert')
     shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 end

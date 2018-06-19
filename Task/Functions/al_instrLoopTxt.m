@@ -153,7 +153,7 @@ else
 
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
-            drawContext(taskParam, currentContext)
+            al_drawContext(taskParam, currentContext)
         end
         
         al_drawCircle(taskParam)
@@ -181,8 +181,7 @@ else
         
         if buttons(2) == 1 
             
-            savedTickmark(i) = ((taskParam.circle.rotAngle) /...
-                taskParam.circle.unit);
+            savedTickmark(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
             Data.tickCannonDev = al_diff(distMean, savedTickmark);
             
             WaitSecs(0.2);
@@ -204,9 +203,7 @@ else
         
         [ keyIsDown, ~, keyCode ] = KbCheck;
         
-        if (keyIsDown && (isequal(button, 'arrow')...
-                && keyCode(taskParam.keys.enter)))...
-                || (isequal(button, 'space') &&  buttons(1) == 1)
+        if (keyIsDown && (isequal(button, 'arrow') && keyCode(taskParam.keys.enter))) || (isequal(button, 'space') &&  buttons(1) == 1)
             fw = 1;
             Data.pred = (taskParam.circle.rotAngle / taskParam.circle.unit);
             break;

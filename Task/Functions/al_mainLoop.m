@@ -313,6 +313,7 @@ if ~isequal(condition,'ARC_controlSpeed') &&...
         end
         
         % set prediction spot to default after break
+
         if i == taskParam.gParam.blockIndices(1)...
                 || i == taskParam.gParam.blockIndices(2) + 1 ...
                 || i == taskParam.gParam.blockIndices(3) + 1 ...
@@ -553,7 +554,7 @@ if ~isequal(condition,'ARC_controlSpeed') &&...
             al_drawCross(taskParam)
             al_drawCircle(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese')
-                drawContext(taskParam,taskData.currentContext(i))
+                al_drawContext(taskParam,taskData.currentContext(i))
                 al_drawCross(taskParam)
             end
             
@@ -770,7 +771,7 @@ if ~isequal(condition,'ARC_controlSpeed') &&...
         elseif isequal(taskParam.gParam.taskType, 'chinese')
             
             whichBlock = taskData.block == taskData.block(i);
-            txt = AL_feedback(taskData, taskParam, subject, condition, whichBlock);
+            txt = al_feedback(taskData, taskParam, subject, condition, whichBlock);
             
             if isequal(condition,'chinese')
                 header = sprintf('Ende Block %.0f von 4', taskData.block(i-1));
@@ -985,7 +986,7 @@ KbReleaseWait();
             
             al_drawCircle(taskParam)
             if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
-                drawContext(taskParam,taskData.currentContext(i))
+                al_drawContext(taskParam,taskData.currentContext(i))
                 al_drawCross(taskParam)
             elseif isequal(condition,'shield') ||...
                     isequal(condition, 'mainPractice_1') ||...
@@ -995,7 +996,7 @@ KbReleaseWait();
                     isequal(condition, 'chinesePractice_3')
                 
                 if isequal(taskParam.gParam.taskType, 'chinese')
-                    drawContext(taskParam,taskData.currentContext(i))
+                    al_drawContext(taskParam,taskData.currentContext(i))
                     al_drawCross(taskParam)
                 end
                 al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))

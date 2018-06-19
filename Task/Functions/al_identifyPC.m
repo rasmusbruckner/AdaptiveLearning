@@ -12,8 +12,7 @@ while ni.hasMoreElements
     end
 end
 
-computer='';
-Computer2='';
+
 if strcmp(sid, '.EDB04B8B5134')
     computer = 'D_Pilot';
     Computer2 = false;
@@ -26,7 +25,7 @@ elseif strcmp(sid, ['.139DEA01CE83.8888888600000000.8888888600000000.'...
 elseif strcmp(sid, ['.F5B0D5445F09.8888888600000000.88A8B78070C3.'...
         '8888888600000000.8888888600000000'])
     computer = 'Dresden_Rene';
-elseif strcmp(sid, '.0928C78F12F8')
+elseif strcmp(sid, '.0928C78F12F8') || strcmp(sid,'.51AEDB61FA6E.A7FCC9806116.B40C7389619A')
     computer = 'Macbook';
 elseif strcmp(sid, '.E2EC7188D14A')
     computer = 'Lennart';
