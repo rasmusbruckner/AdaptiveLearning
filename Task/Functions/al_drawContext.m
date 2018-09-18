@@ -1,26 +1,36 @@
 function al_drawContext(taskParam, currentContext)
-% DRAWCONTEXT Indicates the current context in the cannon task
+% DRAWCONTEXT   Indicates the current context in the cannon task
+%
+%   Input
+%       taskParam: structure containing task parameters
+%       currentContext: planet color
 
+
+% Extract rotation radius
 rotRad = taskParam.circle.rotationRad;
-%rotRad = taskParam.circle.tendencyThreshold;
 
 if currentContext == 1
-
-%     color = [  0  113.5547  177.3047]; % blue
-    color = [116,121,255]; % blue / changed by Lennart for Pilot
+    
+    % Blue for first planet 
+    color = [116,121,255]; 
     
 elseif currentContext == 2
     
-%     color = [0  157.3828  114.5508]; % green
-    color = [106,162,70]; % green / changed by Lennart for Pilot
+    % Green for second planet
+    color = [106,162,70];
     
 elseif currentContext == 3
     
-    color = [255 0 0]; % red
+    % Red for third planet
+    color = [255 0 0]; 
     
 end
 
+% Extract center
 zero = taskParam.gParam.zero;
-Screen('FillOval', taskParam.gParam.window.onScreen,color,[zero(1) - rotRad+10, zero(2) - rotRad+10, zero(1) + rotRad-10, zero(2) + rotRad-10],[]); %zero(1) - 105, zero(2) - 105, zero(1) + 105, zero(2) + 105
+
+% Generate current context
+Screen('FillOval', taskParam.gParam.window.onScreen,color,[zero(1) - rotRad+10, zero(2) - rotRad+10, zero(1) + rotRad-10, zero(2) + rotRad-10],[]);
+
 end
 

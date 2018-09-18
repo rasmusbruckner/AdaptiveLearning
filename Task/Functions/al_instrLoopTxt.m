@@ -1,7 +1,9 @@
-function [taskParam, fw, Data, savedTickmark] = al_instrLoopTxt...
-    (taskParam, txt, cannon, button, distMean, tickInstruction, Data)
-%INSTRLOOPTXT   Participant is able to perform parts of the task
-%while seeing instructions on the screen
+function [taskParam, fw, Data, savedTickmark] = al_instrLoopTxt(taskParam, txt, cannon, button, distMean, tickInstruction, Data)
+%INSTRLOOPTXT   Participant is able to perform parts of the task while seeing instructions on the screen
+%
+%
+% Add more comments!
+
 
 if exist('Data', 'var')
     i = 1;
@@ -129,8 +131,7 @@ else
     SetMouse(720, 450, taskParam.gParam.window.onScreen)
     
     while 1
-        [x,y,buttons,focus,valuators,valinfo] = GetMouse...
-            (taskParam.gParam.window.onScreen);
+        [x,y,buttons,focus,valuators,valinfo] = GetMouse(taskParam.gParam.window.onScreen);
         
         x = x-720;
         y = (y-450)*-1 ;
@@ -146,10 +147,7 @@ else
         
         al_lineAndBack(taskParam)
         sentenceLength = taskParam.gParam.sentenceLength;
-        DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
-            taskParam.gParam.screensize(3)*0.1,...
-            taskParam.gParam.screensize(4)*0.05, [255 255 255],...
-            sentenceLength);
+        DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
 
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
@@ -167,9 +165,7 @@ else
         end
         
         if isequal(button, 'arrow')
-            DrawFormattedText(taskParam.gParam.window.onScreen,...
-                taskParam.strings.txtPressEnter ,'center',...
-                taskParam.gParam.screensize(4)*0.9);
+            DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter ,'center', taskParam.gParam.screensize(4)*0.9);
         end
         hyp = sqrt(x^2 + y^2);
         

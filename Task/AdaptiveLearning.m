@@ -18,10 +18,11 @@ function DataMain = adaptiveLearning(unitTest)
 %                               - Tickmark on vs. off
 %
 %   Written by Rasmus Bruckner (MPI/FU Berlin)
-%   Contributors: Matt Nassar (Brown), Ben Eppinger (Concorida),
+%   Contributors: Ben Eppinger (Concorida), Matt Nassar (Brown), 
 %   Lennart Wittkuhn (MPI), Owen Parsons (Cambridge)
 %
-%   Version 06/2018
+%   Version 09/2018
+
 
 % Initialize task
 % ----------------
@@ -37,8 +38,10 @@ if ~unitTest
 end
 
 % Indentifies your machine; if you have internet!
+% @Sean: add your computer
 computer = al_identifyPC;
 %computer = 'Olga';
+computer = 'Macbook';
 
 % Choose task type:
 %   - 'oddball'
@@ -46,10 +49,12 @@ computer = al_identifyPC;
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
+% @Sean: only chinese 
 taskType = 'chinese';
 
 % Version specific parameters
 % ---------------------------
+
 switch taskType
     
     case 'dresden'
@@ -84,32 +89,34 @@ switch taskType
         trials          = 20;
         controlTrials   = nan;
         concentration   = [10 12 99999999];
-        nContexts       = 1;
-        nStates         = nan;
-        contextHaz      = nan;
-        stateHaz        = nan;
-        safeContext     = nan;
-        safeState       = nan;
+        nPlanets      = 1;
+        nEnemies         = nan;
+        planetHaz      = nan;
+        enemyHaz        = nan;
+        safePlanet     = nan;
+        safeEnemy       = nan;
         DataOddball     = nan;
         textSize        = 19;
     
     case 'chinese'
-    
-        trials          = 2; % 400
-        chinesePractTrials  = 2; % 200 Will be replaced use onlinePractTrials
-        onlinePractTrials   = 2; % Work in progress. Currently working on solution to generate data offline. 
-        nContexts       = 2; % planets
-        nStates         = 2; % enemies
-        contextHaz      = 1;
-        stateHaz        = 0.15;
-        safeContext     = 0;
-        safeState       = 0;
-        concentration   = [12 12 99999999];
-        blockIndices    = [1 101 999 999]; %[1 121 999 999];
-        textSize        = 19;
-        showTickmark    = nan;
-        DataOddball     = nan;
-        controlTrials   = nan;
+        
+        useTrialConstraints = false; % uses code with trial constraints
+        blockIndices = [1 999 999 999]; % only for useTrialConstraints = false!
+        nb = 8; % number of blocks: only for useTrialConstraints = true!
+        trials = 2; %400; % use 400 for useTrialConstraints = true!
+        chinesePractTrials = 2; % 200 number of practice trials
+        nPlanets = 2; % number of planets
+        nEnemies = 2; % number of enemies
+        planetHaz = 1; % probability that planet changes color
+        enemyHaz = 0.15; % probability that enemy changes
+        safePlanet = 0; % minimum number of trials before planet changes (on) 
+        safeEnemy = 0; % minimum number of trials before enemy changes
+        concentration = [12 12 99999999]; % anpassen?
+        textSize = 19; % text size for instructions
+        showTickmark = nan; % do not show tickmark
+        DataOddball = nan; % do not use anything from oddball condition
+        controlTrials = nan; % do not use control trials from "Dresden condition"
+        language = 2; % 1: German, 2: EnglishAd
 
     case 'ARC'
     
@@ -118,12 +125,12 @@ switch taskType
         concentration   = [16 8 99999999]; 
         blockIndices    = [1 101 999 999]; %[1 121 999 999];
         textSize        = 19;
-        nContexts       = 1;
-        nStates         = nan;
-        contextHaz      = nan;
-        stateHaz        = nan;
-        safeContext     = nan;
-        safeState       = nan;
+        nPlanets        = 1;
+        nEnemies         = nan;
+        planetHaz      = nan;
+        enemyHaz        = nan;
+        safePlanet     = nan;
+        safeEnemy       = nan;
         chinesePractTrials = nan;
 
         % Check number of trials
@@ -138,10 +145,10 @@ runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = false;
-shieldTrials            = 1; % 4
+shieldTrials            = 4; % 4
 practTrials             = 2; % 20 in reversal muliplied by 2!
 useCatchTrials          = true;
-haz                     = [.125 1 0];
+haz                     = [.1 1 0]; % .125
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
 driftConc               = [30 99999999];
@@ -153,14 +160,14 @@ outcomeLength           = 1;
 jitter                  = 0.2;
 fixedITI                = 0.9;
 debug                   = false;
-screenNumber            = 2;
+screenNumber            = 2; %2;  % Use 1 if use one screen. Use 2 if you use two screens
 
+% @Sean: add your directory
 % Save directory
 if isequal(computer, 'Macbook')
     cd('~/Dropbox/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
-    cd(['C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning'...
-        '\\DataDirectory']);
+    cd(['C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory']);
 elseif isequal(computer, 'Brown')
     cd('C:\Users\lncc\Dropbox\ReversalTask\data');
 elseif isequal(computer, 'Lennart')
@@ -180,7 +187,7 @@ rand('twister', a(6).*10000);
 
 % User Input
 % ----------
-
+%@Sean: maybe interesting
 % If no user input requested
 if askSubjInfo == false
     
@@ -190,16 +197,12 @@ if askSubjInfo == false
     cBal = 1;
     reward = 1;
     
-    if strcmp(taskType, 'dresden') || strcmp(taskType, 'chinese') ||...
-            strcmp(taskType, 'ARC')
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'chinese') || strcmp(taskType, 'ARC')
         group = '1';
-        subject = struct('ID', ID, 'age', age, 'sex', sex, 'group',...
-            group, 'cBal', cBal, 'rew', reward, 'date', date,...
-            'session', '1');
+        subject = struct('ID', ID, 'age', age, 'sex', sex, 'group', group, 'cBal', cBal, 'rew', reward, 'date', date, 'session', '1');
     elseif strcmp(taskType, 'oddball')
         session = '1';
-        subject = struct('ID', ID, 'age', age, 'sex', sex, 'session',...
-            session, 'cBal', cBal, 'rew', reward, 'date', date);
+        subject = struct('ID', ID, 'age', age, 'sex', sex, 'session', session, 'cBal', cBal, 'rew', reward, 'date', date);
     end
     
     % If user input requested
@@ -325,26 +328,17 @@ elseif askSubjInfo == true
     % Check cBal
     switch taskType 
         case 'dresden'
-            if subjInfo{5} ~= '1'...
-                    && subjInfo{5} ~= '2'...
-                    && subjInfo{5} ~= '3'...
-                    && subjInfo{5} ~= '4'...
-                    && subjInfo{5} ~= '5'...
-                    && subjInfo{5} ~= '6'
+            if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3' && subjInfo{5} ~= '4' && subjInfo{5} ~= '5' && subjInfo{5} ~= '6'
                 msgbox('cBal: 1, 2, 3, 4, 5 or 6?');
                 return
             end
         case 'oddball'
-            if subjInfo{5} ~= '1'...
-                    && subjInfo{5} ~= '2'
+            if subjInfo{5} ~= '1' && subjInfo{5} ~= '2'
                 msgbox('cBal: 1 or 2?');
                 return
             end
         case 'ARC'
-            if subjInfo{5} ~= '1'...
-                    && subjInfo{5} ~= '2'...
-                    && subjInfo{5} ~= '3'...
-                    && subjInfo{5} ~= '4'
+            if subjInfo{5} ~= '1' && subjInfo{5} ~= '2' && subjInfo{5} ~= '3' && subjInfo{5} ~= '4'
                 msgbox('cBal: 1,2,3 or 4?');
                 return
             end
@@ -375,33 +369,20 @@ elseif askSubjInfo == true
     % ------------------------------------------
     switch taskType 
         case 'dresden'
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-                subjInfo(4), 'group', subjInfo(3), 'cBal',...
-                str2double(cell2mat(subjInfo(5))), 'rew',...
-                str2double(cell2mat(subjInfo(6))), 'date',...
-                subjInfo(7), 'session', '1');
+            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
+                str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
         case 'oddball'
         
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-                subjInfo(4), 'session', subjInfo(3), 'cBal',...
-                str2double(cell2mat(subjInfo(5))), 'rew',...
+            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(4), 'session', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
                 str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7));
         case 'reversal'
         
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-                subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))),...
-                'date',subjInfo(5), 'session', '1', 'cBal', nan);
+            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))), 'date',subjInfo(5), 'session', '1', 'cBal', nan);
         case 'chinese'
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex',...
-                subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5),...
-                'date',subjInfo(6), 'session', '1', 'cBal', nan);
+            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5), 'date',subjInfo(6), 'session', '1', 'cBal', nan);
         case 'ARC'       
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2),...
-                'sex', subjInfo(4), 'group', subjInfo(3),...
-                'cBal', str2double(cell2mat(subjInfo(5))),...
-                'rew', str2double(cell2mat(subjInfo(7))),...
-                'testDay',str2double(cell2mat(subjInfo(6))),...
-                'date', subjInfo(8), 'session', '1');
+            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))),...
+                'rew', str2double(cell2mat(subjInfo(7))), 'testDay',str2double(cell2mat(subjInfo(6))), 'date', subjInfo(8), 'session', '1');
             testDay = subject.testDay;  
     end
     
@@ -409,25 +390,17 @@ elseif askSubjInfo == true
     % cbal = 1,2: day1 - tickmark on, day2 - tickmark off
     % cbal = 3,4: day1 - tickmark off, day2 - tickmark on
     cBal = subject.cBal;
-    if (isequal(taskType, 'ARC') && cBal == 1 && testDay == 1) ||...
-            (isequal(taskType, 'ARC') && cBal == 2 && testDay == 1) ||...
-            (isequal(taskType, 'ARC') && cBal == 3 && testDay == 2) ||...
-            (isequal(taskType, 'ARC') && cBal == 4 && testDay == 2)
+    if (isequal(taskType, 'ARC') && cBal == 1 && testDay == 1) || (isequal(taskType, 'ARC') && cBal == 2 && testDay == 1) ||...
+            (isequal(taskType, 'ARC') && cBal == 3 && testDay == 2) || (isequal(taskType, 'ARC') && cBal == 4 && testDay == 2)
         showTickmark = true;
-    elseif (isequal(taskType, 'ARC') && cBal == 1 && testDay == 2) ||...
-            (isequal(taskType, 'ARC') && cBal == 2 && testDay == 2) ||...
-            (isequal(taskType, 'ARC') && cBal == 3 && testDay == 1) ||...
-            (isequal(taskType, 'ARC') && cBal == 4 && testDay == 1)
+    elseif (isequal(taskType, 'ARC') && cBal == 1 && testDay == 2) || (isequal(taskType, 'ARC') && cBal == 2 && testDay == 2) ||...
+            (isequal(taskType, 'ARC') && cBal == 3 && testDay == 1) || (isequal(taskType, 'ARC') && cBal == 4 && testDay == 1)
         showTickmark = false;
     end
     
     % Check if ID exists in save folder
-    if strcmp(taskType, 'dresden')...
-            || strcmp(taskType, 'reversal')...
-            || strcmp(taskType, 'chinese')
-        
-        checkIdInData = dir(sprintf('*%s*',...
-            num2str(cell2mat((subjInfo(1))))));
+    if strcmp(taskType, 'dresden') || strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese')
+        checkIdInData = dir(sprintf('*%s*', num2str(cell2mat((subjInfo(1))))));
     elseif strcmp(taskType, 'oddball')
         checkIdInData = dir(sprintf('*%s_session%s*', num2str(cell2mat((subjInfo(1)))), num2str(cell2mat((subjInfo(3))))));
     elseif strcmp(taskType, 'ARC')
@@ -444,10 +417,7 @@ elseif askSubjInfo == true
     if  ~isempty(fileNames)
         if strcmp(taskType, 'dresden')
             msgbox('Diese ID wird bereits verwendet!');
-        elseif strcmp(taskType, 'oddball') ||...
-                strcmp(taskType, 'reversal') ||...
-                strcmp(taskType, 'chinese') ||...
-                strcmp(taskType, 'ARC')
+        elseif strcmp(taskType, 'oddball') || strcmp(taskType, 'reversal') || strcmp(taskType, 'chinese') || strcmp(taskType, 'ARC')
             msgbox('ID and day have already been used!');
         end
         return
@@ -512,12 +482,13 @@ ref = GetSecs;
 gParam = struct('taskType', taskType , 'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
     sentenceLength, 'driftConc', driftConc, 'oddballProb', oddballProb, 'reversalProb', reversalProb,...
     'concentration', concentration, 'haz', haz, 'sendTrigger', sendTrigger, 'computer', computer, 'trials',...
-    trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials, 'onlinePractTrials', onlinePractTrials,...
-    'chinesePractTrials', chinesePractTrials, 'controlTrials', controlTrials,'nContexts', nContexts, 'nStates',...
-    nStates, 'safe', safe, 'rewMag', rewMag, 'screensize', screensize, 'contextHaz', contextHaz, 'stateHaz', stateHaz,...
-    'safeContext', safeContext, 'safeState', safeState, 'zero', zero,'window', window, 'windowRect', windowRect,...
+    trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials, ...
+    'chinesePractTrials', chinesePractTrials, 'controlTrials', controlTrials,'nPlanets', nPlanets, 'nEnemies',...
+    nEnemies, 'safe', safe, 'rewMag', rewMag, 'screensize', screensize, 'planetHaz', planetHaz, 'enemyHaz', enemyHaz,...
+    'safePlanet', safePlanet, 'safeEnemy', safeEnemy, 'zero', zero,'window', window, 'windowRect', windowRect,...
     'practiceTrialCriterion', practiceTrialCriterion, 'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark,...
-    'useCatchTrials', useCatchTrials, 'screenNumber', screenNumber);
+    'useCatchTrials', useCatchTrials, 'screenNumber', screenNumber, 'language', language, 'useTrialConstraints', useTrialConstraints,...
+    'nb', nb); 
 
 % Parameters related to the circle
 % --------------------------------
@@ -614,8 +585,7 @@ triggers = struct('sampleRate', sampleRate, 'port', port);
 
 % Parameters related to timing
 % ----------------------------
-timingParam = struct('fixCrossLength', fixCrossLength, 'outcomeLength',...
-    outcomeLength, 'jitter', jitter, 'fixedITI', fixedITI);
+timingParam = struct('fixCrossLength', fixCrossLength, 'outcomeLength', outcomeLength, 'jitter', jitter, 'fixedITI', fixedITI);
 
 % Start task
 % ----------
@@ -779,8 +749,7 @@ end
 % ------------------------------------------
 switch taskType
     case 'dresden'
-        totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end)...
-            + DataFollowCannon.accPerf(end);
+        totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end) + DataFollowCannon.accPerf(end);
     case 'oddball' 
         totWin = DataOddball.accPerf(end) + DataMain.accPerf(end);
     case 'reversal'

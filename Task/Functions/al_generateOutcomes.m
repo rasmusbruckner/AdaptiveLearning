@@ -1,36 +1,34 @@
 function taskData = al_generateOutcomes(taskParam, haz, concentration, condition)
-%GENERATEOUTCOMES    generates the outcomes for the different tasks
+%GENERATEOUTCOMES    Generates the outcomes for the different tasks
+%
+%   Input
+%       taskParam: structure containing task parameters
+%       haz: hazard rate parameter
+%       concentration: concentration parameter
+%       condition: task condition
+%   Output
+%       taskData: structure containing generated outcomes
 
-% -------------------------------------------------------------------------
-% Select number of trials
-% -------------------------------------------------------------------------
 
-if isequal(condition, 'main') || isequal(condition, 'oddball') ||...
-        isequal(condition, 'reversal') || isequal(condition, 'chinese')
-    try
+% Select task- and block-specific number of trials
+% ------------------------------------------------
+
+if isequal(condition, 'main') || isequal(condition, 'oddball') || isequal(condition, 'reversal') || isequal(condition, 'chinese')
+    
+    % Take specified number of trials from AdaptiveLearning script
     trials = taskParam.gParam.trials;
-    catch
-        keyboard  
-    end
-elseif isequal(condition, 'mainPractice')... 
-    || isequal(condition, 'practiceNoOddball')...
-    || isequal(condition, 'oddballPractice')... 
-    || isequal(condition, 'followOutcomePractice')...
-    || isequal(condition, 'followCannonPractice')...
-    || isequal(condition, 'reversalPractice')...
-    || isequal(condition, 'reversalPracticeNoise')...
-    || isequal(condition, 'reversalPracticeNoiseInv2')...
-    || isequal(condition, 'chinesePractice_1')...
-    || isequal(condition, 'chinesePractice_2') 
-        
+elseif isequal(condition, 'mainPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'oddballPractice')...
+        || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'reversalPractice')...
+        || isequal(condition, 'reversalPracticeNoise') || isequal(condition, 'reversalPracticeNoiseInv2') || isequal(condition, 'chinesePractice_1')...
+        || isequal(condition, 'chinesePractice_2')
+    
+    % Take specified number of practice trials from AdaptiveLearning script
     trials = taskParam.gParam.practTrials;
-
+    
+    % Take condition-specific number of trials from AdaptiveLearning script
 elseif isequal(condition, 'shield')
     trials = taskParam.gParam.shieldTrials;
-elseif isequal(condition, 'followCannon') ||...
-        isequal(condition, 'followOutcome') ||...
-        isequal(condition, 'ARC_controlSpeed') ||...
-        isequal(condition, 'ARC_controlAccuracy')
+elseif isequal(condition, 'followCannon') || isequal(condition, 'followOutcome') || isequal(condition, 'ARC_controlSpeed') || isequal(condition, 'ARC_controlAccuracy')
     trials = taskParam.gParam.controlTrials;
 elseif isequal(condition, 'ARC_controlPractice')
     trials = taskParam.gParam.controlTrials/4;
@@ -38,433 +36,431 @@ elseif isequal(condition, 'reversalPracticeNoiseInv')
     trials = 4;
 elseif isequal(condition, 'reversalPracticeNoiseInv3')
     trials = taskParam.gParam.practTrials * 2;
-elseif isequal(condition, 'chinesePractice_4')...
-        || isequal(condition, 'chinesePractice_3')
+elseif isequal(condition, 'chinesePractice_4') || isequal(condition, 'chinesePractice_3')
     trials = taskParam.gParam.chinesePractTrials;
 end
-contextTypes = 0;
 
-% -------------------------------------------------------------------------
-% Preallocate variables
-% -------------------------------------------------------------------------
+% XX
+%contextTypes = 0;
 
-fieldNames              = taskParam.fieldNames;
-ID                      = cell(trials, 1);
-age                     = zeros(trials, 1);
-sex                     = cell(trials, 1);
-rew                     = nan(trials, 1);
-actRew                  = nan(trials,1);
-Date                    = cell(trials, 1);
-cond                    = cell(trials, 1);
-outcome                 = nan(trials, 1);
-distMean                = nan(trials, 1);
-reversal                = zeros(trials,1);
-TAC                     = nan(trials,1);
-oddBall                 = zeros(trials,1);
-catchTrial              = zeros(trials,1);
-triggers                = zeros(trials,7);
-pred                    = zeros(trials,1);
-predErr                 = nan(trials,1);
-memErr                  = zeros(trials,1);
-UP                      = zeros(trials,1);
-hit                     = zeros(trials,1);
-cBal                    = nan(trials,1);
-perf                    = zeros(trials,1); 
-accPerf                 = zeros(trials,1); 
-timestampOnset          = nan(trials,1);
-timestampPrediction     = nan(trials,1);
-timestampOffset         = nan(trials,1);
-initiationRT            = nan(trials,1);
-RT                      = nan(trials,1);
-initialTendency         = nan(trials,1);
-block                   = nan(trials,1);
-actJitter               = nan(trials,1);
-allASS                  = zeros(trials,1);
-currentContext          = nan(trials,1);
-hiddenContext           = nan(trials,1);
-latentState             = nan(trials,1);
-TAC_Context             = nan(trials,1);
-TAC_State               = nan(trials,1);
-savedTickmark           = nan(trials,1);
-savedTickmarkPrevious   = nan(trials,1);
-sContext                = nan;
-sState                  = nan;
-if isequal(condition,'shield') ||...
-        isequal(condition,'ARC_controlSpeed') ||...
-        isequal(condition,'ARC_controlAccuracy') ||...
-        isequal(condition,'ARC_controlPractice')
-    s                   = taskParam.gParam.safe(2);
+% Initialize variables
+% --------------------
+
+fieldNames = taskParam.fieldNames; % structure that contains the names of the variables
+ID = cell(trials, 1); % participant ID
+age = zeros(trials, 1); % participant age
+sex = cell(trials, 1); % participant sex
+rew = nan(trials, 1); % current reward
+actRew = nan(trials, 1); % actual reward?? improve description
+Date = cell(trials, 1); % date
+cond = cell(trials, 1); % current condition
+outcome = nan(trials, 1); % current outcome
+distMean = nan(trials, 1); % current mean of the distribution
+reversal = zeros(trials, 1); % reversal trial in "reversal" condition
+TAC = nan(trials, 1); % trials after change point
+oddBall = zeros(trials, 1); % oddball trial in "oddball" condition
+catchTrial = zeros(trials, 1); % catch trials
+triggers = zeros(trials, 7); % triggers
+pred = zeros(trials, 1); % current prediction
+predErr = nan(trials, 1); % current prediction error
+memErr = zeros(trials, 1); % current memory error
+UP = zeros(trials, 1); % current update
+hit = zeros(trials, 1); % current hit
+cBal = nan(trials, 1); % current counterbalancing condition
+perf = zeros(trials, 1); % current performance
+accPerf = zeros(trials, 1); % accumulated performance
+timestampOnset = nan(trials, 1); % timestamp trial onset
+timestampPrediction = nan(trials, 1); % timestamp prediction
+timestampOffset = nan(trials, 1); % timestamp trial offset
+initiationRT = nan(trials, 1); % initiation reaction time
+RT = nan(trials, 1); % reaction time
+initialTendency = nan(trials, 1); % initial prediction tendency (when mouse is used for prediction)
+block = nan(trials, 1); % current block
+actJitter = nan(trials, 1); % current jitter
+allASS = zeros(trials, 1); % all angular shield size
+currentContext = nan(trials, 1); % current context
+hiddenContext = nan(trials, 1); % hiddent context
+latentState = nan(trials, 1); % latent state
+TAC_Context = nan(trials, 1); % trials since last context change
+TAC_State = nan(trials, 1); % trials since last state change
+savedTickmark = nan(trials, 1); % saved tickmark for reversal condition
+savedTickmarkPrevious = nan(trials, 1); % previously saved tickmark
+sContext = nan; % "safe" for context changes
+sState = nan; % "safe" for state changes
+mu = 15; % mean of shield
+minASS = 10; % minimum angular shield size
+maxASS = 180; % maximium angular shiled size
+nPlanets = taskParam.gParam.nPlanets; % number of contexts
+cp = zeros(trials, nPlanets); % current change point
+nEnemies = taskParam.gParam.nEnemies; % number of states
+planetHaz = taskParam.gParam.planetHaz; % context hazard rate
+enemyHaz = taskParam.gParam.enemyHaz; % state hazard rate
+safePlanet = taskParam.gParam.safePlanet; % "safe" for context
+safeEnemy = taskParam.gParam.safeEnemy; % "safe" for state
+
+% Safe for all other conditions except chinese condition
+if isequal(condition,'shield') || isequal(condition,'ARC_controlSpeed') || isequal(condition,'ARC_controlAccuracy') || isequal(condition,'ARC_controlPractice')
+    s = taskParam.gParam.safe(2);
 else
-    s                   = taskParam.gParam.safe(1);
+    s = taskParam.gParam.safe(1);
 end
-mu                      = 15;
-minASS                  = 10;
-maxASS                  = 180;
-nContexts               = taskParam.gParam.nContexts;
-cp                      = zeros(trials, nContexts);
-nStates                 = taskParam.gParam.nStates;
-contextHaz              = taskParam.gParam.contextHaz;
-stateHaz                = taskParam.gParam.stateHaz;
-safeContext             = taskParam.gParam.safeContext;
-safeState               = taskParam.gParam.safeState;
-% -------------------------------------------------------------------------
-% Generate outcomes for CP condition
-% -------------------------------------------------------------------------
 
-if isequal(condition, 'main') ||...
-        isequal(condition, 'followOutcome') ||...
-        isequal(condition, 'mainPractice') ||...
-        isequal(condition, 'followCannon') ||...
-        isequal(condition, 'shield') ||...
-        isequal(condition, 'ARC_controlSpeed') ||...
-        isequal(condition, 'ARC_controlAccuracy') ||...
-        isequal(condition, 'ARC_controlPractice') ||...
-        isequal(condition, 'followOutcomePractice') ||...
-        isequal(condition, 'followCannonPractice')
+% Generate outcomes for CP condition
+% ----------------------------------
+
+if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannon') ||...
+        isequal(condition, 'shield') || isequal(condition, 'ARC_controlSpeed') || isequal(condition, 'ARC_controlAccuracy') || isequal(condition, 'ARC_controlPractice') ||...
+        isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
     
     for i = 1:trials
-        currentContext(i) = 1;
-        if i >= taskParam.gParam.blockIndices(1)...
-                && i < taskParam.gParam.blockIndices(2)
-            block(i) = 1;
-        elseif i >= taskParam.gParam.blockIndices(2)...
-                && i < taskParam.gParam.blockIndices(3)
-            block(i) = 2;
-        elseif i >= taskParam.gParam.blockIndices(3)...
-                && i < taskParam.gParam.blockIndices(4)
-            block(i) = 3;
-        elseif i >= taskParam.gParam.blockIndices(4)
-            block(i) = 4;
-        end
         
-        if (rand < haz && s == 0)...
-                || i == taskParam.gParam.blockIndices(1)...
-                || i == taskParam.gParam.blockIndices(2)...
-                || i == taskParam.gParam.blockIndices(3)...
-                || i == taskParam.gParam.blockIndices(4) 
-            mean=round(rand(1).*359); 
+        % Is it actually necessary to indiate context in this condition?
+        % Maybe simply set to nan
+        currentContext(i) = 1;
+        
+        block(i) = al_indicateBlock(i, taskParam.gParam.blockIndices);
+        
+        % Generate change points
+        if (rand < haz && s == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
+            
+            % Indicate current change point
             cp(i) = 1;
-            if isequal(condition,'shield') ||...
-                    isequal(condition, 'ARC_controlSpeed') ||...
-                    isequal(condition, 'ARC_controlAccuracy') ||...
-                    isequal(condition, 'ARC_controlPractice')
-                s=taskParam.gParam.safe(2);
+            
+            % Draw mean of current distribution
+            mean = round(rand(1).*359);
+            
+            % Take into account that in some conditions change points can only occur after a few trials
+            if isequal(condition,'shield') || isequal(condition, 'ARC_controlSpeed') || isequal(condition, 'ARC_controlAccuracy') || isequal(condition, 'ARC_controlPractice')
+                s = taskParam.gParam.safe(2);
             else
-                s=taskParam.gParam.safe(1);
+                s = taskParam.gParam.safe(1);
             end
             
+            % Reset trials after change point
             TAC(i) = 0;
         else
-            TAC(i) = TAC(i-1)+1;
+            
+            % Increase trials after change point
+            TAC(i) = TAC(i-1) + 1;
+            
+            % Update "safe criterion"
             s = max([s-1, 0]);
         end
         
-        outcome(i) =...
-            round(180+rad2deg(circ_vmrnd(deg2rad(mean-180),...
-            concentration, 1)));
+        % Draw outcome
+        outcome(i) = al_sampleOutcome(mean, concentration);
+        
+        % Save actual mean
         distMean(i) = mean;
+        
+        % Indicate that this condition does not contain any oddballs
         oddBall(i) = nan;
         
-        %CatchTrial
-        if taskParam.gParam.useCatchTrials 
-            
+        % Generate catch trials
+        if taskParam.gParam.useCatchTrials
             if isequal('condition', 'onlinePractice')
                 if rand <= .2 && cp(i) == 0
                     catchTrial(i:i+2) = 1;
+                else
+                    catchTrial(i:i+2) = 0;
                 end
-            elseif rand <= 0.1 && cp(i) == 0
-                catchTrial(i) = 1;
+            else
+                catchTrial(i) = al_generateCatchTrial(cp(i));
             end
-        else
-            catchTrial(i) = 0;
         end
         
-        ASS=nan;
-        while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
-            ASS=exprnd(mu);
-        end
-        allASS(i)=ASS;
-    end
+        % Generate angular shield size
+        allASS(i) = al_getShieldSize(minASS, maxASS, mu);
+        
+        % Set latent state to 0, as it is not used in change point task or shield practice
         latentState(i) = 0;
+    end
     
-% -------------------------------------------------------------------------
-% Generate outcomes for Oddball condition
-% -------------------------------------------------------------------------
-        
-elseif isequal(condition, 'oddball')...
-        || isequal(condition, 'practiceNoOddball')...
-        || isequal(condition, 'practiceOddball')
-
-    distMean=nan(trials,1);
-    oddBall=false(trials,1);
-    outcome=nan(trials,1);
+    
+    
+    % Generate outcomes for Oddball condition
+    % ---------------------------------------
+    
+elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'practiceOddball')
+    
+    oddBall = false(trials,1);
+    
+    % Extract drift of cannon
     if isequal(condition, 'shield')
         driftConc = taskParam.gParam.driftConc(2);
     else
         driftConc = taskParam.gParam.driftConc(1);
     end
     
-    s  = 0;
-    mu = 10; % for ODDBALL = 10
+    % Initialize safe
+    s = 0;
+    mu = 10;
     
-    for i=1:trials
+    for i = 1:trials
         
-        % blocknumber
-        if i >= taskParam.gParam.blockIndices(1)...
-                && i <= taskParam.gParam.blockIndices(2)
-            block(i) = 1;
-        elseif i >= taskParam.gParam.blockIndices(2)...
-                && i <= taskParam.gParam.blockIndices(3)
-            block(i) = 2;
-        elseif i >= taskParam.gParam.blockIndices(3)...
-                && i <= taskParam.gParam.blockIndices(4)
-            block(i) = 3;
-        elseif i >= taskParam.gParam.blockIndices(4)
-            block(i) = 4;
-        end
+        % Indicate current task block
+        block(i) = al_indicateBlock(i, taskParam.gParam.blockIndices);
         
-        if i == taskParam.gParam.blockIndices(1) ...
-                || i == taskParam.gParam.blockIndices(2) + 1 ...
-                || i == taskParam.gParam.blockIndices(3) + 1 ...
-                || i == taskParam.gParam.blockIndices(4) + 1 
-            muRad_offset=unifrnd(-pi, pi);
+        % Generate drift for oddball condition
+        if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1
+            muRad_offset = unifrnd(-pi, pi);
         else
-            muRad_offset= deg2rad(distMean(i-1)-180)+...
-                circ_vmrnd(0, driftConc, 1);
+            muRad_offset = deg2rad(distMean(i-1)-180) + circ_vmrnd(0, driftConc, 1);
         end
-        muRad_offset=circ_dist(muRad_offset, 0);
-        distMean(i)=rad2deg(muRad_offset)+180;
+        muRad_offset = circ_dist(muRad_offset, 0);
+        distMean(i) = rad2deg(muRad_offset) + 180;
         
-        if isequal(condition, 'practiceNoOddball') ...
-                || isequal(condition, 'shield')
+        % Extract probability for oddball trials
+        if isequal(condition, 'practiceNoOddball') || isequal(condition, 'shield')
             oddballProb = taskParam.gParam.oddballProb(2);
-        elseif isequal(condition, 'practiceOddball')...
-                || isequal(condition, 'practice') ...
-                || isequal(condition, 'main') ...
-                || isequal(condition, 'oddball')
+        elseif isequal(condition, 'practiceOddball') || isequal(condition, 'practice') || isequal(condition, 'main') || isequal(condition, 'oddball')
             oddballProb = taskParam.gParam.oddballProb(1);
         end
         
-        if rand<oddballProb && s==0
-            outcome(i)=round(rand.*359);
-            oddBall(i)=true;
-            TAC(i)=0;
-            s=taskParam.gParam.safe(1);
+        % Generate oddballs and non-oddballs
+        if rand < oddballProb && s == 0
+            outcome(i) = round(rand.*359);
+            oddBall(i) = true;
+            TAC(i) = 0;
+            s = taskParam.gParam.safe(1);
         else
-            if i==1
-                TAC(i)=nan;
+            if i == 1
+                TAC(i) = nan;
             else
-                TAC(i)=TAC(i-1)+1;
+                TAC(i) = TAC(i-1)+1;
             end
-            outcome(i) =...
-                round(rad2deg(circ_vmrnd(deg2rad(distMean(i)-180),...
-                concentration, 1))+180); 
-            s=max([s-1, 0]);
+            
+            % Sample outcome
+            outcome(i) = al_sampleOutcome(distMean(i), concentration);
+            
+            % Update "safe"
+            s = max([s - 1, 0]);
         end
+        
+        % Generate angular shield size
+        allASS(i) = al_getShieldSize(minASS, maxASS, mu);
+        allASS(i) = allASS(i)*2;
+        
+        % Indicate that we're not dealing with change points in this condition
         cp(i) = nan;
-        
-        
-        ASS=nan;
-        
-        while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
-            ASS=exprnd(mu);
-        end
-        allASS(i)=ASS.*2;
     end
     
+    % Generate outcomes for reversal condition
+    % ----------------------------------------
     
-% -------------------------------------------------------------------------
-% Generate outcomes for reversal condition
-% -------------------------------------------------------------------------
-    
-elseif isequal(condition, 'reversal')...
-        || isequal(condition, 'reversalPractice')...
-        || isequal(condition, 'reversalPracticeNoise')...
-        || isequal(condition, 'reversalPracticeNoiseInv2')...
-        || isequal(condition, 'reversalPracticeNoiseInv3')
+elseif isequal(condition, 'reversal') || isequal(condition, 'reversalPractice') || isequal(condition, 'reversalPracticeNoise')...
+        || isequal(condition, 'reversalPracticeNoiseInv2') || isequal(condition, 'reversalPracticeNoiseInv3')
     
     for i = 1:trials
-        if i >= taskParam.gParam.blockIndices(1) ...
-                && i <= taskParam.gParam.blockIndices(2)
-            block(i) = 1;
-        elseif i >= taskParam.gParam.blockIndices(2) ...
-                && i <= taskParam.gParam.blockIndices(3)
-            block(i) = 2;
-        elseif i >= taskParam.gParam.blockIndices(3)...
-                && i <= taskParam.gParam.blockIndices(4)
-            block(i) = 3;
-        elseif i >= taskParam.gParam.blockIndices(4)
-            block(i) = 4;
-        end
-        currentBlock = block(i);
-        if (rand < haz && s == 0)...
-                || i == taskParam.gParam.blockIndices(1)...
-                || i == taskParam.gParam.blockIndices(2) + 1 ...
-                || i == taskParam.gParam.blockIndices(3) + 1 ...
-                || i == taskParam.gParam.blockIndices(4) + 1
+        
+        % Indicate current task block
+        block(i) = al_indicateBlock(i, taskParam.gParam.blockIndices);
+        
+        % Generate change points
+        if (rand < haz && s == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1
             cp(i) = 1;
-            if (rand < taskParam.gParam.reversalProb(1) ...
-                    && sum(cp(block == currentBlock)) > 2) ...
-                    || (rand < taskParam.gParam.reversalProb(2) ...
-                    && sum(cp(block == currentBlock)) > 2 ...
-                    && isequal(condition, 'reversalPractice')) ...
-                    || (rand < taskParam.gParam.reversalProb(2) ...
-                    && sum(cp(block == currentBlock)) > 2....
-                    && isequal(condition, 'reversalPracticeNoise')) ...
-                    || (rand < taskParam.gParam.reversalProb(2) ...
-                    && sum(cp(block == currentBlock)) > 2 ...
-                    && isequal(condition, 'reversalPracticeNoiseInv2'))
+            if (rand < taskParam.gParam.reversalProb(1) && sum(cp(block == block(i))) > 2) || (rand < taskParam.gParam.reversalProb(2) ...
+                    && sum(cp(block == block(i))) > 2 && isequal(condition, 'reversalPractice')) || (rand < taskParam.gParam.reversalProb(2) ...
+                    && sum(cp(block == block(i))) > 2 && isequal(condition, 'reversalPracticeNoise')) || (rand < taskParam.gParam.reversalProb(2) ...
+                    && sum(cp(block == block(i))) > 2 && isequal(condition, 'reversalPracticeNoiseInv2'))
                 reversal(i) = true;
                 allMeans = distMean(cp==true);
                 mean = allMeans(end-2);
-                
             else
                 mean = round(rand(1).*359);
                 reversal(i) = false;
-            end 
-                
+            end
             s = taskParam.gParam.safe(1);
-            TAC(i) = 0; 
-            
+            TAC(i) = 0;
         else
             TAC(i) = TAC(i-1)+1;
             s = max([s-1, 0]);
         end
-      
+        
+        % Save actual mean
         distMean(i) = mean;
-
-        outcome(i) = round(180+rad2deg(circ_vmrnd(deg2rad(mean-180),...
-            concentration, 1)));
+        
+        % Generate current outcome
+        outcome(i) = al_sampleOutcome(mean, concentration);
+        
+        % Indicate that we're not dealing with oddballs in this condition
         oddBall(i) = nan;
         
-        if rand <= .10 && cp(i) == 0;
-            catchTrial(i) = 1;
-        else
-            catchTrial(i) = 0;
-        end
-        ASS = nan;
+        % Generate catch trials
+        catchTrial(i) = al_generateCatchTrial(cp(i));
         
-        while ~isfinite(ASS)|| ASS < minASS || ASS > maxASS
-            ASS = exprnd(mu);
-        end
-        
-        allASS(i) = ASS;
+        allASS(i) = al_getShieldSize(minASS, maxASS, mu);
     end
     
-% -------------------------------------------------------------------------
-% Generate outcomes for Chinese condition
-% -------------------------------------------------------------------------
+    % Generate outcomes for practice blocks of Chinese condition
+    % ----------------------------------------------------------
     
-elseif isequal(condition, 'chinese') ||...
-       isequal(condition, 'chinesePractice_1') ||...
-       isequal(condition, 'chinesePractice_4') ||...
-       isequal(condition, 'chinesePractice_2') ||...
-       isequal(condition, 'chinesePractice_3')
-       %warning('checken')
-%        nContexts = taskParam.gParam.nContexts;% 1;
-%         nStates = taskParam.gParam.nStates;%3;
-%         contextHaz = taskParam.gParam.contextHaz;%0.5;%1/nContexts;
-%         stateHaz = taskParam.gParam.stateHaz;% 0.5;
-%         safeContext =  taskParam.gParam.safeContext;% 0;
-%         safeState = taskParam.gParam.safeState;%;0;
-%         sContext = nan;
-%         sState = nan;
-%         cp = zeros(trials, nContexts);
+elseif isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_4') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3') ||...
+        (isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == false)
     
     for i = 1:trials
         
-        if i >= taskParam.gParam.blockIndices(1)...
-                && i < taskParam.gParam.blockIndices(2)
-            block(i) = 1;
-        elseif i >= taskParam.gParam.blockIndices(2)...
-                && i < taskParam.gParam.blockIndices(3)
-            block(i) = 2;
-        elseif i >= taskParam.gParam.blockIndices(3)...
-                && i < taskParam.gParam.blockIndices(4)
-            block(i) = 3;
-        elseif i >= taskParam.gParam.blockIndices(4)
-            block(i) = 4;
-        end
+        % Indicate current task block
+        block(i) = al_indicateBlock(i, taskParam.gParam.blockIndices);
         
-        if i == taskParam.gParam.blockIndices(1)...
-                || i == taskParam.gParam.blockIndices(2)...
-                || i == taskParam.gParam.blockIndices(3)...
-                || i == taskParam.gParam.blockIndices(4)
-           
+        % For each block, determine means of outcome generating distributions
+        if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
             stateSpace = randi(360,3,3);
-            
         end
         
-        % determine latent state
-        if (rand < stateHaz && sState == 0)...
-                || i == taskParam.gParam.blockIndices(1)...
-                || i == taskParam.gParam.blockIndices(2) + 1 ...
-                || i == taskParam.gParam.blockIndices(3) + 1 ...
-                || i == taskParam.gParam.blockIndices(4) + 1 
-
-            latentState(i) = randi(nContexts); 
-            %stateCp(i) = 1;
-            sState = safeState;
-            TAC_State(i) = 0; 
+        % Determine latent state
+        if (rand < enemyHaz && sState == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1
+            latentState(i) = randi(nEnemies);
+            sState = safeEnemy;
+            TAC_State(i) = 0;
         else
             TAC_State(i) = TAC_State(i-1) + 1;
             sState = max([sState-1, 0]);
             latentState(i) = latentState(i-1);
         end
         
-        % determine current context 
-        if (rand < contextHaz && sContext == 0)...
-                || i == taskParam.gParam.blockIndices(1)...
-                || i == taskParam.gParam.blockIndices(2) + 1 ...
-                || i == taskParam.gParam.blockIndices(3) + 1 ...
-                || i == taskParam.gParam.blockIndices(4) + 1 
-           
-            currentContext(i) = randi(nStates); 
-            
-            %contextCp(i) = 1;
-            sContext = safeContext;
-            TAC_Context(i) = 0; 
+        % Determine current context
+        if (rand < planetHaz && sContext == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) + 1 || i == taskParam.gParam.blockIndices(3) + 1 || i == taskParam.gParam.blockIndices(4) + 1
+            currentContext(i) = randi(nPlanets);
+            sContext = safePlanet;
+            TAC_Context(i) = 0;
         else
             TAC_Context(i) = TAC_Context(i-1) + 1;
             sContext = max([sContext-1, 0]);
             currentContext(i) = currentContext(i-1);
         end
         
-        outcome(i) =...
-            round(180+rad2deg(circ_vmrnd(deg2rad(...
-            stateSpace(latentState(i), currentContext(i))-180),...
-            concentration, 1)));
-
+        % Save actual mean
         distMean(i) = stateSpace(latentState(i), currentContext(i));
         
+        % Sample outcomes
+        outcome(i) = al_sampleOutcome(distMean(i), concentration);
+        
+        % Indicate that we're not dealing with oddballs in this condition
         oddBall(i) = nan;
         
-        if rand <= .10 && cp(i) == 0
-            catchTrial(i) = 1;
-        else
-            catchTrial(i) = 0;
-        end
-        ASS=nan;
+        % Generate catch trials
+        catchTrial(i) = al_generateCatchTrial(cp(i));
         
-        while ~isfinite(ASS)|| ASS<minASS || ASS>maxASS
-            ASS = exprnd(mu);
-        end
-        allASS(i) = ASS;
+        % Generate angular shield size
+        allASS(i) = al_getShieldSize(minASS, maxASS, mu);
+        
     end
     
+elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == true
+    % Generation of outcomes for cannon-state extension task
+    
+    % Initialze variables
+    nb = taskParam.gParam.nb;% 8; % number of blocks
+    crit_dist = 45; % critical distance between means. Controls the overlap between states to avoid very similar enemies.
+    %nEnemies = nEnemies; %2; % number of enemies
+    %nPlanets = nPlantes; %2; % number of planets
+    n_changes = (trials/nb)*haz; % number of changes
+    safe = s;
+    block = repelem(1:8, trials/nb); % block indizes
+    ass_mu = mu;
+    
+    % Sample Means for enemy x planet x block
+    % ---------------------------------------
+    mu = randi(359, nEnemies, nPlanets, nb);
+    
+    while 1
+        x = abs(al_diff(mu(1, :, :), mu(2, :, :)));
+        if any(any(x < crit_dist))
+            mu = randi(359, nEnemies, nPlanets, nb);
+        else
+            break
+        end
+    end
+    
+    % Sample planets. Here we have the same frequency for each planet
+    % ---------------------------------------------------------------
+    planet_vec = [ones(1, trials/2), repmat(2, 1, trials/2)];
+    planet_vec = planet_vec(randperm(length(planet_vec)));
+    
+    % Initialiize vector for current mu
+    current_mu = nan(trials/nb, 1)';
+    
+    % Initialize here!
+    all_changes = [];
+    all_mu = [];
+    all_enemies = [];
+    
+    % Sample number and timing of changes. Here we keep the number of enemy
+    % changes constant
+    
+    % Cycle over blocks
+    % -----------------
+    for b = 1:nb
+        while true
+            
+            % Determine "change points" where enemy changes
+            change_vec = [ones(1, n_changes), zeros(1, (trials/nb) - n_changes-safe * 2)];
+            change_vec = change_vec(randperm(length(change_vec)));
+            x = diff(find(change_vec));
+            if ~ismember(x, 1:safe)
+                break
+            end
+        end
+        
+        % Make sure that first 3 and last 3 trials are no change points
+        change_final = [zeros(safe, 1)', change_vec, zeros(safe, 1)'];
+        
+        % Generate enemy vector and determine current mu
+        % Randomly generate the fist "active" enemy
+        enemy_vec = binornd(1, 0.5) + 1;
+        current_mu(1) = mu(enemy_vec(1), planet_vec(1));
+        
+        % Cycle through change vector and determine current enemy and conditional on this the current mean
+        for i = 2:length(change_final)
+            if change_final(i) == 1
+                enemy_vec(i) = 3 - enemy_vec(i-1);
+            else
+                enemy_vec(i) = enemy_vec(i-1);
+            end
+            current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
+        end
+        
+        % TODO: Initialize! 
+        all_changes = horzcat(all_changes, change_vec);
+        all_mu = horzcat(all_mu, current_mu);
+        all_enemies = horzcat(all_enemies, enemy_vec);
+        
+    end
+    
+    % Sample actual outcomes
+    % ----------------------
+    
+    % Cycle over trials
+    for i = 1:trials
+        
+        outcome(i) = round(180 + rad2deg(circ_vmrnd(deg2rad(all_mu(i) - 180), concentration, 1)));
+        
+        % Generate angular shield size
+        allASS(i) = al_getShieldSize(minASS, maxASS, ass_mu);
+        
+    end
+    
+    % Adjust to match names! Adjust in the future
+    latentState = enemy_vec;
+    currentContext = planet_vec;
+    distMean = all_mu;
+    catchTrial = zeros(length(distMean), 1);
+    oddBall = nan(length(distMean), 1);
+
 end
 
-
-if isequal(taskParam.gParam.taskType, 'ARC') ||...
-        isequal(taskParam.gParam.taskType, 'chinese')
-
-        shieldType = ones(trials,1); %always reward
+% Generate shield types
+if isequal(taskParam.gParam.taskType, 'ARC') || isequal(taskParam.gParam.taskType, 'chinese')
+    % Here all shields have the same color
+    shieldType = ones(trials,1);
 else
-    warning('ShieldType nicht spezifiziert')
+    %warning('ShieldType nicht spezifiziert')
     shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 end
 
 %% Save data
+% Todo: Eventually, this should become an object
 taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     block, fieldNames.initiationRTs, initiationRT, ...
     fieldNames.timestampOnset, timestampOnset, 'haz', haz,...
@@ -481,8 +477,7 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     fieldNames.memErr, memErr, fieldNames.UP, UP, fieldNames.hit, hit,...
     fieldNames.perf, perf, fieldNames.accPerf, accPerf, fieldNames.date,...
     {Date},'reversal', reversal, 'initialTendency', initialTendency,...
-    'RT', RT, 'currentContext', currentContext,...
-    'hiddenContext', hiddenContext, 'contextTypes', contextTypes,...
+    'RT', RT, 'currentContext', currentContext, 'hiddenContext', hiddenContext,...
     'latentState', latentState, 'savedTickmark', savedTickmark,...
     'savedTickmarkPrevious', savedTickmarkPrevious);
 end

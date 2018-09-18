@@ -6,6 +6,7 @@ function trigger = al_sendTrigger(taskParam, taskData, condition, ~, trial, Teve
 % habe trigger jetzt aus der schleife genommen. woran liegt das?
 %   See triggerscheme for details
 %keyboard
+
 digit1 = 0;
 digit2 = 0;
 digit3 = 0;

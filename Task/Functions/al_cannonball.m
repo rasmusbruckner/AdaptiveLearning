@@ -1,54 +1,70 @@
 function al_cannonball(taskParam, distMean, outcome, background, currentContext, latentState)
 %CANNONBALL   Animates the cannonball shot
+%
+%   Input
+%       taskParam: structure containing task parameters
+%       distMean: current mean of distribution
+%       outcome: current outcome
+%       background: indicates if background should be printed
+%       currentContext: current planet
+%       latentState: current enemy
+%   Output
+%        ~
 
-% number of times that cannonball is printed between cannon and aim
+
+% Number of times that cannonball is printed while flying from cannon to aim
 nFrames = 50;
 
-% outcome coordinates
+% Outcome coordinates
 xOut = ((taskParam.circle.rotationRad-5) * sind(outcome));
 yOut = ((taskParam.circle.rotationRad-5) * (-cosd(outcome)));
 OutcSpot = OffsetRect(taskParam.circle.outcCentSpotRect, xOut, yOut);
 
-% target (mean) coordinates
+% Target (mean) coordinates
 xTarget = ((taskParam.circle.rotationRad-5) * sind(distMean));
 yTarget = ((taskParam.circle.rotationRad-5) * -cosd(distMean));
+
 if ~isequal(taskParam.gParam.taskType, 'chinese')
+    % In all conditions, except "chinese" needle goes from the center of the screen to the circle
     TargetSpotEnd = OffsetRect(taskParam.circle.outcCentSpotRect, xTarget, yTarget);
     TargetSpotStart = taskParam.circle.outcCentSpotRect;
 else 
+    % In "chinese" condition, cannon and needle start outside of the circle
     xCannon = (300 * sind(distMean));
     yCannon = (300 * -cosd(distMean));
-    TargetSpotEnd = OffsetRect(taskParam.circle.outcCentSpotRect,...
-        xTarget, yTarget);
-    TargetSpotStart = OffsetRect(taskParam.circle.outcCentSpotRect,...
-        xCannon, yCannon);
+    TargetSpotEnd = OffsetRect(taskParam.circle.outcCentSpotRect, xTarget, yTarget);
+    TargetSpotStart = OffsetRect(taskParam.circle.outcCentSpotRect, xCannon, yCannon);
 end
 TargetDist = TargetSpotEnd - TargetSpotStart;
 
-% position at which cannonball starts to fly
+% Position at which cannonball starts to fly
 BallStart = TargetSpotStart + TargetDist/4;
 
-% difference between start and end point
+% Difference between start and end point
 OutcSpotDiff = OutcSpot - BallStart;
 
-% stepsize
+% Stepsize
 Step = OutcSpotDiff / nFrames;
 
-% actual cannonball position
+% Actual cannonball position
 OutcSpotAct = BallStart;
 
+% Cycle over number of frames to run the animation
 for i = 1:nFrames
     
+    % Print background, if desired
     if background == true
         al_lineAndBack(taskParam)
     end
     
+    % Print plante color in chinese version
     OutcSpotAct = OutcSpotAct + Step;
     if isequal(taskParam.gParam.taskType, 'chinese')
-            %currentContext = 1;
             al_drawContext(taskParam, currentContext)
             al_drawCross(taskParam)
     end
+    
+    % Draw circle, cannon, prediction spot
     al_drawCircle(taskParam)
     al_drawCannon(taskParam, distMean, latentState)
     al_predictionSpot(taskParam)
@@ -59,6 +75,8 @@ for i = 1:nFrames
          Screen('FillOval', taskParam.gParam.window.onScreen, [0 0 0],...
             OutcSpotAct);
     end
+    
+    % Flip screen and present changes
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.01);

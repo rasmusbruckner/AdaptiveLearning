@@ -1,10 +1,18 @@
 function al_drawCircle(taskParam)
-% DRAWCIRCLE Draws the circle in the cannon task
+% AL_DRAWCIRCLE   Draws the circle in the cannon task
+%
+%   Input
+%        taskParam: structure containing task parameters
+%   Output
+%        ~
 
+
+% Extract rotation radius
 rotRad = taskParam.circle.rotationRad;
-%rotRad = taskParam.circle.tendencyThreshold;
 
+% Extract center
 zero = taskParam.gParam.zero;
-Screen(taskParam.gParam.window.onScreen,'FrameOval',[224 224 224],...
-    [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad],[],10,[]);
+
+% Generate circle
+Screen(taskParam.gParam.window.onScreen,'FrameOval',[224 224 224], [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], [], 10, []);
 

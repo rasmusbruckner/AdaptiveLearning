@@ -59,7 +59,11 @@
             elseif isequal(whichPractice, 'reversal')
                 txt = 'Reversal Task';
             elseif isequal(whichPractice, 'chinese')
-                txt = 'Beschütze Deine Planeten';
+                if taskParam.gParam.language == 1
+                    txt = 'Beschütze Deine Planeten';
+                elseif taskParam.gParam.language == 2
+                    txt = 'English';
+                end
             end
         end
         

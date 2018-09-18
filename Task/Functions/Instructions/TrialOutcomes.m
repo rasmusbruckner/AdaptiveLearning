@@ -1,4 +1,5 @@
-function [screenIndex] = TrialOutcomes(screenIndex)
+function [screenIndex] = trialOutcomes(screenIndex)
+    
     if isequal(taskParam.gParam.taskType, 'dresden')
         header = 'Gewinnmöglichkeiten';
         if isequal(subject.group, '1')
@@ -11,21 +12,18 @@ function [screenIndex] = TrialOutcomes(screenIndex)
                 'verdienen, spielen wir jetzt alle Möglichkeiten '...
                 'durch.'];
         end
-    elseif isequal(taskParam.gParam.taskType, 'oddball')...
-            || isequal(taskParam.gParam.taskType, 'reversal')...
-            || isequal(taskParam.gParam.taskType, 'ARC')
+    elseif isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC')
         header = 'Trial Outcomes';
         txt = sprintf(['Now lets see what happens when you hit '...
             'or miss the ball with a %s or %s shield...'],...
             colRew, colNoRew);
     end
     feedback = false;
-    fw = al_bigScreen(taskParam,...
-        taskParam.strings.txtPressEnter, header, txt, feedback);
+    fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
     if fw == 1
         screenIndex = screenIndex + 1;
     elseif bw == 1
         screenIndex = screenIndex - 2;
     end
-    WaitSecs(0.1);
+    WaitSecs(0.1)
 end

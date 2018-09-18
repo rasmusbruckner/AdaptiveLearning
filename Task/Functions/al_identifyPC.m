@@ -1,6 +1,7 @@
 function [computer, Computer2] = al_identifyPC()
 %IDENTIFYPC   Identifies the computer the task is running on by checking
 %the software identifier of its network card.
+% Add more comments!
 
 sid = '';
 ni = java.net.NetworkInterface.getNetworkInterfaces;
@@ -25,7 +26,7 @@ elseif strcmp(sid, ['.139DEA01CE83.8888888600000000.8888888600000000.'...
 elseif strcmp(sid, ['.F5B0D5445F09.8888888600000000.88A8B78070C3.'...
         '8888888600000000.8888888600000000'])
     computer = 'Dresden_Rene';
-elseif strcmp(sid, '.0928C78F12F8') || strcmp(sid,'.51AEDB61FA6E.A7FCC9806116.B40C7389619A')
+elseif strcmp(sid, '.0928C78F12F8') || strcmp(sid,'.51AEDB61FA6E.A7FCC9806116.B40C7389619A') || strcmp(sid,'.B40C7389619A')
     computer = 'Macbook';
 elseif strcmp(sid, '.E2EC7188D14A')
     computer = 'Lennart';
