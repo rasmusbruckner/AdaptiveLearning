@@ -1,5 +1,5 @@
 function taskData = al_generateOutcomes(taskParam, haz, concentration, condition)
-%GENERATEOUTCOMES    Generates the outcomes for the different tasks
+%GENERATEOUTCOMES Generates the outcomes for the different tasks
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -97,6 +97,7 @@ planetHaz = taskParam.gParam.planetHaz; % context hazard rate
 enemyHaz = taskParam.gParam.enemyHaz; % state hazard rate
 safePlanet = taskParam.gParam.safePlanet; % "safe" for context
 safeEnemy = taskParam.gParam.safeEnemy; % "safe" for state
+critical_trial = nan; 
 
 % Safe for all other conditions except chinese condition
 if isequal(condition,'shield') || isequal(condition,'ARC_controlSpeed') || isequal(condition,'ARC_controlAccuracy') || isequal(condition,'ARC_controlPractice')
@@ -353,8 +354,6 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
     % Initialze variables
     nb = taskParam.gParam.nb;% 8; % number of blocks
     crit_dist = 45; % critical distance between means. Controls the overlap between states to avoid very similar enemies.
-    %nEnemies = nEnemies; %2; % number of enemies
-    %nPlanets = nPlantes; %2; % number of planets
     n_changes = (trials/nb)*haz; % number of changes
     safe = s;
     block = repelem(1:8, trials/nb); % block indizes
@@ -373,18 +372,17 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
         end
     end
     
-    % Sample planets. Here we have the same frequency for each planet
-    % ---------------------------------------------------------------
-    planet_vec = [ones(1, trials/2), repmat(2, 1, trials/2)];
-    planet_vec = planet_vec(randperm(length(planet_vec)));
-    
-    % Initialiize vector for current mu
-    current_mu = nan(trials/nb, 1)';
+%     % Sample planets. Here we have the same frequency for each planet
+%     % ---------------------------------------------------------------
+%     planet_vec = [ones(1, trials/2), repmat(2, 1, trials/2)];
+%     planet_vec = planet_vec(randperm(length(planet_vec)));
     
     % Initialize here!
     all_changes = [];
     all_mu = [];
     all_enemies = [];
+    all_planets = [];
+    block = [];
     
     % Sample number and timing of changes. Here we keep the number of enemy
     % changes constant
@@ -392,40 +390,89 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
     % Cycle over blocks
     % -----------------
     for b = 1:nb
+
+        % Sample planets. Here we have the same frequency for each planet
+        % ---------------------------------------------------------------
+        planet_vec = [ones(1, trials/nb/2), repmat(2, 1, trials/nb/2)];
+        planet_vec = planet_vec(randperm(length(planet_vec)));
+        
+        % Randomly determine first enemy
+        enemy_vec = nan(trials/nb, 1);
+        enemy_vec(1) = binornd(1, 0.5) + 1;
+
+        % Initialiize vector for current mu
+        current_mu = nan(trials/nb, 1)';
+        current_block = repmat(b, trials/nb, 1);
+        
         while true
             
             % Determine "change points" where enemy changes
             change_vec = [ones(1, n_changes), zeros(1, (trials/nb) - n_changes-safe * 2)];
             change_vec = change_vec(randperm(length(change_vec)));
-            x = diff(find(change_vec));
+            idx_change = find(change_vec);
+            x = diff(idx_change);
             if ~ismember(x, 1:safe)
-                break
+                % Make sure that first 3 and last 3 trials are no change points
+                change_final = [zeros(safe, 1)', change_vec, zeros(safe, 1)'];
+                idx_planet_change = find(diff(planet_vec))+1;
+                idx_enemy_change = find(change_final);
+                %criticalOK = zeros(1,numel(idx_enemy_change)-1);
+                
+                current_mu(1) = mu(enemy_vec(1), planet_vec(1),b);
+
+                % Cycle through change vector and determine current enemy and conditional on this the current mean
+                for i = 2:length(change_final)
+                    if change_final(i) == 1
+                        enemy_vec(i) = 3 - enemy_vec(i-1);
+                    else
+                        enemy_vec(i) = enemy_vec(i-1);
+                    end
+                    
+                    current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
+                end
+                combo_vec = [enemy_vec, planet_vec'];
+                [combo, first_visit] = unique(combo_vec, 'rows');
+                
+                criticalOK = zeros(1,numel(idx_enemy_change));
+                critical_trial = nan(numel(idx_enemy_change));
+                for i = 1:numel(idx_enemy_change)-1
+                     fvoi = combo_vec(idx_enemy_change(i),:);
+                     fvoi_index = first_visit(ismember(combo, fvoi, 'rows'));
+                     criticalOK(i) = any(idx_planet_change > idx_enemy_change(i) & ...
+                        idx_planet_change < idx_enemy_change(i+1) & ...
+                        idx_enemy_change(i) ~= fvoi_index);
+                    critical_trial(i) = idx_planet_change(find(idx_planet_change>idx_enemy_change(i) ,1));
+                end
+                criticalOK(end) = any(idx_planet_change > idx_enemy_change(end));
+                critical_trial(end) = idx_planet_change(find(idx_planet_change>idx_enemy_change(i) ,1));
+                if all(criticalOK(2:end))
+                    break
+                end
             end
         end
         
-        % Make sure that first 3 and last 3 trials are no change points
-        change_final = [zeros(safe, 1)', change_vec, zeros(safe, 1)'];
         
-        % Generate enemy vector and determine current mu
-        % Randomly generate the fist "active" enemy
-        enemy_vec = binornd(1, 0.5) + 1;
-        current_mu(1) = mu(enemy_vec(1), planet_vec(1));
         
-        % Cycle through change vector and determine current enemy and conditional on this the current mean
-        for i = 2:length(change_final)
-            if change_final(i) == 1
-                enemy_vec(i) = 3 - enemy_vec(i-1);
-            else
-                enemy_vec(i) = enemy_vec(i-1);
-            end
-            current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
-        end
+%         % Generate enemy vector and determine current mu
+%         % Randomly generate the fist "active" enemy
+%         current_mu(1) = mu(enemy_vec(1), planet_vec(1),b);
+%         
+%         % Cycle through change vector and determine current enemy and conditional on this the current mean
+%         for i = 2:length(change_final)
+%             if change_final(i) == 1
+%                 enemy_vec(i) = 3 - enemy_vec(i-1);
+%             else
+%                 enemy_vec(i) = enemy_vec(i-1);
+%             end
+%             current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
+%         end
         
         % TODO: Initialize! 
         all_changes = horzcat(all_changes, change_vec);
         all_mu = horzcat(all_mu, current_mu);
         all_enemies = horzcat(all_enemies, enemy_vec);
-        
+        all_planets = horzcat(all_planets, planet_vec);
+        block = horzcat(block, current_block);
     end
     
     % Sample actual outcomes
@@ -442,8 +489,8 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
     end
     
     % Adjust to match names! Adjust in the future
-    latentState = enemy_vec;
-    currentContext = planet_vec;
+    latentState = all_enemies; 
+    currentContext = all_planets;
     distMean = all_mu;
     catchTrial = zeros(length(distMean), 1);
     oddBall = nan(length(distMean), 1);
@@ -479,5 +526,5 @@ taskData = struct(fieldNames.actJitter, actJitter, fieldNames.block,...
     {Date},'reversal', reversal, 'initialTendency', initialTendency,...
     'RT', RT, 'currentContext', currentContext, 'hiddenContext', hiddenContext,...
     'latentState', latentState, 'savedTickmark', savedTickmark,...
-    'savedTickmarkPrevious', savedTickmarkPrevious);
+    'savedTickmarkPrevious', savedTickmarkPrevious, 'critical_trial', critical_trial);
 end

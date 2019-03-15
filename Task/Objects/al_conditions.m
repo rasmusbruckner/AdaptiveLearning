@@ -17,7 +17,9 @@ classdef al_conditions
         showTickmark;
         DataMain;
         Data;
-        DataChinese;
+        DataChineseCued;
+        DataChineseMain;
+
     end
     
     % Methods of the conditions object
@@ -329,8 +331,18 @@ classdef al_conditions
                         'Gegner auf dem jeweiligen Planeten seine Kanone gerichtet hat. Du kannst dann bei einem Wechsel des Gegners oder des Planeten dein Schild direkt '...
                         'an dieser Stelle positionieren.\n\nWenn du noch Fragen hast, wende dich bitte jetzt an den Versuchsleiter.'];
                 elseif taskParam.gParam.language == 2
-                    header = 'English';
-                    txtStartTask = 'English';
+                    header = 'Beginning of the Task';
+                    txtStartTask = ['You have finished the practice trials!\n\n'...
+                        'You can now earn real money, depending on your performance on the task.\n\n'...
+                        'Each trial will be exactly the same as you have just learned.\n\n'...
+                        'Your task is to shield your planet from the cannons of two enemies, by catching their cannonballs.\n\n'...
+                        'Each enemy will have one cannon targeting each of your planets.\n\n'...
+                        'The position of the cannons will stay the same within a trial block.\n\n'...
+                        'Each planet will only be shot by one enemy at a time.\n\n'...
+                        'The cannons are invisible, so you should try to remember each spot that each enemy is targeting on each planet.\n\n'...
+                        'If the planet or enemy changes, try to position your shield on the right spot.\n\n'...
+                        'In this block of trials, the enemy which is currently firing will be shown above your planet.'...
+                        'If you have any questions, please ask the experimenter.'];
                 end
                 feedback = false;
                 al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
@@ -339,11 +351,24 @@ classdef al_conditions
             
             % Run "cued" condition
             taskParam.gParam.showCue = true;
-            [~, condobj.DataChinese] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+            [~, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+            
+            if taskParam.gParam.language == 1
+                header = 'Anfang der Aufgabe';
+                txtStartTask = ['Deutsch'];
+            elseif taskParam.gParam.language == 2
+                header = 'Next round';
+                txtStartTask = ['In this block of trials, you will no longer see which enemy is firing! '...
+                    'Everything else will be exactly the same. If you have any questions, please ask the experimenter.'];
+            end
+            
+            feedback = false;
+            al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+                
             
              % Run "uncued" condition
              taskParam.gParam.showCue = false;
-            [~, condobj.DataChinese] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+            [~, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
         end
         
         function DataFollowOutcome = FollowOutcomeCondition(runIntro, unitTest, haz, concentration, txtPressEnter)

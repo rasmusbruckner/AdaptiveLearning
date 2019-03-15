@@ -30,7 +30,8 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
         txt = ['Dein Schild erscheint nach dem Schuss des Raumschiffs. In diesem Fall hast du die Kanonenkugel abgewehrt. Wenn mindestens '...
             'die Hälfte der Kugel auf dem Schild ist, hast du sie erfolgreich abgewehrt.'];
     elseif taskParam.gParam.language == 2
-       txt = ['English instruction'];
+        txt = ['After the cannon is shot you will see the shield. \n\nIn this case you caught the '...
+        'ball. \n\nIf at least half of the ball overlaps with the shield then it is a "catch".'];   
     end
 end
 

@@ -102,7 +102,9 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
         end
     elseif taskParam.gParam.language == 2
         header = 'Performance';
-        txt = sprintf('Catches: %.0f of %.0f\n\nIn this block you earned %.0f of possible %.0f points.', hits, length(whichBlock), max(Data.accPerf)*10, maxMon*10);
+        %txt = sprintf('Catches: %.0f of %.0f\n\nIn this block you earned %.0f of possible %.0f points.', hits, length(whichBlock), max(Data.accPerf)*10, maxMon*10);
+        txt = sprintf('Catches: %.0f of %.0f', hits, length(whichBlock));
+
     end
 elseif isequal(taskParam.gParam.taskType, 'ARC')
     header = 'Performance';

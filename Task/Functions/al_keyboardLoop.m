@@ -34,7 +34,10 @@ while 1
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001); 
-    taskData.timestampOnset(i,:) = GetSecs - ref;
+    % commented out because update of timestampOnset results in timestamp
+    % of last screen refresh before prediction and thus does not reflect
+    % trial onset.
+    %taskData.timestampOnset(i,:) = GetSecs - ref;
 
     % Get initiation RT
     [ keyIsDown, ~, keyCode ] = KbCheck;

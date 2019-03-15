@@ -22,7 +22,8 @@ if introduceNeedle
     elseif isequal(taskParam.gParam.taskType, 'oddball')
         txt = 'The aim of the cannon is indicated with the black line. Hit SPACE to initiate a cannon shot.';
     elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC') ||(isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 2)
-        txt = 'The aim of the cannon is indicated with the black line. Hit the left mouse button to initiate a cannon shot.';
+        %txt = 'The aim of the cannon is indicated with the black line. Hit the left mouse button to initiate a cannon shot.';
+        txt = 'The aim of the cannon is indicated by the black line. \n\nHit the left mouse button to initiate a cannon shot.';
     elseif (isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 1)
         txt = 'Das Ziel der Kanone wird mit der schwarzen Linie angezeigt. Drücke die linke Maustaste, damit die Kanone schießt.';
     end

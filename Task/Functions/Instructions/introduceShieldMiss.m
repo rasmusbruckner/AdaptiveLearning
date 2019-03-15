@@ -28,7 +28,7 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
     if taskParam.gParam.language == 1
         txt = 'Versuche nun dein Schild so zu positionieren, dass du die Kanonenkugel verfehlst. Drücke dann die linke Maustaste.';
     elseif taskParam.gParam.language == 2
-        txt = ['English instructions'];
+        txt = 'Now try to position your shield so that you miss the cannonball. \n\nThen press the left mouse button.';    
     end
 end
 

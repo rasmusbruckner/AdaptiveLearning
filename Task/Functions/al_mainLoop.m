@@ -58,17 +58,24 @@ if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccu
     
     for i = 1:trial
         
+        
         % Manage breaks
-        if (i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)) && ~isequal(condition, 'chinesePractice_4')
-            
+        %if (i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)) && ~isequal(condition, 'chinesePractice_4')
+        if i > 1 && ~(taskData.block(i) == taskData.block(i-1))
+
             if isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice') || isequal(taskParam.gParam.taskType, 'ARC')
                 txt = 'Take a break!';
                 header = ' ';
             elseif isequal(taskParam.gParam.taskType, 'chinese')
-                whichBlock = taskData.block == taskData.block(i-1);
-                txt = Feedback(taskData, taskParam, subject, condition, whichBlock);
-                header = sprintf(['Ende Block %.0f von 4. Du kannst jetzt eine kurze Pause machen.\n\nBeachte, dass die Gegner '...
-                    'ihre Kanonen jetzt neu ausrichten!'], taskData.block(i-1));
+                whichBlock = taskData.block(i-1) == taskData.block;   %taskData.block == %taskData.block(i-1);
+                txt = al_feedback(taskData, taskParam, subject, condition, whichBlock);
+                
+                header = sprintf(['End of block %.0f of %.0f'], taskData.block(i-1), taskData.block(end));
+                al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, true);
+                txt = 'Take a short break.\n\nKeep in mind that the enemies have recalibrated their cannons!';
+                header = ' ';
+                %header = sprintf(['Ende Block %.0f von 4. Du kannst jetzt eine kurze Pause machen.\n\nBeachte, dass die Gegner '...
+                 %   'ihre Kanonen jetzt neu ausrichten!'], taskData.block(i-1));
             else
                 txt = 'Kurze Pause!';
                 header = ' ';
@@ -403,7 +410,7 @@ elseif isequal(condition,'ARC_controlSpeed') || isequal(condition,'ARC_controlAc
         Screen('Flip', taskParam.gParam.window.onScreen, tUpdated);
         WaitSecs(1);
         
-        SetMouse(720, 450, taskParam.gParam.window.onScreen)
+        SetMouse(720, 450, taskParam.gParam.window.onScreen);
         press = 0;
         initRT_Timestamp = GetSecs();
         al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press)

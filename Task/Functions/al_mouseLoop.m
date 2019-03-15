@@ -18,7 +18,7 @@ while 1
     [x,y,buttons] = GetMouse(taskParam.gParam.window.onScreen);
     
     x = x-720;
-    y = (y-450)*-1 ;
+    y = (y-450)*-1;
     
     currentDegree = mod(atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
     if currentDegree > 360

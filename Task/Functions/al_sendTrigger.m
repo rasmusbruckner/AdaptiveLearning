@@ -63,15 +63,13 @@ if isequal(taskParam.gParam.taskType, 'dresden')
                 digit3 = 0;
             end
             
-            
             if taskData.actRew(trial) == 1
                 digit4 = 1;
             elseif taskData.actRew(trial) == 2
                 digit4 = 0;
             end
             
-            
-            if taskData.catchTrial(trial) || isequal(condition, 'followCannon');
+            if taskData.catchTrial(trial) || isequal(condition, 'followCannon')
                 digit5 = 1;
             else
                 digit5 = 0;

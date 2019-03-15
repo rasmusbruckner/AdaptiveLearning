@@ -1,4 +1,4 @@
-function DataMain = adaptiveLearning(unitTest)
+function DataMain = AdaptiveLearning(unitTest)
 %ADAPTIVELEARNING   Master function for the cannon task
 %   AdaptiveLearning(false) or adaptiveLearning runs the cannon task.
 %   adaptiveLearning(true) is part of a unit test to control task
@@ -18,10 +18,10 @@ function DataMain = adaptiveLearning(unitTest)
 %                               - Tickmark on vs. off
 %
 %   Written by Rasmus Bruckner (MPI/FU Berlin)
-%   Contributors: Ben Eppinger (Concorida), Matt Nassar (Brown), 
+%   Contributors: Ben Eppinger (Concordia), Matt Nassar (Brown), 
 %   Lennart Wittkuhn (MPI), Owen Parsons (Cambridge)
 %
-%   Version 09/2018
+%   Version 01/2019
 
 
 % Initialize task
@@ -38,9 +38,7 @@ if ~unitTest
 end
 
 % Indentifies your machine; if you have internet!
-% @Sean: add your computer
-computer = al_identifyPC;
-%computer = 'Olga';
+computer = 'MacMini';
 computer = 'Macbook';
 
 % Choose task type:
@@ -49,7 +47,6 @@ computer = 'Macbook';
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
-% @Sean: only chinese 
 taskType = 'chinese';
 
 % Version specific parameters
@@ -64,7 +61,7 @@ switch taskType
         concentration       = [12 8 99999999];
         DataFollowOutcome   = nan;
         DataFollowCannon    = nan;
-        textSize            = 19;
+        textSize            = 18;
 
         % Check number of trials in each condition
         if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials >...
@@ -89,21 +86,21 @@ switch taskType
         trials          = 20;
         controlTrials   = nan;
         concentration   = [10 12 99999999];
-        nPlanets      = 1;
-        nEnemies         = nan;
-        planetHaz      = nan;
+        nPlanets        = 1;
+        nEnemies        = nan;
+        planetHaz       = nan;
         enemyHaz        = nan;
-        safePlanet     = nan;
+        safePlanet      = nan;
         safeEnemy       = nan;
         DataOddball     = nan;
         textSize        = 19;
     
     case 'chinese'
         
-        useTrialConstraints = false; % uses code with trial constraints
+        useTrialConstraints = true; % uses code with trial constraints
         blockIndices = [1 999 999 999]; % only for useTrialConstraints = false!
-        nb = 8; % number of blocks: only for useTrialConstraints = true!
-        trials = 2; %400; % use 400 for useTrialConstraints = true!
+        nb = 6; % number of blocks: only for useTrialConstraints = true!
+        trials = 300; %400; % use 400 for useTrialConstraints = true!
         chinesePractTrials = 2; % 200 number of practice trials
         nPlanets = 2; % number of planets
         nEnemies = 2; % number of enemies
@@ -112,11 +109,11 @@ switch taskType
         safePlanet = 0; % minimum number of trials before planet changes (on) 
         safeEnemy = 0; % minimum number of trials before enemy changes
         concentration = [12 12 99999999]; % anpassen?
-        textSize = 19; % text size for instructions
+        textSize = 16; % text size for instructions
         showTickmark = nan; % do not show tickmark
         DataOddball = nan; % do not use anything from oddball condition
         controlTrials = nan; % do not use control trials from "Dresden condition"
-        language = 2; % 1: German, 2: EnglishAd
+        language = 2; % 1: German, 2: English
 
     case 'ARC'
     
@@ -141,14 +138,14 @@ switch taskType
 end
 
 % Version-independent parameters
-runIntro                = true;
+runIntro                = false;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = false;
 shieldTrials            = 4; % 4
 practTrials             = 2; % 20 in reversal muliplied by 2!
 useCatchTrials          = true;
-haz                     = [.1 1 0]; % .125
+haz                     = [.12 1 0]; % .125
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
 driftConc               = [30 99999999];
@@ -159,8 +156,8 @@ fixCrossLength          = 0.5;
 outcomeLength           = 1;
 jitter                  = 0.2;
 fixedITI                = 0.9;
-debug                   = false;
-screenNumber            = 2; %2;  % Use 1 if use one screen. Use 2 if you use two screens
+debug                   = false; %true;
+screenNumber            = 1; %2;  % Use 1 if use one screen. Use 2 if you use two screens
 
 % @Sean: add your directory
 % Save directory
@@ -176,9 +173,8 @@ elseif isequal(computer, 'Dresden1')
     cd('C:\Users\ma_epsy\Desktop\AdaptiveLearning\DataDirectory');
 elseif isequal(computer, 'ARC')
     cd('C:\Users\PsycchLab1\Documents\MATLAB\AdaptiveLearning\Task');
-elseif isequal(computer, 'Olga')
-    % Olga, please indicate your path
-    cd('')
+elseif isequal(computer, 'MacMini')
+    cd('C:\Users\LSDMlab_RA\Desktop\AdaptiveLearning\Task')
 end
 
 % Reset clock
@@ -549,6 +545,11 @@ leftSlowKey = KbName('g');
 space = KbName('Space');
 
 switch computer
+    case 'MacMini'
+        enter = 13;
+        s = 83;
+        t = 84; 
+        z = 90;
     case 'Macbook'
         enter = 40;
         s = 22;
@@ -600,7 +601,7 @@ switch taskType
     case 'reversal'    
         txtPressEnter = 'Press Enter to continue';    
     case 'chinese'
-        txtPressEnter = 'Weiter mit Enter';
+        txtPressEnter = 'Press Enter to continue';
     case 'ARC'
         txtPressEnter = 'Press Enter to continue';
 end
@@ -710,7 +711,9 @@ switch taskType
     case'chinese'
 
         cond = cond.ChineseCondition(taskParam, subject);
-        DataChinese = cond.DataChinese;
+        DataChineseCued = cond.DataChineseCued;
+        DataChineseMain = cond.DataChineseMain;
+
 
     case 'ARC'
     
@@ -755,7 +758,7 @@ switch taskType
     case 'reversal'
         totWin = DataReversal.accPerf(end);
     case 'chinese'
-        totWin = DataChinese.accPerf(end);
+        totWin = DataChineseCued.accPerf(end) + DataChineseMain.accPerf(end);
     case 'ARC'
         totWin = sum(blockWin);
 end

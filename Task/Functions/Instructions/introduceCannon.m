@@ -43,7 +43,9 @@ function screenIndex = introduceCannon(screenIndex, taskParam, distMean, cannon)
                 'Kanonenkugeln. Deine Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem orangenen Punkt kannst du angeben, wo du dein Schild platzieren möchtest, '...
                 'um die Kanonenkugel abzuwehren. Du kannst den Punkt mit der Maus bewegen. Das kannst du jetzt ausprobieren.'];
         elseif taskParam.gParam.language == 2
-            txt = ['English instructions'];
+            txt = ['You are the space police and you must protect your planet.\n\nA foreign spaceship aims its cannon at a spot on your planet and fires '...
+                'cannonballs. \nYour task is to fend off the cannonball with a shield. The orange dot lets you specify a point where you want to place your shield, '...
+                'to ward off the cannonballs. \n\nYou can move the point with your mouse. Try it now.'];
         end
     end
 

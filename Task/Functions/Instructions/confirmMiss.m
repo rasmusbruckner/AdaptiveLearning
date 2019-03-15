@@ -27,7 +27,7 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
     if taskParam.gParam.language == 1
         txt = 'In diesem Fall hast du die Kanonenkugel verfehlt.';
     elseif taskParam.gParam.language == 2
-        txt = 'English Instructions';
+        txt = 'In this case you missed the cannonball.';
     end
 end
 

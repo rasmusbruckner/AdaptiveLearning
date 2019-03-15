@@ -18,13 +18,16 @@ while 1
     if isequal(taskType, 'oddball') || isequal(taskType, 'reversal')
         header = 'End of task!';
         txt = sprintf('Thank you for participating!\n\n\nYou earned $ %.2f', totWin);
-    elseif isequal(taskType, 'dresden') || isequal(taskType, 'chinese')
+    elseif isequal(taskType, 'dresden') 
         header = 'Ende des Versuchs!';
         if isequal(subject.group, '1')
             txt = sprintf('Vielen Dank für deine Teilnahme!\n\n\nDu hast %.2f Euro verdient.', totWin);
         else
             txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient.', totWin);
         end
+    elseif isequal(taskType, 'chinese')    
+        header = 'End of task!';
+        txt = sprintf('Thank you for participating!\n\n\nYou earned %.0f points.', totWin);    
     elseif isequal(taskType, 'ARC')
         header = 'End of task!';
         txt = sprintf('Thank you for participating!\n\n\nYou earned %.0f points.', totWin*10);
