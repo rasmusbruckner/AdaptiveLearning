@@ -124,7 +124,7 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'onlinePractice')
         taskData = load('onlinePractice');
         taskData = taskData.taskData;
-        trial = taskParam.gParam.onlinePractTrials;
+        trial = 2 %taskParam.gParam.onlinePractTrials;
     elseif isequal(condition, 'mainPractice_3')
         taskData = load('pract3');
         taskData = taskData.taskData;

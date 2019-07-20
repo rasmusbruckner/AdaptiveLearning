@@ -12,7 +12,7 @@ function DataMain = AdaptiveLearning(unitTest)
 %   "Oddball version":      Change point task with oddball condition
 %   "Reversal version":     Change point task with occasional reversals to
 %                           previous change point location
-%   "Chinese restaurant":   Learning of a state space
+%   "Chinese restaurant":   Learning of a multiple states
 %   "ARC version":          Owen's Cambridge version
 %                               - Different noise conditions
 %                               - Tickmark on vs. off
@@ -62,7 +62,7 @@ switch taskType
         DataFollowOutcome   = nan;
         DataFollowCannon    = nan;
         textSize            = 18;
-
+        
         % Check number of trials in each condition
         if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials >...
                 1 && mod(controlTrials, 2) == 1)
@@ -100,7 +100,7 @@ switch taskType
         useTrialConstraints = true; % uses code with trial constraints
         blockIndices = [1 999 999 999]; % only for useTrialConstraints = false!
         nb = 6; % number of blocks: only for useTrialConstraints = true!
-        trials = 300; %400; % use 400 for useTrialConstraints = true!
+        trials = 2; %300; %400; % use 400 for useTrialConstraints = true!
         chinesePractTrials = 2; % 200 number of practice trials
         nPlanets = 2; % number of planets
         nEnemies = 2; % number of enemies
@@ -117,7 +117,7 @@ switch taskType
 
     case 'ARC'
     
-        trials          = 2; % 240
+        trials          = 6; % 240
         controlTrials   = 4; % 60; % this is the new control version that we added to control for differences between groups
         concentration   = [16 8 99999999]; 
         blockIndices    = [1 101 999 999]; %[1 121 999 999];
@@ -129,7 +129,34 @@ switch taskType
         safePlanet     = nan;
         safeEnemy       = nan;
         chinesePractTrials = nan;
-
+        language = 2;
+        useTrialConstraints = false;
+        nb = nan;
+        %trials = nan;
+        % Check number of trials
+        if  (trials > 1 && mod(trials, 2)) == 1
+            msgbox('All trials must be even or equal to 1!');
+            return
+        end
+        
+    case 'charite'
+        
+        trials          = 6; % 240
+        controlTrials   = 4; % 60; % this is the new control version that we added to control for differences between groups
+        concentration   = [16 8 99999999]; 
+        blockIndices    = [1 101 999 999]; %[1 121 999 999];
+        textSize        = 19;
+        nPlanets        = 1;
+        nEnemies         = nan;
+        planetHaz      = nan;
+        enemyHaz        = nan;
+        safePlanet     = nan;
+        safeEnemy       = nan;
+        chinesePractTrials = nan;
+        language = 2;
+        useTrialConstraints = false;
+        nb = nan;
+        %trials = nan;
         % Check number of trials
         if  (trials > 1 && mod(trials, 2)) == 1
             msgbox('All trials must be even or equal to 1!');
@@ -138,7 +165,7 @@ switch taskType
 end
 
 % Version-independent parameters
-runIntro                = false;
+runIntro                = true;
 askSubjInfo             = true;
 sendTrigger             = false;
 randomize               = false;
@@ -148,7 +175,7 @@ useCatchTrials          = true;
 haz                     = [.12 1 0]; % .125
 oddballProb             = [.25 0];
 reversalProb            = [.5 1];
-driftConc               = [30 99999999];
+driftConc               = [30 99999999];  % Lara: std.
 safe                    = [3 0];
 rewMag                  = 0.1;
 practiceTrialCriterion  = 10; % 10
@@ -174,6 +201,8 @@ elseif isequal(computer, 'Dresden1')
 elseif isequal(computer, 'ARC')
     cd('C:\Users\PsycchLab1\Documents\MATLAB\AdaptiveLearning\Task');
 elseif isequal(computer, 'MacMini')
+    cd('C:\Users\LSDMlab_RA\Desktop\AdaptiveLearning\Task')
+elseif isequal(computer, 'charite')
     cd('C:\Users\LSDMlab_RA\Desktop\AdaptiveLearning\Task')
 end
 

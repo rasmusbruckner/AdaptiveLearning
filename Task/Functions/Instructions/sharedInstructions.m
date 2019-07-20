@@ -82,7 +82,7 @@ while 1
         case 11
             
             % Run short practice block to illustrate shield size and color
-            [screenIndex, Data] = shieldPractice(taskParam, subject, screenIndex);
+            [screenIndex, Data] = ShieldPractice(taskParam, subject, screenIndex);
             
             % For chinese and ARC we immediately go to case 25 to run task-specific instructions
             if isequal(taskParam.gParam.taskType, 'chinese') || isequal(taskParam.gParam.taskType, 'ARC')
