@@ -1,5 +1,5 @@
 function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
-%CLOSESCREENANDOPENAGAIN   Opens and closes psychtoolbox screen
+%CLOSESCREENANDOPENAGAIN   This function opens and closes psychtoolbox screen
 % at the end of a condition in order to signal participants that
 % new task will begin. Only used in Dresden version.    
 % 
@@ -7,6 +7,7 @@ function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
 %       taskParam: structure containing task parameters
 %       debug: indicates if we're currently debugging the task
 %       unitText: indicates if unit test is done
+%
 %   Output
 %       window: Psychtoolbox window
 

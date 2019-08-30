@@ -1,7 +1,10 @@
-function [taskParam, practData, leaveLoop] = al_practLoop(taskParam, subject, vola,...
-    sigma, cannon, condition, LoadData, reversalPackage)
-%PRACTLOOP Runs the practice blocks. Depending on the condition, the
-%cannon is visible.
+function [taskParam, practData, leaveLoop] = al_practLoop(taskParam, subject, vola, sigma, cannon, condition, LoadData, reversalPackage)
+%AL_PRACTLOOP   This function runs the practice blocks. Depending on the condition, the cannon is visible.
+%
+%   THIS FUNCTION SHOULD NOT BE USED ANYMORE. IN MOST CASES IT HAS BEEN
+%   REPLACED BY AL_MAINLOOP. DELETE FUNCTION IN AFTER MAKING SURE THAT IT
+%   IS REPLACED IN EVERY SCIRPT/FUNCTION
+
 
 if nargin == 7 && isequal(LoadData, 'NoNoise')
     practData = load('OddballNoNoise');
@@ -114,9 +117,7 @@ for i = 1:trials
         practData.actRew(i) = 1;
     end
     
-    if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
-            ~isequal(taskParam.gParam.taskType, 'chinese') &&...
-             ~isequal(taskParam.gParam.taskType, 'ARC')
+    if ~isequal(taskParam.gParam.taskType, 'reversal') && ~isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(taskParam.gParam.taskType, 'ARC')
         
         while 1
             
@@ -143,47 +144,31 @@ for i = 1:trials
             
             if keyIsDown
                 if keyCode(taskParam.keys.rightKey)
-                    if taskParam.circle.rotAngle <...
-                            360*taskParam.circle.unit
-                        taskParam.circle.rotAngle =...
-                            taskParam.circle.rotAngle +...
-                            1*taskParam.circle.unit;
+                    if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                        taskParam.circle.rotAngle = taskParam.circle.rotAngle + 1*taskParam.circle.unit;
                     else
                         taskParam.circle.rotAngle = 0;
                     end
                 elseif keyCode(taskParam.keys.rightSlowKey)
-                    if taskParam.circle.rotAngle <...
-                            360*taskParam.circle.unit
-                        taskParam.circle.rotAngle = ...
-                            taskParam.circle.rotAngle +...
-                            0.1*taskParam.circle.unit; %0.02
+                    if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                        taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; %0.02
                     else
                         taskParam.circle.rotAngle = 0;
                     end
                 elseif keyCode(taskParam.keys.leftKey)
-                    if taskParam.circle.rotAngle >...
-                            0*taskParam.circle.unit
-                        taskParam.circle.rotAngle =...
-                            taskParam.circle.rotAngle -...
-                            1*taskParam.circle.unit;
+                    if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                        taskParam.circle.rotAngle = taskParam.circle.rotAngle - 1*taskParam.circle.unit;
                     else
-                        taskParam.circle.rotAngle =...
-                            360*taskParam.circle.unit;
+                        taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                     end
                 elseif keyCode(taskParam.keys.leftSlowKey)
-                    if taskParam.circle.rotAngle >...
-                            0*taskParam.circle.unit
-                        taskParam.circle.rotAngle =...
-                            taskParam.circle.rotAngle -...
-                            0.1*taskParam.circle.unit;
+                    if taskParam.circle.rotAngle > 0*taskParam.circle.unit
+                        taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
                     else
-                        taskParam.circle.rotAngle =...
-                            360*taskParam.circle.unit;
+                        taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                     end
                 elseif keyCode(taskParam.keys.space)
-                    practData.pred(i) =...
-                        (taskParam.circle.rotAngle /...
-                        taskParam.circle.unit);
+                    practData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                     
                     break
                 end
@@ -195,8 +180,7 @@ for i = 1:trials
         press = 0;
 
         while 1
-            [x,y,buttons,focus,valuators,valinfo] =...
-                GetMouse(taskParam.gParam.window.onScreen);
+            [x,y,buttons,focus,valuators,valinfo] = GetMouse(taskParam.gParam.window.onScreen);
             
             x = x-720;
             y = (y-450)*-1 ;
@@ -212,9 +196,7 @@ for i = 1:trials
                         
             drawCircle(taskParam)
             drawCross(taskParam)
-            if ~isequal(condition, 'reversalPracticeNoiseInv') &&...
-                    ~isequal(condition, 'reversalPracticeNoiseInv2') &&...
-                    ~isequal(condition, 'reversalPracticeNoiseInv3')
+            if ~isequal(condition, 'reversalPracticeNoiseInv') && ~isequal(condition, 'reversalPracticeNoiseInv2') && ~isequal(condition, 'reversalPracticeNoiseInv3')
                 aim(taskParam, practData.distMean(i))
             end
             
@@ -245,14 +227,11 @@ for i = 1:trials
                         i ~= taskParam.gParam.blockIndices(3) + 1 &&...
                         i ~= taskParam.gParam.blockIndices(4) + 1
                     
-                    practData.savedTickmark(i) =...
-                        ((taskParam.circle.rotAngle) /...
-                        taskParam.circle.unit);
+                    practData.savedTickmark(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
                     WaitSecs(0.2);
                     press = 1;
                 elseif i > 1 && press == 0
-                    practData.savedTickmarkPrevious(i) = ...
-                        practData.savedTickmarkPrevious(i - 1);
+                    practData.savedTickmarkPrevious(i) = practData.savedTickmarkPrevious(i - 1);
                     practData.savedTickmark(i) = practData.savedTickmark(i - 1);
                 elseif i == 1
                     %savedTickmarkPrevious(i) = 0;
@@ -263,17 +242,13 @@ for i = 1:trials
                     practData.savedTickmarkPrevious(i) = practData.savedTickmark(i-1);
                 end
                 
-                if i ~= taskParam.gParam.blockIndices(1) &&...
-                        i ~= taskParam.gParam.blockIndices(2) + 1 &&...
-                        i ~= taskParam.gParam.blockIndices(3) + 1 &&...
-                        i ~= taskParam.gParam.blockIndices(4) + 1 &&...
-                         ~isequal(taskParam.gParam.taskType, 'chinese')
+                if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 &&...
+                        i ~= taskParam.gParam.blockIndices(4) + 1 && ~isequal(taskParam.gParam.taskType, 'chinese')
                     
                     tickMark(taskParam, practData.pred(i-1), 'pred');
                     tickMark(taskParam, practData.outcome(i-1), 'outc');
                     if press == 1
-                        tickMark(taskParam,...
-                            practData.savedTickmarkPrevious(i), 'update');
+                        tickMark(taskParam, practData.savedTickmarkPrevious(i), 'update');
                     end
                     tickMark(taskParam, practData.savedTickmark(i), 'saved');
                 end
@@ -282,9 +257,7 @@ for i = 1:trials
                 
                 if buttons(2) == 1
                    
-                    practData.savedtickMark(i) =...
-                        ((taskParam.circle.rotAngle) /...
-                        taskParam.circle.unit);
+                    practData.savedtickMark(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
                     WaitSecs(0.2);
                     press = 1;
                     
@@ -298,16 +271,13 @@ for i = 1:trials
                     practData.savedtickmarkPrevious(i) = practData.savedtickmark(i);
                 elseif i > 1 && press == 0
                     
-                    practData.savedtickmarkPrevious(i) = ...
-                        practData.savedtickmarkPrevious(i - 1);
+                    practData.savedtickmarkPrevious(i) = practData.savedtickmarkPrevious(i - 1);
                     practData.savedtickmark(i) = practData.savedtickmark(i - 1);
-                
                 end
                 
                 if press == 1
                     if i == 1
                         practData.savedtickmarkPrevious(i) = practData.savedtickmark;
-                        
                     else
                         practData.savedtickmarkPrevious(i) = practData.savedtickmark(i-1);
                     end
@@ -317,16 +287,14 @@ for i = 1:trials
                     tickMark(taskParam, practData.pred(i), 'pred');
                     tickMark(taskParam, practData.outcome(i), 'outc');
                     if press == 1
-                        tickMark(taskParam,...
-                            practData.savedtickmarkPrevious(i), 'update');
+                        tickMark(taskParam, practData.savedtickmarkPrevious(i), 'update');
                     end
                     tickMark(taskParam, practData.savedtickmark(i), 'saved');
                 else
                     tickMark(taskParam, practData.pred(i-1), 'pred');
                     tickMark(taskParam, practData.outcome(i-1), 'outc');
                     if press == 1
-                        tickMark(taskParam,...
-                            practData.savedtickMarkPrevious(i), 'update');
+                        tickMark(taskParam, practData.savedtickMarkPrevious(i), 'update');
                     end
                     tickMark(taskParam, practData.savedtickmark(i), 'saved');
                 end
@@ -341,20 +309,14 @@ for i = 1:trials
             
             if buttons(1) == 1
                 
-                practData.pred(i) =...
-                    (taskParam.circle.rotAngle / taskParam.circle.unit);
+                practData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 break;
-                
-            end
-            
-        end
-        
+            end 
+        end 
     end
     
-    practData.predErr(i) =...
-        Diff(practData.outcome(i), practData.pred(i));
-    practData.cannonDev(i) =...
-        Diff(practData.distMean(i), practData.pred(i));
+    practData.predErr(i) = Diff(practData.outcome(i), practData.pred(i));
+    practData.cannonDev(i) = Diff(practData.distMean(i), practData.pred(i));
     
     if i==1
         practData.controlDev(i) = nan;
@@ -464,7 +426,6 @@ for i = 1:trials
     drawOutcome(taskParam, practData.outcome(i))
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-    
     
     if practData.oddBall(i) == false
         Screen('Flip', taskParam.gParam.window.onScreen, t + 1.6);

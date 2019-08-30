@@ -1,9 +1,10 @@
 function [window, windowRect, textures] = OpenWindow(debug, screenNumber)
-%OPENWINDOW   Opens the psychtoolbox screen
+%OPENWINDOW   This function opens the psychtoolbox screen
 %
 %   Input
 %       debug: indicates if we're currently debugging
 %       screenNumber: used screen number
+%
 %   Output
 %       window: psychtoolbox window object
 %       windowRect: ??
@@ -58,7 +59,7 @@ basketTxt = Screen('MakeTexture', window, basketPic);
 % Create structure that contains all textures
 textures = struct('cannonTxt', cannonTxt, 'rocketTxt', rocketTxt, 'rocketTxt_lightning', rocketTxt_lightning, 'rocketTxt_star', rocketTxt_star,...
     'rocketTxt_swirl', rocketTxt_swirl, 'spacebattleTxt', spacebattleTxt, 'shieldTxt', shieldTxt, 'basketTxt', basketTxt, 'dstRect', dstRect);
-%ListenChar(2);
-%HideCursor;
+ListenChar(2);
+HideCursor;
 
 end

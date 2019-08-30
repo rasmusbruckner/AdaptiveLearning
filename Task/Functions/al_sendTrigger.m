@@ -1,11 +1,23 @@
 function trigger = al_sendTrigger(taskParam, taskData, condition, ~, trial, Tevent)
-% This function sends the EEG triggers.
-% 12.05.15: komische triggererfahrung: wenn man mit brown version triggert
+%AL_SENDTRIGGER  This function sends the EEG triggers. See triggerscheme for details.
+%
+% TODO: 12.05.15: komische triggererfahrung: wenn man mit brown version triggert
 % kann man in while schleife triggern und es wird nur einer gesendet
 % bei dresden version (32 bit) wird die ganze zeit in der schleife gesendet
-% habe trigger jetzt aus der schleife genommen. woran liegt das?
-%   See triggerscheme for details
-%keyboard
+% habe trigger jetzt aus der schleife genommen. In both cases it worked, so
+% probably computer-specific?
+%
+%   Input
+%       taskParam: structure containing task paramters
+%       taskData: structure containing task data
+%       condition: noise condition type
+%       ~: take out of the function in future versions
+%       trial: tial index
+%       Tevent: trigger event 
+%
+%   Ouptut
+%       trigger: current trigger
+
 
 digit1 = 0;
 digit2 = 0;
@@ -82,17 +94,13 @@ if isequal(taskParam.gParam.taskType, 'dresden')
         
         if Tevent == 16 && trial > 1
             
-            
             trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4), num2str(digit5));
             %trigger = str2double(trigger);
             trigger = base2dec(trigger, 2) + 100;
         end
     else
         trigger = 255;
-        
-        
     end
-    
     
     if taskParam.gParam.sendTrigger == true
         
@@ -103,7 +111,6 @@ if isequal(taskParam.gParam.taskType, 'dresden')
             WaitSecs(1/taskParam.triggers.sampleRate);
             outp(taskParam.triggers.port,0) % Set port to 0.
         end
-        
     end
     
 % -------------------------------------------------------------------------    
@@ -224,17 +231,14 @@ elseif isequal(taskParam.gParam.taskType, 'reversal')
             trigger = 255;
         end
         
-        
         if Tevent == 16 && trial > 1
-            
-            
+                
             trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
             %trigger = str2double(trigger);
             trigger = base2dec(trigger, 2) + 100;
         end
     %else
        % trigger = 255;
-        
         
     %end
     

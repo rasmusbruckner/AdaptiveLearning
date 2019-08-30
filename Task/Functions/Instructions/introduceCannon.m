@@ -1,10 +1,11 @@
 function screenIndex = introduceCannon(screenIndex, taskParam, distMean, cannon)
-%INTRODUCECANNON   Introduce cannon to participant
+%INTRODUCECANNON   This function introduces the cannon to participant
 %
 %   Input
 %       screenIndex: indicates current sceen of instruction phase
 %       taskParam: structure containing task parameters
 %       cannon: logical that indicates if cannon should be shown during instruction
+%
 %   Output
 %       screenIndex: updated screenIndex 
 

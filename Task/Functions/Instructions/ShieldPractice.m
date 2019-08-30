@@ -1,13 +1,14 @@
 function [screenIndex, Data] = shieldPractice(taskParam, subject, screenIndex)
-%SHIELDPRACTICE   Practice block to illustrate shield size and color
+%SHIELDPRACTICE   This function runs a practice block to illustrate shield size and color
 % 
 %   Input
 %       taskParam: structure containing task parameters
 %       subject: structure containing subject-specific information
 %       screenIndex: indicates current sceen of instruction phase
+%
 %   Output
 %       screenIndex: updated screenIndex 
-%       Data: data from the previous trials // Check this in the future
+%       Data: data from the previous trials
 
 
     condition = 'shield';

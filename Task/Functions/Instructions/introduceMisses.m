@@ -1,5 +1,5 @@
 function [screenIndex, Data, taskParam] = introduceMisses(taskParam, screenIndex, Data, distMean, whichPractice)
-%INTRODUCEMISSES   Introduce misses of the cannonball to participant
+%INTRODUCEMISSES   This function introduce misses of the cannonball to participants
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -7,6 +7,7 @@ function [screenIndex, Data, taskParam] = introduceMisses(taskParam, screenIndex
 %       Data: data from the previous trials // Check this in the future
 %       distMean: mean of the outcome-generating distribution
 %       whichPractice: indicates current practice condition
+%
 %   Output
 %       screenIndex: updated screenIndex
 %       Data: data from the previous trials // Check this in the future

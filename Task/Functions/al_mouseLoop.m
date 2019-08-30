@@ -1,16 +1,17 @@
 function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press)
-%AL_MOUSELOOP   XXX
+%AL_MOUSELOOP   This function manages the interaction between participants and the task via the computer mouse 
 %
 %   Input
-%       taskParam
-%       taskData
-%       condition
-%       i
-%       initRT_Timestamp
-%       press
+%       taskParam: structure containing task paramters
+%       taskData: structure containing task data
+%       condition: noise condition type
+%       i: trial index
+%       initRT_Timestamp: initiation reaction time
+%       press: indext if mouse button has been pressed
+%
 %   Output
-%       taskData
-%       taskParam
+%       taskData: structure containing task data
+%       taskParam: structure containing task paramters
 
 
 while 1
@@ -34,8 +35,12 @@ while 1
         al_drawContext(taskParam,taskData.currentContext(i))
         al_drawCross(taskParam)
         
-        if taskParam.gParam.showCue
-            al_showCue(taskParam, taskData.latentState(i))
+        if taskParam.gParam.showCue 
+            if i == 1 || taskParam.gParam.cueAllTrials == true
+                al_showCue(taskParam, taskData.latentState(i))
+            elseif taskParam.gParam.cueAllTrials == false && i > 1 && taskData.latentState(i) ~= taskData.latentState(i-1)
+                al_showCue(taskParam, taskData.latentState(i))
+            end
         end
     elseif isequal(condition,'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
         
@@ -125,7 +130,6 @@ while 1
         taskData.pred(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
         taskData.pred(i);
         
-        %time = GetSecs;
         taskData.RT(i) = GetSecs() - initRT_Timestamp;
         break
         

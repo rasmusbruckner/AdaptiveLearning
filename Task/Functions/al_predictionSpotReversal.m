@@ -1,10 +1,11 @@
 function al_predictionSpotReversal(taskParam, xPredS,yPredS)
-%AL_PREDICTIONSPOTREVERSAL   Prints the prediction spot for the reversal task
+%AL_PREDICTIONSPOTREVERSAL   This function prints the prediction spot for the reversal task
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       xPredS: x-coordinate for reversal prediction spot
 %       yPredS: y-coordinate for reversal prediction spot
+%
 %   Output
 %       ~
 

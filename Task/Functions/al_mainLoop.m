@@ -1,5 +1,5 @@
-function [taskData, Data] = al_mainLoop(taskParam, haz, concentration, condition, subject)
-%AL_MAINLOOP   Runs the experimental part of the cannon task. You can specify
+function [taskData, Data] = al_mainLoop(taskParam, haz, concentration, condition, subject, taskData)
+%AL_MAINLOOP   This function runs the experimental part of the cannon task. You can specify
 % "main", "practice" or "control". This loop is optimized for triggering
 % accuracy
 %
@@ -14,14 +14,15 @@ function [taskData, Data] = al_mainLoop(taskParam, haz, concentration, condition
 % Jitter:                         (0-200 ms)
 %
 %   Input
-%       taskParam
-%       haz
-%       concentration
-%       condtion
-%       subject
+%       taskParam: structure containing task paramters
+%       haz: hazard rate
+%       concentration: noise in the environment
+%       condtion: noise condition type
+%       subject: structure containing subject information
+%
 %   Output
-%       taskData
-%       Data
+%       taskData: task data
+%       Data: participant data 
 
 
 % Initiate task
@@ -29,11 +30,11 @@ function [taskData, Data] = al_mainLoop(taskParam, haz, concentration, condition
 
 KbReleaseWait();
 
-ref             = taskParam.gParam.ref;
-fixCrossLength  = taskParam.timingParam.fixCrossLength;
-outcomeLength   = taskParam.timingParam.outcomeLength;
-jitter          = taskParam.timingParam.jitter;
-fixedITI        = taskParam.timingParam.fixedITI;
+ref = taskParam.gParam.ref;
+fixCrossLength = taskParam.timingParam.fixCrossLength;
+outcomeLength = taskParam.timingParam.outcomeLength;
+jitter = taskParam.timingParam.jitter;
+fixedITI = taskParam.timingParam.fixedITI;
 
 % textsize
 if isequal(taskParam.gParam.taskType, 'dresden')
@@ -47,18 +48,20 @@ Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
 % Load data if specified
 %-----------------------
 
-% Load condition-specific task data and get correct number of trials
-[taskData, trial] = al_loadTaskData(taskParam, condition, haz, concentration);
-
-
+if ~exist('taskData', 'var')
+    % Load condition-specific task data and get correct number of trials
+    [taskData, trial] = al_loadTaskData(taskParam, condition, haz, concentration);
+else
+    
+    trial = taskParam.gParam.trials;
+end
 % Loop through trials
 %--------------------
 
 if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccuracy') && ~isequal(condition,'ARC_controlPractice')
     
     for i = 1:trial
-        
-        
+       
         % Manage breaks
         %if (i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)) && ~isequal(condition, 'chinesePractice_4')
         if i > 1 && ~(taskData.block(i) == taskData.block(i-1))
@@ -69,8 +72,7 @@ if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccu
             elseif isequal(taskParam.gParam.taskType, 'chinese')
                 whichBlock = taskData.block(i-1) == taskData.block;   %taskData.block == %taskData.block(i-1);
                 txt = al_feedback(taskData, taskParam, subject, condition, whichBlock);
-                
-                header = sprintf(['End of block %.0f of %.0f'], taskData.block(i-1), taskData.block(end));
+                header = sprintf('End of block %.0f of %.0f', taskData.block(i-1), taskData.block(end));
                 al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, true);
                 txt = 'Take a short break.\n\nKeep in mind that the enemies have recalibrated their cannons!';
                 header = ' ';
@@ -159,7 +161,7 @@ if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccu
             end
             
             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
-            [VBLTimestamp(i), StimulusOnsetTime(i), FlipTimestamp(i), Missed(i), Beampos(i)] = Screen('Flip', taskParam.gParam.window.onScreen, tUpdated, 1);
+            Screen('Flip', taskParam.gParam.window.onScreen, tUpdated, 1);
             
             % send fixation cross 1 trigger
             taskData.triggers(i,2) = al_sendTrigger(taskParam, taskData, condition, haz, i, 2);
@@ -250,7 +252,6 @@ if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccu
         % Send outcome 1 trigger
         taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, condition, haz, i, 3);
         
-        
         % Fixation cross 2
         %-----------------
         
@@ -334,7 +335,7 @@ if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccu
             
         elseif isequal(taskParam.gParam.taskType, 'chinese')
             
-            whichBlock = taskData.block == taskData.block(i);
+            whichBlock = taskData.block(1:i);
             [txt, header] = al_feedback(taskData, taskParam, subject, condition, whichBlock);
             
 %             if isequal(condition,'chinese')
@@ -456,8 +457,8 @@ Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
     taskData.perf, 'accPerf',taskData.accPerf,'initialTendency',...
     taskData.initialTendency, 'RT', taskData.RT, 'Date', {taskData.Date},...
     'currentContext', taskData.currentContext,...
-    'hiddenContext', taskData.hiddenContext,...
-    'latentState', taskData.latentState,'taskParam', taskParam); %'contextTypes', taskData.contextTypes,...
+    'latentState', taskData.latentState,'taskParam', taskParam,...
+    'criticalTrial', taskData.critical_trial); %'contextTypes', taskData.contextTypes,...
 
 Data = catstruct(subject, Data);
 
@@ -481,11 +482,11 @@ if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 's
         
         if taskParam.gParam.showCue == true
             
-            savename = sprintf('chinese_cued_%s', subject.ID);
+            savename = sprintf('chinese_cued_%s_block_%.0f', subject.ID, taskData.block(1));
             
         elseif taskParam.gParam.showCue == false
             
-            savename = sprintf('chinese_uncued_%s', subject.ID);
+            savename = sprintf('chinese_uncued_%s_block_%.0f', subject.ID, taskData.block(1));
         
         end
         
@@ -507,6 +508,5 @@ if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 's
 end
 
 KbReleaseWait();
-
 
 end

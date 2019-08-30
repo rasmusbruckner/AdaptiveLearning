@@ -1,5 +1,5 @@
 function al_cannonball(taskParam, distMean, outcome, background, currentContext, latentState)
-%CANNONBALL   Animates the cannonball shot
+%AL_CANNONBALL   This function animates the cannonball shot
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -8,6 +8,7 @@ function al_cannonball(taskParam, distMean, outcome, background, currentContext,
 %       background: indicates if background should be printed
 %       currentContext: current planet
 %       latentState: current enemy
+%
 %   Output
 %        ~
 

@@ -1,5 +1,5 @@
 function [screenIndex, Data, taskParam] = introduceSpot(taskParam, screenIndex, distMean, Data, cannon)
-%INTRODUCESPOT   Introduces orange spot to participant
+%INTRODUCESPOT   This function introduces the orange spot to participants
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -7,6 +7,7 @@ function [screenIndex, Data, taskParam] = introduceSpot(taskParam, screenIndex, 
 %       distMean: mean of the outcome-generating distribution
 %       Data: data from the previous trials // Check this in the future
 %       cannon: logical that indicates if cannon should be shown during instruction
+%
 %   Output
 %       screenIndex: updated screenIndex
 %       Data: data from the trials

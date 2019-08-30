@@ -1,5 +1,5 @@
 function al_instructions(taskParam, whichPractice, subject)
-%INSTRUCTIONS runs the instructions for the cannon task.
+%AL_INSTRUCTIONS This function runs the instructions for the cannon task.
 %   As we recently re-organized the instructions scripts,
 %   instructions are currently only working for the "chinese" and
 %   the "ARC" version. In particular, we divided the instructions
@@ -11,6 +11,7 @@ function al_instructions(taskParam, whichPractice, subject)
 %       taskParam
 %       whichPractice
 %       subject
+%
 %   Output
 %       ~
 

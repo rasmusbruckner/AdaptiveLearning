@@ -1,12 +1,13 @@
 function al_endTask(taskType, taskParam, textSize, totWin, subject)
-%AL_ENDTASK   Screen that shows collected amount of money
+%AL_ENDTASK   This function implements the screen that shows collected amount of money
 %
-%   INPUT
+%   Input
 %       taskType: current task type
 %       taskParam: structure containing task parameters
 %       textSize: size of the printed text
 %       totWin: payoff
 %       subject: structure containing information about subject
+%
 %   Output
 %       ~ 
 

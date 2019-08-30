@@ -1,11 +1,12 @@
 function al_shield(taskParam, allASS, pred, color)
-%AL_SHIELD   Draws the shield in the cannon task
+%AL_SHIELD   This function draws the shield in the cannon task
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       allASS: all angular shield size
 %       pred: current prediction
 %       color: color of printed shield
+%
 %   Output 
 %       ~ 
 

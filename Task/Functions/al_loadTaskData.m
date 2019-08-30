@@ -1,5 +1,21 @@
 function [taskData, trial] = al_loadTaskData(taskParam, condition, haz, concentration)
-% Add comments!
+% AL_LOADTASKDATA   This funciton loads pre-generated outcome data or
+% generates outcomes for the current block
+%
+%   TODO: The organization of this function can be improved. At some point,
+%   it should be reorganized together with the al_generateOutcomes function
+%   in order to have a similar way to generate outcomes for all task
+%   versions. 
+%
+%   Input
+%       taskParam: structure containing task paramters
+%       condition: current task condition of which data should be loaded
+%       haz: hazard rate
+%       concentration: noise in the environment
+%   
+%   Output
+%       taskData: loaded task data
+%       trial: number of trials
 
 
 % data for unit tests
@@ -124,7 +140,7 @@ elseif ~taskParam.unitTest
     elseif isequal(condition, 'onlinePractice')
         taskData = load('onlinePractice');
         taskData = taskData.taskData;
-        trial = 2 %taskParam.gParam.onlinePractTrials;
+        trial = 2; %taskParam.gParam.onlinePractTrials;
     elseif isequal(condition, 'mainPractice_3')
         taskData = load('pract3');
         taskData = taskData.taskData;
@@ -156,8 +172,13 @@ elseif ~taskParam.unitTest
         trial = taskParam.gParam.chinesePractTrials;
         taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
     elseif isequal(condition, 'chinese') %|| isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
-        trial = taskParam.gParam.trials;
         taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
+        if isnan(taskParam.gParam.trials)
+            trial = length(taskData.latentState);
+        else
+            trial = taskParam.gParam.trials;
+        end
+
     elseif isequal(condition, 'main')
         trial = taskParam.gParam.trials;
         taskData = al_generateOutcomes(taskParam, haz, concentration, condition);

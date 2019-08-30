@@ -6,6 +6,7 @@ classdef al_conditions
     % Properties of the conditions object
     % -----------------------------------
     properties
+        
         runIntro;
         unitTest;
         taskType;
@@ -19,7 +20,9 @@ classdef al_conditions
         Data;
         DataChineseCued;
         DataChineseMain;
-
+        perfMain;
+        perfCued;
+        
     end
     
     % Methods of the conditions object
@@ -30,10 +33,10 @@ classdef al_conditions
             % AL_CONDITIONS creates a conditions object of class condobj
             % This is based on the initialization input structure
             %
-            %   Inputs
+            %   Input
             %       cond_init: structure with condition initialization
             %
-            %   Outputs
+            %   Output
             %       condobj: task object with initialized values
             
             % Set variable task properties based on input structure
@@ -46,20 +49,22 @@ classdef al_conditions
             condobj.testDay = cond_init.testDay;
             condobj.txtPressEnter = cond_init.txtPressEnter;
             condobj.showTickmark = cond_init.showTickmark;
+            condobj.perfMain = 0;
+            condobj.perfCued = 0;
         end
         
         
         function condobj = MainCondition(condobj, taskParam, subject)
-            %MAINCONDITION   Runs the change point condition of the
-            % cannon task
+            %MAINCONDITION   Runs the change point condition of the cannon task
             %
-            %   Inputs
+            %   Input
             %       condobj: task object with initialized values
             %       taskParam: structure containing task paramters
             %       subject: structure containing subject information
-            %   Outputs:
+            %
+            %   Output
             %       condobj: task object with initialized values
-
+            
             % Display instructions after practice session
             if condobj.runIntro && ~condobj.unitTest
                 
@@ -192,7 +197,6 @@ classdef al_conditions
                                 
                             end
                             
-                            
                         elseif strcmp(subject.session,'2')
                             
                             if  condobj.cBal == 1 || condobj.cBal == 3
@@ -223,20 +227,26 @@ classdef al_conditions
                 currentConcentration = condobj.concentration(2);
             end
             
-            [~, condobj.DataMain] = al_mainLoop(taskParam,...
-                condobj.haz(1), currentConcentration,...
-                'main', subject);
+            [~, condobj.DataMain] = al_mainLoop(taskParam, condobj.haz(1), currentConcentration, 'main', subject);
             
             function ARC_indicateCondition(condition, taskParam, txtPressEnter)
-                %ARC_INDICATECONDITION
+                % ARC_CONTROLCONDITION
+                %
+                %   Input
+                %       condition: noise condition type
+                %       taskParam: structure containing task paramters
+                %       txtPressEnter: text that is presented to indicate that subject should press "Enter"
+                %
+                %   Output
+                %       ~
                 
                 if strcmp(condition, 'lowNoise')
                     header_ind = 'More accurate cannon';
-                    txtStartTask_ind = ['In this block of trials the cannon will be relatively accurate.'];
+                    txtStartTask_ind = 'In this block of trials the cannon will be relatively accurate.';
                     
                 elseif strcmp(condition, 'highNoise')
                     header_ind = 'Less accurate cannon';
-                    txtStartTask_ind = ['In this block of trials the cannon will be less accurate.'];
+                    txtStartTask_ind = 'In this block of trials the cannon will be less accurate.';
                 end
                 
                 al_bigScreen(taskParam, txtPressEnter, header_ind, txtStartTask_ind, false);
@@ -246,16 +256,20 @@ classdef al_conditions
         
         function condobj = ARC_ControlCondition(condobj, c_condition, taskParam, subject, ~)
             % ARC_CONTROLCONDITION
-            %   Input
             %
+            %   Input
+            %       condobj: task object with initialized values
+            %       c_condition: control condition type
+            %       taskParam: structure containing task paramters
+            %       subject: structure containing information about subject
             %   Output
-
+            %       condobj: task object with initialized values
+            
             if condobj.testDay == 1
                 daySpecificInstruction = 'Before you start the real experiment,';
             elseif condobj.testDay == 2
                 daySpecificInstruction = 'As yesterday,';
             end
-            
             
             if isequal(c_condition, 'ARC_controlSpeed')
                 header = 'Speed Task';
@@ -268,23 +282,17 @@ classdef al_conditions
             txtStartTask = sprintf('%s we ask you to %s', daySpecificInstruction, controlInstructions);
             
             feedback = false;
-            al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask,...
-                feedback);
+            al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
             
             condition = 'ARC_controlPractice';
             taskParam.gParam.showTickmark = false;
-            [~, ~] =  al_mainLoop(taskParam,...
-                taskParam.gParam.haz(2),...
-                taskParam.gParam.concentration(3),...
-                condition, subject);
+            [~, ~] =  al_mainLoop(taskParam, taskParam.gParam.haz(2), taskParam.gParam.concentration(3), condition, subject);
             
             condition = c_condition;
             if isequal(condition, 'ARC_controlSpeed')
-                txtStartTask = ['This is the beginning of the Speed task.'...
-                    'AGAIN, MAYBE SOME MORE INSTRUCTIONS'];
+                txtStartTask = 'This is the beginning of the Speed task. AGAIN, MAYBE SOME MORE INSTRUCTIONS';
             elseif isequal(condition, 'ARC_controlAccuracy')
-                txtStartTask = ['This is the beginning of the Accuracy task.'...
-                    'AGAIN, MAYBE SOME MORE INSTRUCTIONS'];
+                txtStartTask = 'This is the beginning of the Accuracy task. AGAIN, MAYBE SOME MORE INSTRUCTIONS';
             end
             
             feedback = false;
@@ -306,17 +314,21 @@ classdef al_conditions
             txtStartTask = sprintf('This is the end of the %s.', taskIndex);
             al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
             
-            % depending on cbal, turn tickmark on again
+            % Depending on cbal, turn tickmark on again
             taskParam.gParam.showTickmark = condobj.showTickmark;
             
         end
         
         function condobj = ChineseCondition(condobj, taskParam, subject)
             %CHINESECONDITION   Runs the chinese condition of the cannon task
-            %   Input
             %
+            %   Input
+            %       condobj: task object with initialized values
+            %       taskParam: structure containing task paramters
+            %       subject: structure containing information about subject
             %   Output
-
+            %       condobj: task object with initialized values
+            
             if condobj.runIntro && ~condobj.unitTest
                 
                 al_instructions(taskParam, 'chinese', subject);
@@ -346,37 +358,113 @@ classdef al_conditions
                 end
                 feedback = false;
                 al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
-                
             end
             
-            % Run "cued" condition
-            taskParam.gParam.showCue = true;
-            [~, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+            % todo: check if data are saved after each block
+            % for b = 1:taskParam.gParam.nb
             
-            if taskParam.gParam.language == 1
-                header = 'Anfang der Aufgabe';
-                txtStartTask = ['Deutsch'];
-            elseif taskParam.gParam.language == 2
-                header = 'Next round';
-                txtStartTask = ['In this block of trials, you will no longer see which enemy is firing! '...
-                    'Everything else will be exactly the same. If you have any questions, please ask the experimenter.'];
-            end
+            % Add block number to subject info to indicate that blocks
+            % > 1 should use outcome contingenices of first block (if useSameMapping = True)
+            %subject.blockNumber = b;
             
-            feedback = false;
-            al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+            if condobj.cBal == 1
                 
-            
-             % Run "uncued" condition
-             taskParam.gParam.showCue = false;
-            [~, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                % todo: check if data are saved after each block
+                for b = 1:taskParam.gParam.nb
+                    % Run "cued" condition
+                    taskParam.gParam.showCue = true;
+                    if b == 1 || ~isequal(taskParam.gParam.useTrialConstraints, 'aging') % taskParam.gParam.useSameMapping == false
+                        [taskDataCued, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                    else
+                        % Update block number in taskData
+                        taskDataCued.block(:) = b;
+                        [~, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject, taskDataCued);
+                    end
+                    condobj.perfCued = condobj.perfCued + condobj.DataChineseCued.accPerf(end);
+
+                end
+                if taskParam.gParam.language == 1
+                    header = 'Anfang der Aufgabe';
+                    txtStartTask = 'Deutsch';
+                elseif taskParam.gParam.language == 2
+                    header = 'Next round';
+                    txtStartTask = ['In this block of trials, you will no longer see which enemy is firing! '...
+                        'Everything else will be exactly the same. If you have any questions, please ask the experimenter.'];
+                end
+                
+                feedback = false;
+                al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+                
+                % todo: check if data are saved after each block
+                for b = 1:taskParam.gParam.nb
+                    % Run "uncued" condition
+                    taskParam.gParam.showCue = false;
+                    if b == 1 || ~isequal(taskParam.gParam.useTrialConstraints, 'aging') %taskParam.gParam.useSameMapping == false
+                        [taskDataUncued, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                    else
+                        % Update block number in taskData
+                        taskDataUncued.block(:) = b;
+                        [~, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject, taskDataUncued);
+                    end
+                    condobj.perfMain = condobj.perfMain + condobj.DataChineseMain.accPerf(end);
+
+                end
+            elseif condobj.cBal == 2
+                
+                % todo: check if data are saved after each block
+                for b = 1:taskParam.gParam.nb
+                    % Run "uncued" condition
+                    taskParam.gParam.showCue = false;
+                    if b == 1 || ~isequal(taskParam.gParam.useTrialConstraints, 'aging')
+                        [taskDataUncued, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                    else
+                        % Update block number in taskData
+                        taskDataUncued.block(:) = b;
+                        [~, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject, taskDataUncued);
+                    end
+                    condobj.perfMain = condobj.perfMain + condobj.DataChineseMain.accPerf(end);
+
+                end
+                
+                if taskParam.gParam.language == 1
+                    header = 'Anfang der Aufgabe';
+                    txtStartTask = 'Deutsch';
+                elseif taskParam.gParam.language == 2
+                    header = 'Next round';
+                    txtStartTask = ['In this block of trials, you will see which enemy is firing! '...
+                        'Everything else will be exactly the same. If you have any questions, please ask the experimenter.'];
+                end
+                feedback = false;
+                al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+                
+                % todo: check if data are saved after each block
+                for b = 1:taskParam.gParam.nb
+                    % Run "cued" condition
+                    taskParam.gParam.showCue = true;
+                    if b == 1 || ~isequal(taskParam.gParam.useTrialConstraints, 'aging')
+                        [taskDataCued, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                    else
+                        % Update block number in taskData
+                        taskDataCued.block(:) = b;
+                        [~, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject, taskDataCued);
+                    end
+                    condobj.perfCued = condobj.perfCued + condobj.DataChineseCued.accPerf(end);
+                end
+            end
         end
         
         function DataFollowOutcome = FollowOutcomeCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
             %FOLLOWOUTCOMECONDITION   Runs the follow-outcome condition of the cannon task
-            %   Input
             %
+            %   Input
+            %       runIntro: indicate if practice session should be conducted
+            %       unitTest: indicate if unit test should be conducted
+            %       haz: hazard rate
+            %       concentration: noise in the environment
+            %       txtPressEnter: text that is presented to indicate that subject should press "Enter"
             %   Output
-
+            %       DataFollowOutcome: Participant data
+            
             if runIntro && ~unitTest
                 
                 if isequal(subject.group, '1')
@@ -412,10 +500,16 @@ classdef al_conditions
         
         function DataFollowCannon = FollowCannonCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
             %FOLLOWCANNONCONDITION   Runs the follow-the-cannon condition of the cannon task
-            %   Input
             %
+            %   Input
+            %       runIntro: indicate if practice session should be conducted
+            %       unitTest: indicate if unit test should be conducted
+            %       haz: hazard rate
+            %       concentration: noise in the environment
+            %       txtPressEnter: text that is presented to indicate that subject should press "Enter"
             %   Output
-
+            %       DataFollowCannon: Participant data
+            
             if runIntro && ~unitTest
                 
                 if isequal(subject.group, '1')
@@ -441,10 +535,16 @@ classdef al_conditions
         
         function DataReversal = ReversalCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
             %REVERSALCONDITION   Runs the reversal condition of the cannon task
-            %   Input
             %
+            %   Input
+            %       runIntro: indicate if practice session should be conducted
+            %       unitTest: indicate if unit test should be conducted
+            %       haz: hazard rate
+            %       concentration: noise in the environment
+            %       txtPressEnter: text that is presented to indicate that subject should press "Enter"
             %   Output
-
+            %       DataReversal: Participant data
+            
             if runIntro && ~unitTest
                 
                 al_instructions(taskParam, 'reversal', subject);
@@ -468,15 +568,20 @@ classdef al_conditions
             %ODDBALLCONDITION   Runs the oddball condition of the cannon task
             %
             %   Input
-            %
+            %       runIntro: indicate if practice session should be conducted
+            %       unitTest: indicate if unit test should be conducted
+            %       subject: structure containing information about subject
+            %       taskParam: structure containing task paramters
+            %       txtPressEnter: text that is presented to indicate that subject should press "Enter"
+            %       haz: hazard rate
+            %       concentration: noise in the environment
             %   Output
+            %       DataOddball: Participant data
             
             if runIntro && ~unitTest
                 
                 if isequal(subject.session, '1')
-                    
                     al_instructions(taskParam, 'oddballPractice', subject);
-                    
                 elseif isequal(subject.session, '2') || isequal(subject.session, '3')
                     header = 'Oddball Task';
                     txtStartTask = ['This is the beginning of the ODDBALL TASK. During this block you will earn real money '...

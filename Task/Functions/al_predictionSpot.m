@@ -1,8 +1,9 @@
 function al_predictionSpot(taskParam)
-%AL_PREDICTIONSPOT   Prints the prediction spot
+%AL_PREDICTIONSPOT   This function prints the prediction spot
 %
 %   Input
 %       taskParam: structure containing task parameters
+%
 %   Output
 %       ~
 

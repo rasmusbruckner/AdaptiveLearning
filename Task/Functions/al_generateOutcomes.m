@@ -1,11 +1,16 @@
 function taskData = al_generateOutcomes(taskParam, haz, concentration, condition)
-%GENERATEOUTCOMES Generates the outcomes for the different tasks
+%AL_GENERATEOUTCOMES   This function generates the outcomes for the different tasks
+%
+%   TODO: The organization of this function can be improved. At some point,
+%   it should be reorganized in order to have similar way to generate outcomes
+%   for all task versions.
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       haz: hazard rate parameter
 %       concentration: concentration parameter
 %       condition: task condition
+%
 %   Output
 %       taskData: structure containing generated outcomes
 
@@ -97,7 +102,7 @@ planetHaz = taskParam.gParam.planetHaz; % context hazard rate
 enemyHaz = taskParam.gParam.enemyHaz; % state hazard rate
 safePlanet = taskParam.gParam.safePlanet; % "safe" for context
 safeEnemy = taskParam.gParam.safeEnemy; % "safe" for state
-critical_trial = nan; 
+critical_trial = nan;
 
 % Safe for all other conditions except chinese condition
 if isequal(condition,'shield') || isequal(condition,'ARC_controlSpeed') || isequal(condition,'ARC_controlAccuracy') || isequal(condition,'ARC_controlPractice')
@@ -176,8 +181,6 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         % Set latent state to 0, as it is not used in change point task or shield practice
         latentState(i) = 0;
     end
-    
-    
     
     % Generate outcomes for Oddball condition
     % ---------------------------------------
@@ -297,7 +300,7 @@ elseif isequal(condition, 'reversal') || isequal(condition, 'reversalPractice') 
     % ----------------------------------------------------------
     
 elseif isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_4') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3') ||...
-        (isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == false)
+        (isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstraints, 'NoContraints'))
     
     for i = 1:trials
         
@@ -306,7 +309,8 @@ elseif isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePra
         
         % For each block, determine means of outcome generating distributions
         if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
-            stateSpace = randi(360,3,3);
+            %stateSpace = randi(360,3,3);
+            stateSpace = randi(360,3,6);
         end
         
         % Determine latent state
@@ -348,34 +352,42 @@ elseif isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePra
         
     end
     
-elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == true
-    % Generation of outcomes for cannon-state extension task
+elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstraints, 'Montreal')
+    % Generation of outcomes for cannon state extension task
+    
+    if nEnemies ~= 2
+        warning('Contraints not tested for current nEnemies!')
+    end
     
     % Initialze variables
-    nb = taskParam.gParam.nb;% 8; % number of blocks
-    crit_dist = 45; % critical distance between means. Controls the overlap between states to avoid very similar enemies.
+    if taskParam.gParam.useSameMapping == true
+        nb = 1;
+    else
+        nb = taskParam.gParam.nb;% 8; % number of blocks
+    end
+    %crit_dist = 45; % critical distance between means. Controls the overlap between states to avoid very similar enemies.
     n_changes = (trials/nb)*haz; % number of changes
     safe = s;
-    block = repelem(1:8, trials/nb); % block indizes
-    ass_mu = mu;
+    % block = repelem(1:nb, trials/nb); % block indizes
+    %ass_mu = mu;  % this is currently ambiguous
     
     % Sample Means for enemy x planet x block
     % ---------------------------------------
-    mu = randi(359, nEnemies, nPlanets, nb);
+    currDistMeans = randi(359, nEnemies, nPlanets, nb);
     
     while 1
-        x = abs(al_diff(mu(1, :, :), mu(2, :, :)));
-        if any(any(x < crit_dist))
-            mu = randi(359, nEnemies, nPlanets, nb);
+        x = abs(al_diff(currDistMeans(1, :, :), currDistMeans(2, :, :)));
+        if any(any(x < critDist))
+            currDistMeans = randi(359, nEnemies, nPlanets, nb);
         else
             break
         end
     end
     
-%     % Sample planets. Here we have the same frequency for each planet
-%     % ---------------------------------------------------------------
-%     planet_vec = [ones(1, trials/2), repmat(2, 1, trials/2)];
-%     planet_vec = planet_vec(randperm(length(planet_vec)));
+    %     % Sample planets. Here we have the same frequency for each planet
+    %     % ---------------------------------------------------------------
+    %     planet_vec = [ones(1, trials/2), repmat(2, 1, trials/2)];
+    %     planet_vec = planet_vec(randperm(length(planet_vec)));
     
     % Initialize here!
     all_changes = [];
@@ -390,16 +402,20 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
     % Cycle over blocks
     % -----------------
     for b = 1:nb
-
+        
         % Sample planets. Here we have the same frequency for each planet
         % ---------------------------------------------------------------
-        planet_vec = [ones(1, trials/nb/2), repmat(2, 1, trials/nb/2)];
+        
+        % This is how we did it for Montreal
+        % planet_vec = [ones(1, trials/nb/2), repmat(2, 1, trials/nb/2)];
+        % This is the new version. Not yet properly tested!
+        planet_vec = repmat(1:nPlanets,1,trials/nb/nPlanets);
         planet_vec = planet_vec(randperm(length(planet_vec)));
         
         % Randomly determine first enemy
         enemy_vec = nan(trials/nb, 1);
         enemy_vec(1) = binornd(1, 0.5) + 1;
-
+        
         % Initialiize vector for current mu
         current_mu = nan(trials/nb, 1)';
         current_block = repmat(b, trials/nb, 1);
@@ -418,8 +434,8 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
                 idx_enemy_change = find(change_final);
                 %criticalOK = zeros(1,numel(idx_enemy_change)-1);
                 
-                current_mu(1) = mu(enemy_vec(1), planet_vec(1),b);
-
+                current_mu(1) = currDistMeans(enemy_vec(1), planet_vec(1),b);
+                
                 % Cycle through change vector and determine current enemy and conditional on this the current mean
                 for i = 2:length(change_final)
                     if change_final(i) == 1
@@ -428,7 +444,7 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
                         enemy_vec(i) = enemy_vec(i-1);
                     end
                     
-                    current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
+                    current_mu(i) = currDistMeans(enemy_vec(i), planet_vec(i), b);
                 end
                 combo_vec = [enemy_vec, planet_vec'];
                 [combo, first_visit] = unique(combo_vec, 'rows');
@@ -436,9 +452,9 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
                 criticalOK = zeros(1,numel(idx_enemy_change));
                 critical_trial = nan(numel(idx_enemy_change));
                 for i = 1:numel(idx_enemy_change)-1
-                     fvoi = combo_vec(idx_enemy_change(i),:);
-                     fvoi_index = first_visit(ismember(combo, fvoi, 'rows'));
-                     criticalOK(i) = any(idx_planet_change > idx_enemy_change(i) & ...
+                    fvoi = combo_vec(idx_enemy_change(i),:);
+                    fvoi_index = first_visit(ismember(combo, fvoi, 'rows'));
+                    criticalOK(i) = any(idx_planet_change > idx_enemy_change(i) & ...
                         idx_planet_change < idx_enemy_change(i+1) & ...
                         idx_enemy_change(i) ~= fvoi_index);
                     critical_trial(i) = idx_planet_change(find(idx_planet_change>idx_enemy_change(i) ,1));
@@ -451,27 +467,25 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
             end
         end
         
+        %         % Generate enemy vector and determine current mu
+        %         % Randomly generate the fist "active" enemy
+        %         current_mu(1) = mu(enemy_vec(1), planet_vec(1),b);
+        %
+        %         % Cycle through change vector and determine current enemy and conditional on this the current mean
+        %         for i = 2:length(change_final)
+        %             if change_final(i) == 1
+        %                 enemy_vec(i) = 3 - enemy_vec(i-1);
+        %             else
+        %                 enemy_vec(i) = enemy_vec(i-1);
+        %             end
+        %             current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
+        %         end
         
-        
-%         % Generate enemy vector and determine current mu
-%         % Randomly generate the fist "active" enemy
-%         current_mu(1) = mu(enemy_vec(1), planet_vec(1),b);
-%         
-%         % Cycle through change vector and determine current enemy and conditional on this the current mean
-%         for i = 2:length(change_final)
-%             if change_final(i) == 1
-%                 enemy_vec(i) = 3 - enemy_vec(i-1);
-%             else
-%                 enemy_vec(i) = enemy_vec(i-1);
-%             end
-%             current_mu(i) = mu(enemy_vec(i), planet_vec(i), b);
-%         end
-        
-        % TODO: Initialize! 
+        % TODO: Initialize!
         all_changes = horzcat(all_changes, change_vec);
-        all_mu = horzcat(all_mu, current_mu);
-        all_enemies = horzcat(all_enemies, enemy_vec);
-        all_planets = horzcat(all_planets, planet_vec);
+        distMean = horzcat(all_mu, current_mu);
+        latentState = horzcat(all_enemies, enemy_vec);
+        currentContext = horzcat(all_planets, planet_vec);
         block = horzcat(block, current_block);
     end
     
@@ -484,24 +498,95 @@ elseif isequal(condition, 'chinese') && taskParam.gParam.useTrialConstraints == 
         outcome(i) = round(180 + rad2deg(circ_vmrnd(deg2rad(all_mu(i) - 180), concentration, 1)));
         
         % Generate angular shield size
-        allASS(i) = al_getShieldSize(minASS, maxASS, ass_mu);
+        allASS(i) = al_getShieldSize(minASS, maxASS, mu);
         
     end
     
-    % Adjust to match names! Adjust in the future
-    latentState = all_enemies; 
-    currentContext = all_planets;
-    distMean = all_mu;
+    % Adjust in the future to match names!
+    % latentState = all_enemies;
+    % currentContext = all_planets;
+    % distMean = all_mu;
     catchTrial = zeros(length(distMean), 1);
     oddBall = nan(length(distMean), 1);
+    
+elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstraints, 'aging')
+    
+    if nEnemies ~= 3
+         warning('Contraints not tested for current nEnemies!')
+    end
 
+    % Initialize variables
+    %all_mu = [];
+    latentState = [];
+    currentContext = [];
+    critDist = taskParam.gParam.critDist;
+    
+    % Sample Means for enemy x planet
+    % -------------------------------
+    
+    currDistMeans = randi(359, nEnemies, nPlanets);
+    while 1
+        x1 = abs(al_diff(currDistMeans(1, :, :), currDistMeans(2, :, :)));
+        x2 = abs(al_diff(currDistMeans(1, :, :), currDistMeans(3, :, :)));
+        x3 = abs(al_diff(currDistMeans(2, :, :), currDistMeans(3, :, :)));
+        if any(any(x1 < critDist)) || any(any(x2 < critDist)) || any(any(x3 < critDist))
+            currDistMeans = randi(359, nEnemies, nPlanets);
+        else
+            break
+        end
+    end
+    
+    % Determine enemy
+    enemies = linspace(1,nEnemies, nEnemies); 
+    enemies = enemies(randperm(size(enemies ,2)));
+    
+    % Determine number of repetitions for current enemy
+    rep = Shuffle([4, 5, 6]);
+    
+    % Cycle over enemies
+    for e = 1:length(enemies)
+        
+        % Cycle over repetitions
+        for r = 1:rep(e)
+            
+            % Determine all planets for entire block
+            planet_vec = randperm(size(1:nPlanets, 2));
+            currentContext = horzcat(currentContext, planet_vec);
+            
+            % Determine all enemies for entire block
+            enemy_vec = repmat(enemies(e), 1, length(planet_vec));
+            latentState = horzcat(latentState, enemy_vec);
+        end
+    end
+    
+    % Cycle over trials
+    for i = 1:length(latentState)
+        
+        % Determine current mean
+        distMean(i) = currDistMeans(latentState(i), currentContext(i));
+       
+        % Sample outcome
+        outcome(i) = round(180 + rad2deg(circ_vmrnd(deg2rad(distMean(i) - 180), concentration, 1)));
+        
+        % Generate angular shield size
+        allASS(i) = al_getShieldSize(minASS, maxASS, mu);
+        
+    end
+    
+    % Set catch trials and oddballs to zero
+    block = ones(length(latentState), 1);
+    catchTrial = zeros(length(distMean), 1);
+    oddBall = nan(length(distMean), 1);
+    
 end
 
 % Generate shield types
 if isequal(taskParam.gParam.taskType, 'ARC') || isequal(taskParam.gParam.taskType, 'chinese')
+    
     % Here all shields have the same color
     shieldType = ones(trials,1);
 else
+    
     %warning('ShieldType nicht spezifiziert')
     shieldType = Shuffle([zeros((trials/2),1); ones((trials/2),1)]);
 end

@@ -1,8 +1,9 @@
 function al_lineAndBack(taskParam)
-%LINEANDBACK   Draws background for intructions in the cannon task
+%AL_LINEANDBACK   This function draws background for intructions in the cannon task
 %
 %   Input
 %       taskParam: structure containing task parameters
+%
 %   Output
 %       ~
 

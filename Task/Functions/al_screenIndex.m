@@ -1,9 +1,10 @@
 function [screenIndex] = al_screenIndex(taskParam, screenIndex)
-%SCREENINDEX   Tests whether the participant pressed a button to go forward
+%AL_SCREENINDEX   This function tests if the participant pressed a button to go forward
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       screenIndex: indicates the number of instructions screen
+%
 %   Output
 %       screenIndex: updated number of instructions screen
 

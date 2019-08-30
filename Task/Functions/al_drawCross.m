@@ -1,8 +1,9 @@
 function al_drawCross(taskParam)
-%AL_DRAWCROSS   Draws the fixation cross
+%AL_DRAWCROSS   This function draws the fixation cross
 % 
 %   Input
 %       taskParam: structure containing task parameters
+%
 %   Output
 %       ~ 
 

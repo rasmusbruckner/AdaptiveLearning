@@ -1,5 +1,5 @@
 function DataMain = AdaptiveLearning(unitTest)
-%ADAPTIVELEARNING   Master function for the cannon task
+%ADAPTIVELEARNING   Master function of the cannon task.
 %   AdaptiveLearning(false) or adaptiveLearning runs the cannon task.
 %   adaptiveLearning(true) is part of a unit test to control task
 %   output after task changes. Scripts for unit test:
@@ -12,7 +12,7 @@ function DataMain = AdaptiveLearning(unitTest)
 %   "Oddball version":      Change point task with oddball condition
 %   "Reversal version":     Change point task with occasional reversals to
 %                           previous change point location
-%   "Chinese restaurant":   Learning of a multiple states
+%   "Chinese restaurant":   Learning of multiple states
 %   "ARC version":          Owen's Cambridge version
 %                               - Different noise conditions
 %                               - Tickmark on vs. off
@@ -21,7 +21,7 @@ function DataMain = AdaptiveLearning(unitTest)
 %   Contributors: Ben Eppinger (Concordia), Matt Nassar (Brown), 
 %   Lennart Wittkuhn (MPI), Owen Parsons (Cambridge)
 %
-%   Version 01/2019
+%   Version 07/2019
 
 
 % Initialize task
@@ -37,8 +37,7 @@ if ~unitTest
     unitTest = false;
 end
 
-% Indentifies your machine; if you have internet!
-computer = 'MacMini';
+% Current computer
 computer = 'Macbook';
 
 % Choose task type:
@@ -56,12 +55,12 @@ switch taskType
     
     case 'dresden'
     
-        trials              = 2; % 240
-        controlTrials       = 1; % 120
-        concentration       = [12 8 99999999];
-        DataFollowOutcome   = nan;
-        DataFollowCannon    = nan;
-        textSize            = 18;
+        trials = 2; % 240
+        controlTrials = 1; % 120
+        concentration = [12 8 99999999];
+        DataFollowOutcome = nan;
+        DataFollowCannon = nan;
+        textSize = 18;
         
         % Check number of trials in each condition
         if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials >...
@@ -73,90 +72,80 @@ switch taskType
     case 'oddball'
     
         % Trials first session
-        trialsS1        = 50; % 40
+        trialsS1 = 50; % 40
         % Trials second session
-        trialsS2S3      = 50; % 240
-        controlTrials   = nan;
-        concentration   = [10 12 99999999];
-        DataOddball     = nan;
-        textSize        = 30;
+        trialsS2S3 = 50; % 240
+        controlTrials = nan;
+        concentration = [10 12 99999999];
+        DataOddball = nan;
+        textSize = 30;
     
     case 'reversal'
     
-        trials          = 20;
-        controlTrials   = nan;
-        concentration   = [10 12 99999999];
-        nPlanets        = 1;
-        nEnemies        = nan;
-        planetHaz       = nan;
-        enemyHaz        = nan;
-        safePlanet      = nan;
-        safeEnemy       = nan;
-        DataOddball     = nan;
-        textSize        = 19;
+        trials = 20;
+        controlTrials = nan;
+        concentration = [10 12 99999999];
+        nPlanets = 1;
+        nEnemies = nan;
+        planetHaz = nan;
+        enemyHaz = nan;
+        safePlanet = nan;
+        safeEnemy = nan;
+        DataOddball = nan;
+        textSize = 19;
     
     case 'chinese'
         
-        useTrialConstraints = true; % uses code with trial constraints
-        blockIndices = [1 999 999 999]; % only for useTrialConstraints = false!
-        nb = 6; % number of blocks: only for useTrialConstraints = true!
-        trials = 2; %300; %400; % use 400 for useTrialConstraints = true!
+        % Select constraints for the generation of outcomes
+        useTrialConstraints = 'aging'; % 'Montreal'; 'NoConstraints'
+
+        % For all cases
+        trials = 5; % trials per block... 90 for current setting of agent condition
+
+        critDist = 45;% critical distance between means. Controls the overlap between states to avoid very similar enemies.
+        nb = 2; % number of blocks
+        cueAllTrials = false; % if false, only enemy change is cued
         chinesePractTrials = 2; % 200 number of practice trials
-        nPlanets = 2; % number of planets
-        nEnemies = 2; % number of enemies
-        planetHaz = 1; % probability that planet changes color
-        enemyHaz = 0.15; % probability that enemy changes
-        safePlanet = 0; % minimum number of trials before planet changes (on) 
-        safeEnemy = 0; % minimum number of trials before enemy changes
+        nPlanets = 6; % number of planets
+        nEnemies = 3; % number of enemies
         concentration = [12 12 99999999]; % anpassen?
         textSize = 16; % text size for instructions
         showTickmark = nan; % do not show tickmark
         DataOddball = nan; % do not use anything from oddball condition
         controlTrials = nan; % do not use control trials from "Dresden condition"
         language = 2; % 1: German, 2: English
+        blockIndices = [1 999 999 999]; % currently not used anymore
+
+        % 'Montreal' and 'NoConstraints'
+        enemyHaz = 0.15; % probability that enemy changes
+        planetHaz = 1; % probability that planet changes color
+        safePlanet = 0; % minimum number of trials before planet changes
+        safeEnemy = 0; % minimum number of trials before enemy changes
 
     case 'ARC'
     
-        trials          = 6; % 240
-        controlTrials   = 4; % 60; % this is the new control version that we added to control for differences between groups
-        concentration   = [16 8 99999999]; 
-        blockIndices    = [1 101 999 999]; %[1 121 999 999];
-        textSize        = 19;
-        nPlanets        = 1;
-        nEnemies         = nan;
-        planetHaz      = nan;
-        enemyHaz        = nan;
-        safePlanet     = nan;
-        safeEnemy       = nan;
+        trials = 6; % 240
+        controlTrials = 4; % 60; % this is the new control version that we added to control for differences between groups
+        concentration = [16 8 99999999]; 
+        blockIndices = [1 101 999 999]; %[1 121 999 999];
+        textSize = 19;
+        nPlanets = 1;
+        nEnemies = nan;
+        planetHaz = nan;
+        enemyHaz = nan;
+        safePlanet = nan;
+        safeEnemy = nan;
         chinesePractTrials = nan;
         language = 2;
         useTrialConstraints = false;
         nb = nan;
-        %trials = nan;
+        
         % Check number of trials
         if  (trials > 1 && mod(trials, 2)) == 1
             msgbox('All trials must be even or equal to 1!');
             return
         end
         
-    case 'charite'
-        
-        trials          = 6; % 240
-        controlTrials   = 4; % 60; % this is the new control version that we added to control for differences between groups
-        concentration   = [16 8 99999999]; 
-        blockIndices    = [1 101 999 999]; %[1 121 999 999];
-        textSize        = 19;
-        nPlanets        = 1;
-        nEnemies         = nan;
-        planetHaz      = nan;
-        enemyHaz        = nan;
-        safePlanet     = nan;
-        safeEnemy       = nan;
-        chinesePractTrials = nan;
-        language = 2;
-        useTrialConstraints = false;
-        nb = nan;
-        %trials = nan;
         % Check number of trials
         if  (trials > 1 && mod(trials, 2)) == 1
             msgbox('All trials must be even or equal to 1!');
@@ -165,33 +154,34 @@ switch taskType
 end
 
 % Version-independent parameters
-runIntro                = true;
-askSubjInfo             = true;
-sendTrigger             = false;
-randomize               = false;
-shieldTrials            = 4; % 4
-practTrials             = 2; % 20 in reversal muliplied by 2!
-useCatchTrials          = true;
-haz                     = [.12 1 0]; % .125
-oddballProb             = [.25 0];
-reversalProb            = [.5 1];
-driftConc               = [30 99999999];  % Lara: std.
-safe                    = [3 0];
-rewMag                  = 0.1;
-practiceTrialCriterion  = 10; % 10
-fixCrossLength          = 0.5;
-outcomeLength           = 1;
-jitter                  = 0.2;
-fixedITI                = 0.9;
-debug                   = false; %true;
-screenNumber            = 1; %2;  % Use 1 if use one screen. Use 2 if you use two screens
+% ------------------------------
 
-% @Sean: add your directory
-% Save directory
+runIntro = false; % run task instructions
+askSubjInfo = true; % request further parameters for the experiment 
+sendTrigger = false; % send EEG triggers
+randomize = false;  % randomize default task parmeters
+shieldTrials = 4; % 4 number of trials to introduce the shield in the cover story
+practTrials = 2; % 20 number of practice trials - note that in "reversal" version this is muliplied by 2
+useCatchTrials = true; % use catch trials, where cannon is shown occasionally
+haz = [.1 1 0]; %.12 % .125 % hazard rate - determines prior change point probability
+oddballProb = [.25 0]; % deterimines prior oddball point probability
+reversalProb = [.5 1]; % deterimines prior reversal point probability
+driftConc = [30 99999999];  % concentration parameter of drift (inverse variance)
+safe = [3 0]; % minimum number of trials before change point
+rewMag = 0.1; % number of points for rewarded trials
+practiceTrialCriterion = 10; % 10 % number of catches during practice that is required to continue with main task
+fixCrossLength = 0.5; % ISI fixation cross presentation
+outcomeLength = 1; % ISI outcome presentation
+jitter = 0.2; % ITI jitter
+fixedITI = 0.9; % ITI fixed
+debug = false; % true; debug mode
+screenNumber = 1; % 2;  % Use 1 if use one screen. Use 2 if you use two screens
+
+% Save directory for different computers that were used in the past
 if isequal(computer, 'Macbook')
     cd('~/Dropbox/AdaptiveLearning/DataDirectory');
 elseif isequal(computer, 'Dresden')
-    cd(['C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory']);
+    cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
 elseif isequal(computer, 'Brown')
     cd('C:\Users\lncc\Dropbox\ReversalTask\data');
 elseif isequal(computer, 'Lennart')
@@ -212,7 +202,6 @@ rand('twister', a(6).*10000);
 
 % User Input
 % ----------
-%@Sean: maybe interesting
 % If no user input requested
 if askSubjInfo == false
     
@@ -240,7 +229,7 @@ elseif askSubjInfo == true
     elseif isequal(taskType, 'reversal')
         prompt = {'ID:','Age:', 'Sex:','Reward:'};
     elseif isequal(taskType, 'chinese')
-        prompt = {'ID:','Age:', 'Sex:'};
+        prompt = {'ID:','Age:', 'Sex:', 'cBal:'};
     elseif strcmp(taskType, 'ARC')
         prompt = {'ID:','Age:', 'Group:', 'Sex:', 'cBal:', 'day:'}; 
     end
@@ -284,7 +273,7 @@ elseif askSubjInfo == true
         case 'reversal'
             defaultanswer = {'99999','99', 'm', reward};
         case 'chinese'
-            defaultanswer = {'99999','99', 'm', 1};
+            defaultanswer = {'99999','99', 'm', cBal};
         case 'ARC'
             defaultanswer = {'99999','99', '1', 'm', cBal, testDay};
     end
@@ -299,9 +288,9 @@ elseif askSubjInfo == true
         case 'reversal' 
             subjInfo{5} = date;
         case 'chinese'
-            subjInfo{4} = 1; % reward
-            subjInfo{5} = '1'; % group
-            subjInfo{6} = date;
+            subjInfo{5} = 1; % reward
+            subjInfo{6} = '1'; % group
+            subjInfo{7} = date;
         case 'ARC' 
             subjInfo{7} = reward;
             subjInfo{8} = date;
@@ -367,6 +356,11 @@ elseif askSubjInfo == true
                 msgbox('cBal: 1,2,3 or 4?');
                 return
             end
+        case 'chinese'
+            if subjInfo{4} ~= '1' && subjInfo{4} ~= '2'
+                msgbox('cBal: 1 or 2?');
+                return
+            end
     end
     
     % Check reward
@@ -404,7 +398,7 @@ elseif askSubjInfo == true
         
             subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(3), 'rew', str2double(cell2mat(subjInfo(4))), 'date',subjInfo(5), 'session', '1', 'cBal', nan);
         case 'chinese'
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(3), 'rew', subjInfo(4), 'group', subjInfo(5), 'date',subjInfo(6), 'session', '1', 'cBal', nan);
+            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(4))), 'rew', subjInfo(5), 'group', subjInfo(6), 'date',subjInfo(7), 'session', '1');
         case 'ARC'       
             subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))),...
                 'rew', str2double(cell2mat(subjInfo(7))), 'testDay',str2double(cell2mat(subjInfo(6))), 'date', subjInfo(8), 'session', '1');
@@ -513,36 +507,36 @@ gParam = struct('taskType', taskType , 'blockIndices', blockIndices, 'ref', ref,
     'safePlanet', safePlanet, 'safeEnemy', safeEnemy, 'zero', zero,'window', window, 'windowRect', windowRect,...
     'practiceTrialCriterion', practiceTrialCriterion, 'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark,...
     'useCatchTrials', useCatchTrials, 'screenNumber', screenNumber, 'language', language, 'useTrialConstraints', useTrialConstraints,...
-    'nb', nb); 
+    'nb', nb, 'cueAllTrials', cueAllTrials, 'critDist', critDist); 
 
 % Parameters related to the circle
 % --------------------------------
-predSpotRad         = 10;
-shieldAngle         = 30;
-outcSize            = 10;
-cannonEnd           = 5;
-meanPoint           = 1;
-rotationRad         = 150;
-chineseCannonRad    = 300;
-tendencyThreshold   = 15;
-predSpotDiam        = predSpotRad * 2;
-outcDiam            = outcSize * 2;
-spotDiamMean        = meanPoint * 2;
-cannonEndDiam       = cannonEnd * 2;
-predSpotRect        = [0 0 predSpotDiam predSpotDiam];
-outcRect            = [0 0 outcDiam outcDiam];
-cannonEndRect       = [0 0 cannonEndDiam cannonEndDiam];
-spotRectMean        = [0 0 spotDiamMean spotDiamMean];
-boatRect            = [0 0 50 50];
-centBoatRect        = CenterRect(boatRect, windowRect);
-predCentSpotRect    = CenterRect(predSpotRect, windowRect);
-outcCentRect        = CenterRect(outcRect, windowRect);
-outcCentSpotRect    = CenterRect(outcRect, windowRect);
-cannonEndCent       = CenterRect(cannonEndRect, windowRect);
-centSpotRectMean    = CenterRect(spotRectMean,windowRect);
-unit                = 2*pi/360;
-initialRotAngle     = 0*unit;
-rotAngle            = initialRotAngle;
+predSpotRad = 10;
+shieldAngle = 30;
+outcSize = 10;
+cannonEnd = 5;
+meanPoint = 1;
+rotationRad = 150;
+chineseCannonRad = 300;
+tendencyThreshold = 15;
+predSpotDiam = predSpotRad * 2;
+outcDiam = outcSize * 2;
+spotDiamMean = meanPoint * 2;
+cannonEndDiam = cannonEnd * 2;
+predSpotRect = [0 0 predSpotDiam predSpotDiam];
+outcRect = [0 0 outcDiam outcDiam];
+cannonEndRect = [0 0 cannonEndDiam cannonEndDiam];
+spotRectMean = [0 0 spotDiamMean spotDiamMean];
+boatRect = [0 0 50 50];
+centBoatRect = CenterRect(boatRect, windowRect);
+predCentSpotRect = CenterRect(predSpotRect, windowRect);
+outcCentRect = CenterRect(outcRect, windowRect);
+outcCentSpotRect = CenterRect(outcRect, windowRect);
+cannonEndCent = CenterRect(cannonEndRect, windowRect);
+centSpotRectMean = CenterRect(spotRectMean,windowRect);
+unit = 2*pi/360;
+initialRotAngle = 0*unit;
+rotAngle = initialRotAngle;
 
 circle = struct('shieldAngle', shieldAngle, 'cannonEndCent', cannonEndCent, 'outcCentSpotRect', outcCentSpotRect,...
     'predSpotRad', predSpotRad, 'outcSize', outcSize, 'meanRad', meanPoint, 'rotationRad', rotationRad,...
@@ -737,12 +731,11 @@ switch taskType
    
         DataReversal = cond.ReversalCondition;
     
-    case'chinese'
+    case 'chinese'
 
         cond = cond.ChineseCondition(taskParam, subject);
-        DataChineseCued = cond.DataChineseCued;
-        DataChineseMain = cond.DataChineseMain;
-
+        perfCued = cond.perfCued;
+        perfMain = cond.perfMain;
 
     case 'ARC'
     
@@ -787,7 +780,7 @@ switch taskType
     case 'reversal'
         totWin = DataReversal.accPerf(end);
     case 'chinese'
-        totWin = DataChineseCued.accPerf(end) + DataChineseMain.accPerf(end);
+        totWin = perfCued + perfMain;
     case 'ARC'
         totWin = sum(blockWin);
 end

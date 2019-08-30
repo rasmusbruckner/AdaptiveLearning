@@ -1,10 +1,11 @@
 function al_tickMark(taskParam, parameter, type)
-%AL_TICKMARK   Draws the tickmark in the cannon task
+%AL_TICKMARK   This function draws the tickmark in the cannon task
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       parameters: ?
 %       type: tick mark type
+%
 %   Output
 %       ~
 

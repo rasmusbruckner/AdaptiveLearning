@@ -1,5 +1,5 @@
 function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichBlock)
-%AL_FEEDBACK   Displays feedback at the end of a block
+%AL_FEEDBACK   This function displays feedback at the end of a block
 %
 %   Input
 %       Data: structure containing data of subject
@@ -7,6 +7,7 @@ function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichB
 %       subject: structure containing information about subject
 %       condition: current condition
 %       whichBlock: current block
+%
 %   Output
 %       txt: text that will be displayed
 %       header: header that will be displayed
@@ -18,12 +19,21 @@ end
     
 % Compute hits, reward and no reward trials, reward catches and no reward catches and possible amount of money
 % ------------------------------------------------------------------------------------------------------------
-hits = sum(Data.hit(whichBlock == 1));
-rewTrials = sum(Data.actRew(whichBlock == 1));
-noRewTrials = sum(Data.actRew(whichBlock == 1));
-rewCatches = round(max(Data.accPerf(whichBlock))/taskParam.gParam.rewMag);
+% hits = sum(Data.hit(whichBlock == 1));
+% rewTrials = sum(Data.actRew(whichBlock == 1));
+% noRewTrials = sum(Data.actRew(whichBlock == 1));
+% rewCatches = round(max(Data.accPerf(whichBlock))/taskParam.gParam.rewMag);
+% noRewCatches = hits - rewCatches;
+% maxMon = (length(find(Data.shieldType(whichBlock == 1))) * taskParam.gParam.rewMag);
+
+% This works definitely for the aging chinese condition. Check before
+% applying other versions!
+hits = sum(Data.hit);
+rewTrials = sum(Data.actRew);
+noRewTrials = sum(Data.actRew);
+rewCatches = round(max(Data.accPerf)/taskParam.gParam.rewMag);
 noRewCatches = hits - rewCatches;
-maxMon = (length(find(Data.shieldType(whichBlock == 1))) * taskParam.gParam.rewMag);
+maxMon = (length(find(Data.shieldType)) * taskParam.gParam.rewMag);
 
 % Depending on task type, generate displayed text and header
 % ----------------------------------------------------------

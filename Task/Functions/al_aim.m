@@ -1,9 +1,10 @@
 function al_aim(taskParam, parameter)
-%AL_AIM   Prints the aim (as a needle) of the cannon
+%AL_AIM   This function prints the aim (as a needle) of the cannon
 %
 %   Input
 %       taskParam: structure containing task parameters       
 %       parameter: ? 
+%
 %   Output
 %        ~
 

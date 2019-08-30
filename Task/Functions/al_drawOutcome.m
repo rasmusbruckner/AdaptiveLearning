@@ -1,9 +1,10 @@
 function al_drawOutcome(taskParam, outcome)
-%AL_DRAWOUTCOME   Prints the outcome spot
+%AL_DRAWOUTCOME   This function prints the outcome spot
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       outcome: current outcome
+%
 %   Output
 %       ~
 

@@ -1,12 +1,14 @@
 function [screenIndex] = taskScreen(taskParam, texture, screenIndex)
-%TASKSCREEN   Indicates the current task
+%TASKSCREEN   This function indicates the current task
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       texture: texture of image that is shown on the screen
 %       screenIndex: indicates current sceen of instruction phase
+%
 %   Output
 %       screenIndex: updated screenIndex 
+
 
 while 1
     

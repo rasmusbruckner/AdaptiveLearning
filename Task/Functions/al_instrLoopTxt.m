@@ -1,8 +1,20 @@
 function [taskParam, fw, Data, savedTickmark] = al_instrLoopTxt(taskParam, txt, cannon, button, distMean, tickInstruction, Data)
-%INSTRLOOPTXT   Participant is able to perform parts of the task while seeing instructions on the screen
+%AL_INSTRLOOPTXT   This function manages task instructions while participants interact with the tak
 %
+%   Input
+%       taskParam: structure containing task paramters
+%       txt: instruction text
+%       cannon: indicates if cannon should be depicted
+%       button: indicates which button has to be pressed to continue to next screen
+%       distMean: mean of the current outcome distribution (cannon)
+%       tickInstruction: instructions if additional tick mark is displayed 
+%       Data: practice session data structure
 %
-% Add more comments!
+%   Output
+%       taskParam: structure containing task paramters
+%       fw: indicates if participant has indicated to go "forward"
+%       Data: practice session data structure
+%       savedTickmark: position where participants has set tick mark (optionally)
 
 
 if exist('Data', 'var')
@@ -34,17 +46,13 @@ else
     press = 0;
 end
 
-if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
-        ~isequal(taskParam.gParam.taskType, 'chinese') &&...
-        ~isequal(taskParam.gParam.taskType, 'ARC')
+if ~isequal(taskParam.gParam.taskType, 'reversal') && ~isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(taskParam.gParam.taskType, 'ARC')
    
     while 1    
         al_lineAndBack(taskParam)
         sentenceLength = taskParam.gParam.sentenceLength;
-        DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
-            taskParam.gParam.screensize(3)*0.1,...
-            taskParam.gParam.screensize(4)*0.05, [255 255 255],...
-            sentenceLength);
+        DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1,...
+            taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
         if cannon == true   
             al_drawCannon(taskParam, distMean);
         end
@@ -63,9 +71,7 @@ if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
         
         if isequal(button, 'arrow')
             txtPressEnter='Zurück mit Löschen - Weiter mit Enter';
-            DrawFormattedText(taskParam.gParam.window.onScreen,...
-                taskParam.strings.txtPressEnter ,'center',...
-                taskParam.gParam.screensize(4)*0.9);
+            DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter ,'center', taskParam.gParam.screensize(4)*0.9);
         end
         
         Screen('DrawingFinished', taskParam.gParam.window.onScreen);
@@ -76,50 +82,34 @@ if ~isequal(taskParam.gParam.taskType, 'reversal') &&...
         if keyIsDown
             if keyCode(taskParam.keys.rightKey)
                 if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle =...
-                        taskParam.circle.rotAngle +...
-                        0.75*taskParam.circle.unit; 
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit; 
                 else
                     taskParam.circle.rotAngle = 0;
                 end
             elseif keyCode(taskParam.keys.rightSlowKey)
-                if taskParam.circle.rotAngle...
-                        < 360*taskParam.circle.unit
-                    taskParam.circle.rotAngle =...
-                        taskParam.circle.rotAngle +...
-                        0.1*taskParam.circle.unit; 
+                if taskParam.circle.rotAngle < 360*taskParam.circle.unit
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit; 
                 else
                     taskParam.circle.rotAngle = 0;
                 end
             elseif keyCode(taskParam.keys.leftKey)
                 if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle =...
-                        taskParam.circle.rotAngle -...
-                        0.75*taskParam.circle.unit;
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
                 else
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
             elseif keyCode(taskParam.keys.leftSlowKey)
                 if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                    taskParam.circle.rotAngle =...
-                        taskParam.circle.rotAngle -...
-                        0.1*taskParam.circle.unit;
+                    taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
                 else
                     taskParam.circle.rotAngle = 360*taskParam.circle.unit;
                 end
-            elseif (isequal(button, 'arrow')...
-                    && keyCode(taskParam.keys.enter))...
-                    || (isequal(button, 'space')...
-                    && keyCode(taskParam.keys.space))
+            elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.enter)) || (isequal(button, 'space') && keyCode(taskParam.keys.space))
                 fw = 1;
-                Data.pred = (taskParam.circle.rotAngle...
-                    / taskParam.circle.unit);
+                Data.pred = (taskParam.circle.rotAngle / taskParam.circle.unit);
                 break;
                 
-            elseif (isequal(button, 'arrow')...
-                    && keyCode(taskParam.keys.delete))...
-                    || (isequal(button, 'space')...
-                    && keyCode(taskParam.keys.delete))
+            elseif (isequal(button, 'arrow') && keyCode(taskParam.keys.delete)) || (isequal(button, 'space') && keyCode(taskParam.keys.delete))
                 bw = 1;
                 break
             end
@@ -151,6 +141,7 @@ else
 
         if isequal(taskParam.gParam.taskType, 'chinese')
             currentContext = 1;
+            taskParam.gParam.showCue = false
             al_drawContext(taskParam, currentContext)
         end
         
@@ -205,9 +196,7 @@ else
             break;
             
         end
-        
     end
-    
 end
 
 Data.predErr = al_diff(distMean, Data.pred);

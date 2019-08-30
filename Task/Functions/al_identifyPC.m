@@ -1,7 +1,13 @@
 function [computer, Computer2] = al_identifyPC()
-%IDENTIFYPC   Identifies the computer the task is running on by checking
-%the software identifier of its network card.
-% Add more comments!
+%AL_IDENTIFYPC   This function identifies the computer the task is running on by checking
+% the software identifier of its network card.
+% 
+%   Input
+%       ~
+%
+%   Output
+%       computer: identified computer
+%       computer: indicates on which computer is not running (optionally in Dresden version)
 
 sid = '';
 ni = java.net.NetworkInterface.getNetworkInterfaces;

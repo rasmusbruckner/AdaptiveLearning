@@ -1,11 +1,12 @@
 function sharedInstructions(taskParam, subject, cannon, whichPractice)
-%SHAREDINSTRUCTIONS   Runs general instructions that are the same for each condtion
+%SHAREDINSTRUCTIONS   This function runs the general instructions that are the same for each condtion
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       subject: structure containing subject-specific information
 %       cannon: logical that indicates if cannon should be shown during instruction
 %       whichPractice: indicates which practice condition should be presented
+%
 %   Output
 %       ~ 
 
@@ -97,78 +98,65 @@ while 1
             
         case 13
             
-            %
             distMean = 290;
             [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, distMean, Data);
             
         case 14
             
-            % XX
             [screenIndex, Data] = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
             
         case 15
             
-            % XX
             win = true;
             [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, distMean, win);
             
         case 16
-            
-            % XX
+
             distMean = 35;
             [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, distMean);
             
         case 17
             
-            % XX
             Data.outcome = distMean;
             [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
             
         case 18
             
-            % XX
             win = true;
             [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, distMean, win);
             
         case 19
             
-            % XX
             distMean = 190;
             [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, distMean, Data);
             
         case 20
             
-            % XX
             screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
             
         case 21
             
-            % XX
             win = false;
             [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, distMean, win);
             
         case 22
             
-            %XX
             Data.outcome = distMean;
             distMean = 160;
             [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, distMean);
             
         case 23
             
-            % XX
             distMean = 160;
             Data.outcome = distMean;
             [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
             
         case 24
             
-            % XX
             [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, distMean, false);
             
         case 25
             
-            % XX
             if isequal(whichPractice, 'mainPractice') || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 4) || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 5) || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 6)
                 
                 warning('turned first practice off')
@@ -183,17 +171,14 @@ while 1
                 
             elseif isequal(whichPractice, 'oddballPractice')
                 
-                % XX
                 oddballPractice
                 
             elseif isequal(taskParam.gParam.taskType, 'reversal')
-                
-                % XX
+
                 reversalPractice
                 
             elseif isequal(taskParam.gParam.taskType, 'dresden')
                 
-                % XX
                 FollowCannonJustInstructions
                 
             elseif (isequal(whichPractice, 'chinese'))

@@ -1,8 +1,9 @@
 function al_drawCircle(taskParam)
-% AL_DRAWCIRCLE   Draws the circle in the cannon task
+% AL_DRAWCIRCLE   This function draws the circle in the cannon task
 %
 %   Input
 %        taskParam: structure containing task parameters
+%
 %   Output
 %        ~
 

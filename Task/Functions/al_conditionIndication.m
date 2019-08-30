@@ -1,10 +1,11 @@
 function al_conditionIndication(taskParam, txtNoise, txtPressEnter)
-%CONDITIONINDICATION   Displays the current task condition
+%AL_CONDITIONINDICATION   This function displays the current task condition
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       txtNoise: text indicating current condition
 %       txtPressEnter: text indicating that enter should be pressed to continue
+%
 %   Output
 %       ~
 

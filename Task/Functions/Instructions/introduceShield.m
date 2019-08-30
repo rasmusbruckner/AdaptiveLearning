@@ -1,5 +1,5 @@
 function [screenIndex, Data] = introduceShield(taskParam, subject, screenIndex, Data,  distMean, win)
-%INTRODUCESHIELD   Introduces shield to participant
+%INTRODUCESHIELD   This function introduces the shield to participants
 %
 %   Input 
 %       taskParam: structure containing task parameters
@@ -7,7 +7,8 @@ function [screenIndex, Data] = introduceShield(taskParam, subject, screenIndex, 
 %       screenIndex: indicates current sceen of instruction phase
 %       Data: data from the previous trials // Check this in the future
 %       distMean: mean of the outcome-generating distribution
-%       win: ?
+%       win: indicates reward condition 
+%
 %   Output
 %       screenIndex: updated screenIndex 
 %       Data: data from the previous trials // Check this in the future

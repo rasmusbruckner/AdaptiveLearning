@@ -1,17 +1,18 @@
 function [screenIndex, Data, t] = confirmMiss(taskParam, subject, screenIndex, Data, t, distMean, win)
-%CONFIRMMISS   Feedback that shield was indeed missed
+%CONFIRMMISS   This function shows feedback that shield was indeed missed
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       subject: structure containing subject-specific information
-%       screenIndex: indicates current sceen of instruction phase
-%       Data: data from the previous trials // Check this in the future
+%       screenIndex: indicates current screen of instruction phase
+%       Data: data from the previous trials
 %       t: previous timestamp // maybe rename in the future
 %       distMean: mean of the outcome-generating distribution
-%       win? 
+%       win: indicates reward condition 
+%
 %   Output
 %       screenIndex: updated screenIndex 
-%       Data: data from the previous trials // Check this in the future
+%       Data: updated Data structure
 %       t: current timestamp // maybe rename in the future
 
 

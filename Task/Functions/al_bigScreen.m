@@ -1,5 +1,5 @@
 function fw = al_bigScreen(taskParam, txtPressEnter, header, txt, feedback)
-%AL_BIGSCREEN   Draws background during the instructions
+%AL_BIGSCREEN   This function draws background during the instructions
 %
 %   Input
 %       taskParam: structure containing task parameters

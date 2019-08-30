@@ -1,11 +1,12 @@
 function al_drawCannon(taskParam, distMean, latentState, ~)
-%AL_DRAWCANNON   Prints the cannon image
+%AL_DRAWCANNON   This function prints the cannon image
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       distMean: current mean of the distribution
 %       latentState: current enemy
 %       ~ to be deleted!
+%
 %   Output
 %       ~
 

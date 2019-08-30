@@ -1,5 +1,5 @@
 function [screenIndex, Data, taskParam] = introduceShieldMiss(taskParam, screenIndex, Data, distMean, cannon)
-%INTRODUCESHIELDMISS   Introduces miss while showing shield to participant
+%INTRODUCESHIELDMISS   This function introduces cannonball misses while showing shield to participant
 %
 %   Input
 %       taskParam:  structure containing task parameters
@@ -7,6 +7,7 @@ function [screenIndex, Data, taskParam] = introduceShieldMiss(taskParam, screenI
 %       Data: data from the previous trials // Check this in the future
 %       distMean: mean of the outcome-generating distribution
 %       cannon: logical that indicates if cannon should be shown during instruction
+%
 %   Output
 %       screenIndex: updated screenIndex 
 %       Data: data from the previous trials // Check this in the future

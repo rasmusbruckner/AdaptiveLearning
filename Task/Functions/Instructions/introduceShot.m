@@ -1,11 +1,12 @@
 function [screenIndex, Data, taskParam] = introduceShot(taskParam, screenIndex, introduceNeedle, distMean, cannon)
-%INTRODUCESHOT   Introduce shot of the cannon
+%INTRODUCESHOT   This function introduces the shots of the cannon
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       screenIndex: indicates current sceen of instruction phase
 %       introduceNeedle: indicates if needle that points to cannon aim should be introduced
 %       cannon: logical that indicates if cannon should be shown during instruction
+%
 %   Output
 %       screenIndex: updated screenIndex
 %       Data: data from the trials

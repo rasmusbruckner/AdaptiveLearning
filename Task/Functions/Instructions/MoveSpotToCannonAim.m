@@ -1,4 +1,18 @@
 function [screenIndex, Data, taskParam] = MoveSpotToCannonAim(taskParam, screenIndex, distMean, Data, cannon)
+%MOVESPOTTOCANNONAIM   This function instructions participants to move their prediction spot toward the cannon aim
+%
+%   Input
+%       taskParam: structure containing task parameters
+%       screenIndex: indicates current screen of instruction phase
+%       distMean: mean of the distribution (cannon)
+%       Data: data from the previous trials
+%       cannon: logical that indicates if cannon should be shown during instruction
+%
+%   Output
+%       screenIndex: updated screenIndex
+%       Data: updated Data structure
+%       taskParam: structure containing task parameters
+
 
 if isequal(taskParam.gParam.taskType, 'dresden')
     if isequal(subject.group, '1')
@@ -52,8 +66,7 @@ Data.tickMark = true;
 Data.distMean = distMean;
 tickInstruction.savedTickmark = nan;
 tickInstruction.previousOutcome = nan;
-[taskParam, fw, Data, savedTickmark] = al_instrLoopTxt(taskParam,...
-    txt, cannon, 'space', distMean, tickInstruction, Data);
+[taskParam, fw, Data, savedTickmark] = al_instrLoopTxt(taskParam, txt, cannon, 'space', distMean, tickInstruction, Data);
 if fw == 1
     screenIndex = screenIndex + 1;
 end

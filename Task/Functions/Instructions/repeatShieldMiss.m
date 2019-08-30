@@ -1,16 +1,18 @@
 function [screenIndex, Data, t] = repeatShieldMiss(taskParam, screenIndex, Data, distMean)
-%REPEATSHIELDMISS   Repeat "miss" if participant caugh cannonball
+%REPEATSHIELDMISS   This function repeats "miss" instruction if participants caugh cannonball
 %
 %   Input
 %       taskParam: structure containing task parameters
 %       screenIndex: indicates current sceen of instruction phase
-%       Data: data from the previous trials // Check this in the future
+%       Data: data from the previous trials 
 %       distMean:  mean of the outcome-generating distribution
+%
 %   Output
 %       screenIndex: updated screenIndex 
-%       Data: data from the previous trials // Check this in the future
+%       Data: data from the previous trials
 %       t: current timestamp // maybe rename in the future
-%
+
+
 outcome = Data.outcome;
 background = true;
 al_cannonball(taskParam, distMean, outcome, background, 1, 0)

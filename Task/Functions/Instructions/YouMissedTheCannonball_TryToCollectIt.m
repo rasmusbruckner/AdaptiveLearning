@@ -1,5 +1,14 @@
-function [screenIndex, Data] =...
-        YouMissedTheCannonball_TryToCollectIt(screenIndex, Data)
+function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex, Data)
+%YOUMISSEDTHECANNONBALL_TRYTOCOLLECTIT   This function tells participant that cannonball was caught, although instruction was
+%   to miss it
+%
+%   Input
+%       screenIndex: indicates current screen of instruction phase 
+%       Data: data from the previous trials
+%
+%   Output:
+%       screenIndex: updated screenIndex 
+%       Data: data from the previous trials // Check this in the future
 
     background = true;
     Data.distMean = 160;
@@ -53,15 +62,9 @@ function [screenIndex, Data] =...
                 al_shield(taskParam, 20, Data.pred, 1)
             end
             al_drawOutcome(taskParam, Data.outcome)
-            DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
-                taskParam.gParam.screensize(3)*0.1,...
-                taskParam.gParam.screensize(4)*0.05,...
-                [255 255 255], sentenceLength);
-            DrawFormattedText(taskParam.gParam.window.onScreen,...
-                taskParam.strings.txtPressEnter,'center',...
-                taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-            Screen('DrawingFinished',...
-                taskParam.gParam.window.onScreen, 1);
+            DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
+            DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+            Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
             Screen('Flip', taskParam.gParam.window.onScreen, t + 1.6);
             [ keyIsDown, ~, keyCode ] = KbCheck;
             if keyIsDown
@@ -96,13 +99,8 @@ function [screenIndex, Data] =...
             al_predictionSpot(taskParam);
             al_drawOutcome(taskParam, Data.outcome);
             al_drawCannon(taskParam, Data.distMean)
-            DrawFormattedText(taskParam.gParam.window.onScreen,...
-                taskParam.strings.txtPressEnter,'center',...
-                taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-            DrawFormattedText(taskParam.gParam.window.onScreen,txt,...
-                taskParam.gParam.screensize(3)*0.1,...
-                taskParam.gParam.screensize(4)*0.05,...
-                [255 255 255], sentenceLength);
+            DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
+            DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
             Screen('DrawingFinished',taskParam.gParam.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
