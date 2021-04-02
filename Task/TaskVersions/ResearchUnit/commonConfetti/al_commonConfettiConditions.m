@@ -46,7 +46,7 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 % Initialize eye-tracker file
 if taskParam.gParam.eyeTracker
     et_file_name = sprintf('ec_%s', taskParam.subject.ID);
-    et_file_name=[et_file_name, '.edf']; 
+    et_file_name=[et_file_name]; 
 end
 
 % Set up eye-tracker
@@ -63,6 +63,18 @@ if taskParam.gParam.eyeTracker
     % Calibrate the eye tracker
     EyelinkDoTrackerSetup(el);
 end
+
+
+% Start Eyelink recording - calibration and validation of eye-tracker before each block
+if taskParam.gParam.eyeTracker
+    Eyelink('StartRecording');
+    WaitSecs(0.1);
+    Eyelink('message', 'Start recording Eyelink');
+
+    % Reference time stamp
+    taskParam.timingParam.ref = GetSecs();
+end
+
 
 % ------------
 % 3. Main task
@@ -157,4 +169,22 @@ else
 %     dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
 % 
 % end
+end
+
+% Save Eyelink data
+
+et_path=pwd;
+et_file_name=[et_file_name, '.edf'];
+if taskParam.gParam.eyeTracker
+    fprintf('Saving EyeLink data to %s\n', et_path)
+    eyefilename = fullfile(et_path,et_file_name);
+    Eyelink('CloseFile');
+    Eyelink('WaitForModeReady', 500);
+    try
+        status = Eyelink('ReceiveFile', et_file_name, eyefilename);
+        disp(['File ' eyefilename ' saved to disk']);
+    catch
+        warning(['File ' eyefilename ' not saved to disk']);
+    end
+    Eyelink('StopRecording');
 end
