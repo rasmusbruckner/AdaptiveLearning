@@ -11,12 +11,12 @@ The repository is frequently updated in the context of additional studies that u
 
 ## Getting Started
 
-To run the task use the AdaptiveLearning.m script. For questions please get in touch with me.
+To run the task, use the AdaptiveLearning.m script. I'm currently working on independent versions. For questions, please get in touch with me.
 
 ## Built With
 
 * [Matlab](https://www.mathworks.com/products/matlab.html)
-* [Psychtoolbox-2](http://psychtoolbox.org) - In the future the code will be adjusted to Psychtoolbox-3
+* [Psychtoolbox-3](http://psychtoolbox.org)
 
 ## Author
 
