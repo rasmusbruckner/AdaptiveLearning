@@ -1,5 +1,5 @@
-function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichBlock)
-%AL_FEEDBACK   This function displays feedback at the end of a block
+function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichBlock, nTrials)
+%AL_FEEDBACK This function displays feedback at the end of a block
 %
 %   Input
 %       Data: structure containing data of subject
@@ -14,9 +14,15 @@ function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichB
 
 
 if ~exist('whichBlock', 'var')
-    whichBlock = ones(length(Data.hit),1);
+    whichBlock = ones(length(Data.hit), 1);
 end
-    
+
+if ~exist('nTrials', 'var')
+    nTrials = length(Data.hit);
+end
+
+% todo: use trialflow instead of taskType and condition
+
 % Compute hits, reward and no reward trials, reward catches and no reward catches and possible amount of money
 % ------------------------------------------------------------------------------------------------------------
 % hits = sum(Data.hit(whichBlock == 1));
@@ -27,13 +33,13 @@ end
 % maxMon = (length(find(Data.shieldType(whichBlock == 1))) * taskParam.gParam.rewMag);
 
 % This works definitely for the aging chinese condition. Check before
-% applying other versions!
-hits = sum(Data.hit);
-rewTrials = sum(Data.actRew);
-noRewTrials = sum(Data.actRew);
-rewCatches = round(max(Data.accPerf)/taskParam.gParam.rewMag);
+% applying other versions
+hits = sum(Data.hit(1:nTrials), 'omitnan');
+rewTrials = sum(Data.actRew(1:nTrials), 'omitnan');
+noRewTrials = sum(Data.actRew(1:nTrials), 'omitnan');
+rewCatches = round(max(Data.accPerf(1:nTrials))/taskParam.gParam.rewMag);
 noRewCatches = hits - rewCatches;
-maxMon = (length(find(Data.shieldType)) * taskParam.gParam.rewMag);
+maxMon = (length(find(Data.shieldType(1:nTrials))) * taskParam.gParam.rewMag);
 
 % Depending on task type, generate displayed text and header
 % ----------------------------------------------------------
@@ -68,12 +74,12 @@ elseif isequal(taskParam.gParam.taskType, 'dresden')
     end
     
     if isequal(condition, 'mainPractice') || isequal(condition, 'followOutcomePractice') ||  isequal(condition, 'followCannonPractice')
-        wouldHave = 'h‰ttest';
+        wouldHave = 'h√§ttest';
     else
         wouldHave = 'hast ';
     end
     
-    if isequal(condition, 'mainPractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'main') || isequal(condition, 'followCannon')
+    if isequal(condition, 'mainPractice') || isequal(condition, 'mainPractice_2') || isequal(condition, 'mainPractice_3') || isequal(condition, 'followCannonPractice') || isequal(condition, 'main') || isequal(condition, 'followCannon')
         schildVsKorb = 'Schild';
         gefangenVsGesammelt = 'abgewehrt';
     elseif isequal(condition, 'followOutcomePractice') || isequal(condition, 'followOutcome')
@@ -82,8 +88,8 @@ elseif isequal(taskParam.gParam.taskType, 'dresden')
     end
     
     if isequal(subject.group, '1')
-        if isequal(condition, 'mainPractice') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
-            wouldHave = 'h‰ttest';
+        if isequal(condition, 'mainPractice') || isequal(condition, 'mainPractice_2') || isequal(condition, 'mainPractice_3') || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice')
+            wouldHave = 'h√§ttest';
         else
             wouldHave = 'hast ';
         end
@@ -91,8 +97,8 @@ elseif isequal(taskParam.gParam.taskType, 'dresden')
         txt = sprintf('Weil du %.0f von %.0f Kugeln mit dem %s %s %s hast,\n\n%s du %.2f von maximal %.2f Euro gewonnen.', rewCatches,...
             rewTrials, colRewCap, schildVsKorb, gefangenVsGesammelt, wouldHave, max(Data.accPerf), maxMon);
     else
-        if isequal(condition, 'mainPractice') || isequal(condition, 'followOutcomePractice') ||  isequal(condition, 'followCannonPractice')
-            wouldHave = 'h‰tten';
+        if isequal(condition, 'mainPractice') || isequal(condition, 'mainPractice_2') ||isequal(condition, 'mainPractice_3') ||isequal(condition, 'followOutcomePractice') ||  isequal(condition, 'followCannonPractice')
+            wouldHave = 'h√§tten';
         else
             wouldHave = 'haben';
         end
@@ -106,7 +112,7 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
         
         header = 'Ergebnis';
         if isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3') || isequal(condition, 'chinesePractice_4')
-            txt = sprintf('Raketen abgewehrt: %.0f von %.0f.\n\n In diesem Block h‰ttest du %.2f von maximal %.2f Euro gewonnen.', hits, length(Data.hit), max(Data.accPerf), maxMon);
+            txt = sprintf('Raketen abgewehrt: %.0f von %.0f.\n\n In diesem Block h√§ttest du %.2f von maximal %.2f Euro gewonnen.', hits, length(Data.hit), max(Data.accPerf), maxMon);
         elseif isequal(condition, 'chinese') 
             txt = sprintf('Raketen abgewehrt: %.0f.\n\n In diesem Block hast du %.2f von durchschnittlich 5.00 Euro gewonnen.', hits, hits*taskParam.gParam.rewMag);
         end
@@ -116,9 +122,14 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
         txt = sprintf('Catches: %.0f of %.0f', hits, length(whichBlock));
 
     end
-elseif isequal(taskParam.gParam.taskType, 'ARC')
+elseif isequal(taskParam.gParam.taskType, 'ARC') 
     header = 'Performance';
     txt = sprintf('Catches: %.0f of %.0f\n\nIn this block you earned %.0f of possible %.0f points.', hits, length(whichBlock), max(Data.accPerf)*10, maxMon*10);
+elseif isequal(taskParam.gParam.taskType, 'Sleep')
+    header = 'Zwischenstand';
+    txt = sprintf('Gefangene Kugeln: %.0f von %.0f\n\nIn diesem Block haben Sie %.0f von %.0f m√∂glichen Punkten verdient.', hits, nTrials, max(Data.accPerf(1:nTrials))*10, maxMon*10);
+
 end
+
 
 

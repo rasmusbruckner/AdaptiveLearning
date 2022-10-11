@@ -1,11 +1,6 @@
 function trigger = al_sendTrigger(taskParam, taskData, condition, ~, trial, Tevent)
 %AL_SENDTRIGGER  This function sends the EEG triggers. See triggerscheme for details.
 %
-% TODO: 12.05.15: komische triggererfahrung: wenn man mit brown version triggert
-% kann man in while schleife triggern und es wird nur einer gesendet
-% bei dresden version (32 bit) wird die ganze zeit in der schleife gesendet
-% habe trigger jetzt aus der schleife genommen. In both cases it worked, so
-% probably computer-specific?
 %
 %   Input
 %       taskParam: structure containing task paramters
@@ -243,7 +238,7 @@ elseif isequal(taskParam.gParam.taskType, 'reversal')
     %end
     
 elseif isequal(taskParam.gParam.taskType, 'chinese') ||...
-    isequal(taskParam.gParam.taskType, 'ARC')
+    isequal(taskParam.gParam.taskType, 'ARC')  || isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'Sleep')
     
     trigger = 255;
     

@@ -2,7 +2,7 @@ function [taskParam, practData, leaveLoop] = al_practLoop(taskParam, subject, vo
 %AL_PRACTLOOP   This function runs the practice blocks. Depending on the condition, the cannon is visible.
 %
 %   THIS FUNCTION SHOULD NOT BE USED ANYMORE. IN MOST CASES IT HAS BEEN
-%   REPLACED BY AL_MAINLOOP. DELETE FUNCTION IN AFTER MAKING SURE THAT IT
+%   REPLACED BY AL_MAINLOOP. DELETE FUNCTIONIN AFTER MAKING SURE THAT IT
 %   IS REPLACED IN EVERY SCIRPT/FUNCTION
 
 

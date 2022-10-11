@@ -1,5 +1,5 @@
 function ASS = al_getShieldSize(minASS, maxASS, mu)
-%AL_GETSHIELDSIZE   This function samples the current size of the shield
+%AL_GETSHIELDSIZE This function samples the current size of the shield
 % from an exponential distribution given mean and minimum and maximum
 % shield size.
 %

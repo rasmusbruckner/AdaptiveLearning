@@ -1,4 +1,4 @@
-classdef al_conditions
+classdef al_chinese_conditions
     
     % This class definition file specifies the properties and methods of an
     % object for the cannon task conditions
@@ -7,21 +7,25 @@ classdef al_conditions
     % -----------------------------------
     properties
         
-        runIntro;
-        unitTest;
-        taskType;
-        cBal;
-        concentration;
-        haz;
-        testDay;
-        txtPressEnter;
-        showTickmark;
-        DataMain;
-        Data;
-        DataChineseCued;
-        DataChineseMain;
-        perfMain;
-        perfCued;
+        runIntro
+        unitTest
+        taskType
+        cBal
+        concentration
+        haz
+        testDay
+        txtPressEnter
+        showTickmark
+        DataMain
+        DataFollowOutcome
+        DataFollowCannon
+        DataOddball
+        DataReversal
+        Data
+        DataChineseCued
+        DataChineseMain
+        perfMain
+        perfCued
         
     end
     
@@ -29,7 +33,7 @@ classdef al_conditions
     % --------------------------------
     methods
         
-        function condobj = al_conditions(cond_init)
+        function condobj = al_chinese_conditions(cond_init)
             % AL_CONDITIONS creates a conditions object of class condobj
             % This is based on the initialization input structure
             %
@@ -48,7 +52,7 @@ classdef al_conditions
             condobj.haz = cond_init.haz;
             condobj.testDay = cond_init.testDay;
             condobj.txtPressEnter = cond_init.txtPressEnter;
-            condobj.showTickmark = cond_init.showTickmark;
+            %condobj.showTickmark = cond_init.showTickmark;
             condobj.perfMain = 0;
             condobj.perfCued = 0;
         end
@@ -76,16 +80,16 @@ classdef al_conditions
                         
                         % "Du" for younger adults
                         if isequal(subject.group, '1')
-                            txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst wehrst du also die meisten Kugeln ab, '...
+                            txtStartTask = ['Du hast die Ãœbungsphase abgeschlossen. Kurz zusammengefasst wehrst du also die meisten Kugeln ab, '...
                                 'wenn du den orangenen Punkt auf die Stelle bewegst, auf die die Kanone zielt. Weil du die Kanone meistens nicht mehr '...
-                                'sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die abgewehrten '...
+                                'sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschÃ¤tzen. Das Geld fÃ¼r die abgewehrten '...
                                 'Kugeln bekommst du nach der Studie ausgezahlt.\n\nViel Erfolg!'];
                             
                             % "Sie" for older adults
                         else
-                            txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst wehren Sie also die meisten Kugeln ab, '...
+                            txtStartTask = ['Sie haben die Ãœbungsphase abgeschlossen. Kurz zusammengefasst wehren Sie also die meisten Kugeln ab, '...
                                 'wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone zielt. Weil Sie die Kanone meistens nicht mehr '...
-                                'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die abgewehrten '...
+                                'sehen kÃ¶nnen, mÃ¼ssen Sie diese Stelle aufgrund der Position der letzten Kugeln einschÃ¤tzen. Das Geld fÃ¼r die abgewehrten '...
                                 'Kugeln bekommen Sie nach der Studie ausgezahlt.\n\nViel Erfolg!'];
                         end
                         
@@ -98,25 +102,44 @@ classdef al_conditions
                         al_bigScreen(taskParam, condobj.txtPressEnter, condobj.header, txtStartTask, feedback);
                         
                     case 'oddball'
-                        % This has not been adjusted for a long time
+                        % This has not been adjusted in a long time
                         % and has to be slightly updated
+                        %
                         
                         if isequal(subject.session, '1')
-                            header = 'Change Point Task';
-                            txt = ['This is the beginning of the CHANGE POINT TASK. During this block you will earn real money for your performance. The trials will be exactly '...
-                                'the same as those in the previous session.\n\n On each trial a cannon will aim at a location on the circle. On all trials the cannon will '...
-                                'fire a ball somewhere near the point of aim. Most of the time the cannon will remain aimed at the same location, but occasionally the cannon '...
-                                'will be reaimed. Like in the previous session you will not see the cannon, but still have to infer its aim in order to catch balls and '...
-                                'earn money.'];
-                            feedback = false;
-                            al_bigScreen(taskParam, condobj.txtPressEnter, header, txt, feedback);
+                            
+%                             header = 'Change Point Task';
+%                             txt = ['This is the beginning of the CHANGE POINT TASK. During this block you will earn real money for your performance. The trials will be exactly '...
+%                                 'the same as those in the previous session.\n\n On each trial a cannon will aim at a location on the circle. On all trials the cannon will '...
+%                                 'fire a ball somewhere near the point of aim. Most of the time the cannon will remain aimed at the same location, but occasionally the cannon '...
+%                                 'will be reaimed. Like in the previous session you will not see the cannon, but still have to infer its aim in order to catch balls and '...
+%                                 'earn money.'];
+%                             feedback = false;
+%                             al_bigScreen(taskParam, condobj.txtPressEnter, header, txt, feedback);
+                              al_instructions(taskParam, 'mainPractice', subject);
+
                             
                         elseif isequal(subject.session, '2') ||...
                                 isequal(subject.session, '3')
                             
-                            Screen('TextSize', taskParam.gParam.window, 30);
-                            Screen('TextFont', taskParam.gParam.window, 'Arial');
-                            VolaIndication(taskParam, condobj.txtStartTask, condobj.txtPressEnter)
+                            header = 'Change Point Task';
+                            txtStartTask = ['This is the beginning of the CHANGE POINT TASK. During '...
+                                'this block you will earn real money for your performance. '...
+                                'The trials will be exactly the same as those in the '...
+                                'previous session.\n\nOn each trial a cannon will aim '...
+                                'at a location on the circle. On all trials the cannon will '...
+                                'fire a ball somewhere near the point of aim. '...
+                                'Most of the time the cannon will remain aimed at '...
+                                'the same location, but occasionally the cannon '...
+                                'will be reaimed. Like in the previous '...
+                                'session you will not see the cannon, but still '...
+                                'have to infer its aim in order to catch balls and earn money.'];
+                            feedback = false;
+                            al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+                            %BigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+                            %Screen('TextSize', taskParam.gParam.window, 30);
+                            %Screen('TextFont', taskParam.gParam.window, 'Arial');
+                            %VolaIndication(taskParam, condobj.txtStartTask, condobj.txtPressEnter)
                             
                         end
                         
@@ -215,7 +238,9 @@ classdef al_conditions
             if (strcmp(condobj.taskType, 'ARC') && condobj.cBal == 1 && strcmp(subject.session, '1'))...
                     || (strcmp(condobj.taskType, 'ARC') && condobj.cBal == 3 && strcmp(subject.session, '1'))...
                     || (strcmp(condobj.taskType, 'ARC') && condobj.cBal == 2 && strcmp(subject.session, '2'))...
-                    || (strcmp(condobj.taskType, 'ARC') && condobj.cBal == 4 && strcmp(subject.session, '2'))
+                    || (strcmp(condobj.taskType, 'ARC') && condobj.cBal == 4 && strcmp(subject.session, '2'))...
+                    || (strcmp(condobj.taskType, 'dresden'))...
+                    || (strcmp(condobj.taskType, 'oddball'))
                 
                 currentConcentration = condobj.concentration(1);
                 
@@ -331,14 +356,21 @@ classdef al_conditions
             
             if condobj.runIntro && ~condobj.unitTest
                 
-                al_instructions(taskParam, 'chinese', subject);
+                %al_instructions(taskParam, 'chinese', subject);
+                whichPractice = 'chinese';
+                al_ChineseInstructions(taskParam, subject, true, whichPractice)
                 taskParam.gParam.showCue = false;
-                condobj.Data = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinesePractice_4', subject);
+                % ------------------------------------------
+                trial = taskParam.gParam.chinesePractTrials;
+                %taskData = al_generateOutcomes(taskParam, condobj.haz(1), condobj.concentration(1), 'chinesePractice_4');
+                taskData = al_generateOutcomesChinese(taskParam, condobj.haz(1), condobj.concentration(1), 'chinesePractice_4');
+                % ------------------------------------------------------------------------
+                condobj.Data = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinesePractice_4', subject, taskData, trial);
                 if taskParam.gParam.language == 1
                     header = 'Anfang der Aufgabe';
-                    txtStartTask = ['Du hast die Übungsphase abgeschlossen. Du kannst jetzt echtes Geld in Abhängigkeit von deiner Leistung verdienen. Jeder Aufgabendurchgang läuft genau '...
-                        'so ab, wie du es vorher in der Übung gelernt hast.\n\nDeine Aufgabe ist es, deine Planeten vor den Kanongenkugeln zweier Gegner zu beschützen, indem du sie mit deinem Schild '...
-                        'abwehrst. Dabei hat jeder Gegner auf jeden deiner Planeten genau eine Kanone gerichtet. Die Positionen der Kanonen bleiben während eines Aufgabenblocks gleich. '...
+                    txtStartTask = ['Du hast die Ãœbungsphase abgeschlossen. Du kannst jetzt echtes Geld in AbhÃ¤ngigkeit von deiner Leistung verdienen. Jeder Aufgabendurchgang lÃ¤uft genau '...
+                        'so ab, wie du es vorher in der Ãœbung gelernt hast.\n\nDeine Aufgabe ist es, deine Planeten vor den Kanongenkugeln zweier Gegner zu beschÃ¼tzen, indem du sie mit deinem Schild '...
+                        'abwehrst. Dabei hat jeder Gegner auf jeden deiner Planeten genau eine Kanone gerichtet. Die Positionen der Kanonen bleiben wÃ¤hrend eines Aufgabenblocks gleich. '...
                         'Die Planeten werden immer nur von einem Gegner zurzeit beschossen.\n\nDie Kanonen sind unsichtbar. Deshalb solltest du dir merken auf welche Stelle der jeweilige '...
                         'Gegner auf dem jeweiligen Planeten seine Kanone gerichtet hat. Du kannst dann bei einem Wechsel des Gegners oder des Planeten dein Schild direkt '...
                         'an dieser Stelle positionieren.\n\nWenn du noch Fragen hast, wende dich bitte jetzt an den Versuchsleiter.'];
@@ -360,8 +392,6 @@ classdef al_conditions
                 al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
             end
             
-            % todo: check if data are saved after each block
-            % for b = 1:taskParam.gParam.nb
             
             % Add block number to subject info to indicate that blocks
             % > 1 should use outcome contingenices of first block (if useSameMapping = True)
@@ -371,10 +401,21 @@ classdef al_conditions
                 
                 % todo: check if data are saved after each block
                 for b = 1:taskParam.gParam.nb
+                    
                     % Run "cued" condition
                     taskParam.gParam.showCue = true;
                     if b == 1 || ~isequal(taskParam.gParam.useTrialConstraints, 'aging') % taskParam.gParam.useSameMapping == false
-                        [taskDataCued, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                        %[taskData, trial] = al_loadTaskData(taskParam, 'chinese', condobj.haz(1), condobj.concentration(1));
+                        % ------------------------------------------------------------------------
+                        taskData = al_generateOutcomesChinese(taskParam, condobj.haz(1),  condobj.concentration(1), 'chinese');
+                        %taskData = al_generateOutcomes(taskParam, condobj.haz(1),  condobj.concentration(1), 'chinese');
+                        if isnan(taskParam.gParam.trials)
+                            trial = length(taskData.latentState);
+                        else
+                            trial = taskParam.gParam.trials;
+                        end
+                        % ---------------------------------
+                        [taskDataCued, condobj.DataChineseCued] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject,  taskData, trial); % taskData, trial
                     else
                         % Update block number in taskData
                         taskDataCued.block(:) = b;
@@ -400,7 +441,18 @@ classdef al_conditions
                     % Run "uncued" condition
                     taskParam.gParam.showCue = false;
                     if b == 1 || ~isequal(taskParam.gParam.useTrialConstraints, 'aging') %taskParam.gParam.useSameMapping == false
-                        [taskDataUncued, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject);
+                        %[taskData, trial] = al_loadTaskData(taskParam, 'chinese', condobj.haz(1), condobj.concentration(1));
+                        % ------------------------------------------------------------------------
+                        %taskData = al_generateOutcomes(taskParam, condobj.haz(1),  condobj.concentration(1), 'chinese');
+                        taskData = al_generateOutcomesChinese(taskParam, condobj.haz(1),  condobj.concentration(1), 'chinese');
+                        % keine ahnung was der fuck hier soll
+                        if isnan(taskParam.gParam.trials)
+                            trial = length(taskData.latentState);
+                        else
+                            trial = taskParam.gParam.trials;
+                        end
+                        % ---------------------------------
+                        [taskDataUncued, condobj.DataChineseMain] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'chinese', subject, taskData, trial);
                     else
                         % Update block number in taskData
                         taskDataUncued.block(:) = b;
@@ -453,7 +505,8 @@ classdef al_conditions
             end
         end
         
-        function DataFollowOutcome = FollowOutcomeCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
+        %function DataFollowOutcome = FollowOutcomeCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
+        function condobj = FollowOutcomeCondition(condobj, taskParam, subject)
             %FOLLOWOUTCOMECONDITION   Runs the follow-outcome condition of the cannon task
             %
             %   Input
@@ -465,75 +518,80 @@ classdef al_conditions
             %   Output
             %       DataFollowOutcome: Participant data
             
-            if runIntro && ~unitTest
+            if condobj.runIntro && ~condobj.unitTest
                 
                 if isequal(subject.group, '1')
                     
-                    txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst ist es deine Aufgabe Kanonenkugeln aufzusammeln, indem du '...
-                        'deinen Korb an der Stelle platzierst, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). Das Geld für die gesammelten '...
+                    txtStartTask = ['Du hast die Ãœbungsphase abgeschlossen. Kurz zusammengefasst ist es deine Aufgabe Kanonenkugeln aufzusammeln, indem du '...
+                        'deinen Korb an der Stelle platzierst, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). Das Geld fÃ¼r die gesammelten '...
                         'Kugeln bekommst du nach der Studie ausgezahlt.\n\nViel Erfolg!'];
                     
                 else
                     
-                    txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst ist es Ihre Aufgabe Kanonenkugeln aufzusammeln, indem Sie '...
-                        'Ihren Korb an der Stelle platzieren, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). Das Geld für die gesammelten '...
+                    txtStartTask = ['Sie haben die Ãœbungsphase abgeschlossen. Kurz zusammengefasst ist es Ihre Aufgabe Kanonenkugeln aufzusammeln, indem Sie '...
+                        'Ihren Korb an der Stelle platzieren, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). Das Geld fÃ¼r die gesammelten '...
                         'Kugeln bekommen Sie nach der Studie ausgezahlt.\n\nViel Erfolg!'];
                     
                 end
                 
                 al_instructions(taskParam, 'followOutcomePractice', subject)
-                al_mainLoop(taskParam, haz(3),concentration(1), 'followOutcomePractice', subject);
+                al_mainLoop(taskParam, condobj.haz(3),condobj.concentration(1), 'followOutcomePractice', subject);
                 feedback = false;
-                al_bigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
                 
             else
                 
-                Screen('TextSize', taskParam.gParam.window, 30);
-                Screen('TextFont', taskParam.gParam.window, 'Arial');
-                VolaIndication(taskParam, IndicateFollowOutcome, txtPressEnter)
+                Screen('TextSize', taskParam.gParam.window.onScreen, 30);
+                Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
+                % IndicateFollowCannon = 'Follow Cannon Task';
+                % IndicateFollowOutcome = 'Follow Outcome Task';
+                al_conditionIndication(taskParam, 'Follow Outcome Task', condobj.txtPressEnter)
                 
             end
             
-            [~, DataFollowOutcome] = al_mainLoop(taskParam, haz(1), concentration(1), 'followOutcome', subject);
+            [~, condobj.DataFollowOutcome] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject);
             
         end
         
-        function DataFollowCannon = FollowCannonCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
+        % function DataFollowCannon = FollowCannonCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
+        function condobj = FollowCannonCondition(condobj, taskParam, subject)
+
             %FOLLOWCANNONCONDITION   Runs the follow-the-cannon condition of the cannon task
             %
             %   Input
             %       runIntro: indicate if practice session should be conducted
             %       unitTest: indicate if unit test should be conducted
-            %       haz: hazard rate
+            %       haz: hazard rates
             %       concentration: noise in the environment
             %       txtPressEnter: text that is presented to indicate that subject should press "Enter"
             %   Output
             %       DataFollowCannon: Participant data
             
-            if runIntro && ~unitTest
+            if condobj.runIntro && ~condobj.unitTest
                 
                 if isequal(subject.group, '1')
-                    txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst wehrst du die meisten Kugeln ab, wenn du den orangenen Punkt auf die Stelle bewegst, auf die die Kanone '...
+                    txtStartTask = ['Du hast die Ãœbungsphase abgeschlossen. Kurz zusammengefasst wehrst du die meisten Kugeln ab, wenn du den orangenen Punkt auf die Stelle bewegst, auf die die Kanone '...
                         'zielt (schwarze Nadel). Dieses Mal kannst du die Kanone sehen.\n\nViel Erfolg!'];
                 else
-                    txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst wehren Sie die meisten Kugeln ab, wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone '...
-                        'zielt (schwarze Nadel). Dieses Mal können Sie die Kanone sehen.\n\nViel Erfolg!'];
+                    txtStartTask = ['Sie haben die Ãœbungsphase abgeschlossen. Kurz zusammengefasst wehren Sie die meisten Kugeln ab, wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone '...
+                        'zielt (schwarze Nadel). Dieses Mal kÃ¶nnen Sie die Kanone sehen.\n\nViel Erfolg!'];
                 end
                 
                 al_instructions(taskParam, 'followCannonPractice', subject)
-                al_mainLoop(taskParam, haz(3),concentration(1), 'followCannonPractice', subject);
+                al_mainLoop(taskParam, condobj.haz(3),condobj.concentration(1), 'followCannonPractice', subject);
                 feedback = false;
-                al_bigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
             else
-                Screen('TextSize', taskParam.gParam.window, 30);
-                Screen('TextFont', taskParam.gParam.window, 'Arial');
-                VolaIndication(taskParam, IndicateFollowCannon, txtPressEnter)
+                Screen('TextSize', taskParam.gParam.window.onScreen, 30);
+                Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
+                al_conditionIndication(taskParam, 'Follow Cannon Task', condobj.txtPressEnter)
             end
             
-            [~, DataFollowCannon] = al_mainLoop(taskParam, haz(1), concentration(1), 'followCannon', subject);
+            [~, condobj.DataFollowCannon] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followCannon', subject);
         end
         
-        function DataReversal = ReversalCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
+        %function DataReversal = ReversalCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
+        function condobj = ReversalCondition(condobj, taskParam, subject)
             %REVERSALCONDITION   Runs the reversal condition of the cannon task
             %
             %   Input
@@ -545,10 +603,10 @@ classdef al_conditions
             %   Output
             %       DataReversal: Participant data
             
-            if runIntro && ~unitTest
+            if condobj.runIntro && ~condobj.unitTest
                 
                 al_instructions(taskParam, 'reversal', subject);
-                al_mainLoop(taskParam, haz(1), concentration(1), 'reversalPractice', subject);
+                al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'reversalPractice', subject);
                 
                 header = 'Beginning of the Task';
                 txtStartTask = ['This is the beginning of the task. During this block you will earn real money for your '...
@@ -558,13 +616,15 @@ classdef al_conditions
                     'will be reaimed, either to the previous aim or to a new aim. Like in the previous session you will not '...
                     'see the cannon, but have to infer its aim in order to catch balls and earn money.'];
                 feedback = false;
-                al_bigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
                 
             end
-            [~, DataReversal] = al_mainLoop(taskParam, haz(1), concentration(1), 'reversal', subject);
+            [~, condobj.DataReversal] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'reversal', subject);
         end
         
-        function DataOddball = OddballCondition(runIntro, unitTest, subject, taskParam, txtPressEnter, haz, concentration)
+        %function DataOddball = OddballCondition(runIntro, unitTest, subject, taskParam, txtPressEnter, haz, concentration)
+        function condobj = OddballCondition(condobj, taskParam, subject)
+
             %ODDBALLCONDITION   Runs the oddball condition of the cannon task
             %
             %   Input
@@ -578,7 +638,7 @@ classdef al_conditions
             %   Output
             %       DataOddball: Participant data
             
-            if runIntro && ~unitTest
+            if condobj.runIntro && ~condobj.unitTest
                 
                 if isequal(subject.session, '1')
                     al_instructions(taskParam, 'oddballPractice', subject);
@@ -591,11 +651,11 @@ classdef al_conditions
                         'from a different cannon that is equally likely to hit any location on the circle. Like in the '...
                         'previous session you will not see the cannon, but still have to infer its aim in order to catch balls and earn money.'];
                     feedback = false;
-                    al_bigScreen(taskParam, txtPressEnter, header, txtStartTask, feedback);
+                    al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
                 end
             end
             
-            [~, DataOddball] = al_mainLoop(taskParam, haz(1), concentration(1), 'oddball', subject);
+            [~, condobj.DataOddball] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'oddball', subject);
         end
     end
 end

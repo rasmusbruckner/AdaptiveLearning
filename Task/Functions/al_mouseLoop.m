@@ -14,10 +14,20 @@ function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i,
 %       taskParam: structure containing task paramters
 
 
+% Todo: needs to be properly cleaned and commented. Also integrate
+% trialflow. Try to define functions that can be used in instrLoopTxt as
+% well.
+
+[center(1), center(2)] = RectCenter(taskParam.display.windowRect);
 while 1
+    % just relevant to sleep version
+    if isequal(taskParam.trialflow.background, 'picture')
+        Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.textures.backgroundTxt,[], [], []);
+    end
+    [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
     
-    [x,y,buttons] = GetMouse(taskParam.gParam.window.onScreen);
-    
+    % todo: this can be updated so that mouse cursor and dot are perfectly
+    % overlapping (in task mouse cursor is hidden, so not relevant to subject)
     x = x-720;
     y = (y-450)*-1;
     
@@ -27,7 +37,6 @@ while 1
     else
         degree = currentDegree;
     end
-    
     taskParam.circle.rotAngle = degree * taskParam.circle.unit;
     
     al_drawCircle(taskParam)
@@ -50,10 +59,23 @@ while 1
         end
         al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
         al_aim(taskParam, taskData.distMean(i))
+    elseif strcmp(taskParam.trialflow.cannon, 'show cannon')
+       al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
     else
         al_drawCross(taskParam)
     end
+ 
+    if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
+        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        %Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, center, 1); 
+        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 
+
+        al_drawCross(taskParam)
+
+    end
     
+
+    % todo: check if still in use
     if (taskData.catchTrial(i) == 1 && isequal(condition, 'onlinePractice'))
         al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
         al_aim(taskParam, taskData.distMean(i))
@@ -69,14 +91,14 @@ while 1
     end
     
     hyp = sqrt(x^2 + y^2);
-    if hyp <= 150
+    if hyp <= 150 % todo: parameterize using circle size
         al_predictionSpotReversal(taskParam, x ,y*-1)
     else
         al_predictionSpot(taskParam)
     end
     
     if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(i))
-        taskData.initialTendency(i) = degree;
+        taskData.initialTendency(i) = degree;  % todo: save in radians for consistency
         taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;
     end
     
@@ -87,11 +109,13 @@ while 1
             WaitSecs(0.2);
             press = 1;
             
-        elseif i > 1 && press == 0
-            taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
-            taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
-        elseif i == 1
-            taskData.savedTickmarkPrevious(i) = 0;
+        %elseif i > 1 && press == 0
+            % Todo: re-implement when working on reversal version again
+            %taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
+            %taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
+        %elseif i == 1
+            % Todo: re-implement when working on reversal version again
+            % taskData.savedTickmarkPrevious(i) = 0;
         end
         
         if press == 1
@@ -100,39 +124,34 @@ while 1
         end
     end
     
-    % Manage tickmarks
-    if taskParam.gParam.showTickmark == true %&& ~isequal(condition,'shield') %&& ~isequal(condition,'mainPractice_1') && ~isequal(condition,'mainPractice_2')
-        if i ~= taskParam.gParam.blockIndices(1)&& i ~= taskParam.gParam.blockIndices(2) && i ~= taskParam.gParam.blockIndices(3) && i ~= taskParam.gParam.blockIndices(4)    %+1
-            if ~isequal(taskParam.gParam.taskType, 'chinese')
-                
-                
-                al_tickMark(taskParam, taskData.outcome(i-1), 'outc');
-                al_tickMark(taskParam, taskData.pred(i-1), 'pred');
-            end
-            
-            if ~isequal(taskParam.gParam.taskType, 'chinese')
-                if press == 1
-                    al_tickMark(taskParam, taskData.savedTickmarkPrevious(i), 'update');
-                end
-                al_tickMark(taskParam, taskData.savedTickmark(i), 'saved');
-            end
-            
+    % Optionally, present tick marks
+    if isequal(taskParam.trialflow.currentTickmarks, 'show') && i > 1 && (taskData.block(i) == taskData.block(i-1))
+
+        al_tickMark(taskParam, taskData.outcome(i-1), 'outc')
+        al_tickMark(taskParam, taskData.pred(i-1), 'pred')
+
+        % Todo: Test this new version with trialflow object instance for
+        % reversal task
+        if isequal(taskParam.trialflow.savedTickmark, 'show')
+            al_tickMark(taskParam, taskParam.savedTickmark(i-1), 'saved')
         end
     end
+
+    t = GetSecs();
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
     
-    Screen('DrawingFinished', taskParam.gParam.window.onScreen);
-    t = GetSecs;
-    
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
-    
+    Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
+   
     if ((~isequal(condition,'ARC_controlSpeed') && buttons(1) == 1) || (isequal(condition,'ARC_controlSpeed') && hyp >= 150)) || ((~isequal(condition,'ARC_controlAccuracy') && buttons(1) == 1)...
             || (isequal(condition,'ARC_controlAccuracy') && hyp >= 150)) || ((~isequal(condition,'ARC_controlPractice') && buttons(1) == 1) || (isequal(condition,'ARC_controlPractice') && hyp >= 150))
         taskData.pred(i) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
-        taskData.pred(i);
-        
         taskData.RT(i) = GetSecs() - initRT_Timestamp;
         break
+    elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstraints, 'aging') && (GetSecs() - initRT_Timestamp>3)
         
+        taskData.pred(i) = nan;
+        taskData.RT(i) = nan;
+        break
     end
     
 end

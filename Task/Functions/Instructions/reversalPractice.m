@@ -1,4 +1,4 @@
-function reversalPractice
+function reversalPractice(taskParam, subject)
 %REVERSALPRACTICE   This function manages the practice session of the
 %reversal condition
 %
@@ -50,7 +50,8 @@ while 1
             %                         taskParam.gParam.concentration(3), cannon,...
             %                         condition, LoadData);
             % added this (02.01.17) to get rid of practLoop
-            [taskParam, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject);
+            [taskData, trial] = al_loadTaskData(taskParam, condition, taskParam.gParam.haz(1), taskParam.gParam.concentration(3)); 
+            [~, practData] = al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject, taskData, trial);
             
             [txt, header] = al_feedback(practData, taskParam, subject, condition);
             feedback = true;
@@ -113,7 +114,8 @@ while 1
             %                         taskParam.gParam.concentration(1), cannon,...
             %                         condition, LoadData);
             % added this (02.01.17) to get rid of practLoop
-            [taskParam, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject);
+            [taskData, trial] = al_loadTaskData(taskParam, condition, taskParam.gParam.haz(1), taskParam.gParam.concentration(3)); 
+            [~, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject, taskData, trial);
             
             [txt, header] = al_feedback(practData, taskParam, subject, condition);
             feedback = true;
@@ -273,10 +275,10 @@ while 1
                     al_drawCross(taskParam)
                     al_drawCircle(taskParam)
                     al_predictionSpot(taskParam);
-                    TickMark(taskParam, savedTickmark, 'saved');
+                    al_tickMark(taskParam, savedTickmark, 'saved');
                     al_drawOutcome(taskParam, outcome)
                     DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1,...
-                        taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
+                        taskParam.gParam.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
                     DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter, 'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
                     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
                     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.6);
@@ -301,26 +303,41 @@ while 1
                 %                             taskParam.gParam.concentration(1),...
                 %                             cannon, condition, LoadData, reversalPackage);
                 % added this (02.01.17) to get rid of practLoop
-                [taskParam, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject);
-                
-                if leaveLoop
-                    
-                    header = 'Try it one more time!';
-                    txt = ['In this case you updated your tickmark '...
-                        'although the cannon did not change its aim. '...
-                        'In the next round try to hold off for '...
-                        'the tickmark while the cannon does not change.'];
-                    
-                    feedback = false;
-                    fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
-                    screenIndex = 5;
-                    if fw == 1
-                        screenIndex = screenIndex + 1;
-                    elseif bw == 1
-                        screenIndex = screenIndex - 2;
-                    end
-                    
+                %[taskData, trial] = al_loadTaskData(taskParam, condition, taskParam.gParam.haz(1), taskParam.gParam.concentration(3));
+                % ---------
+
+                if isequal(condition, 'reversalPractice')
+                    taskParam.gParam.practTrials = taskParam.gParam.practTrials; 
+                    trial = taskParam.gParam.practTrials; 
                 else
+                    taskParam.gParam.practTrials = taskParam.gParam.practTrials;
+                    trial = taskParam.gParam.practTrials; 
+                    %trial = taskParam.gParam.trials;
+                end
+ 
+                %taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
+                taskData = al_generateOutcomesReversal(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition);
+                % -----------
+                [~, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject, taskData, trial);
+                
+%                 if leaveLoop
+%                     
+%                     header = 'Try it one more time!';
+%                     txt = ['In this case you updated your tickmark '...
+%                         'although the cannon did not change its aim. '...
+%                         'In the next round try to hold off for '...
+%                         'the tickmark while the cannon does not change.'];
+%                     
+%                     feedback = false;
+%                     fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+%                     screenIndex = 5;
+%                     if fw == 1
+%                         screenIndex = screenIndex + 1;
+%                     elseif bw == 1
+%                         screenIndex = screenIndex - 2;
+%                     end
+%                     
+%                 else
                     
                     txt=['In this case the cannon reaimed to its '...
                         'previous position. You can use your saved '...
@@ -378,59 +395,60 @@ while 1
                     WaitSecs(1);
                     
                 end
-            end
+            %end
             
         case 7
-            
-            if tickDev <= 10 && updatedTickDev <= 10 && ~isnan(updatedTickDev)
-                header = '';
-                txt = ['Well done! In this block you can practice '...
-                    'the task with an invisible cannon. Keep in '...
-                    'mind that the cannon occasionally reaims to '...
-                    'its previous position. Use the red tickmark '...
-                    'to mark the previous aim of the cannon.'];
                 
-                feedback = false;
-                fw = al_bigScreen(taskParam,...
-                    taskParam.strings.txtPressEnter, header, txt, feedback);
-                if fw == 1
-                    screenIndex = screenIndex + 1;
-                elseif bw == 1
-                    screenIndex = screenIndex - 2;
-                end
-            elseif tickDev > 10
-                
-                header = 'Try again!';
-                txt = ['In this case you did not use the information '...
-                    'of the tickmark for your current prediction. '...
-                    'Keep in mind to use the tickmark '...
-                    'this time!.'];
-                
-                feedback = false;
-                fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
-                
-                if fw == 1
-                    screenIndex = screenIndex - 1;
-                    
-                end
-                
-            elseif updatedTickDev > 10 || isnan(updatedTickDev)
-                
-                header = 'Try again!';
-                txt = ['In this case you did not correctly update your '...
-                    'tickmark after the cannon reaimed. Keep '...
-                    'in mind to use the tickmark this time!'];
-                
-                feedback = false;
-                fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
-                
-                if fw == 1
-                    screenIndex = screenIndex - 1;
-                    
-                end
-                
-            end
-            
+%             if tickDev <= 10 && updatedTickDev <= 10 && ~isnan(updatedTickDev)
+%                 header = '';
+%                 txt = ['Well done! In this block you can practice '...
+%                     'the task with an invisible cannon. Keep in '...
+%                     'mind that the cannon occasionally reaims to '...
+%                     'its previous position. Use the red tickmark '...
+%                     'to mark the previous aim of the cannon.'];
+%                 
+%                 feedback = false;
+%                 fw = al_bigScreen(taskParam,...
+%                     taskParam.strings.txtPressEnter, header, txt, feedback);
+%                 if fw == 1
+%                     screenIndex = screenIndex + 1;
+%                 elseif bw == 1
+%                     screenIndex = screenIndex - 2;
+%                 end
+%             elseif tickDev > 10
+%                 
+%                 header = 'Try again!';
+%                 txt = ['In this case you did not use the information '...
+%                     'of the tickmark for your current prediction. '...
+%                     'Keep in mind to use the tickmark '...
+%                     'this time!.'];
+%                 
+%                 feedback = false;
+%                 fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+%                 
+%                 if fw == 1
+%                     screenIndex = screenIndex - 1;
+%                     
+%                 end
+%                 
+%             elseif updatedTickDev > 10 || isnan(updatedTickDev)
+%                 
+%                 header = 'Try again!';
+%                 txt = ['In this case you did not correctly update your '...
+%                     'tickmark after the cannon reaimed. Keep '...
+%                     'in mind to use the tickmark this time!'];
+%                 
+%                 feedback = false;
+%                 fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, feedback);
+%                 
+%                 if fw == 1
+%                     screenIndex = screenIndex - 1;
+%                     
+%                 end
+%                 
+%             end
+%               
+            screenIndex = screenIndex + 1; 
             WaitSecs(0.1);
             
         case 8
@@ -446,7 +464,21 @@ while 1
             %                         taskParam.gParam.concentration(1),...
             %                         cannon, condition, LoadData);
             % added this (02.01.17) to get rid of practLoop
-            [taskParam, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject);
+            %[taskData, trial] = al_loadTaskData(taskParam, condition, taskParam.gParam.haz(1), taskParam.gParam.concentration(3)); 
+            % ----
+         
+            if isequal(condition, 'reversalPractice')
+                taskParam.gParam.practTrials = taskParam.gParam.practTrials; 
+                trial = taskParam.gParam.practTrials; 
+            else
+                taskParam.gParam.practTrials = taskParam.gParam.practTrials; 
+                trial = taskParam.gParam.practTrials;  
+                %trial = taskParam.gParam.trials;
+            end
+            %taskData = al_generateOutcomes(taskParam, haz, concentration, condition);
+            taskData = al_generateOutcomesReversal(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition);
+            % --
+            [~, practData] =  al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject, taskData, trial);
             
             [txt, header] = al_feedback(practData, taskParam, subject, condition);
             feedback = true;
@@ -460,24 +492,24 @@ while 1
             WaitSecs(0.1);
             
         case 9
-            
-            if isnan(practData.savedTickmark)
-                
-                header = 'Try it again!';
-                txt = ['In that block you have never used '...
-                    'your tickmark. Remember: Placing '...
-                    'your tickmark where the cannon was '...
-                    'previously aimed will be the '...
-                    'best way to catch cannonballs. Now try again.' ];
-                
-                feedback = false;
-                fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header,txt, feedback);
-                if fw == 1
-                    screenIndex = screenIndex - 1;
-                elseif bw == 1
-                    screenIndex = screenIndex - 2;
-                end
-            else
+
+%             if isnan(practData.savedTickmark)
+%                 
+%                 header = 'Try it again!';
+%                 txt = ['In that block you have never used '...
+%                     'your tickmark. Remember: Placing '...
+%                     'your tickmark where the cannon was '...
+%                     'previously aimed will be the '...
+%                     'best way to catch cannonballs. Now try again.' ];
+%                 
+%                 feedback = false;
+%                 fw = al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header,txt, feedback);
+%                 if fw == 1
+%                     screenIndex = screenIndex - 1;
+%                 elseif bw == 1
+%                     screenIndex = screenIndex - 2;
+%                 end
+%             else
                 header = 'Fourth Practice';
                 txt = ['Now comes the last practice block. In this '...
                     'block of trials the cannon will not always '...
@@ -499,7 +531,7 @@ while 1
                 end
                 
                 WaitSecs(0.1);
-            end
+            %end
             
         case 10
             

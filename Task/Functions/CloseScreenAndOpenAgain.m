@@ -14,8 +14,8 @@ function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
     if ~unitTest
         
         % Adjust text properties
-        Screen('TextFont', taskParam.gParam.window, 'Arial');
-        Screen('TextSize', taskParam.gParam.window, 30);
+        Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
+        Screen('TextSize', taskParam.display.window.onScreen, 30);
         
         % Text that appears on screen
         txt = 'Ende der Aufgabe!\n\nBitte auf den Versuchsleiter warten';
@@ -24,11 +24,11 @@ function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
 
             % Print text until "s" is pressed
             % -------------------------------
-            Screen('FillRect', taskParam.gParam.window, []);
-            DrawFormattedText(taskParam.gParam.window, txt, 'center', 100, [0 0 0]);
-            Screen('DrawingFinished', taskParam.gParam.window);
+            Screen('FillRect', taskParam.display.window.onScreen, []);
+            DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 100, [0 0 0]);
+            Screen('DrawingFinished', taskParam.display.window.onScreen);
             t = GetSecs;
-            Screen('Flip', taskParam.gParam.window, t + 0.1);
+            Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
             [~, ~, keyCode] = KbCheck;
             if find(keyCode) == taskParam.keys.s
                 break
@@ -51,8 +51,8 @@ function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
                 end
             end
         end
-        window = OpenWindow(debug);
+        window = OpenWindow(debug, taskParam.gParam.screenNumber);
 
     end
-    window = taskParam.gParam.window;
+    window = taskParam.display.window;
 end

@@ -4,10 +4,7 @@ classdef OutputTestOddball < matlab.unittest.TestCase
     % use: rew = 2
     % trials = 20
     
-    % bei followCannon -> catchTrial is nan
-    % muss catch trial mitkodiert werden? ja oder?
-    %gibt es sonst noch was was ich vergessen habe?
-    
+
     
     %
     %     This should be the trigger scheme:

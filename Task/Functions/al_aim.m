@@ -1,9 +1,9 @@
 function al_aim(taskParam, parameter)
-%AL_AIM   This function prints the aim (as a needle) of the cannon
+%AL_AIM This function draws the aim (as a needle) of the cannon
 %
 %   Input
 %       taskParam: structure containing task parameters       
-%       parameter: ? 
+%       parameter: Aim of the cannon 
 %
 %   Output
 %        ~
@@ -22,7 +22,7 @@ if ~isequal(taskParam.gParam.taskType, 'chinese')
     y = (outcomeCenter(4)/2) + (outcomeCenter(2)/2);
     
     % Draw needle
-    Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], taskParam.gParam.zero(1), taskParam.gParam.zero(2), x, y, 2);
+    Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], taskParam.display.zero(1), taskParam.display.zero(2), x, y, 2);
     
 else
     

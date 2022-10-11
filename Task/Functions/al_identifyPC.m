@@ -1,5 +1,5 @@
 function [computer, Computer2] = al_identifyPC()
-%AL_IDENTIFYPC   This function identifies the computer the task is running on by checking
+%AL_IDENTIFYPC This function identifies the computer the task is running on by checking
 % the software identifier of its network card.
 % 
 %   Input

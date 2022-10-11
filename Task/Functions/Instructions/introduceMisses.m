@@ -1,5 +1,5 @@
-function [screenIndex, Data, taskParam] = introduceMisses(taskParam, screenIndex, Data, distMean, whichPractice)
-%INTRODUCEMISSES   This function introduce misses of the cannonball to participants
+function [Data, taskParam] = introduceMisses(taskParam, Data, whichPractice, txt)
+%INTRODUCEMISSES This function introduce misses of the cannonball to participants
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -14,27 +14,23 @@ function [screenIndex, Data, taskParam] = introduceMisses(taskParam, screenIndex
 %       taskParam: structure containing task parameters
 
 
-outcome = distMean;
-Data.outcome = distMean;
+outcome = Data.distMean;
+Data.outcome = Data.distMean;
 background = true;
-al_cannonball(taskParam, distMean, outcome, background, 1, 0)
+% al_cannonball(taskParam, distMean, outcome, background, 1, 0)
+% absTrialStartTime = GetSecs;
+if ~ isequal(taskParam.trialflow.shotAndShield, 'sequential')
+%al_cannonball(taskParam, outcome, outcome, background, 1, 0, 1, Data, absTrialStartTime)
+    i = 1;
+    tUpdated = GetSecs + 0.001;
+        Data.hit = 0; 
+    al_cannonMiss(taskParam, Data.distMean(i), Data.outcome(i), background, 1, 0, Data.allASS(i), Data.pred(i), Data.shieldType(i), Data.hit(i), tUpdated)
+end
 WaitSecs(taskParam.timingParam.outcomeLength);
 if (isequal(whichPractice, 'mainPractice') && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'followCannonPractice')...
         && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'oddballPractice') && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'reversal')...
         && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'chinese') && abs(Data.predErr) >= 9)
-    if isequal(taskParam.gParam.taskType, 'dresden')
-        if isequal(subject.group, '1')
-            txt = 'Leider hast du die Kanonenkugel vefehlt. Versuche es noch einmal!';
-        else
-            txt = 'Leider haben Sie die Kanonenkugel vefehlt. Versuchen Sie es bitte noch einmal!';
-        end
-    elseif isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC') ||...
-            (isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 2)
-        txt = 'You missed the cannonball. Try it again!';
-    elseif isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 1
-        txt = 'Du hast die Kanonenkugel verfehlt. Versuche es nochmal!';
-    end
-    
+
     al_lineAndBack(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
         currentContext = 1;
@@ -42,24 +38,24 @@ if (isequal(whichPractice, 'mainPractice') && abs(Data.predErr) >= 9) || (isequa
     end
     
     al_drawCircle(taskParam);
-    al_drawCross(taskParam);
+    %al_drawCross(taskParam);
     al_predictionSpot(taskParam);
     al_drawOutcome(taskParam, outcome);
-    al_drawCannon(taskParam, distMean, 0)
+    al_drawCannon(taskParam, Data.distMean, 0)
     
-    DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-    DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
-    Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+    DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.display.screensize(4)*0.9, [255 255 255]);
+    DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
     t = GetSecs;
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
+    Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
     while 1
         [ keyIsDown, ~, keyCode ] = KbCheck;
         if keyIsDown
             if keyCode(taskParam.keys.enter)
-                screenIndex = screenIndex - 1;
+                %screenIndex = screenIndex - 1;
                 break
             elseif keyCode(taskParam.keys.delete)
-                screenIndex = screenIndex - 2;
+                %screenIndex = screenIndex - 2;
                 break
             end
         end

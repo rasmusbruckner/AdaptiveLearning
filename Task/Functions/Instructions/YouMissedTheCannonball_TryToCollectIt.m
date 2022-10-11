@@ -1,4 +1,4 @@
-function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex, Data)
+function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(taskParam, screenIndex, Data, whichPractice)
 %YOUMISSEDTHECANNONBALL_TRYTOCOLLECTIT   This function tells participant that cannonball was caught, although instruction was
 %   to miss it
 %
@@ -10,10 +10,20 @@ function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex
 %       screenIndex: updated screenIndex 
 %       Data: data from the previous trials // Check this in the future
 
+
+    if taskParam.subject.rew == 1
+        colRew = 'gold';
+        colNoRew = 'grau';
+    elseif taskParam.subject.rew == 2
+        colRew = 'silber';
+        colNoRew = 'gelb';
+    end
+    
     background = true;
     Data.distMean = 160;
     Data.outcome = 160;
-    al_cannonball(taskParam, Data.distMean, Data.outcome, background)
+    %al_cannonball(taskParam, Data.distMean, Data.outcome, background)
+    al_cannonball(taskParam, Data.distMean, Data.outcome, background, Data.currentContext, Data.latentState)
     if Data.memErr <= 9
 
         al_lineAndBack(taskParam)
@@ -32,37 +42,37 @@ function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex
         Screen('Flip', taskParam.gParam.window.onScreen, t + 0.6, 1);
         while 1
 
-            if isequal(subject.group, '1')
+            if isequal(taskParam.subject.group, '1')
                 if isequal(whichPractice, 'followOutcomePractice')
                     txt=sprintf(['Du hast die Kanonenkugel '...
                         'aufgesammelt, aber der Korb war %s. '...
-                        'Daher hättest du nichts verdient.'],colNoRew);
+                        'Daher hÃ¤ttest du nichts verdient.'],colNoRew);
                 else
                     txt=sprintf(['Du hast die Kanonenkugel '...
                         'aufgesammelt, aber das Schild war %s. '...
-                        'Daher hättest du nichts verdient.'],colNoRew);
+                        'Daher hÃ¤ttest du nichts verdient.'],colNoRew);
                 end
             else
                 if isequal(whichPractice, 'followOutcomePractice')
                     txt=sprintf(['Sie haben die Kanonenkugel '...
                         'aufgesammelt, aber der Korb war %s. '...
-                        'Daher hätten Sie nichts verdient.'],colNoRew);
+                        'Daher hÃ¤tten Sie nichts verdient.'],colNoRew);
                 else
                     txt=sprintf(['Du hast die Kanonenkugel '...
                         'aufgesammelt, aber das Schild war %s. '...
-                        'Daher hätten Sie nichts verdient.'],colNoRew); 
+                        'Daher hÃ¤tten Sie nichts verdient.'],colNoRew); 
                 end
             end
             al_lineAndBack(taskParam)
             al_drawCannon(taskParam, Data.distMean)
             al_drawCircle(taskParam)
-            if subject.rew == 1
+            if taskParam.subject.rew == 1
                 al_shield(taskParam, 20, Data.pred, 0)
-            elseif subject.rew == 2
+            elseif taskParam.subject.rew == 2
                 al_shield(taskParam, 20, Data.pred, 1)
             end
             al_drawOutcome(taskParam, Data.outcome)
-            DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
+            DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
             DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
             Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
             Screen('Flip', taskParam.gParam.window.onScreen, t + 1.6);
@@ -83,7 +93,7 @@ function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex
 
         while 1
 
-            if isequal(subject.group, '1')
+            if isequal(taskParam.subject.group, '1')
 
                 txt=['Leider hast du die Kanonenkugel nicht '...
                     'aufgesammelt. Versuche es noch einmal!'];
@@ -100,7 +110,7 @@ function [screenIndex, Data] = YouMissedTheCannonball_TryToCollectIt(screenIndex
             al_drawOutcome(taskParam, Data.outcome);
             al_drawCannon(taskParam, Data.distMean)
             DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
-            DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], sentenceLength);
+            DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
             Screen('DrawingFinished',taskParam.gParam.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);

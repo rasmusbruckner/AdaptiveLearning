@@ -1,4 +1,4 @@
-function [screenIndex] = taskScreen(taskParam, texture, screenIndex)
+function [screenIndex] = taskScreen(taskParam, texture, screenIndex, txt)
 %TASKSCREEN   This function indicates the current task
 %
 %   Input
@@ -24,7 +24,7 @@ while 1
     if ~isequal(taskParam.gParam.taskType, 'chinese')
         Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
         Screen('TextSize', taskParam.gParam.window.onScreen, 30);
-        DrawFormattedText(taskParam.gParam.window.onScreen, txt, 'center', 100, [0 0 0], sentenceLength);
+        DrawFormattedText(taskParam.gParam.window.onScreen, txt, 'center', 100, [0 0 0], taskParam.gParam.sentenceLength);
     end
     
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);

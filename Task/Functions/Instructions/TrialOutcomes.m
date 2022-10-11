@@ -1,4 +1,4 @@
-function [screenIndex] = trialOutcomes(screenIndex)
+function screenIndex = TrialOutcomes(taskParam, subject, screenIndex)
 %TRIALOUTCOMES   This function introduces the possible outcomes in the task
 %
 %   Input
@@ -9,14 +9,22 @@ function [screenIndex] = trialOutcomes(screenIndex)
 
 
 if isequal(taskParam.gParam.taskType, 'dresden')
-    header = 'Gewinnmöglichkeiten';
-    if isequal(subject.group, '1')
+    header = 'GewinnmÃ¶glichkeiten';
+    if isequal(taskParam.subject.group, '1')
         
-        txt = 'Um dir genau zu zeigen, wann du Geld verdienst, spielen wir jetzt alle Möglichkeiten durch.';
+        txt = 'Um dir genau zu zeigen, wann du Geld verdienst, spielen wir jetzt alle MÃ¶glichkeiten durch.';
     else
-        txt = 'Um Ihnen genau zu zeigen, wann Sie Geld verdienen, spielen wir jetzt alle Möglichkeiten durch.';
+        txt = 'Um Ihnen genau zu zeigen, wann Sie Geld verdienen, spielen wir jetzt alle MÃ¶glichkeiten durch.';
     end
 elseif isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC')
+
+    if subject.rew == 1
+        colRew = 'blue';
+        colNoRew = 'green';
+    elseif subject.rew == 2
+        colRew = 'green';
+        colNoRew = 'blue';
+    end
     header = 'Trial Outcomes';
     txt = sprintf('Now lets see what happens when you hit or miss the ball with a %s or %s shield...', colRew, colNoRew);
 end

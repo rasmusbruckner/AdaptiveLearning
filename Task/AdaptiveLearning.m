@@ -1,7 +1,7 @@
-function DataMain = AdaptiveLearning(unitTest)
+function Data = AdaptiveLearning(unitTest)
 %ADAPTIVELEARNING   Master function of the cannon task.
-%   AdaptiveLearning(false) or adaptiveLearning runs the cannon task.
-%   adaptiveLearning(true) is part of a unit test to control task
+%   AdaptiveLearning(false) or AdaptiveLearning runs the cannon task.
+%   AdaptiveLearning(true) is part of a unit test to control task
 %   output after task changes. Scripts for unit test:
 %   ~/AdaptiveLearning/DataScripts
 %
@@ -17,11 +17,11 @@ function DataMain = AdaptiveLearning(unitTest)
 %                               - Different noise conditions
 %                               - Tickmark on vs. off
 %
-%   Written by Rasmus Bruckner (MPI/FU Berlin)
-%   Contributors: Ben Eppinger (Concordia), Matt Nassar (Brown), 
+%   Written by Rasmus Bruckner (FU Berlin)
+%   Contributors: Matt Nassar (Brown), Ben Eppinger (Concordia), 
 %   Lennart Wittkuhn (MPI), Owen Parsons (Cambridge)
 %
-%   Version 07/2019
+%   Version 07/2021
 
 
 % Initialize task
@@ -46,7 +46,7 @@ computer = 'Macbook';
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
-taskType = 'chinese';
+taskType = 'dresden'; %'chinese';
 
 % Version specific parameters
 % ---------------------------
@@ -55,31 +55,61 @@ switch taskType
     
     case 'dresden'
     
-        trials = 2; % 240
-        controlTrials = 1; % 120
+        trials = 20; % 240
+        controlTrials = 20; % 120
         concentration = [12 8 99999999];
         DataFollowOutcome = nan;
         DataFollowCannon = nan;
         textSize = 18;
-        
+        haz = [.25 1 0];%[.125 1 0]; %.12 % .125 % hazard rate - determines prior change point probability
         % Check number of trials in each condition
         if  (trials > 1 && mod(trials, 2)) == 1 || (controlTrials >...
                 1 && mod(controlTrials, 2) == 1)
             msgbox('All trials must be even or equal to 1!');
             return
         end
+        
+        blockIndices = [1 101 999 999]; %[1 121 999 999];
+        nPlanets = 1;
+        nEnemies = nan;
+        planetHaz = nan;
+        enemyHaz = nan;
+        safePlanet = nan;
+        safeEnemy = nan;
+        chinesePractTrials = nan;
+        showTickmark = nan;
+        language = 1;
+        useTrialConstraints = false;
+        nb = nan;
+        cueAllTrials = nan; % if false, only enemy change is cued
+        critDist = nan;% critical distance between means. Controls the overlap between states to avoid very similar enemies.
     
     case 'oddball'
     
         % Trials first session
-        trialsS1 = 50; % 40
+        trialsS1 = 2; % 50; % 40
         % Trials second session
-        trialsS2S3 = 50; % 240
+        trialsS2S3 = 2; %50; % 240
         controlTrials = nan;
         concentration = [10 12 99999999];
         DataOddball = nan;
         textSize = 30;
-    
+        blockIndices = [1 999 999 999]; % currently not used anymore
+        haz = [.125 1 0];
+        chinesePractTrials = nan;
+        nPlanets = 1;
+        nEnemies = nan;
+        planetHaz = nan;
+        enemyHaz = nan;
+        safePlanet = nan;
+        safeEnemy = nan;    
+        showTickmark = nan;      
+        language = 1;
+        useTrialConstraints = false;
+        nb = nan;
+        cueAllTrials = nan; % if false, only enemy change is cued
+        critDist = nan;% critical distance between means. Controls the overlap between states to avoid very similar enemies.
+        
     case 'reversal'
     
         trials = 20;
@@ -93,7 +123,22 @@ switch taskType
         safeEnemy = nan;
         DataOddball = nan;
         textSize = 19;
-    
+        blockIndices = [1 999 999 999]; % currently not used anymore
+        haz = [.125 1 0];
+        chinesePractTrials = nan;
+        nPlanets = 1;
+        nEnemies = nan;
+        planetHaz = nan;
+        enemyHaz = nan;
+        safePlanet = nan;
+        safeEnemy = nan;    
+        showTickmark = nan;      
+        language = 1;
+        useTrialConstraints = false;
+        nb = nan;
+        cueAllTrials = nan; % if false, only enemy change is cued
+        critDist = nan;% critical distance between means. Controls the overlap between states to avoid very similar enemies.
+
     case 'chinese'
         
         % Select constraints for the generation of outcomes
@@ -101,32 +146,32 @@ switch taskType
 
         % For all cases
         trials = 5; % trials per block... 90 for current setting of agent condition
-
         critDist = 45;% critical distance between means. Controls the overlap between states to avoid very similar enemies.
-        nb = 2; % number of blocks
+        nb = 3; % number of blocks
         cueAllTrials = false; % if false, only enemy change is cued
         chinesePractTrials = 2; % 200 number of practice trials
         nPlanets = 6; % number of planets
-        nEnemies = 3; % number of enemies
-        concentration = [12 12 99999999]; % anpassen?
+        nEnemies = 2; % number of enemies
+        concentration = [12 12 99999999]; % noise
         textSize = 16; % text size for instructions
         showTickmark = nan; % do not show tickmark
         DataOddball = nan; % do not use anything from oddball condition
         controlTrials = nan; % do not use control trials from "Dresden condition"
         language = 2; % 1: German, 2: English
         blockIndices = [1 999 999 999]; % currently not used anymore
-
+        
         % 'Montreal' and 'NoConstraints'
         enemyHaz = 0.15; % probability that enemy changes
         planetHaz = 1; % probability that planet changes color
         safePlanet = 0; % minimum number of trials before planet changes
         safeEnemy = 0; % minimum number of trials before enemy changes
-
+        
+        haz = [.125 1 0];
     case 'ARC'
     
-        trials = 6; % 240
+        trials = 20; %6; % 240
         controlTrials = 4; % 60; % this is the new control version that we added to control for differences between groups
-        concentration = [16 8 99999999]; 
+        concentration = [8 8 99999999]; %[16 8 99999999]; 
         blockIndices = [1 101 999 999]; %[1 121 999 999];
         textSize = 19;
         nPlanets = 1;
@@ -139,7 +184,9 @@ switch taskType
         language = 2;
         useTrialConstraints = false;
         nb = nan;
-        
+        cueAllTrials = nan; % if false, only enemy change is cued
+        critDist = nan;% critical distance between means. Controls the overlap between states to avoid very similar enemies.
+        haz = [.125 1 0];%[.125 1 0]; %.12 % .125 % hazard rate - determines prior change point probability
         % Check number of trials
         if  (trials > 1 && mod(trials, 2)) == 1
             msgbox('All trials must be even or equal to 1!');
@@ -163,7 +210,6 @@ randomize = false;  % randomize default task parmeters
 shieldTrials = 4; % 4 number of trials to introduce the shield in the cover story
 practTrials = 2; % 20 number of practice trials - note that in "reversal" version this is muliplied by 2
 useCatchTrials = true; % use catch trials, where cannon is shown occasionally
-haz = [.1 1 0]; %.12 % .125 % hazard rate - determines prior change point probability
 oddballProb = [.25 0]; % deterimines prior oddball point probability
 reversalProb = [.5 1]; % deterimines prior reversal point probability
 driftConc = [30 99999999];  % concentration parameter of drift (inverse variance)
@@ -174,12 +220,14 @@ fixCrossLength = 0.5; % ISI fixation cross presentation
 outcomeLength = 1; % ISI outcome presentation
 jitter = 0.2; % ITI jitter
 fixedITI = 0.9; % ITI fixed
-debug = false; % true; debug mode
-screenNumber = 1; % 2;  % Use 1 if use one screen. Use 2 if you use two screens
+debug = true; %true; %true; %false; % true; debug mode
+screenNumber = 1; % Use 1 if use one screen. Use 2 if you use two screens
 
 % Save directory for different computers that were used in the past
 if isequal(computer, 'Macbook')
-    cd('~/Dropbox/AdaptiveLearning/DataDirectory');
+   cd('~/Dropbox/AdaptiveLearning/DataDirectory');
+   %cd('\\vboxsvr\dropbox\AdaptiveLearning\DataDirectory');
+
 elseif isequal(computer, 'Dresden')
     cd('C:\\Users\\TU-Dresden\\Documents\\MATLAB\\AdaptiveLearning\\DataDirectory');
 elseif isequal(computer, 'Brown')
@@ -446,7 +494,7 @@ end
 % For oddball: check how many trials should be selected
 if isequal(taskType, 'oddball') && isequal(subject.session, '1')
     trials = trialsS1;
-elseif isequal(taskType, 'oddball') && isequal(subject.session, '3')
+elseif (isequal(taskType, 'oddball') && isequal(subject.session, '2')) || (isequal(taskType, 'oddball') && isequal(subject.session, '3'))
     trials = trialsS2S3;
 end
 
@@ -456,7 +504,7 @@ Screen('Preference', 'SuppressAllWarnings', 1);
 Screen('Preference', 'SkipSyncTests', 2);
 
 % Get screen properties
-screensize = get(0,'MonitorPositions');
+screensize =  [1 1 1920 1080];[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; %get(0,'MonitorPositions');
 screensize = screensize(screenNumber, :);
 screensizePart = screensize(3:4);
 zero = screensizePart / 2;
@@ -497,6 +545,17 @@ end
 % Start time for triggers etc.
 ref = GetSecs;
 
+
+timingParam = al_timing();
+
+% This is a reference timestamp at the start of the experiment.
+% This is not equal to the first trial or so. So be carful when using
+% EEG or pupillometry and make sure the reference is specified as desired.
+
+
+
+
+
 % General task parameters
 gParam = struct('taskType', taskType , 'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
     sentenceLength, 'driftConc', driftConc, 'oddballProb', oddballProb, 'reversalProb', reversalProb,...
@@ -504,13 +563,14 @@ gParam = struct('taskType', taskType , 'blockIndices', blockIndices, 'ref', ref,
     trials, 'shieldTrials', shieldTrials, 'practTrials', practTrials, ...
     'chinesePractTrials', chinesePractTrials, 'controlTrials', controlTrials,'nPlanets', nPlanets, 'nEnemies',...
     nEnemies, 'safe', safe, 'rewMag', rewMag, 'screensize', screensize, 'planetHaz', planetHaz, 'enemyHaz', enemyHaz,...
-    'safePlanet', safePlanet, 'safeEnemy', safeEnemy, 'zero', zero,'window', window, 'windowRect', windowRect,...
+    'safePlanet', safePlanet, 'safeEnemy', safeEnemy, 'zero', zero, 'windowRect', windowRect,...
     'practiceTrialCriterion', practiceTrialCriterion, 'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark,...
     'useCatchTrials', useCatchTrials, 'screenNumber', screenNumber, 'language', language, 'useTrialConstraints', useTrialConstraints,...
-    'nb', nb, 'cueAllTrials', cueAllTrials, 'critDist', critDist); 
+    'nb', nb, 'cueAllTrials', cueAllTrials, 'critDist', critDist, 'catchTrialProb', 0.1);  % 'window', window,
 
 % Parameters related to the circle
-% --------------------------------
+% --------------------------------al_display()
+
 predSpotRad = 10;
 shieldAngle = 30;
 outcSize = 10;
@@ -538,12 +598,13 @@ unit = 2*pi/360;
 initialRotAngle = 0*unit;
 rotAngle = initialRotAngle;
 
+tickWidth = 1;
 circle = struct('shieldAngle', shieldAngle, 'cannonEndCent', cannonEndCent, 'outcCentSpotRect', outcCentSpotRect,...
     'predSpotRad', predSpotRad, 'outcSize', outcSize, 'meanRad', meanPoint, 'rotationRad', rotationRad,...
     'chineseCannonRad', chineseCannonRad, 'tendencyThreshold', tendencyThreshold, 'predSpotDiam', predSpotDiam, 'outcDiam',...
     outcDiam, 'spotDiamMean', spotDiamMean, 'predSpotRect', predSpotRect, 'outcRect', outcRect, 'spotRectMean',...
     spotRectMean, 'boatRect', boatRect, 'centBoatRect', centBoatRect, 'predCentSpotRect', predCentSpotRect, 'outcCentRect', outcCentRect,...
-    'centSpotRectMean', centSpotRectMean, 'unit', unit, 'initialRotAngle', initialRotAngle, 'rotAngle', rotAngle);
+    'centSpotRectMean', centSpotRectMean, 'unit', unit, 'initialRotAngle', initialRotAngle, 'rotAngle', rotAngle, 'tickWidth', tickWidth);
 
 % Parameters related to color
 % ---------------------------
@@ -574,8 +635,8 @@ switch computer
         t = 84; 
         z = 90;
     case 'Macbook'
-        enter = 40;
-        s = 22;
+        enter = 37; %40;
+        s = 40;%22;
         t = 23;
         z = 28;
     case 'Lennart'
@@ -593,10 +654,12 @@ switch computer
         z = 90;     
 end
 
+keySpeed = 1.5;
+slowKeySpeed = 0.5;
 keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
     rightArrow, 'leftArrow', leftArrow, 'rightSlowKey', rightSlowKey,...
     'leftKey', leftKey, 'leftSlowKey', leftSlowKey, 'space', space,...
-    'enter', enter, 's', s, 't', t, 'z', z);
+    'enter', enter, 's', s, 't', t, 'z', z, 'keySpeed', keySpeed, 'slowKeySpeed', slowKeySpeed);
 
 % Parameters related to triggers
 % ------------------------------
@@ -609,7 +672,7 @@ triggers = struct('sampleRate', sampleRate, 'port', port);
 
 % Parameters related to timing
 % ----------------------------
-timingParam = struct('fixCrossLength', fixCrossLength, 'outcomeLength', outcomeLength, 'jitter', jitter, 'fixedITI', fixedITI);
+timingParam = struct('fixCrossLength', fixCrossLength, 'outcomeLength', outcomeLength, 'jitter', jitter, 'fixedITI', fixedITI, 'ref', ref);
 
 % Start task
 % ----------
@@ -629,14 +692,25 @@ switch taskType
         txtPressEnter = 'Press Enter to continue';
 end
 
+display = al_display();
+display.window =  window;
+display.screensize = screensize;
+%display.backgroundTxt = textures.backgroundTxt;
+display.zero = zero;
+display.cannonTxt = textures.cannonTxt;
+display.dstRect = textures.dstRect;
+
+trialflow = al_trialflow();
+trialflow.background = 'no picture';
+
 % Put all paramters in structure
 % ------------------------------
 fTxtPressEnter = 'txtPressEnter';
-strings = struct(fTxtPressEnter, txtPressEnter);
+strings = struct(fTxtPressEnter, txtPressEnter, 'sentenceLength', sentenceLength, 'headerSize', 30, 'textSize', 30);
 taskParam = struct('gParam', gParam, 'circle', circle, 'keys', keys,...
     'fieldNames', fieldNames, 'triggers', triggers, 'timingParam',...
     timingParam,'colors', colors, 'strings', strings, 'textures',...
-    textures, 'unitTest', unitTest);
+    textures, 'unitTest', unitTest, 'display', display, 'trialflow', trialflow);
 
 % Condition object initialization
 % -------------------------------
@@ -659,68 +733,76 @@ switch taskType
     case 'dresden'
 
         if subject.cBal == 1
-
-            DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-                header, testDay, cBal, showTickmark);
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
-            DataFollowOutcome = cond.FollowOutcomeCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
-            DataFollowCannon = cond.FollowCannonCondition;
+            % todo: update all cbals like this
+            %DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
+             %   header, testDay, cBal, showTickmark);
+            cond = cond.MainCondition(taskParam, subject);
+            DataMain = cond.DataMain;
+            taskParam.display.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+            cond = cond.FollowOutcomeCondition(taskParam, subject);
+            DataFollowOutcome = cond.DataFollowOutcome;
+            taskParam.display.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+            cond = cond.FollowCannonCondition(taskParam, subject);
+            DataFollowCannon = cond.DataFollowCannon;
 
         elseif subject.cBal == 2
 
             DataMain = cond.MainCondition(runIntro, unitTest, taskType,subject, taskParam, haz, concentration, txtPressEnter,...
                 header, testDay, cBal, showTickmark);
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataFollowCannon = cond.FollowCannonCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataFollowOutcome = cond.FollowOutcomeCondition;
 
         elseif subject.cBal == 3
 
             DataFollowOutcome = cond.FollowOutcomeCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
                 header, testDay, cBal, showTickmark);
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataFollowCannon = cond.FollowCannonCondition;
 
         elseif subject.cBal == 4
 
             DataFollowCannon = cond.FollowCannonCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
                 header, testDay, cBal, showTickmark);
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataFollowOutcome = cond.FollowOutcomeCondition;
 
         elseif subject.cBal == 5
 
             DataFollowOutcome = cond.FollowOutcomeCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataFollowCannon = cond.FollowCannonCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
                 header, testDay, cBal, showTickmark);
 
         elseif subject.cBal == 6
 
             DataFollowCannon = cond.FollowCannonCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataFollowOutcome = cond.FollowOutcomeCondition;
-            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitText);
+            taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
             DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
                 header, testDay, cBal, showTickmark);
 
         end
     
     case 'oddball'
-    
+    %OddballCondition(runIntro, unitTest, subject, taskParam, txtPressEnter, haz, concentration)
         if subject.cBal == 1
-            DataOddball = cond.OddballCondition(runIntro, unitTest, subject,...
-                taskParam, txtPressEnter, haz, concentration);
-            DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-                header, testDay, cBal, showTickmark);
+
+            %cond = cond.MainCondition(taskParam, subject);
+            cond = cond.OddballCondition(taskParam, subject);
+            DataOddball = cond.DataOddball;
+            %DataOddball = cond.OddballCondition(runIntro, unitTest, subject, taskParam, txtPressEnter, haz, concentration);
+            %DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter, header, testDay, cBal, showTickmark);
+            cond = cond.MainCondition(taskParam, subject);
+            DataMain = cond.DataMain;
         elseif subject.cBal == 2
             DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
                 header, testDay, cBal, showTickmark);
@@ -729,7 +811,8 @@ switch taskType
     
     case 'reversal'
    
-        DataReversal = cond.ReversalCondition;
+        cond = cond.ReversalCondition(taskParam, subject);
+        DataReversal = cond.DataReversal;
     
     case 'chinese'
 
@@ -797,6 +880,8 @@ switch taskType
         Data.DataOddball = DataOddball;
     case 'reversal'
         Data.DataReversal = DataReversal;
+    case 'ARC'
+        Data.DataMain = DataMain;
 end
 
 % End of task

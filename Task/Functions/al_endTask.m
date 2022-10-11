@@ -1,5 +1,5 @@
 function al_endTask(taskType, taskParam, textSize, totWin, subject)
-%AL_ENDTASK   This function implements the screen that shows collected amount of money
+%AL_ENDTASK This function implements the screen that shows collected amount of money
 %
 %   Input
 %       taskType: current task type
@@ -9,8 +9,9 @@ function al_endTask(taskType, taskParam, textSize, totWin, subject)
 %       subject: structure containing information about subject
 %
 %   Output
-%       ~ 
+%       ~
 
+% todo: use trialflow instead of taskType
 
 while 1
     
@@ -22,33 +23,35 @@ while 1
     elseif isequal(taskType, 'dresden') 
         header = 'Ende des Versuchs!';
         if isequal(subject.group, '1')
-            txt = sprintf('Vielen Dank für deine Teilnahme!\n\n\nDu hast %.2f Euro verdient.', totWin);
+            txt = sprintf('Vielen Dank fÃ¼r deine Teilnahme!\n\n\nDu hast %.2f Euro verdient.', totWin);
         else
-            txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient.', totWin);
+            txt = sprintf('Vielen Dank fÃ¼r Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient.', totWin);
         end
     elseif isequal(taskType, 'chinese')    
         header = 'End of task!';
         txt = sprintf('Thank you for participating!\n\n\nYou earned %.0f points.', totWin);    
-    elseif isequal(taskType, 'ARC')
+    elseif isequal(taskType, 'ARC') || isequal(taskType, 'Hamburg')  || isequal(taskType, 'Sleep')
         header = 'End of task!';
         txt = sprintf('Thank you for participating!\n\n\nYou earned %.0f points.', totWin*10);
     end
     
     % Draw text, lines and rectangles
     % -------------------------------
-    Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], 0, taskParam.gParam.screensize(4)*0.16, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.16, 5);
-    Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], 0, taskParam.gParam.screensize(4)*0.8, taskParam.gParam.screensize(3), taskParam.gParam.screensize(4)*0.8, 5);
-    Screen('FillRect', taskParam.gParam.window.onScreen, [0 25 51], [0, (taskParam.gParam.screensize(4)*0.16)+3, taskParam.gParam.screensize(3), (taskParam.gParam.screensize(4)*0.8)-2]);
-    Screen('TextSize', taskParam.gParam.window.onScreen, 30);
-    DrawFormattedText(taskParam.gParam.window.onScreen, header, 'center', taskParam.gParam.screensize(4)*0.1);
-    Screen('TextSize', taskParam.gParam.window.onScreen, textSize);
-    DrawFormattedText(taskParam.gParam.window.onScreen, txt, 'center', 'center');
+    % todo: replace by lineAndBack function
+    Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], 0, taskParam.display.screensize(4)*0.16, taskParam.display.screensize(3), taskParam.display.screensize(4)*0.16, 5);
+    Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], 0, taskParam.display.screensize(4)*0.8, taskParam.display.screensize(3), taskParam.display.screensize(4)*0.8, 5);
+    Screen('FillRect', taskParam.display.window.onScreen, [0 25 51], [0, (taskParam.display.screensize(4)*0.16)+3, taskParam.display.screensize(3), (taskParam.display.screensize(4)*0.8)-2]);
+    
+    Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.headerSize);
+    DrawFormattedText(taskParam.display.window.onScreen, header, 'center', taskParam.display.screensize(4)*0.1);
+    Screen('TextSize', taskParam.display.window.onScreen, textSize);
+    DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center');
     
     % Flip screen to present changes
     % ------------------------------
-    Screen('DrawingFinished', taskParam.gParam.window.onScreen, [], []);
+    Screen('DrawingFinished', taskParam.display.window.onScreen, [], []);
     time = GetSecs;
-    Screen('Flip', taskParam.gParam.window.onScreen, time + 0.1);
+    Screen('Flip', taskParam.display.window.onScreen, time + 0.1);
     
     % Check for keypress
     % ------------------

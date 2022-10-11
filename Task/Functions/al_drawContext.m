@@ -35,7 +35,7 @@ elseif currentContext == 4
     
 elseif currentContext == 5
     
-    % XX for foifth planet
+    % XX for fifth planet
     color = [0 0 0];
     
 elseif currentContext == 6

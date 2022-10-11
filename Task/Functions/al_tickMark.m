@@ -2,9 +2,9 @@ function al_tickMark(taskParam, parameter, type)
 %AL_TICKMARK   This function draws the tickmark in the cannon task
 %
 %   Input
-%       taskParam: structure containing task parameters
-%       parameters: ?
-%       type: tick mark type
+%       taskParam: Task-parameter-object instance
+%       parameters: Location paramter that should be presented
+%       type: Tick mark type
 %
 %   Output
 %       ~
@@ -27,13 +27,13 @@ end
 
 % Compute location of tickmark
 rotRad = taskParam.circle.rotationRad + tickNormalization;
-OutcSpot = parameter - 1;
+OutcSpot = parameter - taskParam.circle.tickWidth/2; %- 1;
 
 % Extract center
-zero = taskParam.gParam.zero;
+zero = taskParam.display.zero;
 
 % Print tickmark
-Screen('FrameArc', taskParam.gParam.window.onScreen, col, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, 2, tickLength, [], [])
+Screen('FrameArc', taskParam.display.window.onScreen, col, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, taskParam.circle.tickWidth, tickLength, [], [])
 
 end
 

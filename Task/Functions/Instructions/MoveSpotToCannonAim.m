@@ -15,7 +15,7 @@ function [screenIndex, Data, taskParam] = MoveSpotToCannonAim(taskParam, screenI
 
 
 if isequal(taskParam.gParam.taskType, 'dresden')
-    if isequal(subject.group, '1')
+    if isequal(taskParam.subject.group, '1')
         
         txt = 'Versuche die Kanonenkugel jetzt wieder zu abzuwehren.';
     else
@@ -26,7 +26,7 @@ elseif isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam
     txt = 'Now try to catch the ball.';
 end
 if isequal(taskParam.gParam.taskType, 'dresden')
-    if isequal(subject.group, '1')
+    if isequal(taskParam.subject.group, '1')
         txt = 'Versuche die Kanonenkugel jetzt wieder zu abzuwehren.';
     else
         txt = 'Versuchen Sie die Kanonenkugel jetzt wieder zu abzuwehren.';
@@ -36,19 +36,19 @@ elseif isequal(taskParam.gParam.taskType, 'oddball') || isequal(taskParam.gParam
 end
 
 if isequal(taskParam.gParam.taskType, 'dresden')
-    if isequal(subject.group, '1')
+    if isequal(taskParam.subject.group, '1')
         txt = ['Der schwarze Strich zeigt dir die Position der letzten Kugel. Der orangene Strich zeigt dir die '...
-            'Position deines letzten Schildes. Steuere den orangenen Punkt jetzt auf das Ziel der Kanone und drücke LEERTASTE.'];
+            'Position deines letzten Schildes. Steuere den orangenen Punkt jetzt auf das Ziel der Kanone und drÃ¼cke LEERTASTE.'];
     else
         txt = ['Der schwarze Strich zeigt Ihnen die Position der letzten Kugel. Der orangene Strich zeigt Ihnen die Position Ihres letzten Schildes. '...
-            'Steuern Sie den orangenen Punkt jetzt bitte auf das Ziel der Kanone und drücken Sie LEERTASTE.'];
+            'Steuern Sie den orangenen Punkt jetzt bitte auf das Ziel der Kanone und drÃ¼cken Sie LEERTASTE.'];
     end
 elseif isequal(taskParam.gParam.taskType, 'oddball')
     txt = 'Move the orange spot to the part of the circle, where the cannon is aimed and press SPACE.';
 elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC')|| (isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 2)
     txt = 'Move the orange spot to the part of the circle, where the cannon is aimed and press the left mouse button.';
 elseif isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 1
-    txt = 'Bewege den orangenen Punkt zu der Stelle auf dem Planeten auf die die Kanone zielt und drücke die linke Maustaste.';
+    txt = 'Bewege den orangenen Punkt zu der Stelle auf dem Planeten auf die die Kanone zielt und drÃ¼cke die linke Maustaste.';
 end
 t = GetSecs;
 al_lineAndBack(taskParam)
@@ -66,7 +66,7 @@ Data.tickMark = true;
 Data.distMean = distMean;
 tickInstruction.savedTickmark = nan;
 tickInstruction.previousOutcome = nan;
-[taskParam, fw, Data, savedTickmark] = al_instrLoopTxt(taskParam, txt, cannon, 'space', distMean, tickInstruction, Data);
+[taskParam, fw, Data, ~] = al_instrLoopTxt(taskParam, txt, cannon, 'space', distMean, tickInstruction, Data);
 if fw == 1
     screenIndex = screenIndex + 1;
 end

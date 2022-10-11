@@ -8,7 +8,7 @@ function sharedInstructions(taskParam, subject, cannon, whichPractice)
 %       whichPractice: indicates which practice condition should be presented
 %
 %   Output
-%       ~�
+%       ~
 
 
 % Initialize to first screen
@@ -17,10 +17,12 @@ screenIndex = 1;
 while 1
     switch(screenIndex)
         case 1
-            
+           
             % For "Dresden" version, show slide that indicates the current condition
             if isequal(taskParam.gParam.taskType, 'dresden')
-                screenIndex = taskScreen(taskParam.textures.shieldTxt, screenIndex);
+                %screenIndex = taskScreen(taskParam, taskParam.textures.shieldTxt, screenIndex);
+                txt = 'Kanonenkugeln Abwehren';
+                screenIndex = taskScreen(taskParam, taskParam.textures.shieldTxt, screenIndex, txt);
             else
                 screenIndex = screenIndex + 1;
             end
@@ -29,7 +31,31 @@ while 1
             
             % Introduce cannon
             distMean = 300;
-            screenIndex = introduceCannon(screenIndex, taskParam, distMean, cannon);
+            if isequal(taskParam.gParam.taskType, 'dresden')
+                if isequal(taskParam.subject.group, '1')
+                    txt = ['Eine Kanone zielt auf eine Stelle des Kreises. Deine Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem orangenen Punkt kannst du angeben, '...
+                        'wo du dein Schild platzieren möchtest, um die Kanonenkugel abzuwehren.\nDu kannst den Punkt mit den grünen und blauen Tasten steuern. Grün kannst du für schnelle '...
+                        'Bewegungen und blau für langsame Bewegungen benutzen.'];
+                else
+                    txt = ['Eine Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem orangenen '...
+                        'Punkt können Sie angeben, wo Sie Ihr Schild platzieren möchten, um die Kanonenkugel abzuwehren.\nSie können den Punkt mit den '...
+                        'grünen und blauen Tasten steuern. Grün können Sie für schnelle Bewegungen und blau für langsame Bewegungen benutzen.'];
+                end
+                elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC') || isequal(taskParam.gParam.taskType, 'oddball')   % für oddball am 30.09.21 hinzugefügt. verifizieren, ob das in ursprünglicher version auch so war
+                    txt = 'A cannon is aimed at the circle. Indicate where you would like to place your shield to catch cannonballs with the orange spot. You can move the orange spot using the mouse.';
+                elseif isequal(taskParam.gParam.taskType, 'chinese')
+                        if taskParam.gParam.language == 1
+                            txt = ['Du bist die Weltraumpolizei und beschützt deinen Planeten.\nEin fremdes Raumschiff zielt mit seiner Kanone auf eine Stelle deines Planeten und feuert '...
+                                'Kanonenkugeln. Deine Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem orangenen Punkt kannst du angeben, wo du dein Schild platzieren möchtest, '...
+                                'um die Kanonenkugel abzuwehren. Du kannst den Punkt mit der Maus bewegen. Das kannst du jetzt ausprobieren.'];
+                        elseif taskParam.gParam.language == 2
+                            txt = ['You are the space police and you must protect your planet.\n\nA foreign spaceship aims its cannon at a spot on your planet and fires '...
+                                'cannonballs. \nYour task is to fend off the cannonball with a shield. The orange dot lets you specify a point where you want to place your shield, '...
+                                'to ward off the cannonballs. \n\nYou can move the point with your mouse. Try it now.'];
+                        end
+            end
+
+            screenIndex = introduceCannon(screenIndex, taskParam, distMean, cannon, whichPractice, txt);
             
         case 3
             
@@ -44,7 +70,18 @@ while 1
             % Todo: try to use either distMean or Data.distMean, not both...
             distMean = 300;
             Data.distMean = distMean;
-            [screenIndex, Data, taskParam] = introduceSpot(taskParam, screenIndex, distMean, Data, cannon);
+            if isequal(taskParam.gParam.taskType, 'dresden')
+                if isequal(taskParam.subject.group, '1')
+                    txt=['Der schwarze Strich zeigt dir die Position der letzten Kugel. Der orangene Strich zeigt dir die '...
+                    'Position deines letzten Schildes. Steuere den orangenen Punkt jetzt auf das Ziel der Kanone und drücke LEERTASTE.'];
+                else
+                    txt=['Der schwarze Strich zeigt Ihnen die Position der letzten Kugel. Der orangene Strich zeigt Ihnen die '...
+                        'Position Ihres letzten Schildes. Steuern Sie den orangenen Punkt jetzt bitte auf das Ziel der Kanone und drücken Sie LEERTASTE.'];
+                end
+                elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'ARC') || isequal(taskParam.gParam.taskType, 'oddball') || (isequal(taskParam.gParam.taskType, 'chinese') && taskParam.gParam.language == 2) % für oddball am 30.09.21 hinzugefügt. verifizieren, ob das in ursprünglicher version auch so war
+                     txt = 'Move the orange spot to the part of the circle, where the cannon is aimed and press the left mouse button.';
+            end
+            [screenIndex, Data, taskParam] = introduceSpot(taskParam, screenIndex, distMean, Data, cannon, txt);
             
         case 5
             
@@ -78,7 +115,7 @@ while 1
         case 10
             
             % Introduce shield color
-            [screenIndex, Data] = introduceShieldColor(taskParam, subject, screenIndex, Data);
+            [screenIndex, Data] = introduceShieldColor(taskParam, subject, screenIndex, Data, whichPractice);
             
         case 11
             
@@ -94,67 +131,79 @@ while 1
             
             % Start to introduce all trial outcomes:
             % hit + win, hit + no win, miss + no win
-            screenIndex = trialOutcomes(screenIndex);
+            screenIndex = TrialOutcomes(taskParam, subject, screenIndex);
             
         case 13
             
             distMean = 290;
-            [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, distMean, Data);
-            
+            %[screenIndex, Data] = MoveSpotToCannonAim(screenIndex, distMean, Data);
+            [screenIndex, Data] = MoveSpotToCannonAim(taskParam, screenIndex, distMean, Data, cannon);
+
         case 14
             
-            [screenIndex, Data] = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+            % [screenIndex, Data] = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+            [screenIndex, Data, taskParam] = introduceMisses(taskParam, screenIndex, Data, distMean, whichPractice);
             
         case 15
             
             win = true;
-            [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, distMean, win);
+            %[screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, distMean, win);
+            [screenIndex, Data] = introduceShield(taskParam, subject, screenIndex, Data,  distMean, win);
             
         case 16
 
             distMean = 35;
-            [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, distMean);
+            %[screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, distMean);
+            [screenIndex, Data, taskParam] = introduceShieldMiss(taskParam, screenIndex, Data, distMean, cannon);
             
         case 17
             
             Data.outcome = distMean;
-            [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
+            % [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
+            [screenIndex, Data, t] = repeatShieldMiss(taskParam, screenIndex, Data, distMean);
             
         case 18
             
             win = true;
-            [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, distMean, win);
+            % [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, distMean, win);
+            [screenIndex, Data] = YouCollectedTheCannonball_TryToMissIt(taskParam, subject, screenIndex, Data, win);
             
         case 19
             
             distMean = 190;
-            [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, distMean, Data);
+            % [screenIndex, Data] = MoveSpotToCannonAim(screenIndex, distMean, Data);
+            [screenIndex, Data, taskParam] = MoveSpotToCannonAim(taskParam, screenIndex, distMean, Data, cannon);
             
         case 20
             
-            screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+            %screenIndex = YouMissedTheCannonBall_TryAgain(screenIndex, Data, distMean);
+            [screenIndex, Data, taskParam] = introduceMisses(taskParam, screenIndex, Data, distMean, whichPractice);
             
         case 21
             
             win = false;
-            [screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, distMean, win);
+            %[screenIndex, Data] = AfterCannonIsShotYouSeeTheShield(screenIndex, Data, distMean, win);
+            [screenIndex, Data] = introduceShield(taskParam, subject, screenIndex, Data,  distMean, win);
             
         case 22
             
             Data.outcome = distMean;
             distMean = 160;
-            [screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, distMean);
+            %[screenIndex, Data] = TryToMissTheCannon(screenIndex, Data, distMean);
+            [screenIndex, Data, taskParam] = introduceShieldMiss(taskParam, screenIndex, Data, distMean, cannon);
             
         case 23
             
             distMean = 160;
             Data.outcome = distMean;
-            [screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
-            
+            %[screenIndex, Data, t] = YouCaughtTheCannonball_TryToMissIt(screenIndex, Data, distMean);
+            [screenIndex, Data, t] = repeatShieldMiss(taskParam, screenIndex, Data, distMean);
+
         case 24
             
-            [screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, distMean, false);
-            
+            %[screenIndex, Data, t] = InThisCaseYouMissedTheCannonball(screenIndex, Data, t, distMean, false);
+            [screenIndex, Data] = YouCollectedTheCannonball_TryToMissIt(taskParam, subject, screenIndex, Data, win);
+
         case 25
             
             if isequal(whichPractice, 'mainPractice') || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 4) || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 5) || (isequal(whichPractice, 'followCannonPractice') && subject.cBal == 6)
@@ -167,15 +216,16 @@ while 1
                 %LoadData = 'CP_Noise';
                 %condition = 'mainPractice_2';
                 condition = 'onlinePractice';
-                al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject);
+                [taskData, trial] = al_loadTaskData(taskParam, condition, taskParam.gParam.haz(1), taskParam.gParam.concentration(3));
+                al_mainLoop(taskParam, taskParam.gParam.haz(1), taskParam.gParam.concentration(3), condition, subject, taskData, trial);
                 
             elseif isequal(whichPractice, 'oddballPractice')
                 
-                oddballPractice
+                oddballPractice(taskParam, subject)
                 
             elseif isequal(taskParam.gParam.taskType, 'reversal')
 
-                reversalPractice
+                reversalPractice(taskParam, subject)
                 
             elseif isequal(taskParam.gParam.taskType, 'dresden')
                 
@@ -183,7 +233,7 @@ while 1
                 
             elseif (isequal(whichPractice, 'chinese'))
                 
-                % Run task specific instructions for chinese condition
+                % Run task-specific instructions for chinese condition
                 chinesePractice(taskParam, subject)
                 
             end

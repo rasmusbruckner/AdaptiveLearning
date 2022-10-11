@@ -1,9 +1,8 @@
 function taskData = al_generateOutcomes(taskParam, haz, concentration, condition)
 %AL_GENERATEOUTCOMES   This function generates the outcomes for the different tasks
 %
-%   TODO: The organization of this function can be improved. At some point,
-%   it should be reorganized in order to have similar way to generate outcomes
-%   for all task versions.
+%   NOTE: Deprecated. We now used more specific functions for the different
+%   scenarios.
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -126,7 +125,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         
         block(i) = al_indicateBlock(i, taskParam.gParam.blockIndices);
         
-        % Generate change points
+        % Generate changepoints
         if (rand < haz && s == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
             
             % Indicate current change point
@@ -253,7 +252,7 @@ elseif isequal(condition, 'oddball') || isequal(condition, 'practiceNoOddball') 
     % ----------------------------------------
     
 elseif isequal(condition, 'reversal') || isequal(condition, 'reversalPractice') || isequal(condition, 'reversalPracticeNoise')...
-        || isequal(condition, 'reversalPracticeNoiseInv2') || isequal(condition, 'reversalPracticeNoiseInv3')
+        || isequal(condition, 'reversalPracticeNoiseInv') || isequal(condition, 'reversalPracticeNoiseInv2') || isequal(condition, 'reversalPracticeNoiseInv3')
     
     for i = 1:trials
         
@@ -511,12 +510,11 @@ elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstra
     
 elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstraints, 'aging')
     
-    if nEnemies ~= 3
+    if nEnemies ~= 2
          warning('Contraints not tested for current nEnemies!')
     end
 
     % Initialize variables
-    %all_mu = [];
     latentState = [];
     currentContext = [];
     critDist = taskParam.gParam.critDist;
@@ -525,11 +523,22 @@ elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstra
     % -------------------------------
     
     currDistMeans = randi(359, nEnemies, nPlanets);
+
+    %     while 1
+%         x1 = abs(al_diff(currDistMeans(1, :, :), currDistMeans(2, :, :)));
+%         x2 = abs(al_diff(currDistMeans(1, :, :), currDistMeans(3, :, :)));
+%         x3 = abs(al_diff(currDistMeans(2, :, :), currDistMeans(3, :, :)));
+%         if any(any(x1 < critDist)) || any(any(x2 < critDist)) || any(any(x3 < critDist))
+%             currDistMeans = randi(359, nEnemies, nPlanets);
+%         else
+%             break
+%         end
+%     end
+
     while 1
         x1 = abs(al_diff(currDistMeans(1, :, :), currDistMeans(2, :, :)));
-        x2 = abs(al_diff(currDistMeans(1, :, :), currDistMeans(3, :, :)));
-        x3 = abs(al_diff(currDistMeans(2, :, :), currDistMeans(3, :, :)));
-        if any(any(x1 < critDist)) || any(any(x2 < critDist)) || any(any(x3 < critDist))
+        
+        if any(x1 < critDist)
             currDistMeans = randi(359, nEnemies, nPlanets);
         else
             break
@@ -541,8 +550,8 @@ elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstra
     enemies = enemies(randperm(size(enemies ,2)));
     
     % Determine number of repetitions for current enemy
-    rep = Shuffle([4, 5, 6]);
-    
+    rep = Shuffle([5, 6]);
+
     % Cycle over enemies
     for e = 1:length(enemies)
         

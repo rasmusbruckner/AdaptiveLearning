@@ -12,8 +12,8 @@ function al_drawCircle(taskParam)
 rotRad = taskParam.circle.rotationRad;
 
 % Extract center
-zero = taskParam.gParam.zero;
+zero = taskParam.display.zero;
 
 % Generate circle
-Screen(taskParam.gParam.window.onScreen,'FrameOval',[224 224 224], [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], [], 10, []);
+Screen(taskParam.display.window.onScreen,'FrameOval',[224 224 224], [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], [], 10, []);
 

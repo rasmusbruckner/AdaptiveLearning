@@ -1,104 +1,108 @@
-function [] = al_keyboardLoop()
-%AL_KEYBOARDLOOP   This function implementens the participants' interaction
+function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt, breakKey)
+%AL_KEYBOARDLOOP This function implementens the participants' interaction
 % with the cannon task via the keyboard
 %
-%   TODO: this function is not acitvely used in the latest versions because
-%   we now use the mouse instead of the keyboard. However, this function
-%   should be cleaned and additional comments should be added.
-%
 %   Input
-%       ~
+%       taskParam: Task-parameter-object instance
+%       taskData: Task-data-object instance
+%       trial: Current trial number
+%       initRT_Timestamp: Onset of prediction phase for computing initRT
+%       text: Presented text
+%       breakKey: Key code to lock prediction
 %   Ouptut
-%       ~
+%       taskData: Task-parameter-object instance
+%       taskParam: Task-data-object instance
 
 
+% Manage optional breakKey input: if not provided, use SPACE as default
+if ~exist('breakKey', 'var') || isempty(breakKey)
+    breakKey = taskParam.keys.space;
+end
+
+% -------------------------------------------------------------
+% 1. If push condition, sample push from von Mises distribution
+% -------------------------------------------------------------
+
+if trial == 1 || strcmp(taskParam.trialflow.push, 'practiceNoPush')
+    taskData.z(trial) = rad2deg(taskParam.circle.rotAngle);
+    taskData.y(trial) = 0;
+elseif trial > 1 && strcmp(taskParam.trialflow.push, 'push')
+    taskData.z(trial) = al_sampleOutcome(taskData.pred(trial-1), taskParam.gParam.pushConcentration);
+    taskData.y(trial) = al_diff(taskData.z(trial), taskData.pred(trial-1));
+    taskParam.circle.rotAngle = deg2rad(taskData.z(trial));
+else
+    taskData.z(trial) = taskData.pred(trial-1);
+    taskData.y(trial) = 0;
+end
+
+% -------------------------------------------------------
+% 2. Update prediction spot until prediction is confirmed
+% -------------------------------------------------------
 
 while 1
+
+    % If no text as input, assume we're in the main task and just present
+    % background if required
+    if ~exist('txt', 'var') ||  isempty(txt)
+
+        % Present background picture, if required
+        if isequal(taskParam.trialflow.background, 'picture')
+            Screen('FillRect', taskParam.display.window.onScreen, [0 0 0]); % black background
+            Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.backgroundTxt, [], taskParam.display.backgroundCoords, []); % texture
+        end
+
+        % Otherwise present text and background together
+    else
+        al_lineAndBack(taskParam)
+        sentenceLength = taskParam.strings.sentenceLength;
+        DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], sentenceLength);
+    end
+
+    % If break key equals enter button, ask subject to press enter to continue
+    if breakKey == taskParam.keys.enter
+        DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter ,'center', taskParam.display.screensize(4)*0.9);
+    end
+
+    % Present circle and prediction spot
     al_drawCircle(taskParam)
-    if isequal(taskParam.gParam.taskType, 'chinese')
-        drawContext(taskParam, taskData.currentContext(i))
+    al_predictionSpot(taskParam)
+
+    % Todo: Test this new version with trialflow object instance for
+    % other task versions than "sleep"
+    % If requested, show cannon and cannon aim, otherwise fixation cross
+    if (taskData.catchTrial(trial) == 1) || isequal(taskParam.trialflow.cannon, 'show cannon')
+        al_drawCannon(taskParam, taskData.distMean(trial))
+        al_aim(taskParam, taskData.distMean(trial))
+    else
         al_drawCross(taskParam)
     end
-    al_drawCross(taskParam)
-    al_predictionSpot(taskParam)
-    
-    if i ~= taskParam.gParam.blockIndices(1) && i ~= taskParam.gParam.blockIndices(2) + 1 && i ~= taskParam.gParam.blockIndices(3) + 1 && i ~= taskParam.gParam.blockIndices(4) + 1 && ~isequal(taskParam.gParam.taskType, 'chinese')
-        
-        al_tickMark(taskParam, taskData.outcome(i-1), 'outc')
-        al_tickMark(taskParam, taskData.pred(i-1), 'pred')
-        if isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-            al_tickMark(taskParam, taskParam.savedTickmark(i-1), 'saved')
+
+    % Optionally, present tick marks
+    if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
+
+        al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+        al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
+
+        % Todo: Test this new version with trialflow object instance for
+        % reversal task
+        if isequal(taskParam.trialflow.savedTickmark, 'show')
+            al_tickMark(taskParam, taskParam.savedTickmark(trial-1), 'saved')
         end
     end
-    
-    if (taskData.catchTrial(i) == 1 && isequal(taskParam.gParam.taskType, 'dresden')) || isequal(condition,'followCannon') || isequal(condition,'followCannonPractice')...
-            || isequal(condition,'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1')...
-            || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
-        
-        Cannon(taskParam, taskData.distMean(i))
-        al_aim(taskParam, taskData.distMean(i))
-    elseif isequal(taskParam.gParam.taskType, 'reversal') || isequal(taskParam.gParam.taskType, 'reversalPractice')
-        taskData.catchTrial(i) = 0;
-    end
-    
-    Screen('DrawingFinished', taskParam.gParam.window.onScreen);
+
+    % Tell PTB that all elements have been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
     t = GetSecs;
-    Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
-    % commented out because update of timestampOnset results in timestamp
-    % of last screen refresh before prediction and thus does not reflect
-    % trial onset.
-    %taskData.timestampOnset(i,:) = GetSecs - ref;
-    
-    % Get initiation RT
-    [ keyIsDown, ~, keyCode ] = KbCheck;
-    
-    % initationRTs is nan before first button press: save time
-    % of button press. thereafter variable is not nan anymore
-    % and not resaved.
-    if keyIsDown && isnan(taskData.initiationRTs(i,:))
-        
-        if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
-            taskData.initiationRTs(i,:) = GetSecs() - initRT_Timestamp;
-        end
-        
-    elseif keyIsDown
-        
-        if keyCode(taskParam.keys.rightKey)
-            if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.75*taskParam.circle.unit;
-            else
-                taskParam.circle.rotAngle = 0;
-            end
-        elseif keyCode(taskParam.keys.rightSlowKey)
-            
-            if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-                taskParam.circle.rotAngle = taskParam.circle.rotAngle + 0.1*taskParam.circle.unit;
-            else
-                taskParam.circle.rotAngle = 0;
-            end
-        elseif keyCode(taskParam.keys.leftKey)
-            
-            if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.75*taskParam.circle.unit;
-            else
-                taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-            end
-            
-        elseif keyCode(taskParam.keys.leftSlowKey)
-            
-            if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-                taskParam.circle.rotAngle = taskParam.circle.rotAngle - 0.1*taskParam.circle.unit;
-            else
-                taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-            end
-        elseif keyCode(taskParam.keys.space)
-            taskData.pred(i) = (taskParam.circle.rotAngle / taskParam.circle.unit);
-            
-            time = GetSecs;
-            
-            break
-            
-        end
+    Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
+
+    % Update location of prediction spot depending on participant input
+    [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam, taskData, trial, initRT_Timestamp, breakKey);
+
+    % Break out of while condition if prediction has been confirmed
+    if breakLoop == true
+        break
     end
-    
+
 end
+end
+

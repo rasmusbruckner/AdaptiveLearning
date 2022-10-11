@@ -1,15 +1,15 @@
 function diff = al_diff(parameter1, parameter2)
-%AL_DIFF   This function calculates the difference of two variables on a circle
-%   DIFF is used to compute prediction error, memory error
+%AL_DIFF   This function computes the difference of two variables on a circle
+%   al_diff is used to compute prediction error, memory error,
 %   or update in the cannon task
 %
 %   Input
-%       parameter1, parameter2: values between which difference is computed
+%       parameter1, parameter2: difference between values
 %
 %   Output
 %        diff: computed difference
 
-
+    % Difference expressed in degrees
     diff = rad2deg(circ_dist(deg2rad(parameter1), deg2rad(parameter2)));
 
 end

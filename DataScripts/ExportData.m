@@ -5,7 +5,7 @@
 
 clear all
 computer = 'Macbook';
-%% Which subjects and variables do you want to load?
+% Which subjects and variables do you want to load?
 
 % Use {'all'} for all subjects or give IDs like {'001' '002'}.
 subject = {'p03'};% 'test' 'test2'

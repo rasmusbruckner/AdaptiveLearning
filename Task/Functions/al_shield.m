@@ -10,6 +10,7 @@ function al_shield(taskParam, allASS, pred, color)
 %   Output 
 %       ~ 
 
+% todo: implement trialflow
 
 if isequal(taskParam.gParam.taskType, 'dresden')
     
@@ -38,8 +39,8 @@ end
 
 rotRad = taskParam.circle.rotationRad + 10;
 OutcSpot = pred - (allASS/2);
-zero = taskParam.gParam.zero;
-Screen('FrameArc', taskParam.gParam.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, 30, [], [])
+zero = taskParam.display.zero;
+Screen('FrameArc', taskParam.display.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, 30, [], [])
 
 end
 

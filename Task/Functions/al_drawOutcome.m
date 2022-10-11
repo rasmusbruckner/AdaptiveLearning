@@ -16,9 +16,9 @@ OutcSpot = OffsetRect(taskParam.circle.outcCentSpotRect, xPredS, yPredS);
 
 % Generate outcome spot
 if isequal(taskParam.gParam.taskType, 'chinese')
-    Screen('FillOval', taskParam.gParam.window.onScreen, [165 42 42], OutcSpot);
+    Screen('FillOval', taskParam.display.window.onScreen, [165 42 42], OutcSpot);
 else
-    Screen('FillOval', taskParam.gParam.window.onScreen, [0 0 0], OutcSpot);
+    Screen('FillOval', taskParam.display.window.onScreen, [0 0 0], OutcSpot);
 end
 end
 

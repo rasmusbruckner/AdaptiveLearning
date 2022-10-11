@@ -1,5 +1,5 @@
 function al_conditionIndication(taskParam, txtNoise, txtPressEnter)
-%AL_CONDITIONINDICATION   This function displays the current task condition
+%AL_CONDITIONINDICATION This function displays the current task condition
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -11,11 +11,11 @@ function al_conditionIndication(taskParam, txtNoise, txtPressEnter)
 
 
 % Draw desired text 
-DrawFormattedText(taskParam.gParam.window, txtNoise, 'center','center', [255 255 255]);
-DrawFormattedText(taskParam.gParam.window,txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9);
-Screen('DrawingFinished', taskParam.gParam.window);
+DrawFormattedText(taskParam.display.window.onScreen, txtNoise, 'center','center', [255 255 255]);
+DrawFormattedText(taskParam.display.window.onScreen,txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9);
+Screen('DrawingFinished', taskParam.display.window.onScreen);
 t = GetSecs;
-Screen('Flip', taskParam.gParam.window, t + 0.1);
+Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
 
 % Check for keyboard press to continue instruction
 if ~taskParam.unitTest
