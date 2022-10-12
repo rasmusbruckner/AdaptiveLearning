@@ -11,18 +11,16 @@ function taskData = al_sleepLoop(taskParam, condition, taskData, trial, practice
 %   Output
 %       taskData: Task-data-object instance
 %
-%   TODO: Verify this
 %   Events
 %       1: Trial Onset
 %       2: Prediction            (self-paced)
 %       3: Cannonball animation  (500 ms)
-%       4: Miss/Hit animation    (1500 ms)
+%       4: Miss/Hit animation    (1000 ms)
 %       5: ITI                   (900 ms)
 %       6: Jitter                (0-200 ms)
 %                                ------------
 %                                 3s + pred (~ 2s)
 %
-% todo: timing in unit test
 % todo: maybe get rid of "condition" input
 % todo: some comments should be added on some outdated comments should be
 % deleted
@@ -78,10 +76,8 @@ for i = 1:trial
     % Self-paced prediction phase
     % ---------------------------
 
-    % Only do this when not testing the code
-    if ~taskParam.unitTest
-        [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp);
-    end
+    [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp);
+   
 
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
@@ -114,7 +110,7 @@ for i = 1:trial
         taskData.perf(i) = 0;
     end
 
-    % todo: verify before running real experiment
+    % Accumulated performance
     taskData.accPerf(i) = sum(taskData.perf, 'omitnan');
 
     % Record belief update

@@ -24,10 +24,19 @@ breakLoop = false;
 
 % Todo: This can potentially become a separate function -- check when
 % getting back to unit tests
-[keyIsDown, ~, keyCode ] = KbCheck;
+
+% For unit test: simulate keyIsDown, keyCode, and record RT
+if ~taskParam.unitTest
+    [keyIsDown, ~, keyCode] = KbCheck;
+else
+    WaitSecs(0.5);  % simulate RT = 0.5
+    keyIsDown = 1;
+    keyCode = zeros(1, 256);
+    keyCode(taskParam.keys.space) = 1;
+end
+
 if keyIsDown && isnan(taskData.initiationRTs(trial))
 
-    % Todo: keyCodes should be tested in unit test
     if keyCode(taskParam.keys.rightKey) || keyCode(taskParam.keys.leftKey) || keyCode(taskParam.keys.rightSlowKey) || keyCode(taskParam.keys.leftSlowKey) || keyCode(taskParam.keys.space)
        
         % todo: add explanation
@@ -40,9 +49,13 @@ if keyIsDown && isnan(taskData.initiationRTs(trial))
     % keyboard loop should be terminated
     if keyCode(taskParam.keys.space)
 
-        % Record prediction 
-        taskData.pred(trial) = (taskParam.circle.rotAngle / taskParam.circle.unit);
+        if taskParam.unitTest
+            taskParam.circle.rotAngle = deg2rad(taskData.pred(trial));
+        end
         
+        % Record prediction (todo: can in principle done with rad2deg)
+        taskData.pred(trial) = (taskParam.circle.rotAngle / taskParam.circle.unit);
+
         % RT is equal to initiation RT in this case
         taskData.RT(trial) = taskData.initiationRTs(trial); 
         
@@ -62,6 +75,7 @@ end
 
 % When other keys are pressed before space, update orange spot until space 
 % is pressed
+
 
 if keyIsDown && ~breakLoop
 
@@ -103,7 +117,7 @@ if keyIsDown && ~breakLoop
     % Commit to prediction and terminate response loop
     elseif keyCode(breakKey)
         
-        % Record prediction 
+        % Record prediction (todo: can in principle done with rad2deg)
         taskData.pred(trial) = (taskParam.circle.rotAngle / taskParam.circle.unit);
         
         % Add comment

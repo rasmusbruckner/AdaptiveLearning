@@ -15,8 +15,7 @@ function [dataNoPush, dataPush] =  RunSleepVersion(unitTest)
 %   Last updated
 %       10/22
 
-% Extend the integration test 
-
+% Todo: Extend unit tests and include cBal and Day in integration tests
 % Before collection of MD data: determine incentives and remuneration
 
 % Check if unit test is required

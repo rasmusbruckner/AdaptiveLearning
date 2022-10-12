@@ -2,13 +2,7 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
     % This function runs an integration test for the sleep version
     % To run the test, put run(al_sleepIntegrationTest) in command window
 
-    % Todo: Also add tests for RT and initiationRTs. Basically by 
-    % simulting button presses in the respective function so that 
-    % some values are stored. Also actJitter.
-
-    % Also test the timestamps, which currently have values already
-
-    % Test all cBals and all Days 
+    % Todo: Test all cBals and all Days 
 
     % Test methods
     methods (Test)
@@ -80,27 +74,30 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataNoPush.rew, expectedRew);
             testCase.verifyEqual(dataPush.rew, expectedRew);
            
-            % actJitter
-            
+            % Actual jitter with tolerance of 100 ms 
+            expectedActJitter = repmat(0.1, 20, 1);
+            testCase.verifyEqual(dataNoPush.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush.actJitter, expectedActJitter, "AbsTol", 0.1);
+           
             % Block number
             expectedBlock = ones(20,1);
             testCase.verifyEqual(dataNoPush.block, expectedBlock);
             testCase.verifyEqual(dataPush.block, expectedBlock);
             
-            % RT
-            expectedRT = nan(20,1);
-            testCase.verifyEqual(dataNoPush.RT, expectedRT);
-            testCase.verifyEqual(dataPush.RT, expectedRT);
+            % RT with tolerance of 100 ms
+            expectedRT = repmat(0.5,20,1);
+            testCase.verifyEqual(dataNoPush.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush.RT, expectedRT, "AbsTol", 0.1);
 
-            % initiationRTs
-            expectedInitiationRTs = nan(20,1);
-            testCase.verifyEqual(dataNoPush.initiationRTs, expectedInitiationRTs);
-            testCase.verifyEqual(dataPush.initiationRTs, expectedInitiationRTs);
+            % Initiation RTs with tolerance of 100 ms
+            expectedInitiationRTs = repmat(0.5,20,1);
+            testCase.verifyEqual(dataNoPush.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
 
             % All angular shield size
-            xpectedAllASS = repmat(rad2deg(2*sqrt(1/12)), 20, 1);
-            testCase.verifyEqual(dataNoPush.allASS, xpectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush.allASS, xpectedAllASS, "AbsTol", 1.e-10);
+            expectedAllASS = repmat(rad2deg(2*sqrt(1/12)), 20, 1);
+            testCase.verifyEqual(dataNoPush.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush.allASS, expectedAllASS, "AbsTol", 1.e-10);
 
             % Changepoint
             expectedCP = [1; 0; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0];
@@ -188,30 +185,42 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataPush.initialTendency, expectedInitialTendency);
 
             % Cannon deviation
-            expectedCannonDev = [-24;	13;	-67; -16; 83; -30; -87;	-88; -17; 150; 150;	150; 150; 162; -121; -121; -121; 16; 5; 5];
+            expectedCannonDev = [-24; 13; -67; -16; 83; -30; -87; -88; -17; 150; 150; 150; 150; 162; -121; -121; -121; 16; 5; 5];
             testCase.verifyEqual(dataNoPush.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
             testCase.verifyEqual(dataPush.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
 
             % Initial starting point of prediction
-            expectedZ = nan(20, 1);
-            testCase.verifyEqual(dataNoPush.z, expectedZ);
-            testCase.verifyEqual(dataPush.z, expectedZ);
+            expectedY_Push = repmat([-10, 10], 1,10)';
+            expectedY_Push(1) = 0;
+            expectedZ_noPush = [0; 307; 270; 350; 299; 200; 313; 10; 11; 300; 162; 162; 162; 162; 150; 73; 73; 73; 190; 201];
+            testCase.verifyEqual(dataNoPush.z, expectedZ_noPush);
+            testCase.verifyEqual(dataPush.z, expectedY_Push + expectedZ_noPush);
             
             % Push magnitude
-            expectedY = nan(20, 1);
-            testCase.verifyEqual(dataNoPush.y, expectedY);
-            testCase.verifyEqual(dataPush.y, expectedY);
+            testCase.verifyEqual(dataNoPush.y, zeros(20, 1), 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush.y, expectedY_Push, 'AbsTol', 1.e-10);
 
             % Latent state
             expectedLatentState = zeros(20, 1);
             testCase.verifyEqual(dataNoPush.latentState, expectedLatentState);
             testCase.verifyEqual(dataPush.latentState, expectedLatentState);
             
-            % timestampOnset
+            % Timestamps: Not testing absolute values bc the reference
+            % value depends on manual input (todo: fix when doin CI)
             
-            % timestampPrediction
-            
-            % timestampOffset
+            % Difference prediction and trial onset
+            expectedOnsetPredDiff = repmat(0.5, 20, 1);
+            actualOnsetPredDiffNoPush = dataNoPush.timestampPrediction - dataNoPush.timestampOnset;
+            actualOnsetPredDiffPush = dataPush.timestampPrediction - dataPush.timestampOnset;
+            testCase.verifyEqual(expectedOnsetPredDiff, actualOnsetPredDiffNoPush, 'AbsTol', 0.05)
+            testCase.verifyEqual(expectedOnsetPredDiff, actualOnsetPredDiffPush, 'AbsTol', 0.05)
+
+            % Difference offset and prediction
+            expectedPredShotPlusITIDiff = repmat(2.4, 20, 1);
+            actualPredShotPlusITIDiffNoPush = dataNoPush.timestampOffset -dataNoPush.timestampPrediction;
+            actualPredShotPlusITIDiffPush = dataPush.timestampOffset -dataPush.timestampPrediction;
+            testCase.verifyEqual(expectedPredShotPlusITIDiff, actualPredShotPlusITIDiffNoPush, 'AbsTol', 0.1)
+            testCase.verifyEqual(expectedPredShotPlusITIDiff, actualPredShotPlusITIDiffPush, 'AbsTol', 0.1)
             
             % Triggers
             expectedTriggers = zeros(20,1);

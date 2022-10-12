@@ -27,7 +27,15 @@ if trial == 1 || strcmp(taskParam.trialflow.push, 'practiceNoPush')
     taskData.z(trial) = rad2deg(taskParam.circle.rotAngle);
     taskData.y(trial) = 0;
 elseif trial > 1 && strcmp(taskParam.trialflow.push, 'push')
-    taskData.z(trial) = al_sampleOutcome(taskData.pred(trial-1), taskParam.gParam.pushConcentration);
+    if ~taskParam.unitTest
+        taskData.z(trial) = al_sampleOutcome(taskData.pred(trial-1), taskParam.gParam.pushConcentration);
+    else
+        if rem(trial, 2) == 0
+            taskData.z(trial) = taskData.pred(trial-1) + 10;
+        else
+            taskData.z(trial) = taskData.pred(trial-1) - 10;
+        end
+    end
     taskData.y(trial) = al_diff(taskData.z(trial), taskData.pred(trial-1));
     taskParam.circle.rotAngle = deg2rad(taskData.z(trial));
 else

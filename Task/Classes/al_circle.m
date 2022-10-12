@@ -73,7 +73,7 @@ classdef al_circle
             circleobj.predCentSpotRect = nan;
             circleobj.outcCentRect = nan;
             circleobj.centSpotRectMean = nan;
-            circleobj.unit = 2*pi/360;
+            circleobj.unit = 2*pi/360;  % todo: maybe get rid of unit and use rad2deg for computing pred
             circleobj.initialRotAngle = 0*circleobj.unit;  % todo: delete unit here when tets are implemented
             circleobj.rotAngle = circleobj.initialRotAngle;
             circleobj.cannonEndDiam = 10;
