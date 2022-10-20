@@ -1,4 +1,4 @@
-function [dataNoPush, dataPush] =  RunSleepVersion(unitTest)
+function [dataNoPush, dataPush] =  RunSleepVersion(unitTest, cBal, day)
 %RUNSLEEPVERSION This function runs the sleep-study version
 %  of the cannon task.
 %
@@ -18,9 +18,28 @@ function [dataNoPush, dataPush] =  RunSleepVersion(unitTest)
 % Todo: Extend unit tests and include cBal and Day in integration tests
 % Before collection of MD data: determine incentives and remuneration
 
-% Check if unit test is required
-if nargin == 0
+% Check if unit test is requested
+if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;
+end
+
+% Check optional input related to unit test
+% -----------------------------------------
+
+if exist('cBal', 'var') && ~unitTest
+     error('No unit test: cBal cannot be used');
+elseif exist('cBal', 'var') && unitTest
+    if ~ischar(cBal)
+        error('cBal must be char');
+    end
+end
+
+if exist('day', 'var') && ~unitTest
+     error('No unit test: day cannot be used');
+elseif exist('cBal', 'var') && unitTest
+    if ~ischar(day)
+        error('day must be char');
+    end
 end
 
 % Reset random number generator to ensure different outcome sequences
@@ -35,8 +54,11 @@ end
 % Set relevant task parameters
 % ----------------------------
 
-% Set number of trials of main task
-trials = 20;  %175;  Hier bitte anpassen
+% Set number of trials for experiment
+trialsExp = 20;  %175;  Hier bitte anpassen
+
+% Set number of trials for integration test
+trialsTesting = 20; 
 
 % Number of practice trials
 practTrials = 2; %20;  Hier bitte anpassen
@@ -51,7 +73,7 @@ pushConcentration = 4;
 haz = .125;                     
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false; %true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -120,6 +142,12 @@ dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpass
 
 % Todo: For independent versions make sure that 
 % all variables are still in use.
+
+if unitTest
+    trials = trialsTesting;
+else
+    trials = trialsExp;
+end
 
 % Initialize
 gParam = al_gparam();
@@ -204,11 +232,13 @@ ID = '99999'; % 5 digits
 age = '99'; 
 sex = 'f';  % m/f/d
 group = '1'; % 1=sleep/2=control
-cBal = '1'; % 1/2/3/4
-day = '1'; % 1/2
+if ~unitTest
+    cBal = '1'; % 1/2/3/4
+    day = '1'; % 1/2
+end
 
 % If no user input requested
-if gParam.askSubjInfo == false
+if gParam.askSubjInfo == false || unitTest
 
     % Just add defaults
     subject.ID = str2double(ID);

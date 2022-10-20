@@ -90,9 +90,13 @@ elseif (cBal == 2 && testDay == 2) ||...
 
     % Push first...
     % -------------
-
+    
     % Get data
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+    if ~unitTest
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+    else
+        load('integrationTest_sleep.mat','taskData')
+    end
 
     % Run task
     taskParam.trialflow.push = 'push';
@@ -103,7 +107,11 @@ elseif (cBal == 2 && testDay == 2) ||...
     % ------------------
 
     % Get data
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+    if ~unitTest
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+    else
+        load('integrationTest_sleep.mat','taskData')
+    end
 
     % Run task
     taskParam.trialflow.push = 'noPush';

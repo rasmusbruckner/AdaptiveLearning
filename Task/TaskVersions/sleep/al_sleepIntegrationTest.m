@@ -11,242 +11,570 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             
 
             % Run task in unit-test mode
-            [dataNoPush, dataPush] = RunSleepVersion(true);
-                     
+            % --------------------------
+
+            cBal = '1';
+            day = '1';
+            [dataNoPush_cBal1_day1, dataPush_cBal1_day1] = RunSleepVersion(true, cBal, day);
+            
+            cBal = '2';
+            day = '1';
+            [dataNoPush_cBal2_day1, dataPush_cBal2_day1] = RunSleepVersion(true, cBal, day);
+
+            cBal = '1';
+            day = '2';
+            [dataNoPush_cBal1_day2, dataPush_cBal1_day2] = RunSleepVersion(true, cBal, day);
+            
+            cBal = '2';
+            day = '2';
+            [dataNoPush_cBal2_day2, dataPush_cBal2_day2] = RunSleepVersion(true, cBal, day);
+
+            % Test output
+            % -----------
+
             % ID
             expectedID = repmat(99999,20,1);
-            testCase.verifyEqual(dataNoPush.ID, expectedID);
-            testCase.verifyEqual(dataPush.ID, expectedID);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.ID, expectedID);
+            testCase.verifyEqual(dataPush_cBal1_day1.ID, expectedID);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.ID, expectedID);
+            testCase.verifyEqual(dataPush_cBal2_day1.ID, expectedID);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.ID, expectedID);
+            testCase.verifyEqual(dataPush_cBal1_day2.ID, expectedID);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.ID, expectedID);
+            testCase.verifyEqual(dataPush_cBal2_day2.ID, expectedID);
 
             % Sex
             expectedSex = repmat({'f'},20,1);
-            testCase.verifyEqual(dataNoPush.sex, expectedSex);
-            testCase.verifyEqual(dataPush.sex, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.sex, expectedSex);
+            testCase.verifyEqual(dataPush_cBal1_day1.sex, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.sex, expectedSex);
+            testCase.verifyEqual(dataPush_cBal2_day1.sex, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.sex, expectedSex);
+            testCase.verifyEqual(dataPush_cBal1_day2.sex, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.sex, expectedSex);
+            testCase.verifyEqual(dataPush_cBal2_day2.sex, expectedSex);
 
             % Age
             expectedAge = repmat(99,20,1);
-            testCase.verifyEqual(dataNoPush.age, expectedAge);
-            testCase.verifyEqual(dataPush.age, expectedAge);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.age, expectedAge);
+            testCase.verifyEqual(dataPush_cBal1_day1.age, expectedAge);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.age, expectedAge);
+            testCase.verifyEqual(dataPush_cBal2_day1.age, expectedAge);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.age, expectedAge);
+            testCase.verifyEqual(dataPush_cBal1_day2.age, expectedAge);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.age, expectedAge);
+            testCase.verifyEqual(dataPush_cBal2_day2.age, expectedAge);
 
             % Date
             expectedDate = repmat({date},20,1);
-            testCase.verifyEqual(dataNoPush.Date, expectedDate);
-            testCase.verifyEqual(dataPush.Date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.Date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal1_day1.Date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.Date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal2_day1.Date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.Date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal1_day2.Date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.Date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal2_day2.Date, expectedDate);
+
 
             % Test day
             expectedTestDay = ones(20,1);
-            testCase.verifyEqual(dataNoPush.testDay, expectedTestDay);
-            testCase.verifyEqual(dataPush.testDay, expectedTestDay);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.testDay, expectedTestDay);
+            testCase.verifyEqual(dataPush_cBal1_day1.testDay, expectedTestDay);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.testDay, expectedTestDay);
+            testCase.verifyEqual(dataPush_cBal2_day1.testDay, expectedTestDay);
+            expectedTestDay = ones(20,1) + 1;
+            testCase.verifyEqual(dataNoPush_cBal1_day2.testDay, expectedTestDay);
+            testCase.verifyEqual(dataPush_cBal1_day2.testDay, expectedTestDay);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.testDay, expectedTestDay);
+            testCase.verifyEqual(dataPush_cBal2_day2.testDay, expectedTestDay);
 
             % Condition
             expectedCondition = repmat({'noPush'},20,1);
-            testCase.verifyEqual(dataNoPush.cond, expectedCondition);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.cond, expectedCondition);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.cond, expectedCondition);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.cond, expectedCondition);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.cond, expectedCondition);
             expectedCondition = repmat({'push'},20,1);
-            testCase.verifyEqual(dataPush.cond, expectedCondition);
+            testCase.verifyEqual(dataPush_cBal1_day1.cond, expectedCondition);
+            testCase.verifyEqual(dataPush_cBal2_day1.cond, expectedCondition);
+            testCase.verifyEqual(dataPush_cBal1_day2.cond, expectedCondition);
+            testCase.verifyEqual(dataPush_cBal2_day2.cond, expectedCondition);
 
             % Concentration
             expectedConcentration = repmat(12,20,1);
-            testCase.verifyEqual(dataNoPush.concentration, expectedConcentration);
-            testCase.verifyEqual(dataPush.concentration, expectedConcentration);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.concentration, expectedConcentration);
+            testCase.verifyEqual(dataPush_cBal1_day1.concentration, expectedConcentration);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.concentration, expectedConcentration);
+            testCase.verifyEqual(dataPush_cBal2_day1.concentration, expectedConcentration);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.concentration, expectedConcentration);
+            testCase.verifyEqual(dataPush_cBal1_day2.concentration, expectedConcentration);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.concentration, expectedConcentration);
+            testCase.verifyEqual(dataPush_cBal2_day2.concentration, expectedConcentration);
 
             % Push concentration
             expectedPushConcentration = repmat(4,20,1);
-            testCase.verifyEqual(dataNoPush.pushConcentration, expectedPushConcentration);
-            testCase.verifyEqual(dataPush.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataPush_cBal1_day1.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataPush_cBal2_day1.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataPush_cBal1_day2.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.pushConcentration, expectedPushConcentration);
+            testCase.verifyEqual(dataPush_cBal2_day2.pushConcentration, expectedPushConcentration);
 
             % Hazard rate
             expectedHaz = repmat(0.125,20,1);
-            testCase.verifyEqual(dataNoPush.haz, expectedHaz);
-            testCase.verifyEqual(dataPush.haz, expectedHaz);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.haz, expectedHaz);
+            testCase.verifyEqual(dataPush_cBal1_day1.haz, expectedHaz);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.haz, expectedHaz);
+            testCase.verifyEqual(dataPush_cBal2_day1.haz, expectedHaz);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.haz, expectedHaz);
+            testCase.verifyEqual(dataPush_cBal1_day2.haz, expectedHaz);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.haz, expectedHaz);
+            testCase.verifyEqual(dataPush_cBal2_day2.haz, expectedHaz);
            
             % Safe trial before changepoint
             expectedSafe = repmat(3,20,1);
-            testCase.verifyEqual(dataNoPush.safe, expectedSafe);
-            testCase.verifyEqual(dataPush.safe, expectedSafe);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.safe, expectedSafe);
+            testCase.verifyEqual(dataPush_cBal1_day1.safe, expectedSafe);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.safe, expectedSafe);
+            testCase.verifyEqual(dataPush_cBal2_day1.safe, expectedSafe);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.safe, expectedSafe);
+            testCase.verifyEqual(dataPush_cBal1_day2.safe, expectedSafe);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.safe, expectedSafe);
+            testCase.verifyEqual(dataPush_cBal2_day2.safe, expectedSafe);
             
             % Group
             expectedGroup = ones(20,1);
-            testCase.verifyEqual(dataNoPush.group, expectedGroup);
-            testCase.verifyEqual(dataPush.group, expectedGroup);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.group, expectedGroup);
+            testCase.verifyEqual(dataPush_cBal1_day1.group, expectedGroup);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.group, expectedGroup);
+            testCase.verifyEqual(dataPush_cBal2_day1.group, expectedGroup);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.group, expectedGroup);
+            testCase.verifyEqual(dataPush_cBal1_day2.group, expectedGroup);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.group, expectedGroup);
+            testCase.verifyEqual(dataPush_cBal2_day2.group, expectedGroup);
 
             % Reward
             expectedRew = nan(20,1);
-            testCase.verifyEqual(dataNoPush.rew, expectedRew);
-            testCase.verifyEqual(dataPush.rew, expectedRew);
-           
+            testCase.verifyEqual(dataNoPush_cBal1_day1.rew, expectedRew);
+            testCase.verifyEqual(dataPush_cBal1_day1.rew, expectedRew);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.rew, expectedRew);
+            testCase.verifyEqual(dataPush_cBal2_day1.rew, expectedRew);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.rew, expectedRew);
+            testCase.verifyEqual(dataPush_cBal1_day2.rew, expectedRew);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.rew, expectedRew);
+            testCase.verifyEqual(dataPush_cBal2_day2.rew, expectedRew);
+
             % Actual jitter with tolerance of 100 ms 
             expectedActJitter = repmat(0.1, 20, 1);
-            testCase.verifyEqual(dataNoPush.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataPush.actJitter, expectedActJitter, "AbsTol", 0.1);
-           
+            testCase.verifyEqual(dataNoPush_cBal1_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal1_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal2_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal1_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal2_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
+
             % Block number
             expectedBlock = ones(20,1);
-            testCase.verifyEqual(dataNoPush.block, expectedBlock);
-            testCase.verifyEqual(dataPush.block, expectedBlock);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.block, expectedBlock);
+            testCase.verifyEqual(dataPush_cBal1_day1.block, expectedBlock);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.block, expectedBlock);
+            testCase.verifyEqual(dataPush_cBal2_day1.block, expectedBlock);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.block, expectedBlock);
+            testCase.verifyEqual(dataPush_cBal1_day2.block, expectedBlock);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.block, expectedBlock);
+            testCase.verifyEqual(dataPush_cBal2_day2.block, expectedBlock);
+
             % RT with tolerance of 100 ms
             expectedRT = repmat(0.5,20,1);
-            testCase.verifyEqual(dataNoPush.RT, expectedRT, "AbsTol", 0.1);
-            testCase.verifyEqual(dataPush.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal1_day1.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal2_day1.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal1_day2.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.RT, expectedRT, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal2_day2.RT, expectedRT, "AbsTol", 0.1);
 
             % Initiation RTs with tolerance of 100 ms
             expectedInitiationRTs = repmat(0.5,20,1);
-            testCase.verifyEqual(dataNoPush.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
-            testCase.verifyEqual(dataNoPush.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
 
             % All angular shield size
             expectedAllASS = repmat(rad2deg(2*sqrt(1/12)), 20, 1);
-            testCase.verifyEqual(dataNoPush.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
 
             % Changepoint
             expectedCP = [1; 0; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0];
-            testCase.verifyEqual(dataNoPush.cp, expectedCP);
-            testCase.verifyEqual(dataPush.cp, expectedCP);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.cp, expectedCP);
+            testCase.verifyEqual(dataPush_cBal1_day1.cp, expectedCP);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.cp, expectedCP);
+            testCase.verifyEqual(dataPush_cBal2_day1.cp, expectedCP);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.cp, expectedCP);
+            testCase.verifyEqual(dataPush_cBal1_day2.cp, expectedCP);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.cp, expectedCP);
+            testCase.verifyEqual(dataPush_cBal2_day2.cp, expectedCP);
+
             % Actual reward
             expectedActRew = nan(20,1);
-            testCase.verifyEqual(dataNoPush.actRew, expectedActRew);
-            testCase.verifyEqual(dataPush.actRew, expectedActRew);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.actRew, expectedActRew);
+            testCase.verifyEqual(dataPush_cBal1_day1.actRew, expectedActRew);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.actRew, expectedActRew);
+            testCase.verifyEqual(dataPush_cBal2_day1.actRew, expectedActRew);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.actRew, expectedActRew);
+            testCase.verifyEqual(dataPush_cBal1_day2.actRew, expectedActRew);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.actRew, expectedActRew);
+            testCase.verifyEqual(dataPush_cBal2_day2.actRew, expectedActRew);
 
             % Current trial
             expectedTrial = linspace(1,20,20)';
-            testCase.verifyEqual(dataNoPush.currTrial, expectedTrial);
-            testCase.verifyEqual(dataPush.currTrial, expectedTrial);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.currTrial, expectedTrial);
+            testCase.verifyEqual(dataPush_cBal1_day1.currTrial, expectedTrial);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.currTrial, expectedTrial);
+            testCase.verifyEqual(dataPush_cBal2_day1.currTrial, expectedTrial);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.currTrial, expectedTrial);
+            testCase.verifyEqual(dataPush_cBal1_day2.currTrial, expectedTrial);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.currTrial, expectedTrial);
+            testCase.verifyEqual(dataPush_cBal2_day2.currTrial, expectedTrial);
 
             % Outcome
             expectedOutcome = [295; 276; 302; 267; 299; 313; 300; 298; 273; 311; 331; 307; 325; 282; 277; 304; 315; 189; 194; 199];
-            testCase.verifyEqual(dataNoPush.outcome, expectedOutcome);
-            testCase.verifyEqual(dataPush.outcome, expectedOutcome);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.outcome, expectedOutcome);
+            testCase.verifyEqual(dataPush_cBal1_day1.outcome, expectedOutcome);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.outcome, expectedOutcome);
+            testCase.verifyEqual(dataPush_cBal2_day1.outcome, expectedOutcome);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.outcome, expectedOutcome);
+            testCase.verifyEqual(dataPush_cBal1_day2.outcome, expectedOutcome);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.outcome, expectedOutcome);
+            testCase.verifyEqual(dataPush_cBal2_day2.outcome, expectedOutcome);
 
             % Distribution mean
             expectedDistMean = [283; 283;	283; 283; 283; 283;	283; 283; 283; 312;	312; 312; 312; 312;	312; 312; 312; 206;	206; 206];
-            testCase.verifyEqual(dataNoPush.distMean, expectedDistMean);
-            testCase.verifyEqual(dataPush.distMean, expectedDistMean);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.distMean, expectedDistMean);
+            testCase.verifyEqual(dataPush_cBal1_day1.distMean, expectedDistMean);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.distMean, expectedDistMean);
+            testCase.verifyEqual(dataPush_cBal2_day1.distMean, expectedDistMean);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.distMean, expectedDistMean);
+            testCase.verifyEqual(dataPush_cBal1_day2.distMean, expectedDistMean);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.distMean, expectedDistMean);
+            testCase.verifyEqual(dataPush_cBal2_day2.distMean, expectedDistMean);
 
             % Counterbalancing
             expectedCBal = ones(20,1);
-            testCase.verifyEqual(dataNoPush.cBal, expectedCBal);
-            testCase.verifyEqual(dataPush.cBal, expectedCBal);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.cBal, expectedCBal);
+            testCase.verifyEqual(dataPush_cBal1_day1.cBal, expectedCBal);
+            expectedCBal = ones(20,1) + 1;
+            testCase.verifyEqual(dataNoPush_cBal2_day1.cBal, expectedCBal);
+            testCase.verifyEqual(dataPush_cBal2_day1.cBal, expectedCBal);
+            expectedCBal = ones(20,1);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.cBal, expectedCBal);
+            testCase.verifyEqual(dataPush_cBal1_day2.cBal, expectedCBal);
+            expectedCBal = ones(20,1) + 1;
+            testCase.verifyEqual(dataNoPush_cBal2_day2.cBal, expectedCBal);
+            testCase.verifyEqual(dataPush_cBal2_day2.cBal, expectedCBal);
 
             % Trials after changepoint
             expectedTAC = [0; 1; 2; 3; 4; 5; 6; 7; 8; 0; 1; 2; 3; 4; 5; 6; 7; 0; 1; 2];
-            testCase.verifyEqual(dataNoPush.TAC, expectedTAC);
-            testCase.verifyEqual(dataPush.TAC, expectedTAC);
-
+            testCase.verifyEqual(dataNoPush_cBal1_day1.TAC, expectedTAC);
+            testCase.verifyEqual(dataPush_cBal1_day1.TAC, expectedTAC);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.TAC, expectedTAC);
+            testCase.verifyEqual(dataPush_cBal2_day1.TAC, expectedTAC);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.TAC, expectedTAC);
+            testCase.verifyEqual(dataPush_cBal1_day2.TAC, expectedTAC);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.TAC, expectedTAC);
+            testCase.verifyEqual(dataPush_cBal2_day2.TAC, expectedTAC);
+    
             % Shield type
             expectedShieldType = ones(20,1);
-            testCase.verifyEqual(dataNoPush.shieldType, expectedShieldType);
-            testCase.verifyEqual(dataPush.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataPush_cBal1_day1.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataPush_cBal2_day1.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataPush_cBal1_day2.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.shieldType, expectedShieldType);
+            testCase.verifyEqual(dataPush_cBal2_day2.shieldType, expectedShieldType);
            
             % Catch trial
             expectedCatchTrial = [0;1;0;1;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0];
-            testCase.verifyEqual(dataNoPush.catchTrial, expectedCatchTrial);
-            testCase.verifyEqual(dataPush.catchTrial, expectedCatchTrial);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.catchTrial, expectedCatchTrial);
+            testCase.verifyEqual(dataPush_cBal1_day1.catchTrial, expectedCatchTrial);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.catchTrial, expectedCatchTrial);
+            testCase.verifyEqual(dataPush_cBal1_day2.catchTrial, expectedCatchTrial);
             
             % Prediction
             expectedPred = [307; 270; 350; 299; 200; 313; 10; 11; 300; 162; 162; 162; 162; 150; 73; 73; 73; 190; 201; 201];
-            testCase.verifyEqual(dataNoPush.pred, expectedPred);
-            testCase.verifyEqual(dataPush.pred, expectedPred);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.pred, expectedPred);
+            testCase.verifyEqual(dataPush_cBal1_day1.pred, expectedPred);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.pred, expectedPred);
+            testCase.verifyEqual(dataPush_cBal2_day1.pred, expectedPred);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.pred, expectedPred);
+            testCase.verifyEqual(dataPush_cBal1_day2.pred, expectedPred);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.pred, expectedPred);
+            testCase.verifyEqual(dataPush_cBal2_day2.pred, expectedPred);
+
             % Prediction error
             expectedPredErr = [-12; 6; -48; -32; 99; 0; -70; -73; -27; 149; 169; 145; 163; 132; -156; -129; -118; -1;	-7;	-2];
-            testCase.verifyEqual(dataNoPush.predErr, expectedPredErr, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush.predErr, expectedPredErr, "AbsTol", 1.e-10);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.predErr, expectedPredErr, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.predErr, expectedPredErr, "AbsTol", 1.e-10);
+
             % Estimation Error
             expectedEstErr = [-24; 13; -67; -16; 83; -30; -87; -88; -17; 150; 150; 150; 150; 162; -121; -121; -121; 16; 5; 5];
-            testCase.verifyEqual(dataNoPush.estErr, expectedEstErr, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.estErr, expectedEstErr, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.estErr, expectedEstErr, 'AbsTol', 1.e-10);
 
             % Update
             expectedUP = [nan; -37; 80; -51; -99; 113; 57; 1; -71; -138; 0; 0; 0; -12; -77; 0; 0; 117; 11; 0];
-            testCase.verifyEqual(dataNoPush.UP, expectedUP, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush.UP, expectedUP, "AbsTol", 1.e-10);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.UP, expectedUP, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.UP, expectedUP, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.UP, expectedUP, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.UP, expectedUP, "AbsTol", 1.e-10);
+
             % Hit
-            expectedHit = [1; 1; 0; 0; 0; 1; 0; 0; 0; 0;	0; 0; 0; 0; 0; 0; 0; 1; 1; 1];
-            testCase.verifyEqual(dataNoPush.hit, expectedHit);
-            testCase.verifyEqual(dataPush.hit, expectedHit);
-            
+            expectedHit = [1; 1; 0; 0; 0; 1; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1; 1; 1];
+            testCase.verifyEqual(dataNoPush_cBal1_day1.hit, expectedHit);
+            testCase.verifyEqual(dataPush_cBal1_day1.hit, expectedHit);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.hit, expectedHit);
+            testCase.verifyEqual(dataPush_cBal2_day1.hit, expectedHit);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.hit, expectedHit);
+            testCase.verifyEqual(dataPush_cBal1_day2.hit, expectedHit);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.hit, expectedHit);
+            testCase.verifyEqual(dataPush_cBal2_day2.hit, expectedHit);
+
             % Performance
             expectedPerf = [0.05; 0.05; 0; 0; 0; 0.05; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0.05; 0.05; 0.05];
-            testCase.verifyEqual(dataNoPush.perf, expectedPerf);
-            testCase.verifyEqual(dataPush.perf, expectedPerf);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.perf, expectedPerf);
+            testCase.verifyEqual(dataPush_cBal1_day1.perf, expectedPerf);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.perf, expectedPerf);
+            testCase.verifyEqual(dataPush_cBal2_day1.perf, expectedPerf);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.perf, expectedPerf);
+            testCase.verifyEqual(dataPush_cBal1_day2.perf, expectedPerf);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.perf, expectedPerf);
+            testCase.verifyEqual(dataPush_cBal2_day2.perf, expectedPerf);
+    
             % Accumulated performance
             expectedAccPerf = [0.05; 0.1; 0.1; 0.1; 0.1; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.2; 0.25; 0.3];
-            testCase.verifyEqual(dataNoPush.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
-            
+            testCase.verifyEqual(dataNoPush_cBal1_day1.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
+
             % Initial tendency
             expectedInitialTendency = nan(20, 1);
-            testCase.verifyEqual(dataNoPush.initialTendency, expectedInitialTendency);
-            testCase.verifyEqual(dataPush.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataPush_cBal1_day1.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataPush_cBal2_day1.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataPush_cBal1_day2.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.initialTendency, expectedInitialTendency);
+            testCase.verifyEqual(dataPush_cBal2_day2.initialTendency, expectedInitialTendency);
 
             % Cannon deviation
             expectedCannonDev = [-24; 13; -67; -16; 83; -30; -87; -88; -17; 150; 150; 150; 150; 162; -121; -121; -121; 16; 5; 5];
-            testCase.verifyEqual(dataNoPush.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
 
             % Initial starting point of prediction
             expectedY_Push = repmat([-10, 10], 1,10)';
             expectedY_Push(1) = 0;
             expectedZ_noPush = [0; 307; 270; 350; 299; 200; 313; 10; 11; 300; 162; 162; 162; 162; 150; 73; 73; 73; 190; 201];
-            testCase.verifyEqual(dataNoPush.z, expectedZ_noPush);
-            testCase.verifyEqual(dataPush.z, expectedY_Push + expectedZ_noPush);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.z, expectedZ_noPush);
+            testCase.verifyEqual(dataPush_cBal1_day1.z, expectedY_Push + expectedZ_noPush);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.z, expectedZ_noPush);
+            testCase.verifyEqual(dataPush_cBal2_day1.z, expectedY_Push + expectedZ_noPush);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.z, expectedZ_noPush);
+            testCase.verifyEqual(dataPush_cBal1_day2.z, expectedY_Push + expectedZ_noPush);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.z, expectedZ_noPush);
+            testCase.verifyEqual(dataPush_cBal2_day2.z, expectedY_Push + expectedZ_noPush);
             
             % Push magnitude
-            testCase.verifyEqual(dataNoPush.y, zeros(20, 1), 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush.y, expectedY_Push, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.y, zeros(20, 1), 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.y, expectedY_Push, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.y, zeros(20, 1), 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.y, expectedY_Push, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.y, zeros(20, 1), 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.y, expectedY_Push, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.y, zeros(20, 1), 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.y, expectedY_Push, 'AbsTol', 1.e-10);
 
             % Latent state
             expectedLatentState = zeros(20, 1);
-            testCase.verifyEqual(dataNoPush.latentState, expectedLatentState);
-            testCase.verifyEqual(dataPush.latentState, expectedLatentState);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.latentState, expectedLatentState);
+            testCase.verifyEqual(dataPush_cBal1_day1.latentState, expectedLatentState);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.latentState, expectedLatentState);
+            testCase.verifyEqual(dataPush_cBal2_day1.latentState, expectedLatentState);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.latentState, expectedLatentState);
+            testCase.verifyEqual(dataPush_cBal1_day2.latentState, expectedLatentState);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.latentState, expectedLatentState);
+            testCase.verifyEqual(dataPush_cBal2_day2.latentState, expectedLatentState);
             
             % Timestamps: Not testing absolute values bc the reference
-            % value depends on manual input (todo: fix when doin CI)
+            % value depends on manual input (todo: fix when doing CI)
             
             % Difference prediction and trial onset
             expectedOnsetPredDiff = repmat(0.5, 20, 1);
-            actualOnsetPredDiffNoPush = dataNoPush.timestampPrediction - dataNoPush.timestampOnset;
-            actualOnsetPredDiffPush = dataPush.timestampPrediction - dataPush.timestampOnset;
-            testCase.verifyEqual(expectedOnsetPredDiff, actualOnsetPredDiffNoPush, 'AbsTol', 0.05)
-            testCase.verifyEqual(expectedOnsetPredDiff, actualOnsetPredDiffPush, 'AbsTol', 0.05)
+            actualOnsetPredDiffNoPush = dataNoPush_cBal1_day1.timestampPrediction - dataNoPush_cBal1_day1.timestampOnset;
+            actualOnsetPredDiffPush = dataPush_cBal1_day1.timestampPrediction - dataPush_cBal1_day1.timestampOnset;
+            testCase.verifyEqual(actualOnsetPredDiffNoPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOnsetPredDiffPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            actualOnsetPredDiffNoPush = dataNoPush_cBal2_day1.timestampPrediction - dataNoPush_cBal2_day1.timestampOnset;
+            actualOnsetPredDiffPush = dataPush_cBal2_day1.timestampPrediction - dataPush_cBal2_day1.timestampOnset;
+            testCase.verifyEqual(actualOnsetPredDiffNoPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOnsetPredDiffPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            actualOnsetPredDiffNoPush = dataNoPush_cBal1_day2.timestampPrediction - dataNoPush_cBal1_day2.timestampOnset;
+            actualOnsetPredDiffPush = dataPush_cBal1_day2.timestampPrediction - dataPush_cBal1_day2.timestampOnset;
+            testCase.verifyEqual(actualOnsetPredDiffNoPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOnsetPredDiffPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            actualOnsetPredDiffNoPush = dataNoPush_cBal2_day2.timestampPrediction - dataNoPush_cBal2_day2.timestampOnset;
+            actualOnsetPredDiffPush = dataPush_cBal2_day2.timestampPrediction - dataPush_cBal2_day2.timestampOnset;
+            testCase.verifyEqual(actualOnsetPredDiffNoPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOnsetPredDiffPush, expectedOnsetPredDiff, 'AbsTol', 0.05)
 
             % Difference offset and prediction
             expectedPredShotPlusITIDiff = repmat(2.4, 20, 1);
-            actualPredShotPlusITIDiffNoPush = dataNoPush.timestampOffset -dataNoPush.timestampPrediction;
-            actualPredShotPlusITIDiffPush = dataPush.timestampOffset -dataPush.timestampPrediction;
-            testCase.verifyEqual(expectedPredShotPlusITIDiff, actualPredShotPlusITIDiffNoPush, 'AbsTol', 0.1)
-            testCase.verifyEqual(expectedPredShotPlusITIDiff, actualPredShotPlusITIDiffPush, 'AbsTol', 0.1)
-            
+            actualPredShotPlusITIDiffNoPush = dataNoPush_cBal1_day1.timestampOffset - dataNoPush_cBal1_day1.timestampPrediction;
+            actualPredShotPlusITIDiffPush = dataPush_cBal1_day1.timestampOffset - dataPush_cBal1_day1.timestampPrediction;
+            testCase.verifyEqual(actualPredShotPlusITIDiffNoPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            testCase.verifyEqual(actualPredShotPlusITIDiffPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            actualPredShotPlusITIDiffNoPush = dataNoPush_cBal2_day1.timestampOffset - dataNoPush_cBal2_day1.timestampPrediction;
+            actualPredShotPlusITIDiffPush = dataPush_cBal2_day1.timestampOffset - dataPush_cBal2_day1.timestampPrediction;
+            testCase.verifyEqual(actualPredShotPlusITIDiffNoPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            testCase.verifyEqual(actualPredShotPlusITIDiffPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            actualPredShotPlusITIDiffNoPush = dataNoPush_cBal1_day2.timestampOffset - dataNoPush_cBal1_day2.timestampPrediction;
+            actualPredShotPlusITIDiffPush = dataPush_cBal1_day2.timestampOffset - dataPush_cBal1_day2.timestampPrediction;
+            testCase.verifyEqual(actualPredShotPlusITIDiffNoPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            testCase.verifyEqual(actualPredShotPlusITIDiffPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            actualPredShotPlusITIDiffNoPush = dataNoPush_cBal2_day2.timestampOffset - dataNoPush_cBal2_day2.timestampPrediction;
+            actualPredShotPlusITIDiffPush = dataPush_cBal2_day2.timestampOffset - dataPush_cBal2_day2.timestampPrediction;
+            testCase.verifyEqual(actualPredShotPlusITIDiffNoPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+            testCase.verifyEqual(actualPredShotPlusITIDiffPush, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
+
             % Triggers
             expectedTriggers = zeros(20,1);
-            testCase.verifyEqual(dataNoPush.triggers(:,1), expectedTriggers);
-            testCase.verifyEqual(dataNoPush.triggers(:,2), expectedTriggers);
-            testCase.verifyEqual(dataNoPush.triggers(:,3), expectedTriggers);
-            testCase.verifyEqual(dataNoPush.triggers(:,4), expectedTriggers);
-            testCase.verifyEqual(dataNoPush.triggers(:,5), expectedTriggers);
-            testCase.verifyEqual(dataNoPush.triggers(:,6), expectedTriggers);
-            testCase.verifyEqual(dataPush.triggers(:,1), expectedTriggers);
-            testCase.verifyEqual(dataPush.triggers(:,2), expectedTriggers);
-            testCase.verifyEqual(dataPush.triggers(:,3), expectedTriggers);
-            testCase.verifyEqual(dataPush.triggers(:,4), expectedTriggers);
-            testCase.verifyEqual(dataPush.triggers(:,5), expectedTriggers);
-            testCase.verifyEqual(dataPush.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day1.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day1.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day1.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day1.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day1.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day1.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day1.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day1.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day1.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day1.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day1.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day1.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day2.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day2.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day2.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day2.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day2.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal1_day2.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.triggers(:,6), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,1), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,2), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,3), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,4), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,5), expectedTriggers);
+            testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,6), expectedTriggers);
             
             % Memory error
             expectedMemErr = [];
-            testCase.verifyEqual(dataNoPush.memErr, expectedMemErr)
-            testCase.verifyEqual(dataNoPush.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataNoPush.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataNoPush.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataPush.memErr, expectedMemErr)
-            testCase.verifyEqual(dataPush.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataPush.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataPush.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day1.memErr, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day1.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day1.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day1.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day1.memErr, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day1.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day1.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day1.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day1.memErr, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day1.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day1.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day1.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day1.memErr, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day1.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day1.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day1.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day2.memErr, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day2.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day2.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal1_day2.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day2.memErr, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day2.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day2.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal1_day2.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day2.memErr, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day2.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day2.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataNoPush_cBal2_day2.memErrMin, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day2.memErr, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day2.memErrNorm, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day2.memErrPlus, expectedMemErr)
+            testCase.verifyEqual(dataPush_cBal2_day2.memErrMin, expectedMemErr)
             
         end        
     end
