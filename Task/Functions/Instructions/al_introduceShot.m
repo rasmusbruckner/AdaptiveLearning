@@ -14,20 +14,39 @@ function [taskData, taskParam] = al_introduceShot(taskParam, taskData, trial, tx
 
 % Show cannon and instructions
 initRT_Timestamp = 0;
-[taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
-% Todo: add mouse version
+
+
+% Todo update using trialflow mouse vs. keyboard
+if strcmp(taskParam.gParam.taskType, 'Sleep')
+
+    [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
+
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+    
+    % Participant indicates prediction
+    press = 0;
+    condition = 'main';
+    [~, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+
+end
 
 % Show cannonball
-background = true; % show background image TODO: durch trialflow!
+background = true; % show background image TODO: use trialflow
 absTrialStartTime = GetSecs; % timestamp start of trial for timing
 al_cannonball(taskParam, taskData, background, trial, absTrialStartTime)
 
+
 % If cannonball and shield are presented together AND misses are animated
 % show "explosion"
-if isequal(taskParam.trialflow.shotAndShield, 'simultaneously') && (abs(al_diff(taskData.outcome(trial), taskData.pred(trial))) >=9)  % todo: parameterize
+if isequal(taskParam.trialflow.shotAndShield, 'simultaneously')
+
+    if (abs(al_diff(taskData.outcome(trial), taskData.pred(trial))) >=taskData.allASS(trial)/2) 
+        taskData.hit(trial) = 0; % in this case, it was a miss
+    else
+        taskData.hit(trial) = 1; % in this case, it was a hit
+    end
 
     % Animate miss
-    taskData.hit(trial) = 0; % in this case, it was a miss
     tUpdated = GetSecs + 0.001; % timestamp for animation timing
     al_cannonMiss(taskParam, taskData, trial, background, tUpdated)
 

@@ -13,9 +13,13 @@ classdef al_colors
         
         gold
         blue
+        darkBlue
         silver
         green
         black
+        gray
+        background % background color
+        lineAndBack % color for lineAndBack function
         
     end
     
@@ -29,11 +33,14 @@ classdef al_colors
             % class al_colors
           
             colorsobj.gold = [255, 215, 0];
-            colorsobj.blue = [122,96,215];
+            colorsobj.blue = [122,96,215]; 
+            colorsobj.darkBlue = [0 25 51];
             colorsobj.silver = [160, 160, 160];
             colorsobj.green = [169, 227, 153];
             colorsobj.black = [0 0 0];
-            
+            colorsobj.gray = [66 66 66];
+            colorsobj.background = 'gray';
+            colorsobj.lineAndBack = 'blue';
         end
     end
 end

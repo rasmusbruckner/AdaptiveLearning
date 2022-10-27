@@ -29,8 +29,8 @@ while 1
         taskParam.display.screensize(3), taskParam.display.screensize(4)*0.16, 5);
     Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], 0, taskParam.display.screensize(4)*0.8,...
         taskParam.display.screensize(3), taskParam.display.screensize(4)*0.8, 5);
-    Screen('FillRect', taskParam.display.window.onScreen, [0, 25, 51], [0, (taskParam.display.screensize(4)*0.16)+3,...
-        taskParam.display.screensize(3), (taskParam.display.screensize(4)*0.8)-2]);
+    Screen('FillRect', taskParam.display.window.onScreen, [0, 25, 51], [0, (taskParam.display.screensize(4)*0.16),...  % +3
+        taskParam.display.screensize(3), (taskParam.display.screensize(4)*0.8)]); % -2
     
     % Print header
     Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.headerSize);

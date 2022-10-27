@@ -1,5 +1,6 @@
-function [taskData, taskParam] = al_introduceSpot(taskParam, taskData, trial, txt)
-%INTRODUCESPOT   This function introduces the orange spot to participants
+% function [taskData, taskParam, xyExp] = al_introduceSpot(taskParam, taskData, trial, txt)
+function varargout = al_introduceSpot(taskParam, taskData, trial, txt)
+%AL_INTRODUCESPOT This function introduces the orange spot to participants
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -29,26 +30,63 @@ Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
 Screen('Flip', taskParam.display.window.onScreen, tUpdated + 0.1, 1);
 WaitSecs(0.5);
 
-% Show cannon and instructions
-initRT_Timestamp = GetSecs(); % reference value to compute initiation RT
-[taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
+% Reference value to compute initiation RT
+initRT_Timestamp = GetSecs(); 
 
-% Prediction error
-taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
+% Todo update using trialflow mouse vs. keyboard
+if strcmp(taskParam.gParam.taskType, 'Sleep')
 
-% Show cannonball
-background = true; % show background image TODO: maybe via trialflow
-absTrialStartTime = GetSecs; % timestamp start of trial for timing
-al_cannonball(taskParam, taskData, background, trial, absTrialStartTime)
+    % Show cannon and instructions
+    [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
 
-% If cannonball and shield are presented together AND misses are animated
-% show "explosion"
-if isequal(taskParam.trialflow.shotAndShield, 'simultaneously') && (abs(taskData.predErr(trial)) >=9)  % todo. parameterize
+    % Prediction error
+    taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
+    
+    % Show cannonball
+    background = true; % show background image TODO: maybe via trialflow
+    absTrialStartTime = GetSecs; % timestamp start of trial for timing
+    al_cannonball(taskParam, taskData, background, trial, absTrialStartTime)
 
-    % Animate miss
-    taskData.hit(trial) = 0; % in this case, it was a miss
-    tUpdated = GetSecs + 0.001; % timestamp for animation timing
-    al_cannonMiss(taskParam, taskData, trial, background, tUpdated)
+    % If cannonball and shield are presented together AND misses are animated
+    % show "explosion"
+    if isequal(taskParam.trialflow.shotAndShield, 'simultaneously') && (abs(taskData.predErr(trial)) >=9)  % todo: parameterize
+    
+        % Animate miss
+        taskData.hit(trial) = 0; % in this case, it was a miss
+        tUpdated = GetSecs + 0.001; % timestamp for animation timing
+        al_cannonMiss(taskParam, taskData, trial, background, tUpdated)
+    end
+
+    varargout{1} = taskData;
+    varargout{2} = taskParam;
+
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+    
+    % Reset mouse to screen center
+    SetMouse(720, 450, taskParam.display.window.onScreen)
+
+    % Participant indicates prediction
+    press = 0;
+    condition = 'main';
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+
+    % Prediction error
+    taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
+    
+    % Confetti animation    
+    background = true; % todo: include this in trialflow
+    
+    % Extract current time and determine when screen should be flipped
+    % for accurate timing
+    timestamp = GetSecs;
+    fadeOutEffect = false;
+    [xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
+    
+    varargout{1} = taskData;
+    varargout{2} = taskParam;
+    varargout{3} = xyExp;
+    varargout{4} = dotCol;
+    varargout{5} = dotSize;
 
 end
 end

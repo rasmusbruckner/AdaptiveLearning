@@ -14,10 +14,6 @@ classdef al_display
     
     properties
         
-        % Determines if cursor is hidden and keyboard input to 
-        % console disabled
-        % hidePtbCursor
-
         % Texture of cannon picture
         cannonTxt
 
@@ -64,7 +60,6 @@ classdef al_display
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.
             
-            % displayobj.hidePtbCursor = true; 
             displayobj.cannonTxt = nan;
             displayobj.dstRect = nan;
             displayobj.backgroundTxt = nan;
@@ -84,7 +79,6 @@ classdef al_display
             % Get screen properties
             % set(0,'units','pixels')
             
-        
             % screensize = screensize(taskParam.gParam.screenNumber, :);
             displayobj.screensizePart = displayobj.screensize(3:4);
             displayobj.zero = displayobj.screensizePart / 2;
@@ -166,14 +160,6 @@ classdef al_display
             Screen('Preference', 'SkipSyncTests', 2);
    
         end
-% 
-%         function cursorKeys() 
-%             % CURSORCHAR This function disables keyboard input to the 
-%             % console and hides the cursor during the task
-% 
-%             HideCursor;
-% 
-%         end
     end
 end
 

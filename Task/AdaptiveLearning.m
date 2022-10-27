@@ -46,7 +46,7 @@ computer = 'Macbook';
 %   - 'reversal'
 %   - 'chinese'
 %   - 'ARC'
-taskType = 'dresden'; %'chinese';
+taskType = 'ARC'; %'chinese';
 
 % Version specific parameters
 % ---------------------------
@@ -203,7 +203,7 @@ end
 % Version-independent parameters
 % ------------------------------
 
-runIntro = false; % run task instructions
+runIntro = true; % run task instructions
 askSubjInfo = true; % request further parameters for the experiment 
 sendTrigger = false; % send EEG triggers
 randomize = false;  % randomize default task parmeters

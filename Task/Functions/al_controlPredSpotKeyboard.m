@@ -76,7 +76,6 @@ end
 % When other keys are pressed before space, update orange spot until space 
 % is pressed
 
-
 if keyIsDown && ~breakLoop
 
     % Fast right movement

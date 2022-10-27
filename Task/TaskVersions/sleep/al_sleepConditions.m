@@ -55,7 +55,7 @@ if (cBal == 1 && testDay == 1) ||...
 
     % No-push first...
     % ----------------
-    
+
     % Get data
     if ~unitTest
         taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
@@ -81,7 +81,7 @@ if (cBal == 1 && testDay == 1) ||...
     % Run task
     taskParam.trialflow.push = 'push';
     al_indicateNoise(taskParam)
-    dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);  
+    dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);
 
 elseif (cBal == 2 && testDay == 2) ||...
         (cBal == 3 && testDay == 1) ||...
@@ -90,7 +90,7 @@ elseif (cBal == 2 && testDay == 2) ||...
 
     % Push first...
     % -------------
-    
+
     % Get data
     if ~unitTest
         taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
@@ -101,7 +101,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     % Run task
     taskParam.trialflow.push = 'push';
     al_indicateNoise(taskParam)
-    dataPush = al_sleepLoop(taskParam, 'main', taskData, trial); 
+    dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);
 
     % ... no-push second
     % ------------------

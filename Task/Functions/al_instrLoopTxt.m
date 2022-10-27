@@ -18,7 +18,8 @@ function [taskParam, Data, savedTickmark] = al_instrLoopTxt(taskParam, txt, butt
 
 % Todo: some of the mouse code should be put in function that is reused
 % across scripts. For keyboard, this has already been implemented. Also
-% needs to be cleaned and commented.
+% needs to be cleaned and commented. Is it possible to get rid of this
+% function if mouse loop is properly updated?
 
 
 if nargin < 6

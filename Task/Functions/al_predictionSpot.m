@@ -14,6 +14,6 @@ yPredS = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
 PredSpot = OffsetRect(taskParam.circle.predCentSpotRect, xPredS, yPredS);
 
 % Print prediction spot
-Screen('FillOval', taskParam.display.window.onScreen, [255 165 0], PredSpot);
+Screen('FillOval', taskParam.display.window.onScreen, taskParam.colors.blue, PredSpot);  % [255 165 0]
 
 end

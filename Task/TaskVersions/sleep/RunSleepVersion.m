@@ -1,9 +1,18 @@
-function [dataNoPush, dataPush] =  RunSleepVersion(unitTest, cBal, day)
+function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %RUNSLEEPVERSION This function runs the sleep-study version
 %  of the cannon task.
 %
+%   Input
+%       unitTest: Indicates if unit test is being done or not
+%       cBal: Current cBal (only allowed when running unit test)
+%       day: Current test day (only allowed when running unit test)
+%
+%   Output
+%       dataNoPush: Task-data object "noPush" condition
+%       dataPush: Task-data object "push" condition
+%
 %   Documentation
-%       This script runs the sleep version of the cannon task.
+%       This function runs the sleep-study version of the cannon task.
 %       Subjects are sleep deprived and perform the task within
 %       a larger test battery. The version is shorter that usual
 %       and focuses on the most essential intructions.
@@ -15,8 +24,7 @@ function [dataNoPush, dataPush] =  RunSleepVersion(unitTest, cBal, day)
 %   Last updated
 %       10/22
 
-% Todo: Extend unit tests and include cBal and Day in integration tests
-% Before collection of MD data: determine incentives and remuneration
+% Todo: Before collection of MD data, determine incentives and remuneration
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -27,7 +35,7 @@ end
 % -----------------------------------------
 
 if exist('cBal', 'var') && ~unitTest
-     error('No unit test: cBal cannot be used');
+    error('No unit test: cBal cannot be used');
 elseif exist('cBal', 'var') && unitTest
     if ~ischar(cBal)
         error('cBal must be char');
@@ -35,7 +43,7 @@ elseif exist('cBal', 'var') && unitTest
 end
 
 if exist('day', 'var') && ~unitTest
-     error('No unit test: day cannot be used');
+    error('No unit test: day cannot be used');
 elseif exist('cBal', 'var') && unitTest
     if ~ischar(day)
         error('day must be char');
@@ -45,7 +53,7 @@ end
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
 if ~unitTest
-    rng('shuffle') 
+    rng('shuffle')
 else
     rng(1)
 end
@@ -55,13 +63,13 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 20;  %175;  Hier bitte anpassen
+trialsExp = 2;  % 175;  Hier bitte anpassen
 
 % Set number of trials for integration test
-trialsTesting = 20; 
+trialsTesting = 20;
 
 % Number of practice trials
-practTrials = 2; %20;  Hier bitte anpassen
+practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of cannonballs
 concentration = 12;
@@ -70,42 +78,41 @@ concentration = 12;
 pushConcentration = 4;
 
 % Hazard rate determining a priori changepoint probability
-haz = .125;                     
+haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = false; %true;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
 % Determine blocks
-% todo: Add warning, when more than 4 breaks are included, since this is
-% currently not possible in al_generateOutcomes
-blockIndices = [1 45 90 135]; 
+blockIndices = [1 45 90 135];
 
 % Use catch trials where cannon is shown occasionally
-useCatchTrials = true;                                              
+useCatchTrials = true;
 
 % Catch-trial probability
 catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 100; 
+sentenceLength = 100;
 
 % Set text and header size
 textSize = 35;
 headerSize = 50;
 
+% Screen size
 screensize = [1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
 
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
-            %displayobj.screensize = get(0,'MonitorPositions'); %[1    1
-            %2560    1440]%  laptop [1    1    2560    1440];
+%displayobj.screensize = get(0,'MonitorPositions'); %[1    1
+%2560    1440]%  laptop [1    1    2560    1440];
 
 
 % Maximum number of trials exceeding a certain estimation error during practice that is required to continue with main task
-practiceTrialCriterionNTrials = 5;   
-practiceTrialCriterionEstErr = 9;   
+practiceTrialCriterionNTrials = 5;
+practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
 rotationRad = 200;
@@ -114,20 +121,21 @@ rotationRad = 200;
 predSpotRad = 10;
 
 % Tickmark width
-tickWidth = 1; 
+tickWidth = 1;
 
+% Key codes
 keySpeed = 1.5; %2;
 slowKeySpeed = 0.5; % 0.5;
 s = 40; % Für MD KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen  Lavinia: Hier eventuell anpassen
 enter = 37; % md = 13   MD: Hier bitte anpassen, müsste bei euch 13 sein
 
 % Run task in debug mode with smaller window
-debug = true; % false; 
+debug = true;
 
-% Print timing
+% Print timing for checking
 printTiming = true;
 
-% Hide cursor                                                             
+% Hide cursor
 hidePtbCursor = true;
 
 % Reward magnitude
@@ -140,7 +148,7 @@ dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpass
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-% Todo: For independent versions make sure that 
+% Todo: For independent versions make sure that
 % all variables are still in use.
 
 if unitTest
@@ -149,7 +157,7 @@ else
     trials = trialsExp;
 end
 
-% Initialize
+% Initialize general task parameters
 gParam = al_gparam();
 gParam.taskType = 'Sleep';
 gParam.trials = trials;
@@ -189,6 +197,7 @@ trialflow.cannon = 'hide cannon';
 
 % Todo: Are all color already part of this class?
 colors = al_colors();
+colors.background = 'black';
 
 % ------------------------------------------
 % Create object instance with key parameters
@@ -197,7 +206,7 @@ colors = al_colors();
 keys = al_keys();
 keys.keySpeed = keySpeed;
 keys.slowKeySpeed = slowKeySpeed;
-keys.s = s; 
+keys.s = s;
 keys.enter = enter;
 
 % ---------------------------------------------
@@ -229,7 +238,7 @@ subject = al_subject();
 
 % Default input
 ID = '99999'; % 5 digits
-age = '99'; 
+age = '99';
 sex = 'f';  % m/f/d
 group = '1'; % 1=sleep/2=control
 if ~unitTest
@@ -260,7 +269,7 @@ else
     % Add defaults from above
     defaultanswer = {ID, age, sex, group, cBal, day};
 
-    % Add information that is not specified by user (i.e. date)
+    % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
 
     % Put all relevant subject info in structure
@@ -285,7 +294,7 @@ else
 end
 
 % ------------------
-% Display properties 
+% Display properties
 % ------------------
 
 % Display-object instance
@@ -295,6 +304,7 @@ display = al_display();
 % Todo: Make sure that all tests are passed on task PC
 % display.screen_warnings();
 
+% Set screensize
 display.screensize = screensize;
 
 % Open psychtoolbox window
@@ -304,16 +314,14 @@ display = display.openWindow(gParam);
 display = display.createRects();
 display = display.createTextures("standard");
 
-% Disable keyboard and, if desired, mouse cursor 
-% display.hidePtbCursor = hidePtbCursor;
+% Disable keyboard and, if desired, mouse cursor
 if hidePtbCursor == true
-   HideCursor;
+    HideCursor;
 end
 ListenChar(2);
 
-
 % ---------------------------------------------
-% Create object instance with circle parameterpre
+% Create object instance with circle parameters
 % ---------------------------------------------
 
 % Todo: Delete a couple of variables when versions are independent;
@@ -341,9 +349,7 @@ taskParam.keys = keys;
 taskParam.timingParam = timingParam;
 taskParam.display = display;
 taskParam.subject = subject;
-
-% Replace this when getting back to unit tests
-taskParam.unitTest = unitTest; 
+taskParam.unitTest = unitTest;
 
 % --------
 % Run task
@@ -357,7 +363,7 @@ totWin = dataNoPush.accPerf(end) + dataPush.accPerf(end);
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.2f Euro verdient!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
 

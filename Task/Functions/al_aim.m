@@ -20,10 +20,19 @@ if ~isequal(taskParam.gParam.taskType, 'chinese')
     outcomeCenter = OffsetRect(taskParam.circle.outcCentSpotRect, xPredS, yPredS);
     x = (outcomeCenter(3)/2) + (outcomeCenter(1)/2);
     y = (outcomeCenter(4)/2) + (outcomeCenter(2)/2);
+
+    lineStart = taskParam.circle.rotationRad* 0.05; 
+    xCentS = (lineStart * sin(parameter*taskParam.circle.unit));
+    yCentS = (lineStart *  (-cos(parameter*taskParam.circle.unit)));
+    outcomeCenter = OffsetRect(taskParam.circle.outcCentSpotRect, xCentS, yCentS);
+    xCent = (outcomeCenter(3)/2) + (outcomeCenter(1)/2);
+    yCent = (outcomeCenter(4)/2) + (outcomeCenter(2)/2);
     
-    % Draw needle
-    Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], taskParam.display.zero(1), taskParam.display.zero(2), x, y, 2);
-    
+    % 27.10.22 -- updated this to make sure line starts "within"
+    % the barrel. Make sure that it works for the other versions too
+    % Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], taskParam.display.zero(1), taskParam.display.zero(2), x, y, 2);
+    Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], xCent, yCent, x, y, 2);
+
 else
     
     % In "chinese" condition, cannon and needle start outside of the circle

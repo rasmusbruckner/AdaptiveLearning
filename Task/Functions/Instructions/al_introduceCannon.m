@@ -17,9 +17,24 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 
 % Show cannon and instructions
 initRT_Timestamp = GetSecs(); % reference value to compute initiation RT
-break_key = taskParam.keys.enter; % enter required to continue
-[~, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt, break_key);
+breakKey = taskParam.keys.enter; % enter required to continue
 
+% Todo update using trialflow mouse vs. keyboard
+if strcmp(taskParam.gParam.taskType, 'Sleep')
+    
+    [~, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt, breakKey);
+
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+    
+    % Reset mouse to screen center
+    SetMouse(720, 450, taskParam.display.window.onScreen)
+
+    % Participant indicates prediction
+    press = 0;
+    condition = 'main';
+    [~, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt, breakKey);
+
+end
 WaitSecs(0.1);
 
 end

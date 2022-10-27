@@ -1,6 +1,5 @@
 function taskData = al_generateOutcomesMain(taskParam, haz, concentration, condition)
-%AL_GENERATEOUTCOMESMAIN This function generates the outcomes for the different tasks
-%
+%AL_GENERATEOUTCOMESMAIN This function generates the outcomes for the standard cannon task
 %
 %   Input
 %       taskParam: structure containing task parameters
@@ -11,6 +10,12 @@ function taskData = al_generateOutcomesMain(taskParam, haz, concentration, condi
 %   Output
 %       taskData: structure containing generated outcomes
 
+
+% Ensure that not more than 4 blocks are included since code currently
+% doesn't support this. Update at some point, if necessary.
+if length(taskParam.gParam.blockIndices) > 4
+     error('Too many blocks specified');
+end
 
 % Select task- and block-specific number of trials
 % ------------------------------------------------
@@ -36,7 +41,6 @@ end
 
 % Initialize variables
 % --------------------
-
 
 ID = nan(trials, 1); % participant ID
 age = nan(trials, 1); % participant age
@@ -152,7 +156,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         end
         
         % Generate angular shield size depending on concentration
-        allASS(i) = rad2deg(2*sqrt(1/concentration)); %20; %al_getShieldSize(minASS, maxASS, mu);
+        allASS(i) = rad2deg(2*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu);
         
         % TODO: this should ultimately be removed
         % Set latent state to 0, as it is not used in change point task or shield practice

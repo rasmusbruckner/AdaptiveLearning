@@ -1,16 +1,23 @@
-function al_confetti(taskParam, taskData, currTrial, background)
+function [xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, currTrial, background, timestamp, fadeOutEffect)
 %AL_CONFETTI This function animates the confetti shot
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       distMean: Task-data-object instance
-%       background: indicates if background should be printed
+%       taskData: Task-data-object instance
+%       currTrial: Current trial number
+%       background: Indicates if background for instructions should be printed
+%       timestamp: Timestamp of current trial
+%       fadeOutEffect: Indicates if confetti should disappear towards the end
+%                      of the trial
 %
 %   Output
-%        ~
+%       exExp: Confetti-dots position
 
+if ~exist('fadeOutEffect', 'var') ||  isempty(fadeOutEffect)
+    fadeOutEffect = true;  
+end
 
-nFrames = 150;
+nFrames = 80; % 150;
 fadeOutp = [zeros(1, round(nFrames/2)) linspace(0, 0.5, round(nFrames/2))];
 nDots = 41;
 
@@ -61,6 +68,8 @@ dotCol = uint8(round(rand(3, nDots)*255));
 dotSize = (1+rand(1, nDots))*3;
 [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
 
+tUpdate = GetSecs - timestamp;
+
 % Cycle over number of frames to run the animation
 for i = 1:nFrames
  
@@ -71,8 +80,12 @@ for i = 1:nFrames
         
     % Draw circle, cannon, prediction spot
     al_drawCircle(taskParam)
-    if ~strcmp(taskParam.trialflow.cannon, 'hide cannon')
+    if ~strcmp(taskParam.trialflow.cannon, 'hide cannon') || taskData.catchTrial(currTrial)
         al_drawCannon(taskParam, taskData.distMean(currTrial), 0)
+    else
+        % If cannon is hidden, show confetti cloud
+        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 
+        al_drawCross(taskParam)
     end
 
     % Show orange prediction spot
@@ -93,24 +106,22 @@ for i = 1:nFrames
     % Update dot position
     xyExp(1,stopCrit(1,:)==0) = xyExp(1,stopCrit(1,:)==0) + xExpSteps(i,stopCrit(1,:)==0);
     xyExp(2,stopCrit(2,:)==0) = xyExp(2,stopCrit(2,:)==0) + yExpSteps(i,stopCrit(2,:)==0);
-
-    % Sample which dots disappear...
-    fadeOut = binornd(1, fadeOutp(i), 1, nDots);
+    
+    if fadeOutEffect
+        
+        % Sample which dots disappear...
+        fadeOut = binornd(1, fadeOutp(i), 1, nDots);
    
-    % ...and delete them
-    xyExp(1, fadeOut==1) = nan;
-    xyExp(2, fadeOut==1) = nan;
-
-    % If cannon is hidden, show confetti cloud
-    if strcmp(taskParam.trialflow.cannon, 'hide cannon')
-        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 
-        al_drawCross(taskParam)
-    end
+        % ...and delete them
+        xyExp(1, fadeOut==1) = nan;
+        xyExp(2, fadeOut==1) = nan;
+        
+    end    
 
     % Flip screen and present changes
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    t = GetSecs;
-    Screen('Flip', taskParam.display.window.onScreen, t + 0.01);
+    tUpdate = tUpdate + taskParam.timingParam.cannonBallAnimation / nFrames;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp + tUpdate);
     
 end
 end

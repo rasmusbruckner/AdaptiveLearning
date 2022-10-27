@@ -1,56 +1,114 @@
-%RUNARCVERSION   This script runs the ARC version of the cannon task.
+function dataMain =  RunHamburgVersion(unitTest, cBal, day)
+%RUNHAMBURGVERSION This function runs the first Hamburg pilot version
+%  of the cannon task.
 %
-% Documentation
-% Unit test
-% Contributors
+%   Input
+%       unitTest: Indicates if unit test is being done or not
+%       cBal: Current cBal (only allowed when running unit test)
+%       day: Current test day (only allowed when running unit test)
 %
-% Last updated: 12/21
+%   Output
+%       dataMain: Task-data object
+%
+%   Documentation
+%       This function runs the Hamburg pilot version of the cannon task.
+%       Subjects see a confetti cannon shootin confetti particles.
+%       Currently, there is just one condition but more will be added
+%       in the future.
+%
+%   Testing
+%       To run the integration test, run XX
+%       To run the unit tests, run al_unittets.m in "DataScripts"
+%
+%   Last updated
+%       10/22
+
+% Todo: At some point, we have to determine incentives and remuneration
+
+
+% Check if unit test is requested
+if ~exist('unitTest', 'var') || isempty(unitTest)
+    unitTest = false;
+end
+
+% Check optional input related to unit test
+% -----------------------------------------
+
+if exist('cBal', 'var') && ~unitTest
+    error('No unit test: cBal cannot be used');
+elseif exist('cBal', 'var') && unitTest
+    if ~ischar(cBal)
+        error('cBal must be char');
+    end
+end
+
+if exist('day', 'var') && ~unitTest
+    error('No unit test: day cannot be used');
+elseif exist('cBal', 'var') && unitTest
+    if ~ischar(day)
+        error('day must be char');
+    end
+end
+
+% Reset random number generator to ensure different outcome sequences
+% when we don't run a unit test
+if ~unitTest
+    rng('shuffle')
+else
+    rng(1)
+end
 
 % ----------------------------
 % Set relevant task parameters
 % ----------------------------
- 
-% Indicate your computer
-computer = 'Macbook';
 
-% Set number of trials of main task
-trials = 20;% 0; % 20;
+% Set number of trials for experiment
+trialsExp = 2;  % 175;  Hier bitte anpassen
 
-% Set number of trials of control task testing speed and accuracy
-controlTrials = 4;
+% Set number of trials for integration test
+trialsTesting = 20;
 
 % Number of practice trials
-practTrials = 2; 
+practTrials = 2; % 20;  Hier bitte anpassen
 
-% Number of trials to introduce the shield in the cover story
-shieldTrials = 4; 
-
-% Risk parameter: Inverse variability of cannonballs
+% Risk parameter: Precision of confetti mean
 concentration = 12;
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 25 999 999];
+blockIndices = [1 45 90 135];  % Todo adjust properly for first pilot
 
 % Use catch trials where cannon is shown occasionally
-useCatchTrials = true; 
+useCatchTrials = true;
+
+% Catch-trial probability
+catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 85;
+sentenceLength = 100;
 
-% Choose screen number
-screenNumber = 1;
+% Set text and header size
+textSize = 35;
+headerSize = 50;
+
+% Screen size
+screensize = [1 1 1920 1080]; % [1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
+
+%[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
+%displayobj.screensize = get(0,'MonitorPositions'); %[1    1
+%2560    1440]%  laptop [1    1    2560    1440];
 
 % Number of catches during practice that is required to continue with main task
-practiceTrialCriterion = 10;
+practiceTrialCriterionNTrials = 5;
+practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
 rotationRad = 200;
@@ -59,63 +117,81 @@ rotationRad = 200;
 predSpotRad = 10;
 
 % Tickmark width
-tickWidth = 1; 
+tickWidth = 1;
 
-% XX
-imageRect = [0 0 60 180];
-
-cannonType = "confetti";
-
-screensize = [1 1 1920 1080];% [1    1    2560    1440];
+% Key codes
+s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; % Hamburg: Hier bitte anpassen
 
 % Run task in debug mode with smaller window
-debug = true;%false;%true; %false;
+debug = true;
 
-% Print timing
+% Print timing for checking
 printTiming = true;
 
-% Run unit test?
-unitTest = false;
+% Hide cursor
+hidePtbCursor = true;
 
-% ---------------------------------------------------   
+% Reward magnitude
+rewMag = 0.05;
+
+% Specify data directory
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpassen
+
+% Confetti cannon image rectangle determining the size of the cannon
+imageRect = [0 00 60 200];
+
+% ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-% Initialize
-% Create object instance
-gParam = al_gparam();
+if unitTest
+    trials = trialsTesting;
+else
+    trials = trialsExp;
+end
 
-%gparam_init = al_gparaminit();
+% Initialize general task parameters
+gParam = al_gparam();
 gParam.taskType = 'Hamburg';
-%gParam.computer = computer;
 gParam.trials = trials;
-gParam.controlTrials = controlTrials;
 gParam.practTrials = practTrials;
-gParam.shieldTrials = shieldTrials;
 gParam.runIntro = runIntro;
 gParam.askSubjInfo = askSubjInfo;
 gParam.blockIndices = blockIndices;
 gParam.useCatchTrials = useCatchTrials;
-%gParam.sentenceLength = sentenceLength;
-gParam.screenNumber = screenNumber;
-gParam.practiceTrialCriterion = practiceTrialCriterion;
+gParam.catchTrialProb = catchTrialProb;
+gParam.practiceTrialCriterionNTrials = practiceTrialCriterionNTrials;
+gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
 gParam.debug = debug;
 gParam.printTiming = printTiming;
 gParam.concentration = concentration;
 gParam.haz = haz;
+gParam.rewMag = rewMag;
+gParam.dataDirectory = dataDirectory;
 
+% Save directory
+cd(gParam.dataDirectory);
 
+% -------------------------------------
+% Create object instance for trial flow
+% -------------------------------------
 
-% ---------------------------------------------
-% Create object instance with circle parameters
-% ---------------------------------------------
-
-%circle = al_circle();
+% Todo: What is the best way to document this?
+trialflow = al_trialflow();
+trialflow.shot = ' ';
+trialflow.confetti = 'show confetti cloud';
+trialflow.cannonball_start = 'center';
+trialflow.cannon = 'hide cannon';
+trialflow.background = 'noPicture';
+trialflow.currentTickmarks = 'show';
+trialflow.cannonType = "confetti";
 
 % ---------------------------------------------
 % Create object instance with color parameters
 % ---------------------------------------------
 
+% Todo: Are all color already part of this class?
 colors = al_colors();
 
 % ------------------------------------------
@@ -123,23 +199,24 @@ colors = al_colors();
 % ------------------------------------------
 
 keys = al_keys();
+keys.s = s;
+keys.enter = enter;
 
-% ----------------------------------------------
-% Create object instance with trigger parameters
-% ----------------------------------------------
-
-sendTrigger = false; % add triggers for Hamburg
-if sendTrigger == true
-    config_io;
-end
-
-triggers = al_triggers();
+% -----------------------------------------------------------------
+% Todo: Do we have to create object instance with mouse parameters?
+% -----------------------------------------------------------------
 
 % ---------------------------------------------
 % Create object instance with timing parameters
 % ---------------------------------------------
 
 timingParam = al_timing();
+timingParam.cannonBallAnimation = 1.5;
+
+% This is a reference timestamp at the start of the experiment.
+% This is not equal to the first trial or so. So be carful when using
+% EEG or pupillometry and make sure the reference is specified as desired.
+timingParam.ref = GetSecs();
 
 % ----------------------------------------------
 % Create object instance with strings to display
@@ -147,6 +224,9 @@ timingParam = al_timing();
 
 strings = al_strings();
 strings.txtPressEnter = 'Weiter mit Enter';
+strings.sentenceLength = sentenceLength;
+strings.textSize = textSize;
+strings.headerSize = headerSize;
 
 % ----------
 % User Input
@@ -156,14 +236,17 @@ subject = al_subject();
 
 % Default input
 ID = '99999'; % 5 digits
-age = '99'; 
+age = '99';
 sex = 'f';  % m/f/d
-group = '1'; % 1=sleep/2=control
+group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
-day = '1'; % 1/2
+if ~unitTest
+    cBal = '1'; % 1/2/3/4
+    day = '1'; % 1/2
+end
 
 % If no user input requested
-if gParam.askSubjInfo == false
+if gParam.askSubjInfo == false || unitTest
 
     % Just add defaults
     subject.ID = str2double(ID);
@@ -185,7 +268,7 @@ else
     % Add defaults from above
     defaultanswer = {ID, age, sex, group, cBal, day};
 
-    % Add information that is not specified by user (i.e. date)
+    % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
 
     % Put all relevant subject info in structure
@@ -210,21 +293,8 @@ else
 end
 
 
-% -------------------------------------
-% Create object instance for trial flow
-% -------------------------------------
-% todo: document all cases in trialflow
-trialflow = al_trialflow();
-trialflow.shot = ' '; % todo: noch machen
-trialflow.confetti = 'show confetti cloud'; 
-trialflow.cannonball_start = ' '; 
-trialflow.cannon = 'hide cannon';
-trialflow.background = 'noPicture';
-trialflow.currentTickmarks = 'show';
-trialflow.cannonType = cannonType;
-
 % ------------------
-% Display properties 
+% Display properties
 % ------------------
 
 % Display-object instance
@@ -232,9 +302,9 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 % Todo: Make sure that all tests are passed on task PC
-display.screen_warnings();
+% display.screen_warnings();
 
-
+% Set screensize
 display.screensize = screensize;
 display.backgroundCol = [66, 66, 66];
 display.imageRect = imageRect;
@@ -242,22 +312,18 @@ display.imageRect = imageRect;
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Docment thids
+% Todo: Docment this
 display = display.createRects();
 display = display.createTextures(trialflow.cannonType);
 
-
-% Disable keyboard and, if desired, mouse cursor 
-% display.hidePtbCursor = hidePtbCursor;
-%if hidePtbCursor == true
-    %display.cursorKeys()
- %  HideCursor;
-%end
-%ListenChar(2);
-
+% Disable keyboard and, if desired, mouse cursor
+if hidePtbCursor == true
+    HideCursor;
+end
+ListenChar(2);
 
 % ---------------------------------------------
-% Create object instance with circle parameterpre
+% Create object instance with circle parameters
 % ---------------------------------------------
 
 % Todo: Delete a couple of variables when versions are independent;
@@ -268,37 +334,40 @@ circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle = circle.compute_circle_props();
 
-
 % ---------------------------------------
 % Put all object instances in task object
 % ---------------------------------------
 
+% Object that harbors all relevant object instances
 taskParam = al_objectClass();
+
+% Add these to task-parameters object
 taskParam.gParam = gParam;
+taskParam.strings = strings;
+taskParam.trialflow = trialflow;
 taskParam.circle = circle;
 taskParam.colors = colors;
 taskParam.keys = keys;
-taskParam.triggers = triggers;
 taskParam.timingParam = timingParam;
-taskParam.strings = strings;
-taskParam.trialflow = trialflow;
 taskParam.display = display;
 taskParam.subject = subject;
+taskParam.unitTest = unitTest;
 
-% Replace this when getting back to unit tests
-taskParam.unitTest = unitTest; 
+% --------
+% Run task
+% --------
 
-al_HamburgConditions(taskParam);
-
+dataMain = al_HamburgConditions(taskParam);
+totWin = dataMain.accPerf(end);
 
 % -----------
 % End of task
 % -----------
 
 header = 'Ende des Versuchs!';
-%txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben %.2f Euro verdient!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.2f Euro verdient!', totWin);
 feedback = true; % indicate that this is the instruction mode
-%al_bigScreen(taskParam, header, txt, feedback, true);  
+al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 
 ListenChar();
 ShowCursor;
@@ -307,4 +376,4 @@ Screen('CloseAll');
 % Inform user about timing
 fprintf('Total time: %.1f minutes\n', char((GetSecs - timingParam.ref)/60));
 
-%totWin = dataLowNoise.accPerf(end) + dataHighNoise.accPerf(end);
+end

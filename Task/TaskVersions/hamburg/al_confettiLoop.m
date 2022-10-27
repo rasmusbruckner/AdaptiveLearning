@@ -1,29 +1,28 @@
-function taskData = al_sleepLoop(taskParam, condition, taskData, trial)
-%AL_SLEEPLOOP This function runs the cannon-task trials for the "sleep version"
+function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
+%AL_CONFETTILOOP This function runs the cannon-task trials for the "confetti-cannon version"
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %       condtion: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
-%       practice: Whether or not function is used in practice phase
 %
 %   Output
 %       taskData: Task-data-object instance
 %
-%   Events
+%   Events (Todo: verify)
 %       1: Trial Onset
 %       2: Prediction            (self-paced)
-%       3: Cannonball animation  (500 ms)
-%       4: Miss/Hit animation    (1000 ms)
-%       5: ITI                   (900 ms)
-%       6: Jitter                (0-200 ms)
+%       3: Confetti animation    (1500 ms)
+%       4: ITI                   (900 ms)
+%       5: Jitter                (0-200 ms)
 %                                ------------
-%                                 3 s + pred (~ 2s)
+%                                 2.5 s + pred (~ 2s)
 %
 % todo: maybe get rid of "condition" input
 % todo: some comments should be added and some outdated comments should be
 % deleted
+
 
 % Wait until keys released
 KbReleaseWait();
@@ -41,7 +40,7 @@ for i = 1:trial
 
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
-    taskData.age(i) = taskParam.subject.age;
+    taskData.age(i) = str2double(taskParam.subject.age);
     taskData.ID(i) = taskParam.subject.ID;
     taskData.sex{i} = taskParam.subject.sex;
     taskData.Date{i} = taskParam.subject.date;
@@ -49,7 +48,7 @@ for i = 1:trial
     taskData.rew(i) = taskParam.subject.rew;
     taskData.testDay(i) = taskParam.subject.testDay;
     taskData.group(i) = taskParam.subject.group;
-    taskData.cond{i} = taskParam.trialflow.push;
+    taskData.cond{i} = condition;
 
     % Timestamp for measuring jitter duration for validation purposes
     jitTest = GetSecs();
@@ -65,13 +64,21 @@ for i = 1:trial
     end
 
     % Send trial-onset trigger (here only timestamp since task without EEG or pupillometry)
-    taskData.timestampOnset(i) = GetSecs - taskParam.timingParam.ref;
+    taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Self-paced prediction phase
     % ---------------------------
 
-    [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp);
-   
+    % Only do this when not testing the code
+    if ~taskParam.unitTest
+
+        % Reset mouse to screen center
+        SetMouse(720, 450, taskParam.display.window.onScreen)
+
+        % Participant indicates prediction
+        press = 0;
+        [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press);
+    end
 
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
@@ -82,8 +89,13 @@ for i = 1:trial
     % for accurate timing
     timestamp = GetSecs;
 
-    % Outcome: Animate cannonball
-    %----------------------------
+    % Outcome: Animate confetti
+    %--------------------------
+
+    % send fixation cross 1 trigger
+    % todo: this should be done in mouse loop, like I did for
+    % keyboardLoop
+    taskData.timestampPrediction(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Deviation from cannon (estimation error) to compute performance
     % criterion in practice
@@ -112,46 +124,36 @@ for i = 1:trial
         taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
 
-    % Outcome: Animate hit and miss
-    % -----------------------------
-
-    % Animate cannonball
+    % Confetti animation    
     background = false; % todo: include this in trialflow
-    al_cannonball(taskParam, taskData, background, i, timestamp)
+    al_confetti(taskParam, taskData, i, background, timestamp);
+
+
+    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+        al_drawCannon(taskParam, taskData.distMean(i))
+        % al_aim(taskParam, taskData.distMean(i))  # check if this should
+        % be included at all
+    else
+        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawCross(taskParam)
+    end
+
+    % Draw circle and confetti cloud
+    al_drawCircle(taskParam)
 
     if taskParam.gParam.printTiming
         shotTiming = GetSecs - taskParam.timingParam.ref;
         fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampPrediction(i))
     end
 
-    % Animate explosion when it is a miss
-    timestamp = timestamp + taskParam.timingParam.cannonBallAnimation;
-    al_cannonMiss(taskParam, taskData, i, background, timestamp)
-
-    if taskParam.gParam.printTiming
-        missTiming = GetSecs - taskParam.timingParam.ref;
-        fprintf('Miss duration: %.5f\n', missTiming - shotTiming)
-    end
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.outcomeLength;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Fixation cross: ITI
     % --------------------
-
-    % Present background, fixation cross, and circle
-    Screen('FillRect', taskParam.display.window.onScreen, [0 0 0]);
-    Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.backgroundTxt,[], [taskParam.display.backgroundCoords], []);
-    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-        al_drawCannon(taskParam, taskData.distMean(i))
-        % al_aim(taskParam, taskData.distMean(i))  # check if this should
-        % be included at all
-    else
-        al_drawCross(taskParam)
-    end
-    al_drawCircle(taskParam)
-
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.cannonMissAnimation + taskParam.timingParam.outcomeLength; % hier schauen, dass outcomeLength angepasst
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Fixed inter-trial interval
     WaitSecs(taskParam.timingParam.fixedITI);
@@ -159,9 +161,8 @@ for i = 1:trial
     % Offset timestamp
     taskData.timestampOffset(i) = GetSecs - taskParam.timingParam.ref;
     if taskParam.gParam.printTiming
-        fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - missTiming)
+        fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
     end
-
 end
 
 % Give feedback and save data
@@ -170,19 +171,19 @@ end
 % Todo: update this and potentially get rid of condition
 if ~taskParam.unitTest
 
-        whichBlock = taskData.block;
-        [txt, header] = al_feedback(taskData, taskParam, taskParam.subject, condition, whichBlock, trial);
-        feedback = true;
-        al_bigScreen(taskParam, header, txt, feedback);
+    whichBlock = taskData.block;
+    [txt, header] = al_feedback(taskData, taskParam, taskParam.subject, condition, whichBlock, trial);
+    feedback = true;
+    al_bigScreen(taskParam, header, txt, feedback);
 
     if ~isequal(condition,'practice')
-        
-        % Save data
-        % ---------
 
-        % Todo: do we want to save practice?
+        % Save data
+        %----------
+
+        % todo: do we want to save practice?
         concentration = unique(taskData.concentration);
-        savename = sprintf('cannon_Sleep_g%d_d%d_conc%d_%s_%d', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.trialflow.push, taskParam.subject.ID);
+        savename = sprintf('cannon_confetti_g%d_d%d_conc%d_%d', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
         save(savename, 'taskData')
 
         % Wait until keys released

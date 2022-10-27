@@ -1,4 +1,4 @@
-function taskData = al_confirmMiss(taskParam, taskData, win, trial, txt)
+function taskData = al_confirmMiss(taskParam, taskData, win, trial, txt, xyExp, dotCol, dotSize)
 %AL_CONFIRMMISS This function shows feedback that shield was missed
 %
 %   Input
@@ -11,7 +11,7 @@ function taskData = al_confirmMiss(taskParam, taskData, win, trial, txt)
 %   Output
 %       taskData: Task-data-object instance
 
-if ~ isequal(taskParam.trialflow.shotAndShield, 'sequential')
+if ~isequal(taskParam.trialflow.shotAndShield, 'sequential') && isequal(taskParam.trialflow.cannonType, 'standard')
     tUpdated = GetSecs + 0.001;
     background = true;
     taskData.hit(trial) = 0;
@@ -20,7 +20,6 @@ end
 
 
 tUpdated = GetSecs;
-
 
 % outcome = taskData.distMean(trial);
 
@@ -63,7 +62,16 @@ while 1
     end
 
     % Show outcome
-    al_drawOutcome(taskParam, taskData.distMean(trial))
+    if isequal(taskParam.trialflow.cannonType, 'standard')
+    
+        al_drawOutcome(taskParam, taskData.distMean(trial))
+    
+    elseif exist('xyExp', 'var') && exist('dotCol', 'var') && exist('dotSize', 'var')
+
+        % Draw updated dots to animate explosion
+        Screen('DrawDots', taskParam.display.window.onScreen, round(xyExp), dotSize, dotCol, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+
+    end
     
     % Present instructions
     DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);

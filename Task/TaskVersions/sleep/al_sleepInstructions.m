@@ -1,6 +1,6 @@
 function al_sleepInstructions(taskParam)
 %AL_SLEEPINSTRUCTIONS This function runs the instructions for the
-% sleep version of the cannon task
+% "sleep" version of the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -8,9 +8,9 @@ function al_sleepInstructions(taskParam)
 %   Output
 %       ~
 
-
-% Todo: 
-%   Check if "taskType" is still used somewhere and if so, get rid of it
+% Extract test day and cBal variables
+testDay = taskParam.subject.testDay;
+cBal = taskParam.subject.cBal;
 
 % Indicate that cannon will be displayed during instructions
 taskParam.trialflow.cannon = 'show cannon';
@@ -28,14 +28,12 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 
 al_indicateCondition(taskParam, 'Herzlich Willkommen zur Kanonenaufgabe!')
 
-testDay = taskParam.subject.testDay;
-cBal = taskParam.subject.cBal;
 
 if testDay == 1
 
     % 2. Introduce the cannon
     % -----------------------
-    
+
     % Load taskData-object instance
     taskData = al_taskDataMain();
 
@@ -47,11 +45,11 @@ if testDay == 1
     taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/taskParam.gParam.concentration)); % shield size
     taskData.shieldType(1:n_trials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
-    taskData.outcome = taskData.distMean; % In practice phase, mean and outcome are the same
+    taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
 
     % Introduce cannon
     current_trial = 1;
-    txt = ['Eine Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem orangenen '...
+    txt = ['Eine Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem violetten '...
         'Punkt können Sie angeben, wo Sie Ihr Schild platzieren möchten, um die Kanonenkugel abzuwehren.\nSie können den Punkt mit den '...
         'grünen und blauen Tasten steuern. Grün können Sie für schnelle Bewegungen und blau für langsame Bewegungen benutzen.'];
     taskParam = al_introduceCannon(taskParam, taskData, current_trial, txt);
@@ -59,7 +57,7 @@ if testDay == 1
     % 3. Introduce shot of the cannon
     % -------------------------------
 
-    current_trial = 2;
+    current_trial = 2; % update trial number
     txt = 'Das Ziel der Kanone wird mit der schwarzen Linie angezeigt. Drücken Sie die Leertaste, damit die Kanone schießt.';
     [taskData, taskParam] = al_introduceShot(taskParam, taskData, current_trial, txt);
 
@@ -68,19 +66,19 @@ if testDay == 1
 
     % Add tickmarks to introduce them to participant
     taskParam.trialflow.currentTickmarks = 'show';
-    current_trial = 3;
+    current_trial = 3; % update trial number
 
     % Repeat as long as subject misses cannonball
     while 1
 
-        txt=['Der schwarze Strich zeigt Ihnen die Position der letzten Kugel. Der orangene Strich zeigt Ihnen die '...
-            'Position Ihres letzten Schildes. Steuern Sie den orangenen Punkt jetzt bitte auf das Ziel der Kanone und drücken Sie LEERTASTE.'];
+        txt=['Der schwarze Strich zeigt Ihnen die Position der letzten Kugel. Der violette Strich zeigt Ihnen die '...
+            'Position Ihres letzten Schildes. Steuern Sie den violetten Punkt jetzt bitte auf das Ziel der Kanone und drücken Sie LEERTASTE.'];
         [taskData, taskParam] = al_introduceSpot(taskParam, taskData, current_trial, txt);
 
         % If it is a miss, repeat instruction
         if abs(taskData.predErr(current_trial)) >= taskParam.gParam.practiceTrialCriterionEstErr
             header = 'Leider nicht gefangen!';
-            txt = 'Sie haben die Kanonenkugel verfehlt. Versuchen Sie es nochmal!';
+            txt = 'Sie haben die Kanonenkugel verfehlt. Versuchen Sie es noch mal!';
             feedback = false; % indicate that this is the instruction mode
             al_bigScreen(taskParam, header, txt, feedback);
         else
@@ -98,7 +96,7 @@ if testDay == 1
 
     % 6. Ask participant to miss cannonball
     % -------------------------------------
-    
+
     % Update trial number
     current_trial = 4;
 
@@ -136,13 +134,13 @@ if testDay == 1
     header = 'Erster Übungsdurchgang';
     txt=['Weil die Kanone schon sehr alt ist, sind die Schüsse ziemlich ungenau. Das heißt, auch wenn '...
         'Sie genau auf das Ziel gehen, können Sie die Kugel verfehlen. Die Ungenauigkeit ist zufällig, '...
-        'dennoch wehren Sie die meisten Kugeln ab, wenn Sie den orangenen Punkt genau auf die Stelle '...
+        'dennoch wehren Sie die meisten Kugeln ab, wenn Sie das Schild genau auf die Stelle '...
         'steuern, auf die die Kanone zielt.\n\nIn der nächsten Übung sollen Sie mit der Ungenauigkeit '...
-        'der Kanone erstmal vertraut werden. Lassen Sie den orangenen Punkt bitte immer auf der anvisierten '...
-        'Stelle stehen. Wenn Sie Ihren Punkt zu oft neben die anvisierte Stelle steuern, wird die '...
+        'der Kanone erst mal vertraut werden. Lassen Sie das Schild bitte immer auf der anvisierten '...
+        'Stelle stehen. Wenn Sie Ihr Schild zu oft neben die anvisierte Stelle steuern, wird die '...
         'Übung wiederholt.'];
     feedback = false; % indicate that this is the instruction mode
-    al_bigScreen(taskParam, header, txt, feedback);  
+    al_bigScreen(taskParam, header, txt, feedback);
 
     % Load outcomes for practice
     condition = 'practice';
@@ -156,8 +154,10 @@ if testDay == 1
 
     % Run task
     while 1
+
+        % Task loop
         al_sleepLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
-        
+
         % If estimation error is larger than a criterion on more than five
         % trials, we repeat the instructions
         repeatBlock = sum(abs(taskData.estErr) >= taskParam.gParam.practiceTrialCriterionEstErr);
@@ -166,7 +166,7 @@ if testDay == 1
             header = 'Bitte noch mal probieren!';
             txt = ['Sie haben Ihr Schild oft neben dem Ziel der Kanone platziert. Versuchen Sie im nächsten '...
                 'Durchgang bitte, das Schild direkt auf das Ziel zu steuern. Das Ziel wird mit der Nadel gezeigt.'];
-            al_bigScreen(taskParam, header, txt, feedback);  
+            al_bigScreen(taskParam, header, txt, feedback);
         else
             break
         end
@@ -181,11 +181,11 @@ if testDay == 1
     txt = ['Bis jetzt kannten Sie das Ziel der Kanone und Sie konnten die meisten Kugeln abwehren. Im nächsten '...
         'Übungsdurchgang wird die Kanone nicht mehr sichtbar sein. Anstelle der Kanone sehen Sie dann ein Kreuz. '...
         'Außerdem sehen Sie, wo die Kanonenkugeln landen.\n\nUm weiterhin viele Kanonenkugeln abzuwehren, müssen Sie aufgrund '...
-        'der Landeposition einschätzen, auf welche Stelle die Kanone zielt und den orangenen Punkt auf diese Position '...
-        'steuern. Wenn Sie denken, dass die Kanone auf eine neue Stelle zielt, sollten Sie auch den orangenen Punkt '...
+        'der Landeposition einschätzen, auf welche Stelle die Kanone zielt und das Schild auf diese Position '...
+        'steuern. Wenn Sie denken, dass die Kanone auf eine neue Stelle zielt, sollten Sie auch Ihr Schild '...
         'dorthin bewegen.'];
     feedback = false;
-    al_bigScreen(taskParam, header, txt, feedback); 
+    al_bigScreen(taskParam, header, txt, feedback);
 
     % Load data set for practice phase
     taskData = load('hidCannonPracticeSleep.mat');
@@ -202,8 +202,8 @@ if testDay == 1
     header = 'Letzter Übungsdurchgang: Zufälliger Ausgangspunkt';
 
     txtStartTask = ['Jezt kommen wir zum letzten Übungsdurchgang. In der Hälfte der Durchgänge der richtigen Aufgabe wird der '...
-        'Ausgangspunkt Ihrer Vorhersage (der orangene Punkt) zufällig links oder rechts von Ihrer letzten Vorhersage erscheinen. '...
-        'Versuchen Sie, sich davon nicht ablenken zu lassen und steuern Sie den orangenen Punkt wie bisher auf die Stelle des '...
+        'Ausgangspunkt Ihrer Vorhersage (der violette Punkt) zufällig links oder rechts von Ihrer letzten Vorhersage erscheinen. '...
+        'Versuchen Sie, sich davon nicht ablenken zu lassen und steuern Sie das Schild wie bisher auf die Stelle des '...
         'Kreises, wo Sie das Ziel der Kanone vermuten.'];
 
     feedback = false;
@@ -220,21 +220,21 @@ if testDay == 1
 
 else
 
-    practice = true;
-    
+    % practice = true;
+
     % Text settings
     Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
     Screen('TextSize', taskParam.display.window.onScreen, 50);
     header = 'Tag 2: Übungsdurchgang';
 
-    txtStartTask = ['Herzlich willkommen zum zweiten Teil des Experiments. Wie beim letzten Mal, werden Sie mit einer Übung anfangen. '...
-    'Bei jedem Versuch wird eine Kanone auf eine Stelle des Kreises zielen. Die Schüsse der Kanone werden in der Nähe des Ziels eintreffen. '...
-    'Meistens wird die Kanone auf dieselbe Stelle zielen, aber es kommt auch vor, dass sich die Kanone neu ausrichtet.\n\n'...
-    'Sie werden die Kanone meistens nicht sehen, sondern müssen das Ziel bestmöglichst einschätzen, um möglichst viele Kugeln zu '...
-    'fangen und das gewonnene Geld zu maximieren.\n\n Wenn die Kanone in seltenen Fällen gezeigt wird, sollten Sie Ihren organgenen Punkt '...
-    'genau auf das Ziel steuern.\n\n Beachten Sie außerdem, dass in der Hälfte der Durchgänge der Ausgangspunkt Ihrer Vorhersage (der orangene Punkt) '...
-    'zufällig links oder rechts von Ihrer letzten Vorhersage erscheint. Versuchen Sie, sich davon nicht ablenken zu lassen und steuern Sie den orangenen Punkt '...
-    'auf die Stelle des Kreises, wo Sie das Ziel der Kanone vermuten.'];
+    txtStartTask = ['Herzlich willkommen zum zweiten Teil des Experiments. Wie beim letzten Mal werden Sie mit einer Übung anfangen. '...
+        'Bei jedem Versuch wird eine Kanone auf eine Stelle des Kreises zielen. Die Schüsse der Kanone werden in der Nähe des Ziels eintreffen. '...
+        'Meistens wird die Kanone auf dieselbe Stelle zielen, aber es kommt auch vor, dass sich die Kanone neu ausrichtet.\n\n'...
+        'Sie werden die Kanone meistens nicht sehen, sondern müssen das Ziel bestmöglich einschätzen, um möglichst viele Kugeln '...
+        'mit Ihrem Schild zu fangen und das gewonnene Geld zu maximieren.\n\nWenn die Kanone in seltenen Fällen gezeigt wird, sollten Sie Ihr Schild (violetter Punkt) '...
+        'genau auf das Ziel steuern.\n\nBeachten Sie außerdem, dass in der Hälfte der Durchgänge der Ausgangspunkt Ihrer Vorhersage '...
+        'zufällig links oder rechts von Ihrer letzten Vorhersage erscheint. Versuchen Sie, sich davon nicht ablenken zu lassen und steuern Sie das Schild '...
+        'auf die Stelle des Kreises, wo Sie das Ziel der Kanone vermuten.'];
 
     feedback = false;
     al_bigScreen(taskParam, header, txtStartTask, feedback);
@@ -246,7 +246,7 @@ else
 
         % No-push first...
         % ----------------
-        
+
         % Load data set for practice phase
         taskData = load('hidCannonPracticeSleep.mat');
         taskData = taskData.taskData;
@@ -255,23 +255,24 @@ else
         taskParam.trialflow.push = 'noPush';
         al_indicateNoise(taskParam)
         trial = taskParam.gParam.practTrials;
-        al_sleepLoop(taskParam, 'main', taskData, trial, practice); 
+        condition = 'practice';
+        al_sleepLoop(taskParam, condition, taskData, trial);
 
         % ... push second
         % ----------------
-        
+
         % Load data set for practice phase
         taskData = load('hidCannonPracticeSleepPush.mat');
         taskData = taskData.taskData;
-        
+
         % Run task
         taskParam.trialflow.push = 'push';
-        al_indicateNoise(taskParam)      
+        al_indicateNoise(taskParam)
         trial = taskParam.gParam.practTrials;
-        al_sleepLoop(taskParam, 'main', taskData, trial, practice); 
-        
+        al_sleepLoop(taskParam, condition, taskData, trial);
+
     else
-        
+
         taskParam.trialflow.cannon = 'none'; % don't show cannon anymore
         taskParam.trialflow.currentTickmarks = 'show'; % show tickmarks
 
@@ -281,35 +282,35 @@ else
         % Load data set for practice phase
         taskData = load('hidCannonPracticeSleepPush.mat');
         taskData = taskData.taskData;
-        
+
         % Run task
         taskParam.trialflow.push = 'push';
         al_indicateNoise(taskParam)
         trial = taskParam.gParam.practTrials;
-        al_sleepLoop(taskParam, 'main', taskData, trial, practice);
-        
+        al_sleepLoop(taskParam, condition, taskData, trial);
+
         % ... no-push second
         % ------------------
-        
+
         % Load data set for practice phase
         taskData = load('hidCannonPracticeSleep.mat');
         taskData = taskData.taskData;
-        
+
         % Run task
         taskParam.trialflow.push = 'noPush';
         al_indicateNoise(taskParam)
         trial = taskParam.gParam.practTrials;
-        al_sleepLoop(taskParam, 'main', taskData, trial, practice);  
-        
+        al_sleepLoop(taskParam, condition, taskData, trial);
+
     end
 end
 
-% Experimental blocks
+% Instructions experimental blocks
 header = 'Jetzt kommen wir zum Experiment';
 txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst wehren Sie also die meisten Kugeln ab, '...
-    'wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone zielt. Weil Sie die Kanone meistens nicht mehr '...
+    'wenn Sie den violetten Punkt auf die Stelle bewegen, auf die die Kanone zielt. Weil Sie die Kanone meistens nicht mehr '...
     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Kugeln einschätzen.\n\nIn wenigen Fällen werden Sie '...
-    'die Kanone zu sehen bekommen und können so Ihre Leistung verbessern, indem Sie den orangenen Punkt genau auf das Ziel steuern.\n\n'...
+    'die Kanone zu sehen bekommen und können so Ihre Leistung verbessern, indem Sie den violetten Punkt genau auf das Ziel steuern.\n\n'...
     'In manchen Blöcken wird der Ausgangspunkt Ihrer Vorhersage zufällig links oder rechts von Ihrer vorherigen Position abweichen.\n\n'...
     'Das Geld für die abgewehrten Kugeln bekommen Sie nach der Studie ausgezahlt.\n\nViel Erfolg!'];
 

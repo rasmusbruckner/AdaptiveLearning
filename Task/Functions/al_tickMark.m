@@ -12,7 +12,7 @@ function al_tickMark(taskParam, parameter, type)
 
 % Depending on tickmark type choose color and length of tickmark
 if isequal(type, 'pred')
-    col = [255 165 0];
+    col = taskParam.colors.blue; %[255 165 0];
     tickLength = 40;
     tickNormalization = 15;
 elseif isequal(type,'outc')

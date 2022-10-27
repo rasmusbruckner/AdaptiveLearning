@@ -53,8 +53,7 @@ Step = OutcSpotDiff / nFrames;
 % Actual cannonball position
 OutcSpotAct = BallStart;
 
-% tstart = GetSecs;
-% tZero = GetSecs;
+% Constantly updated timestamp for stimulus presentation
 tUpdate = GetSecs - timestamp;
 
 % Cycle over number of frames to run the animation
@@ -91,18 +90,15 @@ for i = 1:nFrames
     % todo: check if this has to be re-activeted for other versions
     % al_predictionSpot(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
-        Screen('FillOval', taskParam.gParam.window.onScreen, [165 42 42],...
-            OutcSpotAct);
+        Screen('FillOval', taskParam.gParam.window.onScreen, [165 42 42], OutcSpotAct);
     else
-         Screen('FillOval', taskParam.display.window.onScreen, [0 0 0],...
-            OutcSpotAct);
+        Screen('FillOval', taskParam.display.window.onScreen, [0 0 0], OutcSpotAct);
     end
     
     % Flip screen and present changes
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    tUpdatePrev = GetSecs;
     tUpdate = tUpdate + taskParam.timingParam.cannonBallAnimation / nFrames;
-    [VBLTimestamp StimulusOnsetTime FlipTimestamp Missed Beampos] = Screen('Flip', taskParam.display.window.onScreen, timestamp + tUpdate);
+    Screen('Flip', taskParam.display.window.onScreen, timestamp + tUpdate);
     
 end
 end

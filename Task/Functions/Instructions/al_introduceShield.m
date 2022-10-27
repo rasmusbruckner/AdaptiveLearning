@@ -1,4 +1,4 @@
-function taskData = al_introduceShield(taskParam, taskData, win, trial, txt)
+function taskData = al_introduceShield(taskParam, taskData, win, trial, txt, xyExp, dotCol, dotSize)
 %AL_INTRODUCESHIELD This function introduces the shield to participants
 %
 %   Input 
@@ -70,11 +70,19 @@ while 1
     else
         al_shield(taskParam, taskData.allASS(trial), taskData.pred(trial), 1)
     end
-
-    % Added this 21.06.22
-    outcome = taskData.distMean(trial);  
-    al_drawOutcome(taskParam, outcome) 
     
+    if ~exist('xyExp', 'var') && ~exist('dotCol', 'var') && ~exist('dotSize', 'var')
+    
+        % Added this 21.06.22
+        outcome = taskData.distMean(trial);  
+        al_drawOutcome(taskParam, outcome) 
+
+    elseif exist('xyExp', 'var') && exist('dotCol', 'var') && exist('dotSize', 'var')
+
+        % Show confetti dots
+        Screen('DrawDots', taskParam.display.window.onScreen, round(xyExp), dotSize, dotCol, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+    end
+
     % Present instructions
     DrawFormattedText(taskParam.display.window.onScreen, txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);
     DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.display.screensize(4)*0.9, [255 255 255]);
