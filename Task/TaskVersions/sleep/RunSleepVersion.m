@@ -18,8 +18,8 @@ function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %       and focuses on the most essential intructions.
 %
 %   Testing
-%       To run the integration test, run al_sleepIntegrationTest.m
-%       To run the unit tests, run al_unittets.m in "DataScripts"
+%       To run the integration test, run "al_sleepIntegrationTest"
+%       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
 %       10/22

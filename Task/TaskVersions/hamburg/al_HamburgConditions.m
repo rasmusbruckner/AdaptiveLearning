@@ -42,7 +42,11 @@ end
 trial = taskParam.gParam.trials;
 
 % Get data
-taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+if ~unitTest
+    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+else
+    load('integrationTest_sleep.mat','taskData')
+end
 
 % Run task
 dataMain = al_confettiLoop(taskParam, 'main', taskData, trial);

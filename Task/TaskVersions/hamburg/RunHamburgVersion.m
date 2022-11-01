@@ -5,20 +5,20 @@ function dataMain =  RunHamburgVersion(unitTest, cBal, day)
 %   Input
 %       unitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
-%       day: Current test day (only allowed when running unit test)
+%       day: Current tes day (only allowed when running unit test)
 %
 %   Output
 %       dataMain: Task-data object
 %
 %   Documentation
 %       This function runs the Hamburg pilot version of the cannon task.
-%       Subjects see a confetti cannon shootin confetti particles.
+%       Subjects see a confetti cannon shooting confetti particles.
 %       Currently, there is just one condition but more will be added
 %       in the future.
 %
 %   Testing
-%       To run the integration test, run XX
-%       To run the unit tests, run al_unittets.m in "DataScripts"
+%       To run the integration test, run "al_HamburgIntegrationTest"
+%       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
 %       10/22
@@ -63,7 +63,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 175;  Hier bitte anpassen
+trialsExp = 20;  % 175;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -100,7 +100,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; % [1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
+screensize =  [1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
 
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
 %displayobj.screensize = get(0,'MonitorPositions'); %[1    1

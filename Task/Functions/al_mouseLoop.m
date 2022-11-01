@@ -46,22 +46,44 @@ while 1
     if breakKey == taskParam.keys.enter
         DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter ,'center', taskParam.display.screensize(4)*0.9);
     end
-
-    [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
     
-    % todo: this can be updated so that mouse cursor and dot are perfectly
+    % For unit test: simulate keyIsDown, keyCode, and record RT
+    if ~taskParam.unitTest
+        [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
+            % todo: this can be updated so that mouse cursor and dot are perfectly
     % overlapping (in task mouse cursor is hidden, so not relevant to subject)
-    x = x-720;
-    y = (y-450)*-1;
+    screensize = taskParam.display.screensize;
+    %x = x-720;
+    %y = (y-450)*-1;
     
+    
+    x = x-(screensize(3)/2);
+    y = (y-(screensize(4)/2))*-1;
+    %WaitSecs(0.1)
+    x;
+    y;
     currentDegree = mod(atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
     if currentDegree > 360
         degree = currentDegree - 360;
     else
         degree = currentDegree;
     end
-    taskParam.circle.rotAngle = degree * taskParam.circle.unit;
+    else
+        buttons(1) = 1;
+        buttons(2) = 0;
+        degree = taskData.pred(trial);
+        %taskParam.circle.rotAngle = deg2rad(taskData.pred(trial));
+        %x = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
+        %y = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
+
+        %x = x+720;
+        %y = (-1*y+450);
+    end
     
+    taskParam.circle.rotAngle = degree * taskParam.circle.unit;
+
+
+    %degree
     al_drawCircle(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
         al_drawContext(taskParam,taskData.currentContext(trial))
@@ -122,14 +144,23 @@ while 1
         
     end
     
-    hyp = sqrt(x^2 + y^2);
-    if hyp <= taskParam.circle.rotationRad-2 %150 % todo: parameterize using circle size
-        al_predictionSpotReversal(taskParam, x ,y*-1)
+   % if taskParam.unitTest
+    %    taskParam.circle.rotAngle = deg2rad(taskData.pred(trial));
+    %end
+    if ~taskParam.unitTest
+        hyp = sqrt(x^2 + y^2);
+        if hyp <= taskParam.circle.rotationRad-2
+            al_predictionSpotReversal(taskParam, x ,y*-1)
+        else
+            al_predictionSpot(taskParam)
+        end
     else
         al_predictionSpot(taskParam)
+        WaitSecs(0.25);
+        hyp = nan;
     end
     
-    if hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))
+    if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest
         taskData.initialTendency(trial) = degree;  % todo: save in radians for consistency
         taskData.initiationRTs(trial,:) = GetSecs() - initRT_Timestamp;
     end
@@ -174,6 +205,10 @@ while 1
     
     Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
     
+    if taskParam.unitTest
+        WaitSecs(0.25);  % simulate RT = 0.5
+    end
+
     if breakKey == taskParam.keys.enter
         [keyIsDown, ~, keyCode] = KbCheck;
         if keyIsDown && keyCode(breakKey)

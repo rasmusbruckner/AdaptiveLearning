@@ -2,8 +2,6 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
     % This function runs an integration test for the sleep version
     % To run the test, put run(al_sleepIntegrationTest) in command window
 
-    % Todo: Test all cBals and all Days 
-
     % Test methods
     methods (Test)
         

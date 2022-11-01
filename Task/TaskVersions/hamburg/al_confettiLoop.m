@@ -40,7 +40,7 @@ for i = 1:trial
 
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
-    taskData.age(i) = str2double(taskParam.subject.age);
+    taskData.age(i) = taskParam.subject.age;
     taskData.ID(i) = taskParam.subject.ID;
     taskData.sex{i} = taskParam.subject.sex;
     taskData.Date{i} = taskParam.subject.date;
@@ -70,15 +70,15 @@ for i = 1:trial
     % ---------------------------
 
     % Only do this when not testing the code
-    if ~taskParam.unitTest
+    %if ~taskParam.unitTest
 
-        % Reset mouse to screen center
-        SetMouse(720, 450, taskParam.display.window.onScreen)
+    % Reset mouse to screen center
+    SetMouse(720, 450, taskParam.display.window.onScreen)
 
-        % Participant indicates prediction
-        press = 0;
-        [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press);
-    end
+    % Participant indicates prediction
+    press = 0;
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press);
+    %end
 
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
