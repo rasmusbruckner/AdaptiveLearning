@@ -22,7 +22,7 @@ function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       10/22
+%       11/22
 
 % Todo: Before collection of MD data, determine incentives and remuneration
 
@@ -290,7 +290,6 @@ else
     subject.checkGroup();
     subject.checkCBal(),
     subject.checkTestDay();
-    subject.check_N_Trials(gParam)
 end
 
 % ------------------

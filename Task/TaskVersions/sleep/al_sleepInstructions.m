@@ -253,7 +253,7 @@ else
 
         % Run task
         taskParam.trialflow.push = 'noPush';
-        al_indicateNoise(taskParam)
+        al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
         condition = 'practice';
         al_sleepLoop(taskParam, condition, taskData, trial);
@@ -267,7 +267,7 @@ else
 
         % Run task
         taskParam.trialflow.push = 'push';
-        al_indicateNoise(taskParam)
+        al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
         al_sleepLoop(taskParam, condition, taskData, trial);
 
@@ -285,8 +285,9 @@ else
 
         % Run task
         taskParam.trialflow.push = 'push';
-        al_indicateNoise(taskParam)
+        al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
+        condition = 'practice';
         al_sleepLoop(taskParam, condition, taskData, trial);
 
         % ... no-push second
@@ -298,7 +299,7 @@ else
 
         % Run task
         taskParam.trialflow.push = 'noPush';
-        al_indicateNoise(taskParam)
+        al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
         al_sleepLoop(taskParam, condition, taskData, trial);
 

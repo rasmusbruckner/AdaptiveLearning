@@ -13,7 +13,9 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
 
             cBal = '1';
             day = '1';
-            dataMain = RunHamburgVersion(true, cBal, day);
+            [dataMain, ~] = RunHamburgVersion(true, cBal, day);
+
+            % Todo: Test both noise conditions
             
             % Test output
             % -----------

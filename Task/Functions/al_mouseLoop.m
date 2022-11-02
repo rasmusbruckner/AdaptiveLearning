@@ -1,5 +1,5 @@
 function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt, breakKey)
-%AL_MOUSELOOP   This function manages the interaction between participants and the task via the computer mouse 
+%AL_MOUSELOOP This function manages the interaction between participants and the task via the computer mouse 
 %
 %   Input
 %       taskParam: structure containing task paramters
@@ -50,18 +50,12 @@ while 1
     % For unit test: simulate keyIsDown, keyCode, and record RT
     if ~taskParam.unitTest
         [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
-            % todo: this can be updated so that mouse cursor and dot are perfectly
-    % overlapping (in task mouse cursor is hidden, so not relevant to subject)
+            
     screensize = taskParam.display.screensize;
-    %x = x-720;
-    %y = (y-450)*-1;
-    
     
     x = x-(screensize(3)/2);
     y = (y-(screensize(4)/2))*-1;
-    %WaitSecs(0.1)
-    x;
-    y;
+
     currentDegree = mod(atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
     if currentDegree > 360
         degree = currentDegree - 360;

@@ -1,4 +1,4 @@
-function dataMain =  RunHamburgVersion(unitTest, cBal, day)
+function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
 %RUNHAMBURGVERSION This function runs the first Hamburg pilot version
 %  of the cannon task.
 %
@@ -8,20 +8,20 @@ function dataMain =  RunHamburgVersion(unitTest, cBal, day)
 %       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataMain: Task-data object
+%       dataLowNoise: Task-data object low-noise condition
+%       dataHighNoise: Task-data object high-noise condition
 %
 %   Documentation
 %       This function runs the Hamburg pilot version of the cannon task.
 %       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there is just one condition but more will be added
-%       in the future.
+%       Currently, there are two different noise conditions.
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       10/22
+%       11/22
 
 % Todo: At some point, we have to determine incentives and remuneration
 
@@ -63,7 +63,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 20;  % 175;  Hier bitte anpassen
+trialsExp = 5;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -71,8 +71,8 @@ trialsTesting = 20;
 % Number of practice trials
 practTrials = 2; % 20;  Hier bitte anpassen
 
-% Risk parameter: Precision of confetti mean
-concentration = 12;
+% Risk parameter: Precision of confetti average
+concentration = [16, 8];
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
@@ -84,7 +84,7 @@ runIntro = true;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 45 90 135];  % Todo adjust properly for first pilot
+blockIndices = [1 50 100 150];  % Todo: adjust properly for first pilot
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -289,7 +289,6 @@ else
     subject.checkGroup();
     subject.checkCBal(),
     subject.checkTestDay();
-    subject.check_N_Trials(gParam)
 end
 
 
@@ -302,7 +301,7 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 % Todo: Make sure that all tests are passed on task PC
-% display.screen_warnings();
+% display.sreen_warnings();
 
 % Set screensize
 display.screensize = screensize;
@@ -357,8 +356,9 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-dataMain = al_HamburgConditions(taskParam);
-totWin = dataMain.accPerf(end);
+[dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam);
+% totWin = dataMain.accPerf(end);
+totWin = dataLowNoise.accPerf(end) + dataLowNoise.accPerf(end);
 
 % -----------
 % End of task

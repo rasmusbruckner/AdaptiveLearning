@@ -63,7 +63,7 @@ if strcmp(taskParam.gParam.taskType, 'Sleep')
 elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
     
     % Reset mouse to screen center
-    SetMouse(720, 450, taskParam.display.window.onScreen)
+    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
     press = 0;

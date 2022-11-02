@@ -65,7 +65,7 @@ if (cBal == 1 && testDay == 1) ||...
 
     % Run task
     taskParam.trialflow.push = 'noPush';
-    al_indicateNoise(taskParam)
+    al_indicatePush(taskParam)
     dataNoPush = al_sleepLoop(taskParam, 'main', taskData, trial);
 
     % ... push second
@@ -80,7 +80,7 @@ if (cBal == 1 && testDay == 1) ||...
 
     % Run task
     taskParam.trialflow.push = 'push';
-    al_indicateNoise(taskParam)
+    al_indicatePush(taskParam)
     dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);
 
 elseif (cBal == 2 && testDay == 2) ||...
@@ -100,7 +100,7 @@ elseif (cBal == 2 && testDay == 2) ||...
 
     % Run task
     taskParam.trialflow.push = 'push';
-    al_indicateNoise(taskParam)
+    al_indicatePush(taskParam)
     dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);
 
     % ... no-push second
@@ -115,7 +115,7 @@ elseif (cBal == 2 && testDay == 2) ||...
 
     % Run task
     taskParam.trialflow.push = 'noPush';
-    al_indicateNoise(taskParam)
+    al_indicatePush(taskParam)
     dataNoPush = al_sleepLoop(taskParam, 'main', taskData, trial);
 
 end

@@ -152,14 +152,15 @@ classdef al_subject
             end
 
         end
-
-        % Todo: This should be a static function
-        % I think not necessary anymore
-        function check_N_Trials(~, gParam)
-        if  (gParam.trials > 1 && mod(gParam.trials, 2)) == 1
-            msgbox('All trials must be even or equal to 1!');
-            return
-        end
-        end
+        
+          % Does not seem to be necessary anymore
+%         % Todo: This should be a static function
+%         % I think not necessary anymore
+%         function check_N_Trials(~, gParam)
+%         if  (gParam.trials > 1 && mod(gParam.trials, 2)) == 1
+%             msgbox('All trials must be even or equal to 1!');
+%             return
+%         end
+%         end
     end
 end

@@ -43,7 +43,7 @@ if testDay == 1
     taskData.initiationRTs(1:n_trials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:n_trials) = nan;  % set initial tendency of mouse movement
     taskData.block(1:n_trials) = 1; % block number
-    taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/taskParam.gParam.concentration)); % shield size
+    taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
     taskData.shieldType(1:n_trials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -186,18 +186,65 @@ if testDay == 1
         'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
         'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone zielt und den Eimer auf diese Position '...
         'steuern. Wenn Sie denken, dass die Konfetti-Kanone auf eine neue Stelle zielt, sollten Sie auch den Eimer '...
-        'dorthin bewegen.'];
+        'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
+        'als auch einer eher ungenauen Konfetti-Kanone zu tun haben.'];
     feedback = false;
     al_bigScreen(taskParam, header, txt, feedback);
 
-    % Load data set for practice phase
-    taskData = load('hidCannonPracticeSleep.mat');
-    taskData = taskData.taskData;
+    if cBal == 1
+       
+        % Low noise first...
+        % ------------------
+    
+        % Get data
+        % taskData = load('hidCannonPracticeSleep.mat');
+        taskData = load('hidCannonPracticeSleepDay2_c16.mat');
+        taskData = taskData.taskData;
+    
+        % Run task
+        taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
+        taskParam.trialflow.confetti = 'show confetti cloud';
+        al_indicateNoise(taskParam, 'lowNoise')
+        al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    
+        % ... high noise second
+        % ---------------------
+    
+        % Get data
+        taskData = load('hidCannonPracticeSleepDay2_c8.mat');
+        taskData = taskData.taskData;
+    
+        % Run task
+        al_indicateNoise(taskParam, 'highNoise')
+        al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    
+    elseif cBal == 2
 
-    % Run task
-    taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
-    taskParam.trialflow.confetti = 'show confetti cloud';
-    al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+        % LHigh noise first...
+        % ------------------
+    
+        % Get data
+        taskData = load('hidCannonPracticeSleepDay2_c8.mat');
+        taskData = taskData.taskData;
+    
+        % Run task
+        taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
+        taskParam.trialflow.confetti = 'show confetti cloud';
+        al_indicateNoise(taskParam, 'highNoise')
+        al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    
+        % ... low noise second
+        % ---------------------
+    
+        % Get data
+        taskData = load('hidCannonPracticeSleepDay2_c16.mat');
+        taskData = taskData.taskData;
+    
+        % Run task
+        al_indicateNoise(taskParam, 'lowNoise')
+        al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+
+    end
 
 else
 
@@ -216,7 +263,8 @@ else
     al_bigScreen(taskParam, header, txtStartTask, feedback);
 
     % Load data set for practice phase
-    taskData = load('hidCannonPracticeSleep.mat');
+    % taskData = load('hidCannonPracticeSleep.mat');
+    taskData = load('hidCannonPracticeSleepDay2_c16.mat');
     taskData = taskData.taskData;
 
     % Run task

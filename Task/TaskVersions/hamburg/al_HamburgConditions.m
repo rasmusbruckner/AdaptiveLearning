@@ -1,4 +1,4 @@
-function dataMain = al_HamburgConditions(taskParam)
+function [dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam)
 %AL_HAMBURGCONDITIONS This function runs the changepoint condition of the cannon
 %   task tailored to the "Hamburg" version
 %
@@ -6,9 +6,10 @@ function dataMain = al_HamburgConditions(taskParam)
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       dataMain: Task-data object
+%       dataLowNoise: Task-data object low-noise condition
+%       dataHighNoise: Task-data object high-noise condition
 %
-%  Todo: Write a unit test and include this in integration tests
+%  Todo: Write a unit test and integratio high/low noise in integration test
 
 % -----------------------------------------------------
 % 0. Extract some variables from task-parameters object
@@ -41,14 +42,69 @@ end
 % Extract number of trials
 trial = taskParam.gParam.trials;
 
-% Get data
-if ~unitTest
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+if cBal == 1
+
+
+    % Low noise first...
+    % ------------------
+
+    % Get data
+    if ~unitTest
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
+    else
+        load('integrationTest_sleep.mat','taskData')
+    end
+
+    % Run task
+    al_indicateNoise(taskParam, 'lowNoise')
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+
+    % ... high noise second
+    % ---------------------
+
+
+    % Get data
+    if ~unitTest
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
+    else
+        load('integrationTest_sleep.mat','taskData')
+    end
+
+    % Run task
+    al_indicateNoise(taskParam, 'highNoise')
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+
 else
-    load('integrationTest_sleep.mat','taskData')
+
+    % High noise first...
+    % -------------------
+
+    % Get data
+    if ~unitTest
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
+    else
+        load('integrationTest_sleep.mat','taskData')
+    end
+
+    % Run task
+    al_indicateNoise(taskParam, 'highNoise')
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+
+    % ... low noise second
+    % --------------------
+
+
+    % Get data
+    if ~unitTest
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
+    else
+        load('integrationTest_sleep.mat','taskData')
+    end
+
+    % Run task
+    al_indicateNoise(taskParam, 'lowNoise')
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+
+
 end
-
-% Run task
-dataMain = al_confettiLoop(taskParam, 'main', taskData, trial);
-
 end

@@ -1,23 +1,24 @@
-function al_indicateNoise(taskParam)
-% AL_INDICATE_NOISE This function indicates the noise
+function al_indicateNoise(taskParam, noiseCondition)
+% AL_INDICATENOISE This function indicates the noise
 % condition
 %
 %   Input:
-%       condition: High vs. low noise
 %       taskParam: Task-parameter-object instance
+%       noiseCondition: High vs. low noise
+%
 %
 %   Output:
 %       ~
 
 % Todo: change comments so that this is about push vs. noPush
 
-if strcmp(taskParam.trialflow.push, 'noPush')
-    header = 'Gleicher Ausgangspunkt der Vorhersage';
-    txt = 'Im folgenden Block wird der Ausgangspunkt Ihrer Vorhersage nicht verändert.';
+if strcmp(noiseCondition, 'lowNoise')
+    header = 'Genauere Konfetti-Kanone';
+    txt = 'Im folgenden Block wird die Konfetti-Kanone relativ genau sein.';
 
-elseif strcmp(taskParam.trialflow.push, 'push')
-    header = 'Zufälliger Ausgangspunkt der Vorhersage';
-    txt = 'Im folgenden Block wird der Ausgangspunkt Ihrer Vorhersage zufällig links oder rechts von Ihrer vorherigen Position erscheinen.';
+elseif strcmp(noiseCondition, 'highNoise')
+    header = 'Ungenauere Konfetti-Kanone';
+    txt = 'Im folgenden Block wird die Konfetti-Kanone relativ ungenau sein.';
 end
 
 feedback = true;
