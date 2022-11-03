@@ -220,7 +220,7 @@ if testDay == 1
     
     elseif cBal == 2
 
-        % LHigh noise first...
+        % High noise first...
         % ------------------
     
         % Get data
@@ -247,6 +247,9 @@ if testDay == 1
     end
 
 else
+
+    % Add tickmarks to introduce them to participant
+    taskParam.trialflow.currentTickmarks = 'show';
 
     % Text settings
     Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
