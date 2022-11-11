@@ -1,6 +1,6 @@
-function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
-%RUNHAMBURGVERSION This function runs the first Hamburg pilot version
-%  of the cannon task.
+function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, day)
+%RUNASYMREWARDVERSION This function runs the asymmetric-reward version for
+% the FOR project by Jan Gläscher
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -12,12 +12,16 @@ function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
 %       dataHighNoise: Task-data object high-noise condition
 %
 %   Documentation
-%       This function runs the Hamburg pilot version of the cannon task.
-%       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there are two different noise conditions.
+%       This function runs the asymmetric-reward pilot version of
+%       the cannon task. Next to an outcome distribution as in the 
+%       standard confetti-cannon task, rewards are asymmetrically
+%       distributed. For example, more confetti when cannon shoots
+%       to the right compared to left. Currently, there are two 
+%       different noise conditions but this might change in the future.
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
+%       (will be updated).
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
@@ -123,7 +127,7 @@ tickWidth = 1;
 s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
 enter = 37; % Hamburg: Hier bitte anpassen
 
-% Run task in debug mode with smaller window
+% Run task in debug mode with different screen coordinates
 debug = true;
 
 % Print timing for checking
@@ -300,7 +304,7 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 % Todo: Make sure that all tests are passed on task PC
-% display.sreen_warnings();
+% display.screen_warnings();
 
 % Set screensize
 display.screensize = screensize;
