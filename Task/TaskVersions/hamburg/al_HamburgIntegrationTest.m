@@ -170,7 +170,23 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             % Latent state
             expectedLatentState = zeros(20, 1);
             testCase.verifyEqual(dataMain.latentState, expectedLatentState);
-                        
+
+            % Number of confetti particles shot
+            expectedNParticles = repmat(41, 20, 1);
+            testCase.verifyEqual(dataMain.nParticles, expectedNParticles)
+
+            % Number of particles caught in shield
+            expectedNParticlesCaught = [39 41 0 0 0 41 0 0 0 0 0 0 0 0 0 0 0 41 41 41]';
+            testCase.verifyEqual(dataMain.nParticlesCaught, expectedNParticlesCaught)
+            
+            % Confetti standard deviation 
+            expectedConfettiStd = repmat(3, 20, 1);
+            testCase.verifyEqual(dataMain.confettiStd, expectedConfettiStd)
+
+            % Asymmetric-reward condition sign
+            expectedAsymRewardSign = nan(20, 1);
+            testCase.verifyEqual(dataMain.asymRewardSign, expectedAsymRewardSign);
+
             % Timestamps: Not testing absolute values bc the reference
             % value depends on manual input (todo: fix when doing CI)
             

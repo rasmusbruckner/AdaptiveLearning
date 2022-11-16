@@ -1,6 +1,6 @@
-function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
-%RUNHAMBURGVERSION This function runs the first Hamburg pilot version
-%  of the cannon task.
+function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, day)
+%RUNASYMREWARDVERSION This function runs the asymmetric-reward version for
+% the FOR project by Jan Gläscher
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -12,12 +12,16 @@ function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
 %       dataHighNoise: Task-data object high-noise condition
 %
 %   Documentation
-%       This function runs the Hamburg pilot version of the cannon task.
-%       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there are two different noise conditions.
+%       This function runs the asymmetric-reward pilot version of
+%       the confetti-cannon task. Next to an outcome distribution as in the 
+%       standard confetti-cannon task, rewards are asymmetrically
+%       distributed. For example, more confetti when cannon shoots
+%       to the right compared to left. Currently, there are two 
+%       different noise conditions but this might change in the future.
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
+%       (will be updated).
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
@@ -78,13 +82,13 @@ concentration = [16, 8];
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 41;
+nParticles = 80;
 
 % Confetti standard deviations
-confettiStd = 3;% 20; %3; % 3
+confettiStd = 3;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -129,7 +133,7 @@ tickWidth = 1;
 s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
 enter = 37; % Hamburg: Hier bitte anpassen
 
-% Run task in debug mode with smaller window
+% Run task in debug mode with different screen coordinates
 debug = true;
 
 % Show random confetti threshold for validation (don't use in experiment)
@@ -196,7 +200,7 @@ trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "confetti";
-trialflow.reward = "standard";
+trialflow.reward = "asymmetric";
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -320,7 +324,7 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 % Todo: Make sure that all tests are passed on task PC
-% display.sreen_warnings();
+% display.screen_warnings();
 
 % Set screensize
 display.screensize = screensize;
@@ -376,16 +380,16 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam);
-% totWin = dataMain.accPerf(end);
-totWin = dataLowNoise.accPerf(end) + dataLowNoise.accPerf(end);
+[dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam);
+totWin = round((sum(dataLowNoise.nParticlesCaught) + sum(dataHighNoise.nParticlesCaught))/10);
 
 % -----------
 % End of task
 % -----------
 
+% Todo: Maybe indicate number of particles instead
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.2f Euro verdient!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.0f Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 

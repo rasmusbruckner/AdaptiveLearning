@@ -1,6 +1,6 @@
-function [dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam)
-%AL_HAMBURGCONDITIONS This function runs the changepoint condition of the cannon
-%   task tailored to the "Hamburg" version
+function [dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam)
+%AL_ASYMREWARDCONDITIONS This function runs the changepoint condition of the cannon
+%   task tailored to the asymmetric-reward version by Jan Gläscher
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -29,7 +29,7 @@ testDay = taskParam.subject.testDay;
 % --------------------------------
 
 if runIntro && ~unitTest
-    al_HamburgInstructions(taskParam)
+    al_asymRewardInstructions(taskParam)
 end
 
 % ------------
@@ -52,7 +52,7 @@ if cBal == 1
     if ~unitTest
         taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
     else
-        load('integrationTest_Hamburg.mat','taskData')
+        load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
@@ -67,7 +67,7 @@ if cBal == 1
     if ~unitTest
         taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
     else
-        load('integrationTest_Hamburg.mat','taskData')
+        load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
@@ -83,7 +83,7 @@ else
     if ~unitTest
         taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
     else
-        load('integrationTest_Hamburg.mat','taskData')
+        load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
@@ -98,7 +98,7 @@ else
     if ~unitTest
         taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
     else
-        load('integrationTest_Hamburg.mat','taskData')
+        load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task

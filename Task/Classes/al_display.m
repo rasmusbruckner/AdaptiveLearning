@@ -100,7 +100,6 @@ classdef al_display
             
         end
 
-
         function displayobj = createRects(displayobj)
             % CREATERECTS This function centers the imageRect ("dstRect")
             % based on "windowRect" by taking into account that imageRect

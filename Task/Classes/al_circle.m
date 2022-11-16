@@ -11,6 +11,8 @@ classdef al_circle
         
         windowRect
         shieldAngle
+        shieldOffset
+        shieldWidth
         cannonEndCent
         cannonEndRect
         outcCentSpotRect
@@ -58,23 +60,25 @@ classdef al_circle
             %       circleobj: Circle object with default values
             
             circleobj.windowRect = windowRect;
-            circleobj.shieldAngle = 30;
+            circleobj.shieldAngle = 30; % Todo: is this currently used?
+            circleobj.shieldWidth = 30; 
+            circleobj.shieldOffset = 10; 
             circleobj.cannonEndCent = nan;
             circleobj.cannonEndRect = nan;
             circleobj.outcCentSpotRect = nan;
-            circleobj.predSpotRad = 10;  % Todo: can this be combined with diameter?
+            circleobj.predSpotRad = 10; % Todo: can this be combined with diameter?
             circleobj.outcSize = 10;
             circleobj.meanPoint = 1;
             circleobj.rotationRad = 150;
-            circleobj.chineseCannonRad = 500; % todo: used to be 300; update when getting back to chinese version
+            circleobj.chineseCannonRad = 500; % Todo: used to be 300; update when getting back to chinese version
             circleobj.tendencyThreshold = 15;
             circleobj.boatRect = [0 0 50 50];
             circleobj.centBoatRect = nan;
             circleobj.predCentSpotRect = nan;
             circleobj.outcCentRect = nan;
             circleobj.centSpotRectMean = nan;
-            circleobj.unit = 2*pi/360;  % todo: maybe get rid of unit and use rad2deg for computing pred
-            circleobj.initialRotAngle = 0*circleobj.unit;  % todo: delete unit here when tets are implemented
+            circleobj.unit = 2*pi/360;  % Todo: maybe get rid of unit and use rad2deg for computing pred
+            circleobj.initialRotAngle = 0*circleobj.unit; % Todo: delete unit here when tets are implemented
             circleobj.rotAngle = circleobj.initialRotAngle;
             circleobj.cannonEndDiam = 10;
             circleobj.cannonEndRect = [0 0 circleobj.cannonEndDiam circleobj.cannonEndDiam];

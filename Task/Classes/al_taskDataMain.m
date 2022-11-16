@@ -125,6 +125,18 @@ classdef al_taskDataMain
         % Chinese-version specific
         latentState
 
+        % Number of confetti particles in Hamburg version
+        nParticles
+        
+        % Number of confetti particles caught in Hamburg version
+        nParticlesCaught
+
+        % Standard deviation of confetti particles
+        confettiStd
+
+        % Sign determining reward distribution in Hamburg asymReward version
+        asymRewardSign
+
         % EEG
         timestampOnset
         timestampPrediction
