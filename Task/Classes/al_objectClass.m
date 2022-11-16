@@ -8,6 +8,7 @@ classdef al_objectClass
 
     properties
        gParam
+       cannon
        circle
        keys
        fieldNames

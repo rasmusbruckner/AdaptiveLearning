@@ -77,8 +77,14 @@ concentration = [16, 8];
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
+% Number of confetti particles 
+nParticles = 41;
+
+% Confetti standard deviations
+confettiStd = 3;% 20; %3; % 3
+
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -126,6 +132,9 @@ enter = 37; % Hamburg: Hier bitte anpassen
 % Run task in debug mode with smaller window
 debug = true;
 
+% Show random confetti threshold for validation (don't use in experiment)
+showConfettiThreshold = false;
+
 % Print timing for checking
 printTiming = true;
 
@@ -164,6 +173,7 @@ gParam.catchTrialProb = catchTrialProb;
 gParam.practiceTrialCriterionNTrials = practiceTrialCriterionNTrials;
 gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
 gParam.debug = debug;
+gParam.showConfettiThreshold = showConfettiThreshold;
 gParam.printTiming = printTiming;
 gParam.concentration = concentration;
 gParam.haz = haz;
@@ -186,6 +196,16 @@ trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "confetti";
+trialflow.reward = "standard";
+
+% ---------------------------------------------
+% Create object instance with cannon parameters
+% ---------------------------------------------
+
+% Todo: Add some of the other cannon properties
+cannon = al_cannon();
+cannon.nParticles = nParticles;
+cannon.confettiStd = confettiStd;
 
 % ---------------------------------------------
 % Create object instance with color parameters
@@ -343,6 +363,7 @@ taskParam = al_objectClass();
 taskParam.gParam = gParam;
 taskParam.strings = strings;
 taskParam.trialflow = trialflow;
+taskParam.cannon = cannon;
 taskParam.circle = circle;
 taskParam.colors = colors;
 taskParam.keys = keys;

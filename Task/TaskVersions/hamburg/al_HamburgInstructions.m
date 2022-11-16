@@ -1,5 +1,5 @@
 function al_HamburgInstructions(taskParam)
-%AL_SLEEPINSTRUCTIONS This function runs the instructions for the
+%AL_HAMBURGINSTRUCTIONS This function runs the instructions for the
 % "Hamburg" version of the cannon task
 %
 %   Input
@@ -48,7 +48,8 @@ if testDay == 1
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
     taskData.pred(1:n_trials) = nan; % initialize predictions
-
+    taskData.nParticles(1:n_trials) = 41; % number of confetti particles
+    
     % Introduce cannon
     current_trial = 1;
     txt = ['Eine Konfetti-Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
@@ -111,7 +112,7 @@ if testDay == 1
         [taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceShieldMiss(taskParam, taskData, current_trial, txt);
 
         % If it is a hit, repeat instruction
-        if abs(taskData.predErr(current_trial)) <= taskParam.gParam.practiceTrialCriterionEstErr
+        if abs(taskData.predErr(current_trial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
 
             WaitSecs(0.5)
             header = 'Leider gefangen!';
@@ -147,7 +148,7 @@ if testDay == 1
 
     % Load outcomes for practice
     condition = 'practice';
-    taskData = load('visCannonPracticeSleep.mat');
+    taskData = load('visCannonPracticeHamburg.mat');
     taskData = taskData.taskData;
     taskParam.condition = condition;
     taskData.initialTendency = nan(length(taskData.ID), 1);
@@ -197,8 +198,7 @@ if testDay == 1
         % ------------------
     
         % Get data
-        % taskData = load('hidCannonPracticeSleep.mat');
-        taskData = load('hidCannonPracticeSleepDay2_c16.mat');
+        taskData = load('hidCannonPracticeHamburg_c16.mat');
         taskData = taskData.taskData;
     
         % Run task
@@ -211,7 +211,7 @@ if testDay == 1
         % ---------------------
     
         % Get data
-        taskData = load('hidCannonPracticeSleepDay2_c8.mat');
+        taskData = load('hidCannonPracticeHamburg_c8.mat');
         taskData = taskData.taskData;
     
         % Run task
@@ -224,7 +224,7 @@ if testDay == 1
         % ------------------
     
         % Get data
-        taskData = load('hidCannonPracticeSleepDay2_c8.mat');
+        taskData = load('hidCannonPracticeHamburg_c8.mat');
         taskData = taskData.taskData;
     
         % Run task
@@ -237,7 +237,7 @@ if testDay == 1
         % ---------------------
     
         % Get data
-        taskData = load('hidCannonPracticeSleepDay2_c16.mat');
+        taskData = load('hidCannonPracticeHamburg_c16.mat');
         taskData = taskData.taskData;
     
         % Run task
@@ -267,7 +267,7 @@ else
 
     % Load data set for practice phase
     % taskData = load('hidCannonPracticeSleep.mat');
-    taskData = load('hidCannonPracticeSleepDay2_c16.mat');
+    taskData = load('hidCannonPracticeHamburg_c16.mat');
     taskData = taskData.taskData;
 
     % Run task

@@ -37,10 +37,11 @@ else
     end
 end
 
-rotRad = taskParam.circle.rotationRad + 10;
+
+rotRad = taskParam.circle.rotationRad + taskParam.circle.shieldOffset; %10;
 OutcSpot = pred - (allASS/2);
 zero = taskParam.display.zero;
-Screen('FrameArc', taskParam.display.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, 30, [], [])
+Screen('FrameArc', taskParam.display.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, taskParam.circle.shieldWidth, [], [])
 
 end
 

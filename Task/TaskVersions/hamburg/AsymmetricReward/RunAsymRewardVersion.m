@@ -13,7 +13,7 @@ function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, da
 %
 %   Documentation
 %       This function runs the asymmetric-reward pilot version of
-%       the cannon task. Next to an outcome distribution as in the 
+%       the confetti-cannon task. Next to an outcome distribution as in the 
 %       standard confetti-cannon task, rewards are asymmetrically
 %       distributed. For example, more confetti when cannon shoots
 %       to the right compared to left. Currently, there are two 
@@ -81,6 +81,12 @@ concentration = [16, 8];
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
+% Number of confetti particles 
+nParticles = 80;
+
+% Confetti standard deviations
+confettiStd = 3;
+
 % Choose if task instructions should be shown
 runIntro = true;
 
@@ -130,6 +136,9 @@ enter = 37; % Hamburg: Hier bitte anpassen
 % Run task in debug mode with different screen coordinates
 debug = true;
 
+% Show random confetti threshold for validation (don't use in experiment)
+showConfettiThreshold = false;
+
 % Print timing for checking
 printTiming = true;
 
@@ -168,6 +177,7 @@ gParam.catchTrialProb = catchTrialProb;
 gParam.practiceTrialCriterionNTrials = practiceTrialCriterionNTrials;
 gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
 gParam.debug = debug;
+gParam.showConfettiThreshold = showConfettiThreshold;
 gParam.printTiming = printTiming;
 gParam.concentration = concentration;
 gParam.haz = haz;
@@ -190,6 +200,16 @@ trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "confetti";
+trialflow.reward = "asymmetric";
+
+% ---------------------------------------------
+% Create object instance with cannon parameters
+% ---------------------------------------------
+
+% Todo: Add some of the other cannon properties
+cannon = al_cannon();
+cannon.nParticles = nParticles;
+cannon.confettiStd = confettiStd;
 
 % ---------------------------------------------
 % Create object instance with color parameters
@@ -347,6 +367,7 @@ taskParam = al_objectClass();
 taskParam.gParam = gParam;
 taskParam.strings = strings;
 taskParam.trialflow = trialflow;
+taskParam.cannon = cannon;
 taskParam.circle = circle;
 taskParam.colors = colors;
 taskParam.keys = keys;
@@ -359,16 +380,16 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam);
-% totWin = dataMain.accPerf(end);
-totWin = dataLowNoise.accPerf(end) + dataLowNoise.accPerf(end);
+[dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam);
+totWin = round((sum(dataLowNoise.nParticlesCaught) + sum(dataHighNoise.nParticlesCaught))/10);
 
 % -----------
 % End of task
 % -----------
 
+% Todo: Maybe indicate number of particles instead
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.2f Euro verdient!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.0f Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 

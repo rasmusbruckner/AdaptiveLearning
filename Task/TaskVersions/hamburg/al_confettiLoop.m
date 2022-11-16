@@ -48,6 +48,7 @@ for i = 1:trial
     taskData.rew(i) = taskParam.subject.rew;
     taskData.testDay(i) = taskParam.subject.testDay;
     taskData.group(i) = taskParam.subject.group;
+    taskData.confettiStd(i) = taskParam.cannon.confettiStd;
     taskData.cond{i} = condition;
 
     % Timestamp for measuring jitter duration for validation purposes
@@ -69,16 +70,12 @@ for i = 1:trial
     % Self-paced prediction phase
     % ---------------------------
 
-    % Only do this when not testing the code
-    %if ~taskParam.unitTest
-
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
     press = 0;
     [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press);
-    %end
 
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
@@ -93,8 +90,7 @@ for i = 1:trial
     %--------------------------
 
     % send fixation cross 1 trigger
-    % todo: this should be done in mouse loop, like I did for
-    % keyboardLoop
+    % todo: this should be done in mouse loop, like I did fo keyboardLoop
     taskData.timestampPrediction(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Deviation from cannon (estimation error) to compute performance
@@ -126,9 +122,9 @@ for i = 1:trial
 
     % Confetti animation    
     background = false; % todo: include this in trialflow
-    al_confetti(taskParam, taskData, i, background, timestamp);
-
-
+    taskData.nParticlesCaught(i) = al_confetti(taskParam, taskData, i, background, timestamp);
+   
+   % [taskData.nParticlesCaught(i), ~, ~, ~] = 
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
         % al_aim(taskParam, taskData.distMean(i))  # check if this should

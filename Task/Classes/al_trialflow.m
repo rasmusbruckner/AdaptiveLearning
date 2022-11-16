@@ -23,6 +23,9 @@ classdef al_trialflow
         % Which cannon type will be shown
         cannonType 
 
+        % How rewards are delivered (e.g., standard, asymmetric)
+        reward
+
         % Whether or not saved tickmarks are used
         savedTickmark
         
@@ -53,6 +56,7 @@ classdef al_trialflow
             trialflowobj.cannonball_start = 'cannon';
             trialflowobj.cannon = "show cannon";
             trialflowobj.cannonType = "standard";
+            trialflowobj.reward = "standard";
             trialflowobj.savedTickmark = "no previous tickmark";
             trialflowobj.currentTickmarks = "show";
             trialflowobj.background = "picture";

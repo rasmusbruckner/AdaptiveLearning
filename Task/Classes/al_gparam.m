@@ -101,6 +101,9 @@ classdef al_gparam
         % Turns debug mode on or off
         debug
 
+        % Plotting of random confetti threshold for validation
+        showConfettiThreshold
+
         % Whether or not trial timing is displayed for debugging
         printTiming
 
@@ -133,7 +136,7 @@ classdef al_gparam
         safePlanet
         safeEnemy
 
-         % In chinese version: if true, outcomes are generated in a more
+        % In chinese version: if true, outcomes are generated in a more
         % balanced way, based on some constraints
         useTrialConstraints
 
@@ -182,7 +185,8 @@ classdef al_gparam
             gparamobj.catchTrialProb = nan; 
             gparamobj.screenNumber = 1;
             gparamobj.language = 2; 
-            gparamobj.debug = nan; 
+            gparamobj.debug = nan;
+            gparamobj.showConfettiThreshold = false;
             gparamobj.printTiming = false;
             gparamobj.runIntro = nan;
             gparamobj.dataDirectory = nan;  

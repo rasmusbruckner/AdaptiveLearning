@@ -71,7 +71,7 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
     % for accurate timing
     timestamp = GetSecs;
     fadeOutEffect = false;
-    [xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
+    [~, xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
     
     varargout{1} = taskData;
     varargout{2} = taskParam;
