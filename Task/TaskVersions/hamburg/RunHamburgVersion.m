@@ -81,7 +81,7 @@ haz = .125;
 nParticles = 41;
 
 % Confetti standard deviations
-confettiStd = 3;% 20; %3; % 3
+confettiStd = 3;
 
 % Choose if task instructions should be shown
 runIntro = false;
@@ -90,7 +90,7 @@ runIntro = false;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 150];  % Todo: adjust properly for first pilot
+blockIndices = [1 50 100 150];
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -142,7 +142,7 @@ printTiming = true;
 hidePtbCursor = true;
 
 % Reward magnitude
-rewMag = 0.05;
+rewMag = 0.1;
 
 % Specify data directory
 dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpassen
@@ -377,15 +377,14 @@ taskParam.unitTest = unitTest;
 % --------
 
 [dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam);
-% totWin = dataMain.accPerf(end);
-totWin = dataLowNoise.accPerf(end) + dataLowNoise.accPerf(end);
+totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 
 % -----------
 % End of task
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.2f Euro verdient!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 

@@ -132,7 +132,11 @@ elseif isequal(taskParam.gParam.taskType, 'Hamburg')
     header = 'Zwischenstand';
     % Todo: Match reward rules across functions (parameterize)
     if ~isequal(taskParam.trialflow.reward, 'asymmetric')
-        txt = sprintf('Gefangenes Konfetti: %.0f von %.0f\n\nIn diesem Block haben Sie %.0f von %.0f möglichen Punkten verdient.', hits, nTrials, max(Data.accPerf(1:nTrials))*10, maxMon*10);
+        currPoints = sum(Data.hit, 'omitnan');
+        if isnan(currPoints)
+            currPoints = 0;
+        end
+        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(Data.nParticlesCaught))/10);
     end

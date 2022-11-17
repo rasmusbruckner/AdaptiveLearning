@@ -145,11 +145,11 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataMain.hit, expectedHit);
             
             % Performance
-            expectedPerf = [0.05; 0.05; 0; 0; 0; 0.05; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0.05; 0.05; 0.05];
+            expectedPerf = [0.1; 0.1; 0; 0; 0; 0.1; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0.1; 0.1; 0.1];
             testCase.verifyEqual(dataMain.perf, expectedPerf);
                 
             % Accumulated performance
-            expectedAccPerf = [0.05; 0.1; 0.1; 0.1; 0.1; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.15; 0.2; 0.25; 0.3];
+            expectedAccPerf = [0.1; 0.2; 0.2; 0.2; 0.2; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.4; 0.5; 0.6];
             testCase.verifyEqual(dataMain.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
             
             % Initial tendency

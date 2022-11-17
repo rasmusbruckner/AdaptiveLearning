@@ -160,7 +160,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         end
 
         % Generate angular shield size depending on concentration
-        allASS(i) = rad2deg(2*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu);
+        allASS(i) = rad2deg(2*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
 
         % TODO: this should ultimately be removed
         % Set latent state to 0, as it is not used in change point task or shield practice
