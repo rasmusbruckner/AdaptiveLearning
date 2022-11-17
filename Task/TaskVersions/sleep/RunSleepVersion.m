@@ -24,8 +24,6 @@ function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %   Last updated
 %       11/22
 
-% Todo: Before collection of MD data, determine incentives and remuneration
-
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;

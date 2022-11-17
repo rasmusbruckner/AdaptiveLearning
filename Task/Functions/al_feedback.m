@@ -125,10 +125,10 @@ elseif isequal(taskParam.gParam.taskType, 'chinese')
 elseif isequal(taskParam.gParam.taskType, 'ARC') 
     header = 'Performance';
     txt = sprintf('Catches: %.0f of %.0f\n\nIn this block you earned %.0f of possible %.0f points.', hits, length(whichBlock), max(Data.accPerf)*10, maxMon*10);
-elseif isequal(taskParam.gParam.taskType, 'Sleep') 
-    header = 'Zwischenstand';
-    txt = sprintf('Gefangene Kugeln: %.0f von %.0f\n\nIn diesem Block haben Sie %.0f von %.0f möglichen Punkten verdient.', hits, nTrials, max(Data.accPerf(1:nTrials))*10, maxMon*10);
-elseif isequal(taskParam.gParam.taskType, 'Hamburg')
+%elseif isequal(taskParam.gParam.taskType, 'Sleep') 
+%    header = 'Zwischenstand';
+%    txt = sprintf('Gefangene Kugeln: %.0f von %.0f\n\nIn diesem Block haben Sie %.0f von %.0f möglichen Punkten verdient.', hits, nTrials, max(Data.accPerf(1:nTrials))*10, maxMon*10);
+elseif isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'Sleep') 
     header = 'Zwischenstand';
     % Todo: Match reward rules across functions (parameterize)
     if ~isequal(taskParam.trialflow.reward, 'asymmetric')

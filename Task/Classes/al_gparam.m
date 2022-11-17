@@ -161,11 +161,11 @@ classdef al_gparam
             
             gparamobj.taskType = nan; 
             gparamobj.blockIndices = nan; 
-            %gparamobj.textSize = 30;
             gparamobj.driftConc = [30 99999999];
             gparamobj.oddballProb = [.25 0];
             gparamobj.reversalProb = [.5 1]; 
             gparamobj.concentration = nan;
+            gparamobj.pushConcentration = nan;
             gparamobj.haz = 0.125; 
             gparamobj.sendTrigger = false; 
             gparamobj.trials = nan; 
