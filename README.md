@@ -1,17 +1,17 @@
-# AdaptiveLearning Cannon Task Code
+# Cannon Task
 
-This repository contains the code of the AdaptiveLearning Cannon Task.
+This repository contains the code of the adaptive-learning cannon task.
 
 The task was used in:
 
-* **Nassar, M. R., Bruckner, R., & Frank, M. J. (2019). 
+* **Nassar, M.R., Bruckner, R., & Frank, M.J. (2019). 
 Statistical context dictates the relationship between feedback-related EEG signals and learning. eLife, 8:e46975** [Link](https://elifesciences.org/articles/46975)
 
 The repository is frequently updated in the context of additional studies that use the task. Go to branch „franklabEEG“ (commit number a0b782e) for the version that was used in the paper. 
 
 ## Getting Started
 
-To run the task, use the AdaptiveLearning.m script. I'm currently working on independent versions. For questions, please get in touch with me.
+To run the task versions that are currently updated, go to the TaskVersions folder. The "sleep" and "Hamburg" are already tested based on unit and integration tests. The other versions are currently updated, so we will have independent task versions that rely on the same objects and core functions. Previously, all versions were combined in the "AdaptiveLearning" function, which will be removed soon. Since there are now so many different versions, it is easier when they are more independent. For questions, please get in touch with me.
 
 ## Built With
 
@@ -20,14 +20,13 @@ To run the task, use the AdaptiveLearning.m script. I'm currently working on ind
 
 ## Author
 
-* **Rasmus Bruckner** - [GitHub](https://github.com/rasmusbruckner) - [Freie Universität Berlin](https://www.ewi-psy.fu-berlin.de/en/einrichtungen/arbeitsbereiche/emotionspsych/mitarbeiter/pre-doc/bruckner/index.html)
+* **Rasmus Bruckner** - [GitHub](https://github.com/rasmusbruckner) - [Freie Universität Berlin](https://www.ewi-psy.fu-berlin.de/en/einrichtungen/arbeitsbereiche/neural_dyn_of_vis_cog/learning-lab/team/bruckner/index.html)
 
-## Contributors
+## Acknowledgments
 
-* **Matt Nassar** - [Brown University](https://sites.brown.edu/mattlab/)
-* **Ben Eppinger** - [Concordia University](https://www.concordia.ca/artsci/psychology/faculty.html?fpid=benjamin-eppinger)
-* **Lennart Wittkuhn** - [Max Planck Institute for Human Development Berlin](https://www.mpib-berlin.mpg.de/en/staff/lennart-wittkuhn)
-* **Owen Parsons** - [University of Cambridge](https://www.autismresearchcentre.com/people_parsons)
+Over the years, several people have contributed to the task:
+
+Matt Nassar, Ben Eppinger, Lennart Wittkuhn, & Owen Parsons.
 
 ## License
 
