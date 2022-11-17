@@ -74,6 +74,9 @@ practTrials = 2; % 20;  Hier bitte anpassen
 % Risk parameter: Precision of confetti average
 concentration = [16, 8];
 
+% Factor that translates concentration into shield size
+shieldFixedSizeFactor = 2;
+
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
@@ -350,6 +353,7 @@ circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
+circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
 circle = circle.compute_circle_props();
 
 % ---------------------------------------

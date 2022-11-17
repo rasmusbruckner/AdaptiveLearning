@@ -13,6 +13,7 @@ classdef al_circle
         shieldAngle
         shieldOffset
         shieldWidth
+        shieldFixedSizeFactor % only applied when shield depends in concentration
         cannonEndCent
         cannonEndRect
         outcCentSpotRect
@@ -63,6 +64,7 @@ classdef al_circle
             circleobj.shieldAngle = 30; % Todo: is this currently used?
             circleobj.shieldWidth = 30; 
             circleobj.shieldOffset = 10; 
+            circleobj.shieldFixedSizeFactor = 2; 
             circleobj.cannonEndCent = nan;
             circleobj.cannonEndRect = nan;
             circleobj.outcCentSpotRect = nan;
