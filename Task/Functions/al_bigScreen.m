@@ -73,7 +73,7 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, time + 0.1);
     
     % Check for response of participant to continue to next screen
-    [ ~, ~, keyCode] = KbCheck;
+    [ ~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
     if keyCode(taskParam.keys.enter) && ~taskParam.unitTest && ~endOfTask
         % keyCode
         fw = 1;  % todo: this should be deleted

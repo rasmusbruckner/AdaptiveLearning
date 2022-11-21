@@ -27,7 +27,7 @@ breakLoop = false;
 
 % For unit test: simulate keyIsDown, keyCode, and record RT
 if ~taskParam.unitTest
-    [keyIsDown, ~, keyCode] = KbCheck;
+    [keyIsDown, ~, keyCode] = KbCheck ( taskParam.keys.kbDev );
 else
     WaitSecs(0.5);  % simulate RT = 0.5
     keyIsDown = 1;

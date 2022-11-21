@@ -21,7 +21,7 @@ Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
 if ~taskParam.unitTest
     while 1
         
-        [ keyIsDown, ~, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown
             if find(keyCode) == taskParam.keys.enter
                 break

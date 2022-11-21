@@ -204,7 +204,7 @@ while 1
     end
 
     if breakKey == taskParam.keys.enter
-        [keyIsDown, ~, keyCode] = KbCheck;
+        [keyIsDown, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown && keyCode(breakKey)
             break
         end

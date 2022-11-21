@@ -140,7 +140,7 @@ for i = 1:trials
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
             
             
-            [ keyIsDown, ~, keyCode ] = KbCheck;
+            [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
             
             if keyIsDown
                 if keyCode(taskParam.keys.rightKey)
@@ -305,7 +305,7 @@ for i = 1:trials
             
             Screen('Flip', taskParam.gParam.window.onScreen, t + 0.001);
             
-            [ keyIsDown, ~, keyCode ] = KbCheck;
+            [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
             
             if buttons(1) == 1
                 

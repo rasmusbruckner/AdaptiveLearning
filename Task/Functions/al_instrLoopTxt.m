@@ -157,7 +157,7 @@ else
         
         Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
         
-        [ keyIsDown, ~, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
         
         if (keyIsDown && (isequal(button, 'arrow') && keyCode(taskParam.keys.enter))) || (isequal(button, 'space') &&  buttons(1) == 1)
             

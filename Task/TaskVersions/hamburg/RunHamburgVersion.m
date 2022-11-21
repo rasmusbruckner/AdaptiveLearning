@@ -90,7 +90,7 @@ confettiStd = 3;
 runIntro = true;
 
 % Choose if dialogue box should be shown
-askSubjInfo = true;
+askSubjInfo = false;
 
 % Determine blocks
 blockIndices = [1 50 100 150];
@@ -129,8 +129,11 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; % Hamburg: Hier bitte anpassen
+s = 22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 40; % Hamburg: Hier bitte anpassen
+
+% Keyboard device number
+% kbDev = 19;
 
 % Run task in debug mode with smaller window
 debug = true;
@@ -148,7 +151,7 @@ hidePtbCursor = true;
 rewMag = 0.1;
 
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpassen
+dataDirectory = '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
@@ -222,6 +225,11 @@ colors = al_colors();
 % ------------------------------------------
 
 keys = al_keys();
+if ~exist( 'kbDev' )
+  keys = al_kbdev( keys );
+else
+  keys.kbDev = kbDev;
+end
 keys.s = s;
 keys.enter = enter;
 

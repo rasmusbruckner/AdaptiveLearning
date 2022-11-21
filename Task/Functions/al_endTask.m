@@ -55,7 +55,7 @@ while 1
     
     % Check for keypress
     % ------------------
-    [ ~, ~, keyCode] = KbCheck;
+    [ ~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
     if find(keyCode) == taskParam.keys.s & ~taskParam.unitTest
         break
     elseif taskParam.unitTest

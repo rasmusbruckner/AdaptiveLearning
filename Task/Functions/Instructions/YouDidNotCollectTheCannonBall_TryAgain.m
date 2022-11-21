@@ -47,7 +47,7 @@ if Data.memErr >=9
         DrawFormattedText(taskParam.gParam.window.onScreen,txt, taskParam.gParam.screensize(3)*0.1, taskParam.gParam.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
         Screen('DrawingFinished',taskParam.gParam.window.onScreen);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 1.5);
-        [ keyIsDown, ~, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown
             if keyCode(taskParam.keys.enter)
                 screenIndex = screenIndex - 1 ;
@@ -90,7 +90,7 @@ else
         DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
         Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
         Screen('Flip', taskParam.gParam.window.onScreen, t + 1.6);
-        [ keyIsDown, ~, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown
             if keyCode(taskParam.keys.enter)
                 screenIndex = screenIndex + 1;
