@@ -30,7 +30,7 @@ while 1
     Screen('DrawingFinished', taskParam.gParam.window.onScreen);
     t = GetSecs;
     Screen('Flip', taskParam.gParam.window.onScreen, t + 0.1);
-    [~, ~, keyCode] = KbCheck;
+    [~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
     if find(keyCode) == taskParam.keys.enter
         screenIndex = screenIndex + 1;
         break

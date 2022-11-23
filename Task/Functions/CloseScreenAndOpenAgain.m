@@ -29,7 +29,7 @@ function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
             Screen('DrawingFinished', taskParam.display.window.onScreen);
             t = GetSecs;
             Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
-            [~, ~, keyCode] = KbCheck;
+            [~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
             if find(keyCode) == taskParam.keys.s
                 break
             end
@@ -44,7 +44,7 @@ function window = CloseScreenAndOpenAgain(taskParam, debug, unitTest)
         WaitSecs(1);
 
         while 1
-            [ keyIsDown, ~, keyCode ] = KbCheck;
+            [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
             if keyIsDown
                 if keyCode(taskParam.keys.s)
                     break

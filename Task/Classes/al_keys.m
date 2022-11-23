@@ -21,7 +21,8 @@ classdef al_keys
         space
         enter        
         s
-        
+        kbDev
+
     end
     
     % Methods of the conditions object
@@ -48,6 +49,24 @@ classdef al_keys
             keysobj.s = 40;  
                       
         end
+
+        function keysobj = al_kbdev( keysobj )
+            
+            kbdevs = [];
+            devs = PsychHID('Devices');
+            for d = 1:numel( devs )
+                if strcmp(devs(d).usageName,'Keyboard')
+                    kbdevs(end+1) = devs(d).index;
+                end
+            end
+            if numel( kbdevs > 1 )
+              keysobj.kbDev = -1; % "merge" all keyboard in KbCheck
+            else
+              keysobj.kbDev = kbdevs;
+            end
+
+        end
+
     end
 end
 

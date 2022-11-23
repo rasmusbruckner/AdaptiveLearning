@@ -42,7 +42,7 @@ if abs(taskData.predErr) <= 9
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         t = GetSecs;
         Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
-        [ keyIsDown, ~, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown
             if keyCode(taskParam.keys.enter)
 %                screenIndex = screenIndex - 1 ;

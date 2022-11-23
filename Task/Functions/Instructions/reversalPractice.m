@@ -282,7 +282,7 @@ while 1
                     DrawFormattedText(taskParam.gParam.window.onScreen, taskParam.strings.txtPressEnter, 'center', taskParam.gParam.screensize(4)*0.9, [255 255 255]);
                     Screen('DrawingFinished', taskParam.gParam.window.onScreen, 1);
                     Screen('Flip', taskParam.gParam.window.onScreen, t + 1.6);
-                    [ keyIsDown, ~, keyCode ] = KbCheck;
+                    [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
                     if keyIsDown
                         if keyCode(taskParam.keys.enter)
                             screenIndex = screenIndex + 1;

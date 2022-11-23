@@ -82,7 +82,7 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, tUpdated + 1.2);
     
     % Terminate when subject presses enter
-    [keyIsDown, ~, keyCode] = KbCheck;
+    [keyIsDown, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
     if keyIsDown
         if keyCode(taskParam.keys.enter)
             break

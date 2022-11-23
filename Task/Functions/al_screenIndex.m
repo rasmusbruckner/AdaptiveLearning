@@ -10,7 +10,7 @@ function [screenIndex] = al_screenIndex(taskParam, screenIndex)
 
 
 % Check for keypress and update screen index
-[ keyIsDown, ~, keyCode ] = KbCheck;
+[ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
 if keyIsDown
     if keyCode(taskParam.keys.enter)
         screenIndex = screenIndex + 1;

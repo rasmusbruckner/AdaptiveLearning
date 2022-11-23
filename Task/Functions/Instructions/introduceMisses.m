@@ -49,7 +49,7 @@ if (isequal(whichPractice, 'mainPractice') && abs(Data.predErr) >= 9) || (isequa
     t = GetSecs;
     Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
     while 1
-        [ keyIsDown, ~, keyCode ] = KbCheck;
+        [ keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown
             if keyCode(taskParam.keys.enter)
                 %screenIndex = screenIndex - 1;
