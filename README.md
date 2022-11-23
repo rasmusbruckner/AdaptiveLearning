@@ -11,7 +11,7 @@ The repository is frequently updated in the context of additional studies that u
 
 ## Getting Started
 
-To run the task versions that are currently updated, go to the TaskVersions folder. The "sleep" and "Hamburg" are already tested based on unit and integration tests. The other versions are currently updated, so we will have independent task versions that rely on the same objects and core functions. Previously, all versions were combined in the "AdaptiveLearning" function, which will be removed soon. Since there are now so many different versions, it is easier when they are more independent. For questions, please get in touch with me.
+To run the task versions that are currently updated, go to the TaskVersions folder. The "sleep" and "Hamburg" versions are already tested based on unit and integration tests. The other versions are currently updated, so we will have independent task versions that rely on the same objects and core functions. Previously, all versions were combined in the "AdaptiveLearning" function, which will be removed soon. Since there are now so many different versions, it is easier when they are more independent. For questions, please get in touch with me.
 
 ## Built With
 

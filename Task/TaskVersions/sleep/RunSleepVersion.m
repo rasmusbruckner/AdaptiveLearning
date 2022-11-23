@@ -61,7 +61,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 175;  Hier bitte anpassen
+trialsExp = 2;  % 180;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -79,7 +79,7 @@ pushConcentration = 4;
 haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -101,7 +101,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
+screensize = [1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: [screenWidth, screenHeight] = Screen('WindowSize', 0); screenSize = [1, 1, screenWidth, screenHeight];
 
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
 %displayobj.screensize = get(0,'MonitorPositions'); %[1    1
@@ -235,7 +235,7 @@ strings.headerSize = headerSize;
 subject = al_subject();
 
 % Default input
-ID = '99999'; % 5 digits
+ID = '01'; % 5 digits
 age = '99';
 sex = 'f';  % m/f/d
 group = '1'; % 1=sleep/2=control
@@ -248,7 +248,7 @@ end
 if gParam.askSubjInfo == false || unitTest
 
     % Just add defaults
-    subject.ID = str2double(ID);
+    subject.ID = ID;
     subject.age = str2double(age);
     subject.sex = sex;
     subject.group = str2double(group);
@@ -273,7 +273,7 @@ else
     % Put all relevant subject info in structure
     % ------------------------------------------
 
-    subject.ID = str2double(subjInfo{1});
+    subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
     subject.sex = subjInfo{3};
     subject.group = str2double(subjInfo{4});
@@ -282,8 +282,8 @@ else
     subject.date = date;
 
     % Test user input and selected number of trials
-    checkString = dir(sprintf('*d%s*%s*', num2str(subject.testDay), num2str(subject.ID)));
-    subject.checkID(checkString);
+    checkString = dir(sprintf('*d%s*MORPHEUS%s*', num2str(subject.testDay), num2str(subject.ID)));
+    subject.checkID(checkString, 2);
     subject.checkSex();
     subject.checkGroup();
     subject.checkCBal(),
@@ -353,14 +353,14 @@ taskParam.unitTest = unitTest;
 % --------
 
 [dataNoPush, dataPush] = al_sleepConditions(taskParam);
-totWin = dataNoPush.accPerf(end) + dataPush.accPerf(end);
+totWin = sum(dataNoPush.hit) + sum(dataPush.hit);
 
 % -----------
 % End of task
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.2f Euro verdient!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
 

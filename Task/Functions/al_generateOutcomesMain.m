@@ -42,7 +42,7 @@ end
 % Initialize variables
 % --------------------
 
-ID = nan(trials, 1); % participant ID
+ID = cell(trials, 1); % participant ID
 age = nan(trials, 1); % participant age
 sex = cell(trials, 1); % participant sex
 rew = nan(trials, 1); % current reward

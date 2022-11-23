@@ -1,5 +1,5 @@
 function al_indicatePush(taskParam)
-% AL_INDICATEPUSH This function indicates the noise
+% AL_INDICATEPUSH This function indicates the push
 % condition
 %
 %   Input:
@@ -7,8 +7,6 @@ function al_indicatePush(taskParam)
 %
 %   Output:
 %       ~
-
-% Todo: change comments so that this is about push vs. noPush
 
 if strcmp(taskParam.trialflow.push, 'noPush')
     header = 'Gleicher Ausgangspunkt der Vorhersage';

@@ -45,7 +45,7 @@ classdef al_subject
     end
     
     methods
-        function checkID(subobj, checkString)
+        function checkID(subobj, checkString, ID_len)
             %CHECKID This function tests input related to the subject ID
             %
             %   If ID is incorrectly specified, the function returns
@@ -58,15 +58,11 @@ classdef al_subject
             %   Output
             %       ~
             
-            % Todo: Just check if not equal to 5 instead of both directions
-            if numel(num2str(subobj.ID)) < 5 || numel(num2str(subobj.ID)) > 5
-                error('ID: Please use five numbers!')
+            if ~(numel(subobj.ID) == ID_len) 
+                error('ID: Please use %i digits!', ID_len)
             end
 
-            % Todo: Comment properly
-            checkIdInData = checkString;
-            fileNames = {checkIdInData.name};
-            
+            fileNames = {checkString.name};            
             if  ~isempty(fileNames)
                 error('Dataset already exists!');
             end
@@ -87,8 +83,8 @@ classdef al_subject
             %       ~
 
 
-            if subobj.group ~= 0 && subobj.group ~= 1
-                error('Group: "0" or "1"?');
+            if subobj.group ~= 1 && subobj.group ~= 2
+                error('Group: "1" or "2"?');
             end
 
         end

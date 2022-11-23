@@ -31,7 +31,7 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             % -----------
 
             % ID
-            expectedID = repmat(99999,20,1);
+            expectedID = repmat({'01'},20,1);
             testCase.verifyEqual(dataNoPush_cBal1_day1.ID, expectedID);
             testCase.verifyEqual(dataPush_cBal1_day1.ID, expectedID);
             testCase.verifyEqual(dataNoPush_cBal2_day1.ID, expectedID);

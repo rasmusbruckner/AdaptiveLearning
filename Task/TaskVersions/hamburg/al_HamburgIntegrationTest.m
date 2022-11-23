@@ -21,7 +21,7 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             % -----------
 
             % ID
-            expectedID = repmat(99999,20,1);
+            expectedID = repmat({'99999'},20,1);
             testCase.verifyEqual(dataMain.ID, expectedID);
             
             % Sex

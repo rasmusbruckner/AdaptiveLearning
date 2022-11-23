@@ -42,7 +42,7 @@ for i = 1:trial
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
-    taskData.ID(i) = taskParam.subject.ID;
+    taskData.ID{i} = taskParam.subject.ID;
     taskData.sex{i} = taskParam.subject.sex;
     taskData.Date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
@@ -182,7 +182,7 @@ if ~taskParam.unitTest
 
         % Todo: do we want to save practice?
         concentration = unique(taskData.concentration);
-        savename = sprintf('cannon_Sleep_g%d_d%d_conc%d_%s_%d', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.trialflow.push, taskParam.subject.ID);
+        savename = sprintf('cannon_Sleep_g%d_d%d_conc%d_%s_MORPHEUS%s', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.trialflow.push, taskParam.subject.ID);
         save(savename, 'taskData')
 
         % Wait until keys released

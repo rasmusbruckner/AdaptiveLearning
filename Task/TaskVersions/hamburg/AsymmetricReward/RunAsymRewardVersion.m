@@ -67,7 +67,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 5;  % 200;  Hier bitte anpassen
+trialsExp = 2;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -276,7 +276,7 @@ end
 if gParam.askSubjInfo == false || unitTest
 
     % Just add defaults
-    subject.ID = str2double(ID);
+    subject.ID = ID;
     subject.age = str2double(age);
     subject.sex = sex;
     subject.group = str2double(group);
@@ -301,7 +301,7 @@ else
     % Put all relevant subject info in structure
     % ------------------------------------------
 
-    subject.ID = str2double(subjInfo{1});
+    subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
     subject.sex = subjInfo{3};
     subject.group = str2double(subjInfo{4});
@@ -311,7 +311,7 @@ else
 
     % Test user input
     checkString = dir(sprintf('*d%s*%s*', num2str(subject.testDay), num2str(subject.ID)));
-    subject.checkID(checkString);
+    subject.checkID(checkString, 5);
     subject.checkSex();
     subject.checkGroup();
     subject.checkCBal(),
