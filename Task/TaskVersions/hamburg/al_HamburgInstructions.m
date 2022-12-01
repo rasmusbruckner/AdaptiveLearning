@@ -52,8 +52,8 @@ if testDay == 1
     
     % Introduce cannon
     current_trial = 1;
-    txt = ['Eine Konfetti-Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
-        'Punkt können Sie angeben, wo Sie Ihren Eimer platzieren möchten, um das Konfetti zu fangen. Sie können den Punkt mit der '...
+    txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
+        'Punkt können Sie angeben, wo auf dem Kreis Sie Ihren Eimer platzieren möchten, um das Konfetti zu fangen. Sie können den Punkt mit der '...
         'Maus steuern.'];
     taskParam = al_introduceCannon(taskParam, taskData, current_trial, txt);
 
@@ -94,8 +94,7 @@ if testDay == 1
     % -------------------
 
     win = true; % color of shield when catch is rewarded
-    txt = ['Der Eimer erscheint während des Schusses. In diesem Fall haben Sie genug Konfetti gefangen. '...
-        'Wenn Sie ungefähr die Hälfte des Konfetti im Eimer fangen, zählt es als Treffer.'];
+    txt = ['Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.'];
     taskData = al_introduceShield(taskParam, taskData, win, current_trial, txt, xyExp, dotCol, dotSize);
 
     % 6. Ask participant to miss confetti
@@ -131,7 +130,16 @@ if testDay == 1
     txt = 'In diesem Fall haben Sie das Konfetti verfehlt.';
     al_confirmMiss(taskParam, taskData, win, current_trial, txt, xyExp, dotCol, dotSize);
 
-    % 8. Introduce variability of the confetti cannon
+    % 8. Introduce practice blocks
+    % ----------------------------
+
+    % Display instructions
+    header = '';
+    txt=['Im Folgenden durchlaufen Sie zwei Übungsdurchgänge\nund im Anschluss zwei Durchgänge des Experiments.'];
+    feedback = true; % present text centrally
+    al_bigScreen(taskParam, header, txt, feedback);
+
+    % 9. Introduce variability of the confetti cannon
     % -----------------------------------------------
 
     % Display instructions
@@ -139,10 +147,9 @@ if testDay == 1
     txt=['Weil die Konfetti-Kanone schon sehr alt ist, sind die Schüsse ziemlich ungenau. Das heißt, auch wenn '...
         'Sie genau auf das Ziel gehen, können Sie das Konfetti verfehlen. Die Ungenauigkeit ist zufällig, '...
         'dennoch fangen Sie am meisten Konfetti, wenn Sie den violetten Punkt genau auf die Stelle '...
-        'steuern, auf die die Konfetti-Kanone zielt.\n\nIn der nächsten Übung sollen Sie mit der Ungenauigkeit '...
+        'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
         'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den violetten Punkt bitte immer auf die anvisierte '...
-        'Stelle. Wenn Sie den Eimer zu oft neben die anvisierte Stelle stellen, wird die '...
-        'Übung wiederholt.'];
+        'Stelle.'];
     feedback = false; % indicate that this is the instruction mode
     al_bigScreen(taskParam, header, txt, feedback);
 
@@ -177,16 +184,15 @@ if testDay == 1
 
     end
 
-    % 9. Introduce hidden confetti cannon
+    % 10. Introduce hidden confetti cannon
     % -----------------------------------
 
     % Display instructions
     header = 'Zweiter Übungsdurchgang';
-    txt = ['Bis jetzt kannten Sie das Ziel der Konfetti-Kanone und Sie konnten das meiste Konfetti fangen. Im nächsten '...
-        'Übungsdurchgang wird die Konfetti-Kanone nicht mehr sichtbar sein. Anstelle der Konfetti-Kanone sehen Sie dann ein Kreuz. '...
+    txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann ein Kreuz. '...
         'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
-        'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone zielt und den Eimer auf diese Position '...
-        'steuern. Wenn Sie denken, dass die Konfetti-Kanone auf eine neue Stelle zielt, sollten Sie auch den Eimer '...
+        'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
+        'steuern. Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
         'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
         'als auch einer eher ungenauen Konfetti-Kanone zu tun haben. Beachten Sie, dass Sie das Konfetti trotz '...
         'guter Vorhersagen auch häufig nicht fangen können.'];
@@ -279,7 +285,9 @@ else
 
 end
 
-% Instructions experimental blocks
+% 11. Instructions experimental blocks
+% ------------------------------------
+
 header = 'Jetzt kommen wir zum Experiment';
 txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst fangen Sie also das meiste Konfetti, '...
     'wenn Sie den Eimer (violetter Punkt) auf die Stelle bewegen, auf die die Konfetti-Kanone zielt. Weil Sie die Konfetti-Kanone meistens nicht mehr '...

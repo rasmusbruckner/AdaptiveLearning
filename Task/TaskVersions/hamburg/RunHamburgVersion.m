@@ -84,13 +84,13 @@ haz = .125;
 nParticles = 41;
 
 % Confetti standard deviations
-confettiStd = 3;
+confettiStd = 1;
 
 % Choose if task instructions should be shown
 runIntro = true;
 
 % Choose if dialogue box should be shown
-askSubjInfo = false;
+askSubjInfo = true;
 
 % Determine blocks
 blockIndices = [1 50 100 150];
@@ -129,8 +129,8 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 40; % Hamburg: Hier bitte anpassen
+s = 40; %22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; %40; % Hamburg: Hier bitte anpassen
 
 % Keyboard device number
 % kbDev = 19;
@@ -151,7 +151,7 @@ hidePtbCursor = true;
 rewMag = 0.1;
 
 % Specify data directory
-dataDirectory = '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];

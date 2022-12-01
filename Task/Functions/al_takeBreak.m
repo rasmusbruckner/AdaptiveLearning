@@ -13,7 +13,7 @@ function taskParam = al_takeBreak(taskParam, taskData, currTrial)
 if currTrial > 1 && ~(taskData.block(currTrial) == taskData.block(currTrial-1))
 
     % Present text indicating the break
-    txt = sprintf('Kurze Pause!\n\nIn diesem Block haben Sie %i von insgesamt %i Versuchen geschafft.', currTrial, taskParam.gParam.trials);
+    txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgänge geschafft.', currTrial, taskParam.gParam.trials);
 
     header = ' ';
     feedback = true;

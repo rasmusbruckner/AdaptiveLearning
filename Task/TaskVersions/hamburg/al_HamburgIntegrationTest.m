@@ -176,11 +176,11 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataMain.nParticles, expectedNParticles)
 
             % Number of particles caught in shield
-            expectedNParticlesCaught = [39 41 0 0 0 41 0 0 0 0 0 0 0 0 0 0 0 41 41 41]';
+            expectedNParticlesCaught = [41 41 0 0 0 41 0 0 0 0 0 0 0 0 0 0 0 41 41 41]';
             testCase.verifyEqual(dataMain.nParticlesCaught, expectedNParticlesCaught)
             
             % Confetti standard deviation 
-            expectedConfettiStd = repmat(3, 20, 1);
+            expectedConfettiStd = ones(20, 1);
             testCase.verifyEqual(dataMain.confettiStd, expectedConfettiStd)
 
             % Asymmetric-reward condition sign
