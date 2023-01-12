@@ -64,6 +64,9 @@ classdef al_taskDataMain
 
         % Changepoint index
         cp
+
+        % Reward-distribution-changepoint index
+        cp_rew
         
         % Actual reward
         actRew

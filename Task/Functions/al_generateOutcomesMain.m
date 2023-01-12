@@ -82,6 +82,7 @@ mu = 15; % mean of shield
 minASS = 10; % minimum angular shield size
 maxASS = 180; % maximium angular shiled size
 cp = nan(trials, 1); % current change point
+cp_rew = nan(trials, 1); % current reward-distribution change point
 latentState = nan(trials, 1); % latent state / todo: remove
 nParticles = nan(trials, 1); % number of confetti particles in Hamburg version
 nParticlesCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
@@ -163,20 +164,56 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         allASS(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
 
         % TODO: this should ultimately be removed
-        % Set latent state to 0, as it is not used in change point task or shield practice
+        % Set latent state to 0, as it is not used in changepoint task or shield practice
         latentState(i) = 0;
 
         % If confetti-cannon is used, determine reward magnitude (number of particles)
         if isequal(taskParam.gParam.taskType, 'Hamburg')
+            
             if isequal(taskParam.trialflow.reward, 'asymmetric')
-                if cp(i)
-                    asymRewardSign(i) = (-1)^randi([1,2]);
+                
+                % Generate reward-distribution changepoints
+                if (rand < haz && s_rew == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
+                
+                    % Indicate current reward-distribution changepoint
+                    cp_rew(i) = 1;
+                    
+                    % Change reward distribution
+                    if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
+                        
+                        % At beginning of new block, randomly sample sign of distribution
+                        asymRewardSign(i) = (-1)^randi([1,2]); 
+
+                    else
+                        % Otherwise, flip sign deterministically
+                        asymRewardSign(i) = -asymRewardSign(i-1);
+
+                    end
+                    
+                    % Reset safe variable for reward distribution
+                    s_rew = taskParam.gParam.safe(1);
+
                 else
+
+                    % Update "safe criterion" 
+                    s_rew = max([s_rew-1, 0]);
+
+                    % Set reward-distribution changepoint to false...
+                    cp_rew(i) = 0;
+
+                    % ... and take same distribution
                     asymRewardSign(i) = asymRewardSign(i-1);
+
                 end
+                
+                % Determine number of particles
                 nParticles(i) = al_getParticleN(taskParam.cannon.nParticles, outcome(i), distMean(i), concentration, asymRewardSign(i));
+            
             else
+
+                % Take common number of particles
                 nParticles(i) = taskParam.cannon.nParticles;
+            
             end
         end
     end
@@ -223,6 +260,7 @@ taskData.sex = sex;
 taskData.outcome = outcome;
 taskData.distMean = distMean;
 taskData.cp = cp;
+taskData.cp_rew = cp_rew;
 taskData.cBal = cBal;
 taskData.TAC = TAC;
 taskData.shieldType = shieldType;
