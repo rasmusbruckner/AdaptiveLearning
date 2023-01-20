@@ -190,7 +190,7 @@ if testDay == 1
         taskParam.trialflow.reward = "standard";
 
         % Get data
-        taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'main');
+        taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'asymRewardPractice');
 
         % Run task
         al_indicateReward(taskParam)
@@ -202,7 +202,7 @@ if testDay == 1
         taskParam.trialflow.reward = "asymmetric";
 
         % Get data
-        taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'main');
+        taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'asymRewardPractice');
 
         % Run task
         al_indicateReward(taskParam)
@@ -230,7 +230,7 @@ txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Wie in der Übung wer
     'Weil Sie die Konfetti-Kanone meistens nicht mehr sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. '...
     'Im zweiten Block kommt eine Kanone, die unterschiedliche Mengen an Konfetti verschießt.\n\nBeachten Sie in beiden Blöcken, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen.\n\n'...
-    'In jedem Block gibt es 3 kurze Pausen.\n\nViel Erfolg!'];
+    'In jedem Block gibt es 2 kurze Pausen.\n\nViel Erfolg!'];
 
 feedback = false;
 al_bigScreen(taskParam, header, txtStartTask, feedback);

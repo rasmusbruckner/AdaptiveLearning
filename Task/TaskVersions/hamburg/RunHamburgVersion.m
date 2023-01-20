@@ -331,7 +331,7 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 % Todo: Make sure that all tests are passed on task PC
-% display.sreen_warnings();
+% display.screen_warnings();
 
 % Set screensize
 display.screensize = screensize;

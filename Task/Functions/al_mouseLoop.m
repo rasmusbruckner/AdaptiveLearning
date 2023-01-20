@@ -159,27 +159,27 @@ while 1
         taskData.initiationRTs(trial,:) = GetSecs() - initRT_Timestamp;
     end
     
-    if ~isequal(taskParam.gParam.taskType, 'chinese') || ~isequal(taskParam.gParam.taskType, 'ARC')
-        if  (buttons(2) == 1 && trial ~= taskParam.gParam.blockIndices(1) && trial ~= taskParam.gParam.blockIndices(2) + 1 && trial ~= taskParam.gParam.blockIndices(3) + 1 && trial ~= taskParam.gParam.blockIndices(4) + 1)
-            
-            taskData.savedTickmark(trial) = ((taskParam.circle.rotAngle)/taskParam.circle.unit);
-            WaitSecs(0.2);
-            press = 1;
-            
-        %elseif i > 1 && press == 0
-            % Todo: re-implement when working on reversal version again
-            %taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
-            %taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
-        %elseif i == 1
-            % Todo: re-implement when working on reversal version again
-            % taskData.savedTickmarkPrevious(i) = 0;
-        end
-        
-        if press == 1
-            
-            taskData.savedTickmarkPrevious(trial) = taskData.savedTickmark(trial-1);
-        end
-    end
+%     if ~isequal(taskParam.gParam.taskType, 'chinese') || ~isequal(taskParam.gParam.taskType, 'ARC')
+%         if  (buttons(2) == 1 && trial ~= taskParam.gParam.blockIndices(1) && trial ~= taskParam.gParam.blockIndices(2) + 1 && trial ~= taskParam.gParam.blockIndices(3) + 1 && trial ~= taskParam.gParam.blockIndices(4) + 1)
+%             
+%             taskData.savedTickmark(trial) = ((taskParam.circle.rotAngle)/taskParam.circle.unit);
+%             WaitSecs(0.2);
+%             press = 1;
+%             
+%         %elseif i > 1 && press == 0
+%             % Todo: re-implement when working on reversal version again
+%             %taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
+%             %taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
+%         %elseif i == 1
+%             % Todo: re-implement when working on reversal version again
+%             % taskData.savedTickmarkPrevious(i) = 0;
+%         end
+%         
+%         if press == 1
+%             
+%             taskData.savedTickmarkPrevious(trial) = taskData.savedTickmark(trial-1);
+%         end
+%     end
     
     % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))

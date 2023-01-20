@@ -1,8 +1,8 @@
 % This script plots the reward function of the asymmetric reward version
 % of the confetti-cannon task
 
-% Maximum number of particles
-nMaxParticles = 80;
+% Avearge number of particles
+meanParticles = 40;
 
 % Current outcome
 outcome = linspace(-60,60,101);
@@ -23,13 +23,13 @@ z = nan(length(outcome), 1);
 
 % Cycle over outcomes 
 for i = 1:100
-    [nParticles(i), cannonDev(i)] = al_getParticleN(nMaxParticles, outcome(i), distMean, concentration, sign);
+    [nParticles(i), cannonDev(i)] = al_getParticleN(meanParticles, outcome(i), distMean, concentration, sign);
 end
 
 % Plot reward function
 figure
 plot(cannonDev, nParticles)
-yline(nMaxParticles/2)
+yline(meanParticles)
 xline(0)
 xlabel('Difference between outcome and cannon mean')
 ylabel('Number of confetti particles')

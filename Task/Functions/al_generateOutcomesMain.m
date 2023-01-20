@@ -27,7 +27,7 @@ if isequal(condition, 'main')
     trials = taskParam.gParam.trials;
 
 elseif isequal(condition, 'mainPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'oddballPractice')...
-        || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') %|| isequal(condition, 'reversalPractice')...
+        || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'asymRewardPractice') %|| isequal(condition, 'reversalPractice')...
 
     % Take specified number of practice trials from AdaptiveLearning script
     trials = taskParam.gParam.practTrials;
@@ -97,13 +97,14 @@ asymRewardSign = nan(trials, 1); % sign determining reward distribution in Hambu
 % end
 
 s = taskParam.gParam.safe(1);
+s_rew = taskParam.gParam.safe(1);
 
 % Generate outcomes for CP condition
 % ----------------------------------
 
 if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannon') ||...
         isequal(condition, 'shield') || isequal(condition, 'ARC_controlSpeed') || isequal(condition, 'ARC_controlAccuracy') || isequal(condition, 'ARC_controlPractice') ||...
-        isequal(condition, 'followOutcomePractice') %|| isequal(condition, 'followCannonPractice')
+        isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'asymRewardPractice')
 
     for i = 1:trials
 
@@ -168,7 +169,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         latentState(i) = 0;
 
         % If confetti-cannon is used, determine reward magnitude (number of particles)
-        if isequal(taskParam.gParam.taskType, 'Hamburg')
+        if isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'asymReward')
             
             if isequal(taskParam.trialflow.reward, 'asymmetric')
                 

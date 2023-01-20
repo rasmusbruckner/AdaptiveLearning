@@ -179,7 +179,7 @@ if ~taskParam.unitTest
 
         % todo: do we want to save practice?
         concentration = unique(taskData.concentration);
-        savename = sprintf('cannon_confetti_g%d_d%d_conc%d_%s', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+        savename = sprintf('confetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
         save(savename, 'taskData')
 
         % Wait until keys released

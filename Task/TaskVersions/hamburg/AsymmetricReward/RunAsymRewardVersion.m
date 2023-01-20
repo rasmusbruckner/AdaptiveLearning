@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, day)
+function [dataStandard, dataAsymReward] = RunAsymRewardVersion(unitTest, cBal, day)
 %RUNASYMREWARDVERSION This function runs the asymmetric-reward version for
 % the FOR project by Jan Gläscher
 %
@@ -8,8 +8,8 @@ function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, da
 %       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataLowNoise: Task-data object low-noise condition
-%       dataHighNoise: Task-data object high-noise condition
+%       dataStandard: Task-data object standard condition
+%       dataAsymReward: Task-data object asymmetric-reward condition
 %
 %   Documentation
 %       This function runs the asymmetric-reward pilot version of
@@ -25,7 +25,7 @@ function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, da
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       11/22
+%       01/23
 
 % Todo: At some point, we have to determine incentives and remuneration
 
@@ -67,37 +67,38 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 200;  Hier bitte anpassen
+trialsExp = 150;  % 150;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
 
 % Number of practice trials
-practTrials = 2; % 20;  Hier bitte anpassen
+practTrials = 20; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
 concentration = 12;
 
 % Factor that translates concentration into shield size
-shieldFixedSizeFactor = 2;
+shieldFixedSizeFactor = 1.7321; % 2 % With 1.7321, shield size is 28.6487
+% (like in low-noise condition of standard task)
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
-% Number of confetti particles 
-nParticles = 80;
+% Average number of confetti particles 
+nParticles = 40;
 
 % Confetti standard deviations
 confettiStd = 3;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false; %true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 150];  % Todo: adjust properly for first pilot
+blockIndices = [1 50 100 999];  % 2 breaks in pilot session
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -113,7 +114,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
+screensize = [1 1 1920 1080]; %get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
 
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
 %displayobj.screensize = get(0,'MonitorPositions'); %[1    1
@@ -133,11 +134,11 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 83; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 13; % Hamburg: Hier bitte anpassen
+s = 40; %83; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; %13; % Hamburg: Hier bitte anpassen
 
 % Run task in debug mode with different screen coordinates
-debug = false;
+debug = true;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -152,7 +153,7 @@ hidePtbCursor = true;
 rewMag = 0.05;
 
 % Specify data directory
-dataDirectory = 'C:\Users\Testen\Documents\MATLAB\AdaptiveLearning\DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
@@ -169,7 +170,7 @@ end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'Hamburg';
+gParam.taskType = 'asymReward'; %'Hamburg';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -384,8 +385,8 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam);
-totWin = round((sum(dataLowNoise.nParticlesCaught) + sum(dataHighNoise.nParticlesCaught))/10);
+[dataStandard, dataAsymReward] = al_asymRewardConditions(taskParam);
+totWin = round((sum(dataStandard.nParticlesCaught) + sum(dataAsymReward.nParticlesCaught))/10);
 
 % -----------
 % End of task
