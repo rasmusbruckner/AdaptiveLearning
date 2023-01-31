@@ -2,7 +2,7 @@ classdef al_colors
     %AL_COLORS This class definition file specifies the 
     % properties and methods of a colors object
     %
-    %   A color object contains color parameters in RGB.
+    %   A color object contains color parameters in RGB or string.
     
     % Properties of the colors object
     % -------------------------------
@@ -13,6 +13,7 @@ classdef al_colors
         
         gold
         blue
+        red
         darkBlue
         silver
         green
@@ -33,12 +34,13 @@ classdef al_colors
             % class al_colors
           
             colorsobj.gold = [255, 215, 0];
-            colorsobj.blue = [122,96,215]; 
+            colorsobj.blue = [122, 96, 215]; 
+            colorsobj.red = [220, 20, 60];
             colorsobj.darkBlue = [0 25 51];
             colorsobj.silver = [160, 160, 160];
             colorsobj.green = [169, 227, 153];
-            colorsobj.black = [0 0 0];
-            colorsobj.gray = [66 66 66];
+            colorsobj.black = [0, 0, 0];
+            colorsobj.gray = [66, 66, 66];
             colorsobj.background = 'gray';
             colorsobj.lineAndBack = 'blue';
         end

@@ -11,7 +11,7 @@ outcome = linspace(-60,60,101);
 distMean = 0;
 
 % Concentration parameter
-concentration = 16;
+concentration = 12;
 
 % Sign of the reward function
 sign = -1;
