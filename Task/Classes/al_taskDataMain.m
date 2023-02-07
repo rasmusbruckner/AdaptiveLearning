@@ -146,6 +146,12 @@ classdef al_taskDataMain
         % Sign determining reward distribution in Hamburg asymReward version
         asymRewardSign
 
+        % Number of green particles shot by cannon in asymmetric-reward condition
+        nGreenParticles
+
+        % Reward prediction error
+        rpe 
+
         % nested struct?
         dotCol
 

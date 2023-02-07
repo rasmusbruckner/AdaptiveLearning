@@ -91,6 +91,8 @@ greenCaught = nan(trials, 1); % number of confetti particles caught on a trial i
 redCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
 confettiStd = nan(trials, 1); % standard deviation of confetti particles
 asymRewardSign = nan(trials, 1); % sign determining reward distribution in Hamburg asymReward version
+nGreenParticles = nan(trials, 1); % number of green particles 
+rpe = nan(trials, 1); % reward prediction error
 dotCol = struct;
 
 % % Safe for all other conditions except chinese condition
@@ -214,8 +216,8 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
                 % Determine particle color
                 nParticles(i) = taskParam.cannon.nParticles;  % todo: if we keep this version, set nParticles at once as before
                 outcomeDeviation = outcome(i) - distMean(i);
-                nGreenParticles = al_getParticleColor(taskParam.cannon.nParticles, outcomeDeviation, concentration, asymRewardSign(i));
-                dotCol(i).rgb = [repmat(taskParam.colors.green, 1,nGreenParticles), repmat(taskParam.colors.red, 1,taskParam.cannon.nParticles-nGreenParticles)];
+                nGreenParticles(i) = al_getParticleColor(taskParam.cannon.nParticles, outcomeDeviation, concentration, asymRewardSign(i));
+                dotCol(i).rgb = [repmat(taskParam.colors.green, 1,nGreenParticles(i)), repmat(taskParam.colors.red, 1,taskParam.cannon.nParticles-nGreenParticles(i))];
             else
 
                 % Take common number of particles...
@@ -300,6 +302,8 @@ taskData.testDay = testDay;
 taskData.group = group;
 taskData.z = z;
 taskData.y = y;
+taskData.nGreenParticles = nGreenParticles;
+taskData.rpe = rpe;
 taskData.dotCol = dotCol;
 
 end

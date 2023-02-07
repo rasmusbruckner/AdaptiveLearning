@@ -10,7 +10,7 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %   Output
 %       taskData: Task-data-object instance
 %
-%   Events (Todo: verify)
+%   Events standard condition
 %       1: Trial Onset
 %       2: Prediction            (self-paced)
 %       3: Confetti animation    (1500 ms)
@@ -18,6 +18,17 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %       5: Jitter                (0-200 ms)
 %                                ------------
 %                                 2.5 s + pred (~ 2s)
+%
+%   Events asymmetric-reward condition
+%       1: Trial Onset
+%       2: Prediction            (self-paced)
+%       3: Confetti animation    (1500 ms)
+%       4: ISI                   (500 ms)
+%       5: Reward                (1000 ms)
+%       6: ITI                   (900 ms)
+%       7: Jitter                (0-200 ms)
+%                                ------------
+%                                 4.0 s + pred (~ 2s)
 %
 % todo: maybe get rid of "condition" input
 % todo: some comments should be added and some outdated comments should be
@@ -124,6 +135,9 @@ for i = 1:trial
 
         % Performance depends on green vs. red particles caught
         taskData.perf(i) = taskData.greenCaught(i) - taskData.redCaught(i);
+        
+        % Reward prediction error: actual reward - (green minus red confetti particles assuming that all particles would be collected)
+        taskData.rpe(i) = taskData.perf(i) - (taskData.nGreenParticles(i) - (taskData.nParticles(i)-taskData.nGreenParticles(i)));
 
     else
 
