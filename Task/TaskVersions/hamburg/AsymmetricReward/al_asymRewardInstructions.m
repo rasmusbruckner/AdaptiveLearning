@@ -16,6 +16,7 @@ cBal = taskParam.subject.cBal;
 taskParam.trialflow.cannon = 'show cannon'; % cannon will be displayed
 taskParam.trialflow.currentTickmarks = 'hide'; % tick marks initially not shown
 taskParam.trialflow.push = 'practiceNoPush'; % turn off push manipulation
+taskParam.trialflow.reward = "standard";
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
@@ -38,18 +39,23 @@ if testDay == 1
     taskData = al_taskDataMain();
 
     % Generate practice-phase data
-    n_trials = 4;
-    taskData.catchTrial(1:n_trials) = 0; % no catch trials
-    taskData.initiationRTs(1:n_trials) = nan;  % set initiation RT to nan to indicate that this is the first response
-    taskData.initialTendency(1:n_trials) = nan;  % set initial tendency of mouse movement
-    taskData.block(1:n_trials) = 1; % block number
-    taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
-    taskData.shieldType(1:n_trials) = 1; % shield color
+    nTrials = 4;
+    taskData.catchTrial(1:nTrials) = 0; % no catch trials
+    taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
+    taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
+    taskData.block(1:nTrials) = 1; % block number
+    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
+    taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
-    taskData.pred(1:n_trials) = nan; % initialize predictions
-    taskData.nParticles(1:n_trials) = 41; % number of confetti particles
-
+    taskData.pred(1:nTrials) = nan; % initialize predictions
+    taskData.nParticles(1:nTrials) = taskParam.cannon.nParticles; % number of confetti particles
+    taskData.greenCaught(1:nTrials) = nan;
+    taskData.redCaught(1:nTrials) = nan;
+    for t = 1:nTrials
+        taskData.dotCol(t).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
+    end
+    
     % Introduce cannon
     current_trial = 1;
     txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
@@ -76,7 +82,8 @@ if testDay == 1
 
         txt=['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Konfettiwolke. Der violette Strich zeigt Ihnen die '...
             'Position Ihres letzten Eimers. Steuern Sie den violetten Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücken Sie die linke Maustaste.'];
-        [taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+        %[taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+        [taskData, taskParam, xyExp, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
 
         % If it is a miss, repeat instruction
         if abs(taskData.predErr(current_trial)) >= taskParam.gParam.practiceTrialCriterionEstErr
@@ -94,7 +101,7 @@ if testDay == 1
 
     win = true; % color of shield when catch is rewarded
     txt = 'Je mehr Konfetti Sie im Eimer fangen, desto mehr Punkte erhalten Sie.';
-    al_introduceShield(taskParam, taskData, win, current_trial, txt, xyExp, dotCol, dotSize);
+    al_introduceShield(taskParam, taskData, win, current_trial, txt, xyExp, taskData.dotCol(current_trial).rgb, dotSize); %taskData.dotCol(currTrial).rgb;
 
     % 6. Introduce practice blocks
     % ----------------------------
@@ -157,26 +164,14 @@ if testDay == 1
     header = 'Zweiter Übungsdurchgang';
     txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann ein Kreuz. '...
         'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
-        'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt.\n\nIn der Übung werden Sie es '...
-        'sowohl mit einer Konfetti-Kanone zu tun haben, die immer dieselbe Menge an Konfetti verschießt (erster Block) '...
-        'als auch mit einer Kanone, die jedes Mal unterschiedlich viel Konfetti schießt (zweiter Block).'];
+        'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt.\n\nIm ersten Übungsblock schießt die '...
+        'Konfetti-Kanone immer buntes Konfetti. Im zweiten Übungsblock schießt die Kanone nur rotes und grünes Konfetti. '];
     feedback = false;
     al_bigScreen(taskParam, header, txt, feedback);
 
 
     % 9. Introduce difference between the two task conditions
     % -------------------------------------------------------
-
-    % Display instructions
-    txt = ['Um im ersten Block so viel wie möglich zu fangen, steuern Sie den Eimer auf die Position, wo Sie das Ziel der Konfetti-Kanone vermuten. '...
-        'Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer dorthin bewegen.\n\n'...
-        'Im zweiten Block hängt die Menge von Konfetti dann davon ab, ob der Schuss eher nach links oder rechts geht. '...
-        'Bei der Positionierung des Eimers muss man sich demnach entscheiden, ob man lieber eine häufige, aber mittlere Menge Konfetti anstrebt. '...
-        'In diesem Fall steuern Sie den Eimer so nah an das Ziel der Kanone wie möglich. Oder ob man seltener, aber dafür eine größere Menge Konfetti '...
-        'fangen möchte. In diesem Fall steuern Sie den Eimer auf die Seite mit viel Konfetti.\n\nBeachten Sie in beiden Blöcken, dass Sie das Konfetti '...
-        'trotz guter Vorhersagen häufig nicht vollständig fangen können!'];
-    feedback = false;
-    al_bigScreen(taskParam, header, txt, feedback);
 
     if cBal == 1
 
@@ -187,6 +182,13 @@ if testDay == 1
         % Standard task first...
         % ----------------------
 
+        % Display instructions
+        txt = ['Um im ersten Block so viel wie möglich zu fangen, steuern Sie den Eimer auf die Position, wo Sie das Ziel der Konfetti-Kanone vermuten. '...
+          'Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer dorthin bewegen.'];
+        feedback = false;
+        al_bigScreen(taskParam, header, txt, feedback);
+
+        
         taskParam.trialflow.reward = "standard";
 
         % Get data
@@ -194,10 +196,28 @@ if testDay == 1
 
         % Run task
         al_indicateReward(taskParam)
-        al_confettiLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
+        al_confettiLoop(taskParam, 'practice', taskData, taskParam.gParam.practTrials);
 
         % ... asymmetric-reward task second
         % ---------------------------------
+
+        taskParam.trialflow.reward = "asymmetric";
+
+        
+        % Display instructions
+        txt = ['Im zweiten Block schießt die Konfetti-Kanone nur rotes und grünes Konfetti. Für jedes eingefangene grüne Konfetti gewinnen Sie einen '...
+          'Punkt, für jedes rote Konfetti verlieren Sie einen Punkt. Der Anteil von rotem und grünem Konfetti ändert sich, je weiter der aktuelle Schuss '...
+          'nach rechts oder links von der mittleren Schussrichtung der Kanone abweicht. Wenn Sie mehr grünes als rotes Konfetti fangen, gewinnen Sie im aktuellen '...
+          'Durchgang; wenn Sie mehr rotes als grünes Konfetti fangen, verlieren Sie.\n\nJe weiter Sie den Eimer von der mittleren Schussrichtung der '...
+          'Konfetti-Kanone entfernen, desto seltener wird der Schuss Ihren Eimer treffen, aber wenn dann die Seite stimmt, überwiegt das grüne Konfetti und '...
+          'Sie gewinnen. Bei der Positionierung des Eimers muss man sich demnach entscheiden, ob man lieber häufig einen kleinen Gewinn anstrebt. Dann steuern '...
+          'Sie den Eimer dahin, wo Sie das Ziel der Kanone vermuten. Oder ob man lieber selten eine größeren Gewinn anstrebt. In diesem Fall steuern Sie den '...
+          'Eimer auf die Seite mit viel grünem Konfetti.\n\nAuch in diesem Block kann sich die Richtung der Konfetti-Kanone verändern, es kann sich aber auch ' ...
+          'die Seite ändern, auf der mehr grünes Konfetti verschossen wird.\n\n'...
+          'Beachten Sie in beiden Blöcken, dass Sie das Konfetti trotz guter Vorhersagen häufig nicht '...
+          'vollständig fangen können!'];
+        feedback = false;
+        al_bigScreen(taskParam, header, txt, feedback);
 
         taskParam.trialflow.reward = "asymmetric";
 
@@ -206,7 +226,7 @@ if testDay == 1
 
         % Run task
         al_indicateReward(taskParam)
-        al_confettiLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
+        al_confettiLoop(taskParam, 'practice', taskData, taskParam.gParam.practTrials);
 
 
     elseif cBal == 2
@@ -225,11 +245,11 @@ end
 % ------------------------------------
 
 header = 'Jetzt kommen wir zum Experiment';
-txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Wie in der Übung werden Sie im ersten Block mit einer Konfetti-Kanone spielen, die immer gleich viel '...
+txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Wie in der Übung werden Sie im ersten Block mit einer Konfetti-Kanone spielen, die immer buntes '...
     'Konfetti verschießt. Hier fangen Sie das meiste Konfetti, wenn Sie den Eimer (violetter Punkt) auf die Stelle bewegen, auf die die Konfetti-Kanone zielt. '...
     'Weil Sie die Konfetti-Kanone meistens nicht mehr sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. '...
-    'Im zweiten Block kommt eine Kanone, die unterschiedliche Mengen an Konfetti verschießt.\n\nBeachten Sie in beiden Blöcken, dass Sie das Konfetti trotz '...
-    'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen.\n\n'...
+    'Im zweiten Block kommt eine Kanone, die nur grünes oder rotes Konfetti verschießt, was zu Gewinnen und Verlusten führt.\n\nBeachten Sie in beiden Blöcken, '...
+    'dass Sie das Konfetti trotz guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen.\n\n'...
     'In jedem Block gibt es 2 kurze Pausen.\n\nViel Erfolg!'];
 
 feedback = false;

@@ -10,12 +10,10 @@ function al_indicateReward(taskParam)
 
 if strcmp(taskParam.trialflow.reward, 'standard')
     header = 'Gleich viel Konfetti';
-    txt = 'Im folgenden Block wird die Konfetti-Kanone immer die gleiche Menge an Konfetti verschießen.';
-
+    txt = 'Im folgenden Block wird die Konfetti-Kanone buntes Konfetti verschießen.';
 elseif strcmp(taskParam.trialflow.reward, 'asymmetric')
     header = 'Unterschiedlich viel Konfetti';
-    txt = 'Im folgenden Block wird die Konfetti-Kanone unterschiedliche Mengen an Konfetti verschießen.';
-
+    txt = 'Im folgenden Block wird die Konfetti-Kanone rot-grünes Konfetti verschießen.';
 end
 
 feedback = true;

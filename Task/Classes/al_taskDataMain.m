@@ -109,6 +109,12 @@ classdef al_taskDataMain
         
         % Trial-by-trial performance
         perf
+
+        % Asymmetric-reward-version number of green particles caught
+        greenCaught
+
+        % Asymmetric-reward-version number of red particles caught
+        redCaught
         
         % Accumulated performance
         accPerf
@@ -140,13 +146,17 @@ classdef al_taskDataMain
         % Sign determining reward distribution in Hamburg asymReward version
         asymRewardSign
 
+        % nested struct?
+        dotCol
+
         % EEG
         timestampOnset
         timestampPrediction
+        timestampReward
         timestampOffset
         triggers
 
-         % todo: comment
+        % todo: comment
         memErr
         memErrNorm 
         memErrPlus

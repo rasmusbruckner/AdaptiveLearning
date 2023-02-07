@@ -143,7 +143,11 @@ elseif isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam
 elseif isequal(taskParam.gParam.taskType, 'asymReward') 
 
     header = 'Zwischenstand';
+    if isequal(taskParam.trialflow.reward, "standard")
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(Data.nParticlesCaught))/10);
+    else
+        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', Data.accPerf(end));
+    end
 end
 end
 

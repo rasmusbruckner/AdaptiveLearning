@@ -81,7 +81,7 @@ shieldFixedSizeFactor = 2;
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 41;
+nParticles = 40;
 
 % Confetti standard deviations
 confettiStd = 1;
@@ -109,11 +109,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
-
-%[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
-%displayobj.screensize = get(0,'MonitorPositions'); %[1    1
-%2560    1440]%  laptop [1    1    2560    1440];
+screensize = [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -129,8 +125,8 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 40; %22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; %40; % Hamburg: Hier bitte anpassen
+s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; % Hamburg: Hier bitte anpassen
 
 % Keyboard device number
 % kbDev = 19;

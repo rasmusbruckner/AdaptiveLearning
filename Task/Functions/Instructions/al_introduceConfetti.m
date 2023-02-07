@@ -19,7 +19,7 @@ if strcmp(taskParam.gParam.taskType, 'Sleep')
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'asymReward') || strcmp(taskParam.gParam.taskType, 'Leipzig')
     
     % Participant indicates prediction
     press = 0;

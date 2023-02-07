@@ -1,4 +1,3 @@
-% function [taskData, taskParam, xyExp] = al_introduceSpot(taskParam, taskData, trial, txt)
 function varargout = al_introduceSpot(taskParam, taskData, trial, txt)
 %AL_INTRODUCESPOT This function introduces the orange spot to participants
 %
@@ -80,13 +79,12 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.
     % for accurate timing
     timestamp = GetSecs;
     fadeOutEffect = false;
-    [~, xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
-    
+    [taskData, xyExp, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
+         
     varargout{1} = taskData;
-    varargout{2} = taskParam;
+    varargout{2} = taskParam; % todo: necessary?
     varargout{3} = xyExp;
-    varargout{4} = dotCol;
-    varargout{5} = dotSize;
+    varargout{4} = dotSize;
 
 end
 end

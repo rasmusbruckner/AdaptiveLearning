@@ -69,6 +69,7 @@ perf = nan(trials, 1); % current performance
 accPerf = nan(trials, 1); % accumulated performance
 timestampOnset = nan(trials, 1); % timestamp trial onset
 timestampPrediction = nan(trials, 1); % timestamp prediction
+timestampReward = nan(trials, 1); % timestamp reward
 timestampOffset = nan(trials, 1); % timestamp trial offset
 initiationRT = nan(trials, 1); % initiation reaction time
 RT = nan(trials, 1); % reaction time
@@ -86,8 +87,11 @@ cp_rew = nan(trials, 1); % current reward-distribution change point
 latentState = nan(trials, 1); % latent state / todo: remove
 nParticles = nan(trials, 1); % number of confetti particles in Hamburg version
 nParticlesCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
+greenCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
+redCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
 confettiStd = nan(trials, 1); % standard deviation of confetti particles
 asymRewardSign = nan(trials, 1); % sign determining reward distribution in Hamburg asymReward version
+dotCol = struct;
 
 % % Safe for all other conditions except chinese condition
 % if isequal(condition,'shield') || isequal(condition,'ARC_controlSpeed') || isequal(condition,'ARC_controlAccuracy') || isequal(condition,'ARC_controlPractice')
@@ -207,13 +211,18 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
 
                 end
                 
-                % Determine number of particles
-                nParticles(i) = al_getParticleN(taskParam.cannon.nParticles, outcome(i), distMean(i), concentration, asymRewardSign(i));
-            
+                % Determine particle color
+                nParticles(i) = taskParam.cannon.nParticles;  % todo: if we keep this version, set nParticles at once as before
+                outcomeDeviation = outcome(i) - distMean(i);
+                nGreenParticles = al_getParticleColor(taskParam.cannon.nParticles, outcomeDeviation, concentration, asymRewardSign(i));
+                dotCol(i).rgb = [repmat(taskParam.colors.green, 1,nGreenParticles), repmat(taskParam.colors.red, 1,taskParam.cannon.nParticles-nGreenParticles)];
             else
 
-                % Take common number of particles
+                % Take common number of particles...
                 nParticles(i) = taskParam.cannon.nParticles;
+                
+                % ... and random colors
+                dotCol(i).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
             
             end
         end
@@ -251,6 +260,7 @@ taskData.safe = repmat(taskParam.gParam.safe, length(ID), 1);
 taskData.concentration = repmat(concentration, length(ID), 1);
 taskData.pushConcentration = repmat(taskParam.gParam.pushConcentration, length(ID), 1);
 taskData.timestampPrediction = timestampPrediction;
+taskData.timestampReward = timestampReward;
 taskData.timestampOffset = timestampOffset;
 taskData.allASS = allASS;
 taskData.ID = ID;
@@ -282,12 +292,15 @@ taskData.RT = RT;
 taskData.latentState = latentState;
 taskData.nParticles = nParticles;
 taskData.nParticlesCaught = nParticlesCaught;
+taskData.greenCaught = greenCaught;
+taskData.redCaught = redCaught;
 taskData.confettiStd = confettiStd;
 taskData.asymRewardSign = asymRewardSign;
 taskData.testDay = testDay;
 taskData.group = group;
 taskData.z = z;
 taskData.y = y;
+taskData.dotCol = dotCol;
 
 end
 

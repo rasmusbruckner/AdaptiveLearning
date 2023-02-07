@@ -16,6 +16,7 @@ classdef al_colors
         darkBlue
         silver
         green
+        red
         black
         gray
         background % background color
@@ -36,7 +37,8 @@ classdef al_colors
             colorsobj.blue = [122,96,215]; 
             colorsobj.darkBlue = [0 25 51];
             colorsobj.silver = [160, 160, 160];
-            colorsobj.green = [169, 227, 153];
+            colorsobj.green = [50; 205; 50];   %[169, 227, 153];
+            colorsobj.red = [178; 34; 34];
             colorsobj.black = [0 0 0];
             colorsobj.gray = [66 66 66];
             colorsobj.background = 'gray';

@@ -25,7 +25,7 @@ function [dataStandard, dataAsymReward] = RunAsymRewardVersion(unitTest, cBal, d
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       01/23
+%       02/23
 
 % Todo: At some point, we have to determine incentives and remuneration
 
@@ -67,13 +67,13 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 150;  % 150;  Hier bitte anpassen
+trialsExp = 10;  % 150;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
 
 % Number of practice trials
-practTrials = 20; % 20;  Hier bitte anpassen
+practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
 concentration = 12;
@@ -92,7 +92,7 @@ nParticles = 40;
 confettiStd = 3;
 
 % Choose if task instructions should be shown
-runIntro = false; %true;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -114,11 +114,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
-
-%[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
-%displayobj.screensize = get(0,'MonitorPositions'); %[1    1
-%2560    1440]%  laptop [1    1    2560    1440];
+screensize = [1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -134,11 +130,11 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 40; %83; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; %13; % Hamburg: Hier bitte anpassen
+s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; % Hamburg: Hier bitte anpassen
 
 % Run task in debug mode with different screen coordinates
-debug = true;
+debug = false;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -155,7 +151,7 @@ rewMag = 0.05;
 % Specify data directory
 dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
-% Confetti cannon image rectangle determining the size of the cannon
+% Confetti-cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
 
 % ---------------------------------------------------
@@ -240,6 +236,7 @@ keys.enter = enter;
 
 timingParam = al_timing();
 timingParam.cannonBallAnimation = 1.5;
+timingParam.fixCrossLength = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -386,7 +383,7 @@ taskParam.unitTest = unitTest;
 % --------
 
 [dataStandard, dataAsymReward] = al_asymRewardConditions(taskParam);
-totWin = round((sum(dataStandard.nParticlesCaught) + sum(dataAsymReward.nParticlesCaught))/10);
+totWin = round(sum(dataStandard.nParticlesCaught)/10) + dataAsymReward.accPerf(end);
 
 % -----------
 % End of task
