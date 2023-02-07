@@ -26,7 +26,7 @@ To run the task versions that are currently updated, go to the TaskVersions fold
 
 Over the years, several people have contributed to the task:
 
-Matt Nassar, Ben Eppinger, Lennart Wittkuhn, & Owen Parsons.
+Matt Nassar, Ben Eppinger, Lennart Wittkuhn, Owen Parsons, & Jan Gläscher.
 
 ## License
 
