@@ -32,6 +32,9 @@ if runIntro && ~unitTest
     al_HamburgInstructions(taskParam)
 end
 
+Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
+
+
 % ------------
 % 2. Main task
 % ------------

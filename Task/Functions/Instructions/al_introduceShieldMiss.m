@@ -50,7 +50,7 @@ if strcmp(taskParam.gParam.taskType, 'Sleep')
     varargout{1} = taskData;
     varargout{2} = taskParam;
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'HamburgEEG')
     
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,

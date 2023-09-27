@@ -148,6 +148,11 @@ elseif isequal(taskParam.gParam.taskType, 'asymReward')
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', Data.accPerf(end));
     end
+
+elseif isequal(taskParam.gParam.taskType, 'HamburgEEG') 
+
+    header = 'Ende des Blocks';
+    txt = 'Du hast den Block abgeschlossen.';
 end
 end
 

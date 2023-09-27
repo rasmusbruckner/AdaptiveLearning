@@ -79,7 +79,7 @@ pushConcentration = 4;
 haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;

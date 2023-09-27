@@ -57,7 +57,7 @@ outcome = nan(trials, 1); % current outcome
 distMean = nan(trials, 1); % current mean of the distribution
 TAC = nan(trials, 1); % trials after change point
 catchTrial = zeros(trials, 1); % catch trials
-triggers = zeros(trials, 7); % triggers
+triggers = zeros(trials, 8); % triggers
 pred = nan(trials, 1); % current prediction
 predErr = nan(trials, 1); % current prediction error
 estErr = nan(trials, 1); % current estimation error (previously memErr)
@@ -67,8 +67,13 @@ hit = nan(trials, 1); % current hit
 cBal = nan(trials, 1); % current counterbalancing condition
 perf = nan(trials, 1); % current performance
 accPerf = nan(trials, 1); % accumulated performance
+startingBudget = nan(trials, 1); % initial amount of money
 timestampOnset = nan(trials, 1); % timestamp trial onset
 timestampPrediction = nan(trials, 1); % timestamp prediction
+timestampFixCross2 = nan(trials, 1); % timestamp fixation cross 2
+timestampFixCross3 = nan(trials, 1); % timestamp fixation cross 3
+timestampOutcome = nan(trials, 1); % timestamp outcome
+timestampShield = nan(trials, 1); % timestamp shield
 timestampReward = nan(trials, 1); % timestamp reward
 timestampOffset = nan(trials, 1); % timestamp trial offset
 initiationRT = nan(trials, 1); % initiation reaction time
@@ -168,14 +173,17 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         end
 
         % Generate angular shield size depending on concentration
-        allASS(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
-
+        if isequal(taskParam.gParam.taskType, 'HamburgEEG') 
+            allASS(i) = al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
+        else
+            allASS(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
+        end
         % TODO: this should ultimately be removed
         % Set latent state to 0, as it is not used in changepoint task or shield practice
         latentState(i) = 0;
 
         % If confetti-cannon is used, determine reward magnitude (number of particles)
-        if isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'asymReward')
+        if isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'HamburgEEG') ||isequal(taskParam.gParam.taskType, 'asymReward')
             
             if isequal(taskParam.trialflow.reward, 'asymmetric')
                 
@@ -254,14 +262,18 @@ taskData = al_taskDataMain();
 taskData.actJitter = actJitter;
 taskData.block = block;
 taskData.initiationRTs = initiationRT;
-taskData.timestampOnset = timestampOnset;
 taskData.currTrial = currTrial;
 taskData.cannonDev = cannonDev;
 taskData.haz = repmat(haz, length(ID), 1);
 taskData.safe = repmat(taskParam.gParam.safe, length(ID), 1);
 taskData.concentration = repmat(concentration, length(ID), 1);
 taskData.pushConcentration = repmat(taskParam.gParam.pushConcentration, length(ID), 1);
+taskData.timestampOnset = timestampOnset;
+taskData.timestampFixCross2 = timestampFixCross2;
+taskData.timestampFixCross3 = timestampFixCross3;
 taskData.timestampPrediction = timestampPrediction;
+taskData.timestampOutcome = timestampOutcome;
+taskData.timestampShield = timestampShield;
 taskData.timestampReward = timestampReward;
 taskData.timestampOffset = timestampOffset;
 taskData.allASS = allASS;
@@ -287,6 +299,7 @@ taskData.UP = UP;
 taskData.hit = hit;
 taskData.perf = perf;
 taskData.accPerf = accPerf;
+taskData.startingBudget = startingBudget;
 taskData.Date = Date;
 taskData.cond = cond;
 taskData.initialTendency = initialTendency;

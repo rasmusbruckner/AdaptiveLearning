@@ -25,7 +25,7 @@ function [dataStandard, dataAsymReward] = RunAsymRewardVersion(unitTest, cBal, d
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       02/23
+%       09/23
 
 % Todo: At some point, we have to determine incentives and remuneration
 
@@ -67,7 +67,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10;  % 150;  Hier bitte anpassen
+trialsExp = 5;  % 150;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -114,7 +114,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
+screensize = [1 1 1920 1080]; %[1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -134,7 +134,7 @@ s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode
 enter = 37; % Hamburg: Hier bitte anpassen
 
 % Run task in debug mode with different screen coordinates
-debug = false;
+debug = true;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;

@@ -8,6 +8,8 @@ classdef al_display
     
     % TODO: This still needs to be commented properly and some variable
     % names have to be updated
+    % We should also consider child classes for properties or methods
+    % that are unique to a project
 
     % Properties of the display object
     % --------------------------------
@@ -19,6 +21,7 @@ classdef al_display
 
         % Todo: comment
         dstRect
+        centeredSocialFeedbackRect
 
         % Background texture
         backgroundTxt
@@ -46,6 +49,15 @@ classdef al_display
 
         % Todo: comment
         imageRect
+        socialFeedbackRect
+
+        % Textures related to social task (consider child class for this)
+        socialHasTxts 
+        socialDisTxts 
+
+        % Number of textures in social task (also potentially child class)
+        nHas
+        nDis
 
     end
     
@@ -65,7 +77,9 @@ classdef al_display
             displayobj.backgroundTxt = nan;
             displayobj.backgroundCol = [0, 0, 0];
             displayobj.imageRect = [0 0 180 270];
-            
+            displayobj.socialFeedbackRect = [0 0 562 762]/4;
+            %displayobj.socialTxts = struct;
+
         end
 
         function displayobj = openWindow(displayobj, gParam)
@@ -107,6 +121,7 @@ classdef al_display
             % confetti
 
             displayobj.dstRect = CenterRect(displayobj.imageRect, displayobj.windowRect);
+            displayobj.centeredSocialFeedbackRect = CenterRect(displayobj.socialFeedbackRect, displayobj.windowRect);
 
         end
 
@@ -127,6 +142,26 @@ classdef al_display
                 [cannonPic, ~, alpha]  = imread('confetti_cannon.png');
             end
             [backgroundPic, ~, backgroundPicAlpha] = imread('Greybanner Coliseum - Day - Large - 44x32.jpg');
+
+            % Todo: make optional when combining with other versions 
+            % Load social-fedback images
+            
+            % Textures social task
+            % Consider consider to put this in child class because it is
+            % not shared across projects
+            parentDirectory = fileparts(cd);
+            displayobj.nHas = length(dir([parentDirectory '/Files/socialFeedback/HAS/*.JPG']));
+            displayobj.nDis = length(dir([parentDirectory '/Files/socialFeedback/DIS/*.JPG']));
+
+            for n=1:displayobj.nHas
+              imagesHas{n} = imread(sprintf('has_%d.JPG',n));
+              displayobj.socialHasTxts{n} = Screen('MakeTexture', displayobj.window.onScreen, imagesHas{n});
+            end
+
+            for n=1:displayobj.nDis
+              imagesDis{n} = imread(sprintf('dis_%d.JPG',n));
+              displayobj.socialDisTxts{n} = Screen('MakeTexture', displayobj.window.onScreen, imagesDis{n});
+            end
 
             backgroundPicSize = size(backgroundPic);
             ySize = displayobj.window.screenY; 

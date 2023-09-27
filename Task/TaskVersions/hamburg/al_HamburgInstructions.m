@@ -1,5 +1,5 @@
 function al_HamburgInstructions(taskParam)
-%AL_HAMBURGINSTRUCTIONS This functio,,n runs the instructions for the
+%AL_HAMBURGINSTRUCTIONS This function runs the instructions for the
 % "Hamburg" version of the cannon task
 %
 %   Input

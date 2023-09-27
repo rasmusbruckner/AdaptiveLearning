@@ -21,15 +21,14 @@ function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       11/22
-
-% Todo: At some point, we have to determine incentives and remuneration
-
+%       09/23
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;
 end
+
+KbName('UnifyKeyNames')
 
 % Check optional input related to unit test
 % -----------------------------------------
@@ -63,7 +62,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 200;  Hier bitte anpassen
+trialsExp = 5;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -99,7 +98,7 @@ blockIndices = [1 50 100 150];
 useCatchTrials = true;
 
 % Catch-trial probability
-catchTrialProb = 0.1;
+catchTrialProb = 0.0; %0.1;
 
 % Set sentence length
 sentenceLength = 100;
@@ -109,7 +108,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;

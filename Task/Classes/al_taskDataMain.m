@@ -118,6 +118,9 @@ classdef al_taskDataMain
         
         % Accumulated performance
         accPerf
+
+        % Start-up budget
+        startingBudget
         
         % todo: comment
         initialTendency
@@ -158,6 +161,10 @@ classdef al_taskDataMain
         % EEG
         timestampOnset
         timestampPrediction
+        timestampFixCross2
+        timestampFixCross3
+        timestampOutcome
+        timestampShield
         timestampReward
         timestampOffset
         triggers

@@ -42,6 +42,8 @@ KbReleaseWait();
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 
+Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
+
 % Cycle over trials
 % -----------------
 for i = 1:trial

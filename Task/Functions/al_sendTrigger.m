@@ -1,4 +1,4 @@
-function trigger = al_sendTrigger(taskParam, taskData, condition, ~, trial, Tevent)
+function trigger = al_sendTrigger(taskParam, taskData, condition, trial, Tevent, printTrigger)
 %AL_SENDTRIGGER  This function sends the EEG triggers. See triggerscheme for details.
 %
 %
@@ -6,13 +6,17 @@ function trigger = al_sendTrigger(taskParam, taskData, condition, ~, trial, Teve
 %       taskParam: structure containing task paramters
 %       taskData: structure containing task data
 %       condition: noise condition type
-%       ~: take out of the function in future versions
 %       trial: tial index
 %       Tevent: trigger event 
 %
 %   Ouptut
 %       trigger: current trigger
 
+
+% Check if unit test is requested
+if ~exist('printTrigger', 'var') || isempty(printTrigger)
+    printTrigger = false;
+end
 
 digit1 = 0;
 digit2 = 0;
@@ -26,7 +30,7 @@ if isequal(taskParam.gParam.taskType, 'dresden')
 % Dresden version   
 % -------------------------------------------------------------------------
     
-    %% "Brown" trigger system
+    % Brown trigger system
     if taskParam.gParam.sendTrigger == true
         if taskParam.gParam.oddball
             ioObject = io64;
@@ -237,6 +241,89 @@ elseif isequal(taskParam.gParam.taskType, 'reversal')
         
     %end
     
+elseif isequal(taskParam.gParam.taskType, 'HamburgEEG') 
+    
+    % Ensure that this is the way Hamburg triggers
+    if taskParam.gParam.sendTrigger == true
+        ioObject = io64;
+        status = io64(ioObject);
+    end
+
+    % Trial onset
+    if isequal(Tevent, 'onset')
+        
+        % onset 
+        trigger = 99;
+
+    % Response
+    elseif isequal(Tevent, 'response')
+        
+        trigger = 100;
+
+    % Fixation cross
+    elseif isequal(Tevent, 'fix')
+        
+        trigger = 101;
+       
+    % Prediction error
+    elseif isequal(Tevent, 'outcome')
+        
+        if isequal(condition, 'monetary') && taskData.cp(trial) == 0
+            trigger = 10;
+        elseif isequal(condition, 'monetary') && taskData.cp(trial) == 1
+            trigger = 11;
+        elseif isequal(condition, 'social') && taskData.cp(trial) == 0
+            trigger = 20;
+        elseif isequal(condition, 'social') && taskData.cp(trial) == 1
+            trigger = 21;
+        end
+    
+    % Shield
+    elseif isequal(Tevent, 'shield')
+        
+        if isequal(condition, 'monetary') && taskData.hit(trial) == 0
+
+            trigger = 30;
+
+        elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1
+            
+            trigger = 31;
+
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 0
+            
+            trigger = 40;
+        
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 1
+
+            trigger = 41;
+
+        end
+
+
+    % Reward
+    elseif isequal(Tevent, 'reward')
+        
+        if isequal(condition, 'monetary') && taskData.hit(trial) == 0
+
+            trigger = 50;
+
+        elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1
+            
+            trigger = 51;
+
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 0
+            
+            trigger = 60;
+        
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 1
+
+            trigger = 61;
+
+        end
+
+    end
+
+
 elseif isequal(taskParam.gParam.taskType, 'chinese') ||...
     isequal(taskParam.gParam.taskType, 'ARC')  || isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'Sleep')
     
@@ -249,6 +336,56 @@ if taskParam.gParam.sendTrigger == true
     %     WaitSecs(1/taskParam.triggers.sampleRate);
     %     outp(taskParam.triggers.port,0) % Set port to 0.
     
-    %io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
+    io64(ioObject,taskParam.triggers.port, trigger) % This is for brown and maybe for Hamburg too?
 end
+
+if printTrigger 
+    fprintf('Current trigger: %.1f\n', trigger);
 end
+
+end
+
+
+
+% %first digit
+%     if isequal(condition, 'main') 
+%         digit1 = 1;
+%     elseif isequal(condition, 'control')   
+%         digit1 = 2;
+%     end
+%     
+%     % second digit
+%     if vola == .2 && taskData.cp(trial) == 1
+%         digit2 = 3;
+%     elseif vola == .2 && taskData.cp(trial) == 0    
+%         digit2 = 0;
+%     elseif vola == .7 && taskData.cp(trial) == 1
+%         digit2 = 4;
+%     elseif vola == .7 && taskData.cp(trial) == 0
+%         digit2 = 1;
+%     end
+%     
+%     % Third digit.
+%     if trial > 1
+%         if Tevent == 1 && taskData.actRew(trial-1) == 1
+%             digit3 = 2;
+%         elseif Tevent == 1 && taskData.actRew(trial-1) == 2
+%             digit3 = 3;
+%         elseif Tevent == 2 && taskData.actRew(trial-1) == 1
+%             digit3 = 4;
+%         elseif Tevent == 2 && taskData.actRew(trial-1) == 2
+%             digit3 = 5; 
+%         elseif Tevent == 3 && taskData.actRew(trial) == 1
+%             digit3 = 6;
+%         elseif Tevent == 3 && taskData.actRew(trial) == 2
+%             digit3 = 7;
+%         end
+%     else
+%         if Tevent == 3 && taskData.actRew(trial) == 1
+%             digit3 = 6;
+%         elseif Tevent == 3 && taskData.actRew(trial) == 2
+%             digit3 = 7;
+%         end
+%     end
+
+
