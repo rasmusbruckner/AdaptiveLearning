@@ -85,7 +85,7 @@ nParticles = 41;
 confettiStd = 5;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -107,7 +107,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080];
+screensize = [1    1    2560    1440]; %[1 1 1920 1080];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -127,7 +127,7 @@ s = 40; %22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um ke
 enter = 37; %40; % Hamburg: Hier bitte anpassen
 
 % Run task in debug mode with smaller window
-debug = true;
+debug = false;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;

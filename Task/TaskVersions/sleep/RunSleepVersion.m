@@ -101,7 +101,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: [screenWidth, screenHeight] = Screen('WindowSize', 0); screenSize = [1, 1, screenWidth, screenHeight];
+screensize = [1    1    2560    1440];  %[1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: [screenWidth, screenHeight] = Screen('WindowSize', 0); screenSize = [1, 1, screenWidth, screenHeight];
 
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
 %displayobj.screensize = get(0,'MonitorPositions'); %[1    1
@@ -128,7 +128,7 @@ s = 40; % Für MD KbDemo in Konsole laufen lassen und s drücken um keyCode zu b
 enter = 37; % md = 13   MD: Hier bitte anpassen, müsste bei euch 13 sein
 
 % Run task in debug mode with smaller window
-debug = true;
+debug = false;
 
 % Print timing for checking
 printTiming = true;

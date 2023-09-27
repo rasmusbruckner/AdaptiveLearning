@@ -17,7 +17,6 @@ classdef al_colors
         darkBlue
         silver
         green
-        red
         black
         gray
         background % background color
