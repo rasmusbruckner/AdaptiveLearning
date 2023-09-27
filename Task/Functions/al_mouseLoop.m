@@ -2,16 +2,18 @@ function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, tr
 %AL_MOUSELOOP This function manages the interaction between participants and the task via the computer mouse 
 %
 %   Input
-%       taskParam: structure containing task paramters
-%       taskData: structure containing task data
+%       taskParam: Task-parameter-object instance
+%       taskData: Task-data-object instance
 %       condition: noise condition type
-%       i: trial index
+%       trial: trial index
 %       initRT_Timestamp: initiation reaction time
 %       press: indext if mouse button has been pressed
+%       txt: 
+%       breakKey:
 %
 %   Output
-%       taskData: structure containing task data
-%       taskParam: structure containing task paramters
+%       taskData: Task-parameter-object instance
+%       taskParam: Task-data-object instance
 
 
 % Todo: needs to be properly cleaned and commented. Also integrate
@@ -75,10 +77,8 @@ while 1
     end
     
     taskParam.circle.rotAngle = degree * taskParam.circle.unit;
-
-
-    %degree
     al_drawCircle(taskParam)
+
     if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
         al_drawContext(taskParam,taskData.currentContext(trial))
         al_drawCross(taskParam)
@@ -99,8 +99,13 @@ while 1
         al_drawCannon(taskParam, taskData.distMean(trial), taskData.latentState(trial))
         al_aim(taskParam, taskData.distMean(trial))
     elseif strcmp(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(trial)
-       al_drawCannon(taskParam, taskData.distMean(trial))
-       al_aim(taskParam, taskData.distMean(trial))
+       if strcmp(taskParam.trialflow.cannonType, 'helicopter')
+            al_showHelicopter(taskParam, taskData.distMean(trial))
+            al_tickMark(taskParam, taskData.distMean(trial), 'aim')
+       else
+            al_drawCannon(taskParam, taskData.distMean(trial))
+            al_aim(taskParam, taskData.distMean(trial))
+       end
     else
 
         if isequal(taskParam.trialflow.confetti, 'show confetti cloud')

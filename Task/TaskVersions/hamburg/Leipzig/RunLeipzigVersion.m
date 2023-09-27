@@ -1,33 +1,27 @@
-function [dataStandard, dataAsymReward] = RunAsymRewardVersion(unitTest, cBal, day)
-%RUNASYMREWARDVERSION This function runs the asymmetric-reward version for
-% the FOR project by Jan Gläscher
+function [dataLowNoise, dataHighNoise] = RunLeipzigVersion(unitTest, cBal, day)
+%RUNLEIPZIGVERSION This function runs the first Leipzig pilot version
+%  of the cannon task
 %
 %   Input
-%       unitTest: Indicates if unit test is being done or not
+%       unitTest: Indicates if unit test is being done or not (not yet implemented)
 %       cBal: Current cBal (only allowed when running unit test)
 %       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataStandard: Task-data object standard condition
-%       dataAsymReward: Task-data object asymmetric-reward condition
+%       dataLowNoise: Task-data object low-noise condition
+%       dataHighNoise: Task-data object high-noise condition
 %
 %   Documentation
-%       This function runs the asymmetric-reward pilot version of
-%       the confetti-cannon task. Next to an outcome distribution as in the 
-%       standard confetti-cannon task, rewards are asymmetrically
-%       distributed. For example, more confetti when cannon shoots
-%       to the right compared to left. Currently, there are two 
-%       different noise conditions but this might change in the future.
+%       This function runs the Leipzig pilot version of the cannon task.
+%       Subjects see a (hidden) helicopter dropping supply items during 
+%       an emergency. Currently, there are two different noise conditions.
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
-%       (will be updated).
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/23
-
-% Todo: At some point, we have to determine incentives and remuneration
+%       01/23
 
 
 % Check if unit test is requested
@@ -67,29 +61,28 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 5;  % 150;  Hier bitte anpassen
+trialsExp = 10;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
 
 % Number of practice trials
-practTrials = 2; % 20;  Hier bitte anpassen
+practTrials = 20; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
-concentration = 12;
+concentration = [16, 8];
 
 % Factor that translates concentration into shield size
-shieldFixedSizeFactor = 1.7321; % 2 % With 1.7321, shield size is 28.6487
-% (like in low-noise condition of standard task)
+shieldFixedSizeFactor = 2;
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
-% Average number of confetti particles 
-nParticles = 30;
+% Number of confetti particles 
+nParticles = 41;
 
 % Confetti standard deviations
-confettiStd = 3;
+confettiStd = 5;
 
 % Choose if task instructions should be shown
 runIntro = true;
@@ -98,7 +91,7 @@ runIntro = true;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 999];  % 2 breaks in pilot session
+blockIndices = [1 50 100 150];
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -114,7 +107,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %[1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
+screensize = [1 1 1920 1080];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -130,11 +123,11 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; % Hamburg: Hier bitte anpassen
+s = 40; %22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; %40; % Hamburg: Hier bitte anpassen
 
-% Run task in debug mode with different screen coordinates
-debug = false;
+% Run task in debug mode with smaller window
+debug = true;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -146,13 +139,15 @@ printTiming = true;
 hidePtbCursor = true;
 
 % Reward magnitude
-rewMag = 0.05;
+rewMag = 0.1;
 
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % Hier bitte anpassen
 
-% Confetti-cannon image rectangle determining the size of the cannon
+% Image rectangle determining the size of the helicopter and doctor
+% todo: rename
 imageRect = [0 00 60 200];
+doctorRect = [0 00 100 100];
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -166,7 +161,7 @@ end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'asymReward'; %'Hamburg';
+gParam.taskType = "Leipzig";
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -194,13 +189,13 @@ cd(gParam.dataDirectory);
 % Todo: What is the best way to document this?
 trialflow = al_trialflow();
 trialflow.shot = ' ';
-trialflow.confetti = 'show confetti cloud';
+trialflow.confetti = 'no confettig cloud';
 trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
-trialflow.cannonType = "confetti";
-trialflow.reward = "asymmetric";
+trialflow.cannonType = "helicopter";
+trialflow.reward = "standard";
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -223,6 +218,11 @@ colors = al_colors();
 % ------------------------------------------
 
 keys = al_keys();
+if ~exist( 'kbDev' )
+  keys = al_kbdev( keys );
+else
+  keys.kbDev = kbDev;
+end
 keys.s = s;
 keys.enter = enter;
 
@@ -236,7 +236,6 @@ keys.enter = enter;
 
 timingParam = al_timing();
 timingParam.cannonBallAnimation = 1.5;
-timingParam.fixCrossLength = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -331,6 +330,8 @@ display = al_display();
 display.screensize = screensize;
 display.backgroundCol = [66, 66, 66];
 display.imageRect = imageRect;
+display.doctorRect = doctorRect;
+
 
 % Open psychtoolbox window
 display = display.openWindow(gParam);
@@ -382,16 +383,15 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataStandard, dataAsymReward] = al_asymRewardConditions(taskParam);
-totWin = round(sum(dataStandard.nParticlesCaught)/10) + dataAsymReward.accPerf(end);
+[dataLowNoise, dataHighNoise] = al_LeipzigConditions(taskParam);
+totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 
 % -----------
 % End of task
 % -----------
 
-% Todo: Maybe indicate number of particles instead
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.0f Punkte gewonnen!', totWin);
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 
