@@ -1,5 +1,5 @@
 function al_HamburgInstructions(taskParam)
-%AL_HAMBURGINSTRUCTIONS This functio,,n runs the instructions for the
+%AL_HAMBURGINSTRUCTIONS This function runs the instructions for the
 % "Hamburg" version of the cannon task
 %
 %   Input
@@ -38,18 +38,23 @@ if testDay == 1
     taskData = al_taskDataMain();
 
     % Generate practice-phase data
-    n_trials = 4;
-    taskData.catchTrial(1:n_trials) = 0; % no catch trials
-    taskData.initiationRTs(1:n_trials) = nan;  % set initiation RT to nan to indicate that this is the first response
-    taskData.initialTendency(1:n_trials) = nan;  % set initial tendency of mouse movement
-    taskData.block(1:n_trials) = 1; % block number
-    taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
-    taskData.shieldType(1:n_trials) = 1; % shield color
+    nTrials = 4;
+    taskData.catchTrial(1:nTrials) = 0; % no catch trials
+    taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
+    taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
+    taskData.block(1:nTrials) = 1; % block number
+    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
+    taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
-    taskData.pred(1:n_trials) = nan; % initialize predictions
-    taskData.nParticles(1:n_trials) = 41; % number of confetti particles
-    
+    taskData.pred(1:nTrials) = nan; % initialize predictions
+    taskData.nParticles(1:nTrials) = taskParam.cannon.nParticles; % number of confetti particles
+    taskData.greenCaught(1:nTrials) = nan;
+    taskData.redCaught(1:nTrials) = nan;
+    for t = 1:nTrials
+        taskData.dotCol(t).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
+    end
+
     % Introduce cannon
     current_trial = 1;
     txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
@@ -77,7 +82,8 @@ if testDay == 1
 
         txt=['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Konfettiwolke. Der violette Strich zeigt Ihnen die '...
             'Position Ihres letzten Eimers. Steuern Sie den violetten Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücken Sie die linke Maustaste.'];
-        [taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+        %[taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+        [taskData, taskParam, xyExp, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
 
         % If it is a miss, repeat instruction
         if abs(taskData.predErr(current_trial)) >= taskParam.gParam.practiceTrialCriterionEstErr
@@ -95,7 +101,7 @@ if testDay == 1
 
     win = true; % color of shield when catch is rewarded
     txt = ['Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.'];
-    taskData = al_introduceShield(taskParam, taskData, win, current_trial, txt, xyExp, dotCol, dotSize);
+    taskData = al_introduceShield(taskParam, taskData, win, current_trial, txt, xyExp, taskData.dotCol(current_trial).rgb, dotSize);
 
     % 6. Ask participant to miss confetti
     % -----------------------------------
@@ -108,7 +114,7 @@ if testDay == 1
 
         % Introduce miss with bucket
         txt = 'Versuchen Sie nun Ihren Eimer so zu positionieren, dass Sie das Konfetti verfehlen. Drücken Sie dann die linke Maustaste.';
-        [taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceShieldMiss(taskParam, taskData, current_trial, txt);
+        [taskData, taskParam, xyExp, dotSize] = al_introduceShieldMiss(taskParam, taskData, current_trial, txt);
 
         % If it is a hit, repeat instruction
         if abs(taskData.predErr(current_trial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
@@ -128,7 +134,7 @@ if testDay == 1
     % -------------------------------------
     win = true;
     txt = 'In diesem Fall haben Sie das Konfetti verfehlt.';
-    al_confirmMiss(taskParam, taskData, win, current_trial, txt, xyExp, dotCol, dotSize);
+    al_confirmMiss(taskParam, taskData, win, current_trial, txt, xyExp, taskData.dotCol(current_trial).rgb, dotSize);
 
     % 8. Introduce practice blocks
     % ----------------------------

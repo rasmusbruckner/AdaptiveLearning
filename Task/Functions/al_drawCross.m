@@ -1,23 +1,31 @@
-function al_drawCross(taskParam)
+function al_drawCross(taskParam, size, width)
 %AL_DRAWCROSS This function draws the fixation cross
 % 
 %   Input
-%       taskParam: structure containing task parameters
+%       taskParam: Task-parameter-object instance
+%       size: Line length
+%       width: Line width
 %
 %   Output
 %       ~
 
+% Check optional input
+
+% Size
+if ~exist('size', 'var') || isempty(size)
+    size = 20;
+end
+
+% Width
+if ~exist('width', 'var') || isempty(width)
+    width = 6;
+end
 
 % Extract center
 zero = taskParam.display.zero;
 
-% Generate fixation cross
-% note: this is what we used previously. parameterize the size of the cross
-%Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], zero(1) - 9, zero(2), zero(1) + 9 , zero(2), 3);
-%Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], zero(1), zero(2) - 9, zero(1) , zero(2) + 9, 3);
-
-Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], zero(1) - 20, zero(2), zero(1) + 20 , zero(2), 6);
-Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], zero(1), zero(2) - 20, zero(1) , zero(2) + 20, 6);
+Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], zero(1) - size, zero(2), zero(1) + size , zero(2), width);
+Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], zero(1), zero(2) - size, zero(1) , zero(2) + size, width);
 
 end
 

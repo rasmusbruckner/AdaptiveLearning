@@ -22,6 +22,8 @@ classdef al_circle
         meanPoint
         rotationRad
         chineseCannonRad
+        shieldImageRad
+        heliImageRad
         tendencyThreshold
         predSpotDiam
         outcDiam
@@ -73,6 +75,8 @@ classdef al_circle
             circleobj.meanPoint = 1;
             circleobj.rotationRad = 150;
             circleobj.chineseCannonRad = 500; % Todo: used to be 300; update when getting back to chinese version
+            circleobj.shieldImageRad = 275;
+            circleobj.heliImageRad = 70;
             circleobj.tendencyThreshold = 15;
             circleobj.boatRect = [0 0 50 50];
             circleobj.centBoatRect = nan;

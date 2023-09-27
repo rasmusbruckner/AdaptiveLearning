@@ -1,8 +1,8 @@
 function al_predictionSpot(taskParam)
-%AL_PREDICTIONSPOT This function prints the prediction spot
+%AL_PREDICTIONSPOT This function displays the prediction spot
 %
 %   Input
-%       taskParam: structure containing task parameters
+%       taskParam: Task-parameter-object instance
 %
 %   Output
 %       ~
@@ -11,9 +11,9 @@ function al_predictionSpot(taskParam)
 % Compute coordinates of prediction spot
 xPredS = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
 yPredS = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
-PredSpot = OffsetRect(taskParam.circle.predCentSpotRect, xPredS, yPredS);
+predSpot = OffsetRect(taskParam.circle.predCentSpotRect, xPredS, yPredS);
 
-% Print prediction spot
-Screen('FillOval', taskParam.display.window.onScreen, taskParam.colors.blue, PredSpot);  % [255 165 0]
+% Display prediction spot
+Screen('FillOval', taskParam.display.window.onScreen, taskParam.colors.blue, predSpot);
 
 end

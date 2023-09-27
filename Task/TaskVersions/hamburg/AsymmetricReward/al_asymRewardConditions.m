@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam)
+function [dataStandard, dataAsymmetricReward] = al_asymRewardConditions(taskParam)
 %AL_ASYMREWARDCONDITIONS This function runs the changepoint condition of the cannon
 %   task tailored to the asymmetric-reward version by Jan Gläscher
 %
@@ -12,7 +12,7 @@ function [dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam)
 %  Todo: Write a unit test and integratio high/low noise in integration test
 
 % -----------------------------------------------------
-% 0. Extract some variables from task-parameters object
+% 1. Extract some variables from task-parameters object
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
@@ -25,7 +25,7 @@ cBal = taskParam.subject.cBal;
 testDay = taskParam.subject.testDay;
 
 % --------------------------------
-% 1. Show instructions, if desired
+% 2. Show instructions, if desired
 % --------------------------------
 
 if runIntro && ~unitTest
@@ -33,7 +33,7 @@ if runIntro && ~unitTest
 end
 
 % ------------
-% 2. Main task
+% 3. Main task
 % ------------
 
 % Note that days and cBal are not yet implemented.
@@ -45,65 +45,71 @@ trial = taskParam.gParam.trials;
 if cBal == 1
 
 
-    % Low noise first...
-    % ------------------
-
+    % Standard task first...
+    % ----------------------
+    
+    taskParam.trialflow.reward = "standard";
+    
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
     else
         load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
-    al_indicateNoise(taskParam, 'lowNoise')
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+    al_indicateReward(taskParam)
+    dataStandard = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % ... high noise second
-    % ---------------------
+    % ... asymmetric-reward task second
+    % ---------------------------------
 
+    taskParam.trialflow.reward = "asymmetric";
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
     else
         load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
-    al_indicateNoise(taskParam, 'highNoise')
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+    al_indicateReward(taskParam)
+    dataAsymmetricReward = al_confettiLoop(taskParam, 'main', taskData, trial);
 
 else
 
-    % High noise first...
-    % -------------------
+    % Asymmetric-reward task first...
+    % -------------------------------
+
+    taskParam.trialflow.reward = "asymmetric";
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
     else
         load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
-    al_indicateNoise(taskParam, 'highNoise')
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+    al_indicateReward(taskParam)
+    dataAsymmetricReward = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % ... low noise second
-    % --------------------
+    % ... standard task second
+    % ------------------------
 
-
+    taskParam.trialflow.reward = "standard";
+    
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
+        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
     else
         load('integrationTest_sleep.mat','taskData')
     end
 
     % Run task
-    al_indicateNoise(taskParam, 'lowNoise')
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+    al_indicateReward(taskParam)
+    dataStandard = al_confettiLoop(taskParam, 'main', taskData, trial);
 
 
 end

@@ -64,6 +64,9 @@ classdef al_taskDataMain
 
         % Changepoint index
         cp
+
+        % Reward-distribution-changepoint index
+        cp_rew
         
         % Actual reward
         actRew
@@ -106,9 +109,18 @@ classdef al_taskDataMain
         
         % Trial-by-trial performance
         perf
+
+        % Asymmetric-reward-version number of green particles caught
+        greenCaught
+
+        % Asymmetric-reward-version number of red particles caught
+        redCaught
         
         % Accumulated performance
         accPerf
+
+        % Start-up budget
+        startingBudget
         
         % todo: comment
         initialTendency
@@ -137,13 +149,27 @@ classdef al_taskDataMain
         % Sign determining reward distribution in Hamburg asymReward version
         asymRewardSign
 
+        % Number of green particles shot by cannon in asymmetric-reward condition
+        nGreenParticles
+
+        % Reward prediction error
+        rpe 
+
+        % nested struct?
+        dotCol
+
         % EEG
         timestampOnset
         timestampPrediction
+        timestampFixCross2
+        timestampFixCross3
+        timestampOutcome
+        timestampShield
+        timestampReward
         timestampOffset
         triggers
 
-         % todo: comment
+        % todo: comment
         memErr
         memErrNorm 
         memErrPlus

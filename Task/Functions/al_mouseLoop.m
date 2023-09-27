@@ -2,16 +2,18 @@ function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, tr
 %AL_MOUSELOOP This function manages the interaction between participants and the task via the computer mouse 
 %
 %   Input
-%       taskParam: structure containing task paramters
-%       taskData: structure containing task data
+%       taskParam: Task-parameter-object instance
+%       taskData: Task-data-object instance
 %       condition: noise condition type
-%       i: trial index
+%       trial: trial index
 %       initRT_Timestamp: initiation reaction time
 %       press: indext if mouse button has been pressed
+%       txt: 
+%       breakKey:
 %
 %   Output
-%       taskData: structure containing task data
-%       taskParam: structure containing task paramters
+%       taskData: Task-parameter-object instance
+%       taskParam: Task-data-object instance
 
 
 % Todo: needs to be properly cleaned and commented. Also integrate
@@ -75,10 +77,8 @@ while 1
     end
     
     taskParam.circle.rotAngle = degree * taskParam.circle.unit;
-
-
-    %degree
     al_drawCircle(taskParam)
+
     if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
         al_drawContext(taskParam,taskData.currentContext(trial))
         al_drawCross(taskParam)
@@ -99,8 +99,13 @@ while 1
         al_drawCannon(taskParam, taskData.distMean(trial), taskData.latentState(trial))
         al_aim(taskParam, taskData.distMean(trial))
     elseif strcmp(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(trial)
-       al_drawCannon(taskParam, taskData.distMean(trial))
-       al_aim(taskParam, taskData.distMean(trial))
+       if strcmp(taskParam.trialflow.cannonType, 'helicopter')
+            al_showHelicopter(taskParam, taskData.distMean(trial))
+            al_tickMark(taskParam, taskData.distMean(trial), 'aim')
+       else
+            al_drawCannon(taskParam, taskData.distMean(trial))
+            al_aim(taskParam, taskData.distMean(trial))
+       end
     else
 
         if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
@@ -159,27 +164,27 @@ while 1
         taskData.initiationRTs(trial,:) = GetSecs() - initRT_Timestamp;
     end
     
-    if ~isequal(taskParam.gParam.taskType, 'chinese') || ~isequal(taskParam.gParam.taskType, 'ARC')
-        if  (buttons(2) == 1 && trial ~= taskParam.gParam.blockIndices(1) && trial ~= taskParam.gParam.blockIndices(2) + 1 && trial ~= taskParam.gParam.blockIndices(3) + 1 && trial ~= taskParam.gParam.blockIndices(4) + 1)
-            
-            taskData.savedTickmark(trial) = ((taskParam.circle.rotAngle)/taskParam.circle.unit);
-            WaitSecs(0.2);
-            press = 1;
-            
-        %elseif i > 1 && press == 0
-            % Todo: re-implement when working on reversal version again
-            %taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
-            %taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
-        %elseif i == 1
-            % Todo: re-implement when working on reversal version again
-            % taskData.savedTickmarkPrevious(i) = 0;
-        end
-        
-        if press == 1
-            
-            taskData.savedTickmarkPrevious(trial) = taskData.savedTickmark(trial-1);
-        end
-    end
+%     if ~isequal(taskParam.gParam.taskType, 'chinese') || ~isequal(taskParam.gParam.taskType, 'ARC')
+%         if  (buttons(2) == 1 && trial ~= taskParam.gParam.blockIndices(1) && trial ~= taskParam.gParam.blockIndices(2) + 1 && trial ~= taskParam.gParam.blockIndices(3) + 1 && trial ~= taskParam.gParam.blockIndices(4) + 1)
+%             
+%             taskData.savedTickmark(trial) = ((taskParam.circle.rotAngle)/taskParam.circle.unit);
+%             WaitSecs(0.2);
+%             press = 1;
+%             
+%         %elseif i > 1 && press == 0
+%             % Todo: re-implement when working on reversal version again
+%             %taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
+%             %taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
+%         %elseif i == 1
+%             % Todo: re-implement when working on reversal version again
+%             % taskData.savedTickmarkPrevious(i) = 0;
+%         end
+%         
+%         if press == 1
+%             
+%             taskData.savedTickmarkPrevious(trial) = taskData.savedTickmark(trial-1);
+%         end
+%     end
     
     % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))

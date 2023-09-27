@@ -1,4 +1,4 @@
-function [nParticles, outcomeDeviation] = al_getParticleN(nMaxParticles, outcome, distMean, concentration, sign)
+function [nParticles, outcomeDeviation] = al_getParticleN(meanParticles, outcome, distMean, concentration, sign)
 % AL_GETPARTICLEN This function determines the number of confetti particles
 % in the asymRewardVersion of the confetti-cannon task.
 %
@@ -8,7 +8,7 @@ function [nParticles, outcomeDeviation] = al_getParticleN(nMaxParticles, outcome
 %   on a changepoint. The exact settings may be updated in the future. 
 %
 %   Input
-%       nMaxParticles: Maximum number of particles
+%       meanParticles: Average number of particles
 %       outcome: Current outcome
 %       distMean: Current aim of the cannon
 %       concentration: Concentration parameter
@@ -18,6 +18,8 @@ function [nParticles, outcomeDeviation] = al_getParticleN(nMaxParticles, outcome
 %       nParticles: Computed number of particles
 %       outcomeDeviation: Difference between outcome and cannon mean
 %
+
+nMaxParticles = 2*meanParticles;
 
 % Concentration expressed as variance (approximation)
 GaussStd = rad2deg((1/concentration)^.5);
@@ -33,12 +35,13 @@ ceilingDeviation = 2*GaussStd;
 slope = sign * (outcomeDeviation/ceilingDeviation);
 
 % Compute number of particles
-rewardFunction = nMaxParticles/2 + slope * (nMaxParticles/2);
+rewardFunction = meanParticles + slope * meanParticles;
 if rewardFunction <= 1
     rewardFunction = 1;
 elseif rewardFunction > nMaxParticles
     rewardFunction = nMaxParticles;
 end
+
 nParticles = round(rewardFunction);
 
 end

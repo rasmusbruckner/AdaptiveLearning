@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, day)
+function [dataStandard, dataAsymReward] = RunAsymRewardVersion(unitTest, cBal, day)
 %RUNASYMREWARDVERSION This function runs the asymmetric-reward version for
 % the FOR project by Jan Gläscher
 %
@@ -8,8 +8,8 @@ function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, da
 %       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataLowNoise: Task-data object low-noise condition
-%       dataHighNoise: Task-data object high-noise condition
+%       dataStandard: Task-data object standard condition
+%       dataAsymReward: Task-data object asymmetric-reward condition
 %
 %   Documentation
 %       This function runs the asymmetric-reward pilot version of
@@ -25,7 +25,7 @@ function [dataLowNoise, dataHighNoise] = RunAsymRewardVersion(unitTest, cBal, da
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       11/22
+%       09/23
 
 % Todo: At some point, we have to determine incentives and remuneration
 
@@ -67,7 +67,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 200;  Hier bitte anpassen
+trialsExp = 5;  % 150;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -76,16 +76,17 @@ trialsTesting = 20;
 practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
-concentration = [16, 8];
+concentration = 12;
 
 % Factor that translates concentration into shield size
-shieldFixedSizeFactor = 2;
+shieldFixedSizeFactor = 1.7321; % 2 % With 1.7321, shield size is 28.6487
+% (like in low-noise condition of standard task)
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
-% Number of confetti particles 
-nParticles = 80;
+% Average number of confetti particles 
+nParticles = 30;
 
 % Confetti standard deviations
 confettiStd = 3;
@@ -97,7 +98,7 @@ runIntro = true;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 150];  % Todo: adjust properly for first pilot
+blockIndices = [1 50 100 999];  % 2 breaks in pilot session
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -113,11 +114,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
-
-%[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
-%displayobj.screensize = get(0,'MonitorPositions'); %[1    1
-%2560    1440]%  laptop [1    1    2560    1440];
+screensize = [1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -137,7 +134,7 @@ s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode
 enter = 37; % Hamburg: Hier bitte anpassen
 
 % Run task in debug mode with different screen coordinates
-debug = true;
+debug = false;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -152,9 +149,9 @@ hidePtbCursor = true;
 rewMag = 0.05;
 
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
-% Confetti cannon image rectangle determining the size of the cannon
+% Confetti-cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
 
 % ---------------------------------------------------
@@ -169,7 +166,7 @@ end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'Hamburg';
+gParam.taskType = 'asymReward'; %'Hamburg';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -239,6 +236,7 @@ keys.enter = enter;
 
 timingParam = al_timing();
 timingParam.cannonBallAnimation = 1.5;
+timingParam.fixCrossLength = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -384,8 +382,8 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_asymRewardConditions(taskParam);
-totWin = round((sum(dataLowNoise.nParticlesCaught) + sum(dataHighNoise.nParticlesCaught))/10);
+[dataStandard, dataAsymReward] = al_asymRewardConditions(taskParam);
+totWin = round(sum(dataStandard.nParticlesCaught)/10) + dataAsymReward.accPerf(end);
 
 % -----------
 % End of task

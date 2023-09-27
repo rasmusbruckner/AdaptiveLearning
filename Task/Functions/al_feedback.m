@@ -2,8 +2,8 @@ function [txt, header] = al_feedback(Data, taskParam, subject, condition, whichB
 %AL_FEEDBACK This function displays feedback at the end of a block
 %
 %   Input
-%       Data: structure containing data of subject
-%       taskParam: structure containing task parameters 
+%       Data: Task-data-object instance
+%       taskParam: Task-parameter-object instance
 %       subject: structure containing information about subject
 %       condition: current condition
 %       whichBlock: current block
@@ -128,7 +128,7 @@ elseif isequal(taskParam.gParam.taskType, 'ARC')
 %elseif isequal(taskParam.gParam.taskType, 'Sleep') 
 %    header = 'Zwischenstand';
 %    txt = sprintf('Gefangene Kugeln: %.0f von %.0f\n\nIn diesem Block haben Sie %.0f von %.0f möglichen Punkten verdient.', hits, nTrials, max(Data.accPerf(1:nTrials))*10, maxMon*10);
-elseif isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'Sleep') 
+elseif isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'Sleep') || isequal(taskParam.gParam.taskType, 'Leipzig') 
     header = 'Zwischenstand';
     % Todo: Match reward rules across functions (parameterize)
     if ~isequal(taskParam.trialflow.reward, 'asymmetric')
@@ -140,6 +140,20 @@ elseif isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(Data.nParticlesCaught))/10);
     end
+elseif isequal(taskParam.gParam.taskType, 'asymReward') 
+
+    header = 'Zwischenstand';
+    if isequal(taskParam.trialflow.reward, "standard")
+        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(Data.nParticlesCaught))/10);
+    else
+        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', Data.accPerf(end));
+    end
+
+elseif isequal(taskParam.gParam.taskType, 'HamburgEEG') 
+
+    header = 'Ende des Blocks';
+    txt = 'Du hast den Block abgeschlossen.';
+end
 end
 
 

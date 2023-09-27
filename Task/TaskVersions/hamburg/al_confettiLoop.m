@@ -10,7 +10,7 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %   Output
 %       taskData: Task-data-object instance
 %
-%   Events (Todo: verify)
+%   Events standard condition
 %       1: Trial Onset
 %       2: Prediction            (self-paced)
 %       3: Confetti animation    (1500 ms)
@@ -18,6 +18,17 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %       5: Jitter                (0-200 ms)
 %                                ------------
 %                                 2.5 s + pred (~ 2s)
+%
+%   Events asymmetric-reward condition
+%       1: Trial Onset
+%       2: Prediction            (self-paced)
+%       3: Confetti animation    (1500 ms)
+%       4: ISI                   (500 ms)
+%       5: Reward                (1000 ms)
+%       6: ITI                   (900 ms)
+%       7: Jitter                (0-200 ms)
+%                                ------------
+%                                 4.0 s + pred (~ 2s)
 %
 % todo: maybe get rid of "condition" input
 % todo: some comments should be added and some outdated comments should be
@@ -30,6 +41,8 @@ KbReleaseWait();
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
+
+Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
 % Cycle over trials
 % -----------------
@@ -90,7 +103,7 @@ for i = 1:trial
     %--------------------------
 
     % send fixation cross 1 trigger
-    % todo: this should be done in mouse loop, like I did fo keyboardLoop
+    % todo: this should be done in mouse loop, like I did for keyboardLoop
     taskData.timestampPrediction(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Deviation from cannon (estimation error) to compute performance
@@ -106,29 +119,47 @@ for i = 1:trial
     % Record hit
     if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
         taskData.hit(i) = 1;
-        taskData.perf(i) = taskParam.gParam.rewMag;
     else
         taskData.hit(i) = 0;
-        taskData.perf(i) = 0;
     end
-
-    % Accumulated performance
-    taskData.accPerf(i) = sum(taskData.perf, 'omitnan');
 
     % Record belief update
     if i > 1
         taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
 
-    % Confetti animation    
+    % Confetti animation
     background = false; % todo: include this in trialflow
-    taskData.nParticlesCaught(i) = al_confetti(taskParam, taskData, i, background, timestamp);
-   
-   % [taskData.nParticlesCaught(i), ~, ~, ~] = 
+    taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+
+    % Compute performance
+    if strcmp(taskParam.trialflow.reward, "asymmetric")
+
+        % Performance depends on green vs. red particles caught
+        taskData.perf(i) = taskData.greenCaught(i) - taskData.redCaught(i);
+        
+        % Reward prediction error: actual reward - (green minus red confetti particles assuming that all particles would be collected)
+        taskData.rpe(i) = taskData.perf(i) - (taskData.nGreenParticles(i) - (taskData.nParticles(i)-taskData.nGreenParticles(i)));
+
+    else
+
+        % Performance depends on hit vs miss
+        if taskData.hit(i) == 1
+            taskData.perf(i) = taskParam.gParam.rewMag;
+        else
+            taskData.perf(i) = 0;
+        end
+
+    end
+
+    % Accumulated performance
+    taskData.accPerf(i) = sum(taskData.perf, 'omitnan');
+
+    % Fixation cross: ITI (standard version) or ISI (asymmetric reward)
+    % -----------------------------------------------------------------
+
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
-        % al_aim(taskParam, taskData.distMean(i))  # check if this should
-        % be included at all
     else
         [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
@@ -138,18 +169,63 @@ for i = 1:trial
     % Draw circle and confetti cloud
     al_drawCircle(taskParam)
 
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.cannonBallAnimation;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+
     if taskParam.gParam.printTiming
-        shotTiming = GetSecs - taskParam.timingParam.ref;
+        shotTiming = GetSecs() - taskParam.timingParam.ref;
         fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampPrediction(i))
     end
 
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.outcomeLength;
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+    % For asymmetric reward: Display feedback and fixation cross (ISI)
+    if strcmp(taskParam.trialflow.reward, "asymmetric")
 
-    % Fixation cross: ITI
-    % --------------------
+        % Feedback
+        % --------
+
+        timestamp = timestamp + taskParam.timingParam.fixCrossLength;
+
+        % Display reward feedback
+        txt = sprintf('<color=32CD32>Grünes Konfetti: %.0f\n<color=ff0000>Rotes Konfetti: %.0f\n<color=ffa500>Gewinn: %.0f Punkte', taskData.greenCaught(i), taskData.redCaught(i), taskData.perf(i));
+        zero = taskParam.display.zero;
+        DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
+
+        % Tell PTB that everything has been drawn and flip screen
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+
+        if taskParam.gParam.printTiming
+            fixCrossTiming = GetSecs - taskParam.timingParam.ref;
+            fprintf('Fix-cross duration: %.5f\n', fixCrossTiming -  shotTiming)
+        end
+
+        % Fixation cross: ITI
+        % --------------------
+
+        if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+            al_drawCannon(taskParam, taskData.distMean(i))
+        else
+            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+            Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+            al_drawCross(taskParam)
+        end
+
+        % Draw circle and confetti cloud
+        al_drawCircle(taskParam)
+
+        % Tell PTB that everything has been drawn and flip screen
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        timestamp = timestamp + taskParam.timingParam.rewardLength;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+
+        % Reward timestamp
+        if taskParam.gParam.printTiming
+            taskData.timestampReward(i) = GetSecs - taskParam.timingParam.ref;
+            fprintf('Feedback duration: %.5f\n', taskData.timestampReward(i) - fixCrossTiming)
+        end
+    end
 
     % Fixed inter-trial interval
     WaitSecs(taskParam.timingParam.fixedITI);
@@ -157,7 +233,11 @@ for i = 1:trial
     % Offset timestamp
     taskData.timestampOffset(i) = GetSecs - taskParam.timingParam.ref;
     if taskParam.gParam.printTiming
-        fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
+        if strcmp(taskParam.trialflow.reward, "asymmetric")
+            fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampReward(i))
+        else
+            fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
+        end
     end
 end
 
@@ -179,7 +259,7 @@ if ~taskParam.unitTest
 
         % todo: do we want to save practice?
         concentration = unique(taskData.concentration);
-        savename = sprintf('cannon_confetti_g%d_d%d_conc%d_%s', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+        savename = sprintf('confetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
         save(savename, 'taskData')
 
         % Wait until keys released

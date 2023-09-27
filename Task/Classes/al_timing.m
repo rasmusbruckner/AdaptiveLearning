@@ -22,6 +22,12 @@ classdef al_timing
         % Presentation of outcome 
         outcomeLength
 
+        % Presentation of shield
+        shieldLength        
+
+        % Presentation of reward feedback
+        rewardLength
+
         % Length of jitter
         jitter
 
@@ -46,6 +52,8 @@ classdef al_timing
             timingobj.cannonBallAnimation = 0.5;
             timingobj.cannonMissAnimation = 1.0;
             timingobj.outcomeLength = 0.0;
+            timingobj.shieldLength = 0.0;
+            timingobj.rewardLength = 1.0;
             timingobj.jitter = 0.2;        
             timingobj.fixedITI = 0.9;
             timingobj.ref = nan;

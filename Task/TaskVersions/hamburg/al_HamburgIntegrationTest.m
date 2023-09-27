@@ -172,11 +172,11 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataMain.latentState, expectedLatentState);
 
             % Number of confetti particles shot
-            expectedNParticles = repmat(41, 20, 1);
+            expectedNParticles = repmat(40, 20, 1);
             testCase.verifyEqual(dataMain.nParticles, expectedNParticles)
 
             % Number of particles caught in shield
-            expectedNParticlesCaught = [41 41 0 0 0 41 0 0 0 0 0 0 0 0 0 0 0 41 41 41]';
+            expectedNParticlesCaught = [40 40 0 0 0 40 0 0 0 0 0 0 0 0 0 0 0 40 40 40]';
             testCase.verifyEqual(dataMain.nParticlesCaught, expectedNParticlesCaught)
             
             % Confetti standard deviation 

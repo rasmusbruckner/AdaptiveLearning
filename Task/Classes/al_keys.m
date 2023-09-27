@@ -51,7 +51,7 @@ classdef al_keys
         end
 
         function keysobj = al_kbdev(keysobj)
-            % This function detects the keyboard devide, necessary on 
+            % This function detects the keyboard device, necessary on 
             % some Macs
 
             kbdevs = [];

@@ -20,8 +20,11 @@ if isequal(taskParam.gParam.taskType, 'chinese')
     al_drawContext(taskParam, currentContext)
     al_drawCross(taskParam);
 end
-al_drawCross(taskParam)
+
 al_drawCircle(taskParam)
+if ~strcmp(taskParam.gParam.taskType, 'Leipzig')
+    al_drawCross(taskParam)
+end
 
 % Tell PTB that everything has been drawn and flip screen
 tUpdated = GetSecs;
@@ -50,7 +53,9 @@ if strcmp(taskParam.gParam.taskType, 'Sleep')
     varargout{1} = taskData;
     varargout{2} = taskParam;
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'HamburgEEG')
+% Todo: share more code between Hamburg and Leipzig here. Major difference
+% is task loop
     
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
@@ -58,7 +63,6 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
     % Participant indicates prediction
     press = 0;
     condition = 'main';
-    % i = 1;
     [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
 
     % Prediction error
@@ -71,13 +75,38 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
     % for accurate timing
     timestamp = GetSecs;
     fadeOutEffect = false;
-    [~, xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
+    [taskData, xyExp, dotSize] = al_confetti(taskParam, taskData, trial, background, timestamp, fadeOutEffect);
+
+    varargout{1} = taskData;
+    varargout{2} = taskParam;
+    varargout{3} = xyExp;
+    varargout{4} = dotSize;
+
+
+elseif strcmp(taskParam.gParam.taskType, 'Leipzig')
+    
+    % Reset mouse to screen center
+    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
+
+    % Participant indicates prediction
+    press = 0;
+    condition = 'main';
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+
+    % Prediction error
+    taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
+    
+    % Confetti animation    
+    background = true; % todo: include this in trialflow
+    
+    % Extract current time and determine when screen should be flipped
+    % for accurate timing
+    timestamp = GetSecs;
+    [~, xyExp] = al_supplies(taskParam, taskData, trial, background, timestamp);
     
     varargout{1} = taskData;
     varargout{2} = taskParam;
     varargout{3} = xyExp;
-    varargout{4} = dotCol;
-    varargout{5} = dotSize;
 
 end
 end

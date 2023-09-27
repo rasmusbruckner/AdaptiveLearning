@@ -1,4 +1,4 @@
-function [nParticlesCaught, xyExp, dotCol, dotSize] = al_confetti(taskParam, taskData, currTrial, background, timestamp, fadeOutEffect)
+function [taskData, xyExp, dotSize] = al_confetti(taskParam, taskData, currTrial, background, timestamp, fadeOutEffect)
 %AL_CONFETTI This function animates the confetti shot
 %
 %   Input
@@ -10,10 +10,10 @@ function [nParticlesCaught, xyExp, dotCol, dotSize] = al_confetti(taskParam, tas
 %       fadeOutEffect: Indicates if confetti should disappear towards the end of the trial
 %
 %   Output
-%       nParticlesCaught: Number of particles caught
+%       taskData: Task-data-object instance
 %       xyExp: Confetti-position matrix
-%       dotCol: Confetti-color matrix
 %       dotSize: Confetti-size matrix
+
 
 if ~exist('fadeOutEffect', 'var') ||  isempty(fadeOutEffect)
     fadeOutEffect = true;  
@@ -36,34 +36,57 @@ xyExp(1,:) = xExpStart;
 xyExp(2,:) = yExpStart; 
 
 % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
-spread_wide = normrnd(taskData.outcome(currTrial), taskParam.cannon.confettiStd, nParticles, 1); 
+spreadWide = normrnd(taskData.outcome(currTrial), taskParam.cannon.confettiStd, nParticles, 1); 
 
 % Random confetti flight distance (radius) conditional on circle radius and some arbitrary standard deviation
-spread_long = taskParam.circle.rotationRad + normrnd(taskParam.circle.rotationRad, 20, nParticles,1);
+spreadLong = taskParam.circle.rotationRad + normrnd(taskParam.circle.rotationRad, 20, nParticles,1);
 
 % End points of animation, both spread and distance combined
-xExpEnd = spread_long .* sind(spread_wide);
-yExpEnd = spread_long .* -cosd(spread_wide);
+xExpEnd = spreadLong .* sind(spreadWide);
+yExpEnd = spreadLong .* -cosd(spreadWide);
 
 % When is it a catch?
 % -------------------
 
 % Determine threshold at which confetti stops moving when in shield
 threshold = taskParam.circle.rotationRad + normrnd(-0.75*taskParam.circle.shieldOffset, taskParam.circle.shieldWidth/10, nParticles, 1);  % ensure that we only cover some part of the shield width
-xThres = threshold .* sind(spread_wide);
-yThres = threshold .* -cosd(spread_wide);
+xThres = threshold .* sind(spreadWide);
+yThres = threshold .* -cosd(spreadWide);
 xyThres = [xThres yThres]';
 
 % Compute distance between confetti and prediction to determine when it is a catch
-dotPredDist = al_diff(spread_wide, taskData.pred(currTrial))'; 
+dotPredDist = al_diff(spreadWide, taskData.pred(currTrial))'; 
 
 % Determine which particles will be caught
-[whichParticlesCaught, nParticlesCaught] = al_getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
+[whichParticlesCaught, taskData.nParticlesCaught(currTrial)] = al_getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
 
-% Store caught particles is separate matrix for illustration below
+% Dot color, size, and confetti cloud
+dotCol = taskData.dotCol(currTrial).rgb;
+dotSize = (1+rand(1, nParticles))*3;
+[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+ 
+% For asymmetric reward version, compute number of red and green particles
+% caught in shield
+if strcmp(taskParam.trialflow.reward, "asymmetric")
+
+    % Determine particle color
+    greenParticles = unique(dotCol == taskParam.colors.green,'rows');
+    redParticles = unique(dotCol == taskParam.colors.red,'rows');
+    
+    % Determine which of those were caught
+    taskData.greenCaught(currTrial) = sum(whichParticlesCaught(greenParticles));
+    taskData.redCaught(currTrial) = sum(whichParticlesCaught(redParticles));
+
+else
+
+    % For other versions, set to nan
+    taskData.greenCaught(currTrial) = nan;
+    taskData.redCaught(currTrial) = nan;
+    
+end
+
 xyThresCatch = xyThres;
 xyThresCatch(:, whichParticlesCaught==0) = nan;
-
 
 % Determine step size of the animation
 % ------------------------------------
@@ -82,11 +105,6 @@ yExpSteps = y_vals(2:end,:) - y_vals(1:end-1,:);
 weight = linspace(2,0,nFrames);
 xExpSteps = xExpSteps .* weight'; 
 yExpSteps = yExpSteps .* weight';
-
-% Dot color, size, and confetti cloud
-dotCol = uint8(round(rand(3, nParticles)*255));
-dotSize = (1+rand(1, nParticles))*3;
-[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
 
 tUpdate = GetSecs - timestamp;
 

@@ -27,7 +27,7 @@ if isequal(condition, 'main')
     trials = taskParam.gParam.trials;
 
 elseif isequal(condition, 'mainPractice') || isequal(condition, 'practiceNoOddball') || isequal(condition, 'oddballPractice')...
-        || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') %|| isequal(condition, 'reversalPractice')...
+        || isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'asymRewardPractice') %|| isequal(condition, 'reversalPractice')...
 
     % Take specified number of practice trials from AdaptiveLearning script
     trials = taskParam.gParam.practTrials;
@@ -57,7 +57,7 @@ outcome = nan(trials, 1); % current outcome
 distMean = nan(trials, 1); % current mean of the distribution
 TAC = nan(trials, 1); % trials after change point
 catchTrial = zeros(trials, 1); % catch trials
-triggers = zeros(trials, 7); % triggers
+triggers = zeros(trials, 8); % triggers
 pred = nan(trials, 1); % current prediction
 predErr = nan(trials, 1); % current prediction error
 estErr = nan(trials, 1); % current estimation error (previously memErr)
@@ -67,8 +67,14 @@ hit = nan(trials, 1); % current hit
 cBal = nan(trials, 1); % current counterbalancing condition
 perf = nan(trials, 1); % current performance
 accPerf = nan(trials, 1); % accumulated performance
+startingBudget = nan(trials, 1); % initial amount of money
 timestampOnset = nan(trials, 1); % timestamp trial onset
 timestampPrediction = nan(trials, 1); % timestamp prediction
+timestampFixCross2 = nan(trials, 1); % timestamp fixation cross 2
+timestampFixCross3 = nan(trials, 1); % timestamp fixation cross 3
+timestampOutcome = nan(trials, 1); % timestamp outcome
+timestampShield = nan(trials, 1); % timestamp shield
+timestampReward = nan(trials, 1); % timestamp reward
 timestampOffset = nan(trials, 1); % timestamp trial offset
 initiationRT = nan(trials, 1); % initiation reaction time
 RT = nan(trials, 1); % reaction time
@@ -82,11 +88,17 @@ mu = 15; % mean of shield
 minASS = 10; % minimum angular shield size
 maxASS = 180; % maximium angular shiled size
 cp = nan(trials, 1); % current change point
+cp_rew = nan(trials, 1); % current reward-distribution change point
 latentState = nan(trials, 1); % latent state / todo: remove
 nParticles = nan(trials, 1); % number of confetti particles in Hamburg version
 nParticlesCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
+greenCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
+redCaught = nan(trials, 1); % number of confetti particles caught on a trial in Hamburg version
 confettiStd = nan(trials, 1); % standard deviation of confetti particles
 asymRewardSign = nan(trials, 1); % sign determining reward distribution in Hamburg asymReward version
+nGreenParticles = nan(trials, 1); % number of green particles 
+rpe = nan(trials, 1); % reward prediction error
+dotCol = struct;
 
 % % Safe for all other conditions except chinese condition
 % if isequal(condition,'shield') || isequal(condition,'ARC_controlSpeed') || isequal(condition,'ARC_controlAccuracy') || isequal(condition,'ARC_controlPractice')
@@ -96,13 +108,14 @@ asymRewardSign = nan(trials, 1); % sign determining reward distribution in Hambu
 % end
 
 s = taskParam.gParam.safe(1);
+s_rew = taskParam.gParam.safe(1);
 
 % Generate outcomes for CP condition
 % ----------------------------------
 
 if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(condition, 'mainPractice') || isequal(condition, 'followCannon') ||...
         isequal(condition, 'shield') || isequal(condition, 'ARC_controlSpeed') || isequal(condition, 'ARC_controlAccuracy') || isequal(condition, 'ARC_controlPractice') ||...
-        isequal(condition, 'followOutcomePractice') %|| isequal(condition, 'followCannonPractice')
+        isequal(condition, 'followOutcomePractice') || isequal(condition, 'followCannonPractice') || isequal(condition, 'asymRewardPractice')
 
     for i = 1:trials
 
@@ -160,23 +173,67 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
         end
 
         % Generate angular shield size depending on concentration
-        allASS(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
-
+        if isequal(taskParam.gParam.taskType, 'HamburgEEG') 
+            allASS(i) = al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
+        else
+            allASS(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/concentration)); % al_getShieldSize(minASS, maxASS, mu); % todo: in circle class so that it can be changed in main function
+        end
         % TODO: this should ultimately be removed
-        % Set latent state to 0, as it is not used in change point task or shield practice
+        % Set latent state to 0, as it is not used in changepoint task or shield practice
         latentState(i) = 0;
 
         % If confetti-cannon is used, determine reward magnitude (number of particles)
-        if isequal(taskParam.gParam.taskType, 'Hamburg')
+        if isequal(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'HamburgEEG') ||isequal(taskParam.gParam.taskType, 'asymReward')
+            
             if isequal(taskParam.trialflow.reward, 'asymmetric')
-                if cp(i)
-                    asymRewardSign(i) = (-1)^randi([1,2]);
+                
+                % Generate reward-distribution changepoints
+                if (rand < haz && s_rew == 0) || i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
+                
+                    % Indicate current reward-distribution changepoint
+                    cp_rew(i) = 1;
+                    
+                    % Change reward distribution
+                    if i == taskParam.gParam.blockIndices(1) || i == taskParam.gParam.blockIndices(2) || i == taskParam.gParam.blockIndices(3) || i == taskParam.gParam.blockIndices(4)
+                        
+                        % At beginning of new block, randomly sample sign of distribution
+                        asymRewardSign(i) = (-1)^randi([1,2]); 
+
+                    else
+                        % Otherwise, flip sign deterministically
+                        asymRewardSign(i) = -asymRewardSign(i-1);
+
+                    end
+                    
+                    % Reset safe variable for reward distribution
+                    s_rew = taskParam.gParam.safe(1);
+
                 else
+
+                    % Update "safe criterion" 
+                    s_rew = max([s_rew-1, 0]);
+
+                    % Set reward-distribution changepoint to false...
+                    cp_rew(i) = 0;
+
+                    % ... and take same distribution
                     asymRewardSign(i) = asymRewardSign(i-1);
+
                 end
-                nParticles(i) = al_getParticleN(taskParam.cannon.nParticles, outcome(i), distMean(i), concentration, asymRewardSign(i));
+                
+                % Determine particle color
+                nParticles(i) = taskParam.cannon.nParticles;  % todo: if we keep this version, set nParticles at once as before
+                outcomeDeviation = outcome(i) - distMean(i);
+                nGreenParticles(i) = al_getParticleColor(taskParam.cannon.nParticles, outcomeDeviation, concentration, asymRewardSign(i));
+                dotCol(i).rgb = [repmat(taskParam.colors.green, 1,nGreenParticles(i)), repmat(taskParam.colors.red, 1,taskParam.cannon.nParticles-nGreenParticles(i))];
             else
+
+                % Take common number of particles...
                 nParticles(i) = taskParam.cannon.nParticles;
+                
+                % ... and random colors
+                dotCol(i).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
+            
             end
         end
     end
@@ -205,14 +262,19 @@ taskData = al_taskDataMain();
 taskData.actJitter = actJitter;
 taskData.block = block;
 taskData.initiationRTs = initiationRT;
-taskData.timestampOnset = timestampOnset;
 taskData.currTrial = currTrial;
 taskData.cannonDev = cannonDev;
 taskData.haz = repmat(haz, length(ID), 1);
 taskData.safe = repmat(taskParam.gParam.safe, length(ID), 1);
 taskData.concentration = repmat(concentration, length(ID), 1);
 taskData.pushConcentration = repmat(taskParam.gParam.pushConcentration, length(ID), 1);
+taskData.timestampOnset = timestampOnset;
+taskData.timestampFixCross2 = timestampFixCross2;
+taskData.timestampFixCross3 = timestampFixCross3;
 taskData.timestampPrediction = timestampPrediction;
+taskData.timestampOutcome = timestampOutcome;
+taskData.timestampShield = timestampShield;
+taskData.timestampReward = timestampReward;
 taskData.timestampOffset = timestampOffset;
 taskData.allASS = allASS;
 taskData.ID = ID;
@@ -223,6 +285,7 @@ taskData.sex = sex;
 taskData.outcome = outcome;
 taskData.distMean = distMean;
 taskData.cp = cp;
+taskData.cp_rew = cp_rew;
 taskData.cBal = cBal;
 taskData.TAC = TAC;
 taskData.shieldType = shieldType;
@@ -236,6 +299,7 @@ taskData.UP = UP;
 taskData.hit = hit;
 taskData.perf = perf;
 taskData.accPerf = accPerf;
+taskData.startingBudget = startingBudget;
 taskData.Date = Date;
 taskData.cond = cond;
 taskData.initialTendency = initialTendency;
@@ -243,12 +307,17 @@ taskData.RT = RT;
 taskData.latentState = latentState;
 taskData.nParticles = nParticles;
 taskData.nParticlesCaught = nParticlesCaught;
+taskData.greenCaught = greenCaught;
+taskData.redCaught = redCaught;
 taskData.confettiStd = confettiStd;
 taskData.asymRewardSign = asymRewardSign;
 taskData.testDay = testDay;
 taskData.group = group;
 taskData.z = z;
 taskData.y = y;
+taskData.nGreenParticles = nGreenParticles;
+taskData.rpe = rpe;
+taskData.dotCol = dotCol;
 
 end
 

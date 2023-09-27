@@ -17,6 +17,7 @@ classdef al_subject
         group
         cBal
         rew
+        startingBudget
         testDay
         date
         session
@@ -37,6 +38,7 @@ classdef al_subject
             subobj.group = nan; 
             subobj.cBal = nan; 
             subobj.rew = nan; 
+            subobj.startingBudget = nan;
             subobj.testDay = nan;
             subobj.date = nan;
             subobj.session = 1;

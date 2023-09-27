@@ -1,5 +1,5 @@
 function taskData = al_generateOutcomes(taskParam, haz, concentration, condition)
-%AL_GENERATEOUTCOMES   This function generates the outcomes for the different tasks
+%AL_GENERATEOUTCOMES This function generates the outcomes for the different tasks
 %
 %   NOTE: Deprecated. We now used more specific functions for the different
 %   scenarios.

@@ -21,15 +21,14 @@ function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       11/22
-
-% Todo: At some point, we have to determine incentives and remuneration
-
+%       09/23
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;
 end
+
+KbName('UnifyKeyNames')
 
 % Check optional input related to unit test
 % -----------------------------------------
@@ -63,7 +62,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 200;  Hier bitte anpassen
+trialsExp = 5;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -81,7 +80,7 @@ shieldFixedSizeFactor = 2;
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 41;
+nParticles = 40;
 
 % Confetti standard deviations
 confettiStd = 1;
@@ -99,7 +98,7 @@ blockIndices = [1 50 100 150];
 useCatchTrials = true;
 
 % Catch-trial probability
-catchTrialProb = 0.1;
+catchTrialProb = 0.0; %0.1;
 
 % Set sentence length
 sentenceLength = 100;
@@ -109,11 +108,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: get(0,'MonitorPositions'); ausprobieren
-
-%[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
-%displayobj.screensize = get(0,'MonitorPositions'); %[1    1
-%2560    1440]%  laptop [1    1    2560    1440];
+screensize = [1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -129,14 +124,14 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 40; %22; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; %40; % Hamburg: Hier bitte anpassen
+s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; % Hamburg: Hier bitte anpassen
 
 % Keyboard device number
 % kbDev = 19;
 
 % Run task in debug mode with smaller window
-debug = true;
+debug = false;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -331,7 +326,7 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 % Todo: Make sure that all tests are passed on task PC
-% display.sreen_warnings();
+% display.screen_warnings();
 
 % Set screensize
 display.screensize = screensize;
