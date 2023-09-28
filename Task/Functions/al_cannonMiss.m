@@ -67,7 +67,7 @@ for i = 1:nFrames
     % Draw circle, cannon, prediction spot, and shield
     al_drawCircle(taskParam)
     if isequal(taskParam.trialflow.cannon, 'show cannon')  || taskData.catchTrial(currTrial)
-        al_drawCannon(taskParam, taskData.distMean(currTrial), 0)
+        al_drawCannon(taskParam, taskData.distMean(currTrial))
     else
         al_drawCross(taskParam)
     end

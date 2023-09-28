@@ -119,7 +119,7 @@ for i = 1:nFrames
     % Draw circle, cannon, prediction spot
     al_drawCircle(taskParam)
     if ~strcmp(taskParam.trialflow.cannon, 'hide cannon') || taskData.catchTrial(currTrial)
-        al_drawCannon(taskParam, taskData.distMean(currTrial), 0)
+        al_drawCannon(taskParam, taskData.distMean(currTrial))
     else
         % If cannon is hidden, show confetti cloud
         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 

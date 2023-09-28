@@ -1,10 +1,10 @@
 function diff = al_diff(parameter1, parameter2)
-%AL_DIFF   This function computes the difference of two variables on a circle
+%AL_DIFF This function computes the difference of two variables on a circle
 %   al_diff is used to compute prediction error, memory error,
-%   or update in the cannon task
+%   or update
 %
 %   Input
-%       parameter1, parameter2: difference between values
+%       parameter1, parameter2: the 2 input parameters
 %
 %   Output
 %        diff: computed difference

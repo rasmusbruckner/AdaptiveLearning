@@ -49,7 +49,7 @@ while 1
         al_drawContext(taskParam, currentContext)
         al_drawCross(taskParam);
     end
-    al_drawCannon(taskParam, taskData.distMean(trial), 0)
+    al_drawCannon(taskParam, taskData.distMean(trial))
     al_drawCircle(taskParam)
     
     % todo: update when working on dresden etc.

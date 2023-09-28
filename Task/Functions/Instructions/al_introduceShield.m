@@ -53,7 +53,7 @@ while 1
     
     % Print background, cannon, and circle
     al_lineAndBack(taskParam)
-    al_drawCannon(taskParam, taskData.distMean(trial), 0)
+    al_drawCannon(taskParam, taskData.distMean(trial))
     al_drawCircle(taskParam)
     % todo: use trialflow
     if isequal(taskParam.gParam.taskType, 'chinese')
