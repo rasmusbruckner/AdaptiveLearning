@@ -1,11 +1,11 @@
 function catchTrial = al_generateCatchTrial(taskParam, cp)
-%AL_GENERATECATCHTRIAL   This function samples a catch trial.
+%AL_GENERATECATCHTRIAL This function samples catch trials
 %
 %   Input
-%       cp: changepoint indication
+%       cp: Changepoint index
 %
 %   Output
-%       catchTrial: sampled catch trial
+%       catchTrial: Sampled catch trial
 
 if rand <= taskParam.gParam.catchTrialProb && cp == 0
     catchTrial = 1;
