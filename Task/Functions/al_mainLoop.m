@@ -84,7 +84,7 @@ if ~isequal(condition,'ARC_controlSpeed') && ~isequal(condition,'ARC_controlAccu
         % Save constant variables
         taskData.currTrial(i) = i;
         taskData.age(i) = str2double(subject.age);
-        taskData.ID(i) = str2double(subject.ID);
+        taskData.ID{i} = subject.ID;
         taskData.sex{i} = subject.sex;
         taskData.Date{i} = subject.date;
         %taskData.cond{i} = condition;

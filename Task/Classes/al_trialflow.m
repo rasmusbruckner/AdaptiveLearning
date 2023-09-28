@@ -40,6 +40,9 @@ classdef al_trialflow
 
         % Whether or not initial shield location varies randomly
         push
+
+        % Cannon position 
+        cannonPosition
     end
     
     methods
@@ -62,6 +65,7 @@ classdef al_trialflow
             trialflowobj.background = "picture";
             trialflowobj.shotAndShield = "simultaneously";
             trialflowobj.push = 'noPush';
+            trialflowobj.cannonPosition = 'inside';
             
         end
     end

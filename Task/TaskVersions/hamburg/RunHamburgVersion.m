@@ -86,7 +86,7 @@ nParticles = 40;
 confettiStd = 1;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;

@@ -203,7 +203,7 @@ end
 % Version-independent parameters
 % ------------------------------
 
-runIntro = false; % run task instructions
+runIntro = true; % run task instructions
 askSubjInfo = true; % request further parameters for the experiment 
 sendTrigger = false; % send EEG triggers
 randomize = false;  % randomize default task parmeters
@@ -220,7 +220,7 @@ fixCrossLength = 0.5; % ISI fixation cross presentation
 outcomeLength = 1; % ISI outcome presentation
 jitter = 0.2; % ITI jitter
 fixedITI = 0.9; % ITI fixed
-debug = true; %true; %true; %false; % true; debug mode
+debug = false; %true; %true; %false; % true; debug mode
 screenNumber = 1; % Use 1 if use one screen. Use 2 if you use two screens
 
 % Save directory for different computers that were used in the past
@@ -436,7 +436,7 @@ elseif askSubjInfo == true
     % ------------------------------------------
     switch taskType 
         case 'dresden'
-            subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
+            subject = struct('ID', subjInfo{1}, 'age', subjInfo(2), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
                 str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
         case 'oddball'
         
@@ -554,7 +554,7 @@ timingParam = al_timing();
 
 
 
-
+pushConcentration = nan;
 
 % General task parameters
 gParam = struct('taskType', taskType , 'blockIndices', blockIndices, 'ref', ref, 'sentenceLength',...
@@ -566,7 +566,7 @@ gParam = struct('taskType', taskType , 'blockIndices', blockIndices, 'ref', ref,
     'safePlanet', safePlanet, 'safeEnemy', safeEnemy, 'zero', zero, 'windowRect', windowRect,...
     'practiceTrialCriterion', practiceTrialCriterion, 'askSubjInfo', askSubjInfo, 'showTickmark', showTickmark,...
     'useCatchTrials', useCatchTrials, 'screenNumber', screenNumber, 'language', language, 'useTrialConstraints', useTrialConstraints,...
-    'nb', nb, 'cueAllTrials', cueAllTrials, 'critDist', critDist, 'catchTrialProb', 0.1);  % 'window', window,
+    'nb', nb, 'cueAllTrials', cueAllTrials, 'critDist', critDist, 'catchTrialProb', 0.1, 'pushConcentration', pushConcentration,'window', window);  % 
 
 % Parameters related to the circle
 % --------------------------------al_display()
@@ -597,14 +597,18 @@ centSpotRectMean = CenterRect(spotRectMean,windowRect);
 unit = 2*pi/360;
 initialRotAngle = 0*unit;
 rotAngle = initialRotAngle;
-
+shieldFixedSizeFactor = 2;
 tickWidth = 1;
+shieldOffset = 10;
+shieldWidth = 30;
+
 circle = struct('shieldAngle', shieldAngle, 'cannonEndCent', cannonEndCent, 'outcCentSpotRect', outcCentSpotRect,...
     'predSpotRad', predSpotRad, 'outcSize', outcSize, 'meanRad', meanPoint, 'rotationRad', rotationRad,...
     'chineseCannonRad', chineseCannonRad, 'tendencyThreshold', tendencyThreshold, 'predSpotDiam', predSpotDiam, 'outcDiam',...
     outcDiam, 'spotDiamMean', spotDiamMean, 'predSpotRect', predSpotRect, 'outcRect', outcRect, 'spotRectMean',...
     spotRectMean, 'boatRect', boatRect, 'centBoatRect', centBoatRect, 'predCentSpotRect', predCentSpotRect, 'outcCentRect', outcCentRect,...
-    'centSpotRectMean', centSpotRectMean, 'unit', unit, 'initialRotAngle', initialRotAngle, 'rotAngle', rotAngle, 'tickWidth', tickWidth);
+    'centSpotRectMean', centSpotRectMean, 'unit', unit, 'initialRotAngle', initialRotAngle, 'rotAngle', rotAngle, 'tickWidth', tickWidth,...
+    'shieldFixedSizeFactor', shieldFixedSizeFactor, 'shieldOffset', shieldOffset, 'shieldWidth', shieldWidth);
 
 % Parameters related to color
 % ---------------------------
@@ -656,10 +660,13 @@ end
 
 keySpeed = 1.5;
 slowKeySpeed = 0.5;
+
 keys = struct('delete', delete, 'rightKey', rightKey, 'rightArrow',...
     rightArrow, 'leftArrow', leftArrow, 'rightSlowKey', rightSlowKey,...
     'leftKey', leftKey, 'leftSlowKey', leftSlowKey, 'space', space,...
-    'enter', enter, 's', s, 't', t, 'z', z, 'keySpeed', keySpeed, 'slowKeySpeed', slowKeySpeed);
+    'enter', enter, 's', s, 't', t, 'z', z, 'keySpeed', keySpeed,...
+    'slowKeySpeed', slowKeySpeed, 'kbDev', []);
+
 
 % Parameters related to triggers
 % ------------------------------

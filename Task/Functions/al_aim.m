@@ -1,57 +1,51 @@
-function al_aim(taskParam, parameter)
-%AL_AIM This function draws the aim (as a needle) of the cannon
+function al_aim(taskParam, aim)
+%AL_AIM This function draws the aim (using a thin line) of the cannon
 %
 %   Input
-%       taskParam: structure containing task parameters       
-%       parameter: Aim of the cannon 
+%       taskParam: Task-parameter-object instance       
+%       aim: Aim of the cannon 
 %
 %   Output
 %        ~
 
+% Aim inside circle
+if isequal(taskParam.trialflow.cannonPosition, 'inside')
+     
+    % Compute x and y coordinates of end of line
+    xAim = ((taskParam.circle.rotationRad-5) * sin(aim*taskParam.circle.unit));
+    yAim = ((taskParam.circle.rotationRad-5) *  (-cos(aim*taskParam.circle.unit)));
+    aimStart = OffsetRect(taskParam.circle.outcCentSpotRect, xAim, yAim);
+    x = (aimStart(3)/2) + (aimStart(1)/2);
+    y = (aimStart(4)/2) + (aimStart(2)/2);
 
-if ~isequal(taskParam.gParam.taskType, 'chinese')
-    
-    % In all conditions, except "chinese" needle goes from the center of the screen to the circle
-    % -------------------------------------------------------------------------------------------
-    
-    % Compute x and y coordinates of end of needle
-    xPredS = ((taskParam.circle.rotationRad-5) * sin(parameter*taskParam.circle.unit));
-    yPredS = ((taskParam.circle.rotationRad-5) *  (-cos(parameter*taskParam.circle.unit)));
-    outcomeCenter = OffsetRect(taskParam.circle.outcCentSpotRect, xPredS, yPredS);
-    x = (outcomeCenter(3)/2) + (outcomeCenter(1)/2);
-    y = (outcomeCenter(4)/2) + (outcomeCenter(2)/2);
-
+    % Compute center of circle
     lineStart = taskParam.circle.rotationRad* 0.05; 
-    xCentS = (lineStart * sin(parameter*taskParam.circle.unit));
-    yCentS = (lineStart *  (-cos(parameter*taskParam.circle.unit)));
-    outcomeCenter = OffsetRect(taskParam.circle.outcCentSpotRect, xCentS, yCentS);
-    xCent = (outcomeCenter(3)/2) + (outcomeCenter(1)/2);
-    yCent = (outcomeCenter(4)/2) + (outcomeCenter(2)/2);
+    xCentS = (lineStart * sin(aim*taskParam.circle.unit));
+    yCentS = (lineStart *  (-cos(aim*taskParam.circle.unit)));
+    aimEnd = OffsetRect(taskParam.circle.outcCentSpotRect, xCentS, yCentS);
+    xCent = (aimEnd(3)/2) + (aimEnd(1)/2);
+    yCent = (aimEnd(4)/2) + (aimEnd(2)/2);
     
-    % 27.10.22 -- updated this to make sure line starts "within"
-    % the barrel. Make sure that it works for the other versions too
-    % Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], taskParam.display.zero(1), taskParam.display.zero(2), x, y, 2);
+    % Draw line
     Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], xCent, yCent, x, y, 2);
 
+% Aim outside of circle
 else
     
-    % In "chinese" condition, cannon and needle start outside of the circle
-    % ---------------------------------------------------------------------
+    % Compute coordinates of beginning of line
+    xBegin = ((taskParam.circle.chineseCannonRad - 55) * sin(aim*taskParam.circle.unit));
+    yBegin = ((taskParam.circle.chineseCannonRad - 55) * (-cos(aim*taskParam.circle.unit)));
+    aimBegin = OffsetRect(taskParam.circle.outcCentSpotRect, xBegin, yBegin);
     
-    % Compute coordinates of beginning of needle
-    xBegin = ((taskParam.circle.chineseCannonRad - 55) * sin(parameter*taskParam.circle.unit));
-    yBegin = ((taskParam.circle.chineseCannonRad - 55) * (-cos(parameter*taskParam.circle.unit)));
-    AimBegin = OffsetRect(taskParam.circle.outcCentSpotRect, xBegin, yBegin);
+    % Compute x and y coordinates of end of line
+    xAim = ((taskParam.circle.rotationRad-5) * sin(aim*taskParam.circle.unit));
+    yAim = ((taskParam.circle.rotationRad-5) * (-cos(aim*taskParam.circle.unit)));
+    aimEnd = OffsetRect(taskParam.circle.outcCentSpotRect, xAim, yAim);
+    x = (aimEnd(3)/2) + (aimEnd(1)/2);
+    y = (aimEnd(4)/2) + (aimEnd(2)/2);
     
-    % Compute x and y coordinates of end of needle
-    xPredS = ((taskParam.circle.rotationRad-5) * sin(parameter*taskParam.circle.unit));
-    yPredS = ((taskParam.circle.rotationRad-5) * (-cos(parameter*taskParam.circle.unit)));
-    outcomeCenter = OffsetRect(taskParam.circle.outcCentSpotRect, xPredS, yPredS);
-    x = (outcomeCenter(3)/2) + (outcomeCenter(1)/2);
-    y = (outcomeCenter(4)/2) + (outcomeCenter(2)/2);
-    
-    % Draw needle
-    Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], mean([AimBegin(1) AimBegin(3)]), mean([AimBegin(2) AimBegin(4)]), x, y, 3);
+    % Draw line
+    Screen('DrawLine', taskParam.gParam.window.onScreen, [0 0 0], mean([aimBegin(1) aimBegin(3)]), mean([aimBegin(2) aimBegin(4)]), x, y, 3);
     
 end
 end
