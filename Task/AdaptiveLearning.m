@@ -203,7 +203,7 @@ end
 % Version-independent parameters
 % ------------------------------
 
-runIntro = true; % run task instructions
+runIntro = false; % run task instructions
 askSubjInfo = true; % request further parameters for the experiment 
 sendTrigger = false; % send EEG triggers
 randomize = false;  % randomize default task parmeters

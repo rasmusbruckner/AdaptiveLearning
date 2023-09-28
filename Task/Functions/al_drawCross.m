@@ -3,13 +3,12 @@ function al_drawCross(taskParam, size, width)
 % 
 %   Input
 %       taskParam: Task-parameter-object instance
-%       size: Line length
-%       width: Line width
+%       size: Optional line length
+%       width: Optional line width
 %
 %   Output
 %       ~
 
-% Check optional input
 
 % Size
 if ~exist('size', 'var') || isempty(size)

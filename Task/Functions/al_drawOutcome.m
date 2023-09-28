@@ -1,9 +1,9 @@
 function al_drawOutcome(taskParam, outcome)
-%AL_DRAWOUTCOME   This function prints the outcome spot
+%AL_DRAWOUTCOME This function shows the outcome spot
 %
 %   Input
-%       taskParam: structure containing task parameters
-%       outcome: current outcome
+%       taskParam: Task-parameter-object instance
+%       outcome: Current outcome
 %
 %   Output
 %       ~
@@ -15,11 +15,6 @@ yPredS = ((taskParam.circle.rotationRad-5) * (-cos(outcome*taskParam.circle.unit
 OutcSpot = OffsetRect(taskParam.circle.outcCentSpotRect, xPredS, yPredS);
 
 % Generate outcome spot
-if isequal(taskParam.gParam.taskType, 'chinese')
-    Screen('FillOval', taskParam.display.window.onScreen, [165 42 42], OutcSpot);
-else
-    Screen('FillOval', taskParam.display.window.onScreen, [0 0 0], OutcSpot);
-end
-end
+Screen('FillOval', taskParam.display.window.onScreen, [0 0 0], OutcSpot);
 
-
+end
