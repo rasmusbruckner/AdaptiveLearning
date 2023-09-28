@@ -87,7 +87,7 @@ confettiStd = 1;  % Todo: the confetti EEG "dot" is not yet generated using this
 startingBudget = 20;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;

@@ -32,7 +32,6 @@ spread_long = taskParam.circle.rotationRad + normrnd(taskParam.circle.rotationRa
 xExpEnd = spread_long .* sind(spread_wide);
 yExpEnd = spread_long .* -cosd(spread_wide);
 
-
 % Determine step size of the animation
 % ------------------------------------
 
