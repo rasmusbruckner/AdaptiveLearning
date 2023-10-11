@@ -35,15 +35,15 @@ if testDay == 1
     % -----------------------
 
     % Load taskData-object instance
-    taskData = al_taskDataMain();
+    nTrials = 4;
+    taskData = al_taskDataMain(nTrials);
 
     % Generate practice-phase data
-    n_trials = 4;
-    taskData.catchTrial(1:n_trials) = 0; % no catch trials
-    taskData.initiationRTs(1:n_trials) = nan;  % set initiation RT to nan to indicate that this is the first response
-    taskData.block(1:n_trials) = 1; % block number
-    taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/taskParam.gParam.concentration)); % shield size
-    taskData.shieldType(1:n_trials) = 1; % shield color
+    taskData.catchTrial(1:nTrials) = 0; % no catch trials
+    taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
+    taskData.block(1:nTrials) = 1; % block number
+    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/taskParam.gParam.concentration)); % shield size
+    taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
 

@@ -1,6 +1,5 @@
 function trigger = al_sendTrigger(taskParam, taskData, condition, trial, Tevent, printTrigger)
-%AL_SENDTRIGGER  This function sends the EEG triggers. See triggerscheme for details.
-%
+%AL_SENDTRIGGER  This function sends the EEG triggers; See triggerscheme for details
 %
 %   Input
 %       taskParam: structure containing task paramters

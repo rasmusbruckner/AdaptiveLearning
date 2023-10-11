@@ -61,13 +61,13 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10;  % 200;  Hier bitte anpassen
+trialsExp = 5;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
 
 % Number of practice trials
-practTrials = 20; % 20;  Hier bitte anpassen
+practTrials = 5; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
 concentration = [16, 8];
@@ -85,7 +85,7 @@ nParticles = 41;
 confettiStd = 5;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -97,7 +97,7 @@ blockIndices = [1 50 100 150];
 useCatchTrials = true;
 
 % Catch-trial probability
-catchTrialProb = 0.1;
+catchTrialProb = 0.1; 
 
 % Set sentence length
 sentenceLength = 100;
@@ -196,6 +196,7 @@ trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "helicopter";
 trialflow.reward = "standard";
+trialflow.shieldType = "constant";
 
 % ---------------------------------------------
 % Create object instance with cannon parameters

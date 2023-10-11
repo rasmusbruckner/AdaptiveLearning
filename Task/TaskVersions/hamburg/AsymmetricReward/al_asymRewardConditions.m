@@ -52,7 +52,16 @@ if cBal == 1
     
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -68,7 +77,16 @@ if cBal == 1
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -86,7 +104,16 @@ else
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -102,7 +129,16 @@ else
     
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -110,7 +146,6 @@ else
     % Run task
     al_indicateReward(taskParam)
     dataStandard = al_confettiLoop(taskParam, 'main', taskData, trial);
-
 
 end
 end

@@ -44,19 +44,20 @@ trial = taskParam.gParam.trials;
 
 if cBal == 1
 
-
     % Monetary reward first...
     % ------------------------
 
     taskParam.trialflow.reward = "monetary";
 
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
 
-    % Get data
-    % if ~unitTest
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
-    % else
-    %     load('integrationTest_Hamburg.mat','taskData')
-    % end
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
 
     % Run task
     al_indicateSocial(taskParam)
@@ -67,13 +68,15 @@ if cBal == 1
 
     taskParam.trialflow.reward = "social";
 
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
 
-    % Get data
-    % if ~unitTest
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
-    % else
-    %     load('integrationTest_Hamburg.mat','taskData')
-    % end
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
 
     % Run task
     al_indicateSocial(taskParam)
@@ -86,12 +89,15 @@ else
 
     taskParam.trialflow.reward = "social";
 
-    % Get data
-    % if ~unitTest
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
-    % else
-    %     load('integrationTest_Hamburg.mat','taskData')
-    % end
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
 
     % Run task
     al_indicateSocial(taskParam)
@@ -102,18 +108,18 @@ else
 
     taskParam.trialflow.reward = "monetary";
 
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
 
-    % Get data
-    % if ~unitTest
-    taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
-    % else
-    %     load('integrationTest_Hamburg.mat','taskData')
-    % end
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
 
     % Run task
     al_indicateSocial(taskParam)
     dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
-
 
 end
 end

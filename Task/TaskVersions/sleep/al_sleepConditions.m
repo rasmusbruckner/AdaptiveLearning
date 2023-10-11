@@ -58,7 +58,13 @@ if (cBal == 1 && testDay == 1) ||...
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -73,7 +79,13 @@ if (cBal == 1 && testDay == 1) ||...
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -93,7 +105,13 @@ elseif (cBal == 2 && testDay == 2) ||...
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+       
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end
@@ -108,7 +126,13 @@ elseif (cBal == 2 && testDay == 2) ||...
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration, 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration(2), taskParam.gParam.safe);
+
     else
         load('integrationTest_sleep.mat','taskData')
     end

@@ -43,6 +43,13 @@ classdef al_trialflow
 
         % Cannon position 
         cannonPosition
+
+        % Shield type (contant vs. reward)
+        shieldType
+
+        % Shield variable vs. fixed
+        shield
+        
     end
     
     methods
@@ -66,6 +73,8 @@ classdef al_trialflow
             trialflowobj.shotAndShield = "simultaneously";
             trialflowobj.push = 'noPush';
             trialflowobj.cannonPosition = 'inside';
+            trialflowobj.shieldType = "contant";
+            trialflowobj.shield = "fixed";
             
         end
     end

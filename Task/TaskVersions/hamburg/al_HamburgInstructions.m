@@ -35,10 +35,10 @@ if testDay == 1
     % -----------------------
 
     % Load taskData-object instance
-    taskData = al_taskDataMain();
+    nTrials = 4;
+    taskData = al_taskDataMain(nTrials);
 
     % Generate practice-phase data
-    nTrials = 4;
     taskData.catchTrial(1:nTrials) = 0; % no catch trials
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement

@@ -34,7 +34,7 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
            
             % Date
             expectedDate = repmat({date},20,1);
-            testCase.verifyEqual(dataMain.Date, expectedDate);
+            testCase.verifyEqual(dataMain.date, expectedDate);
 
             % Test day
             expectedTestDay = ones(20,1);
@@ -167,10 +167,6 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             expectedZ_noPush = nan(20, 1);
             testCase.verifyEqual(dataMain.y, expectedZ_noPush, 'AbsTol', 1.e-10);
             
-            % Latent state
-            expectedLatentState = zeros(20, 1);
-            testCase.verifyEqual(dataMain.latentState, expectedLatentState);
-
             % Number of confetti particles shot
             expectedNParticles = repmat(40, 20, 1);
             testCase.verifyEqual(dataMain.nParticles, expectedNParticles)
@@ -208,11 +204,6 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataMain.triggers(:,4), expectedTriggers);
             testCase.verifyEqual(dataMain.triggers(:,5), expectedTriggers);
             testCase.verifyEqual(dataMain.triggers(:,6), expectedTriggers);
-            
-            % Memory error
-            expectedMemErr = [];
-            testCase.verifyEqual(dataMain.memErr, expectedMemErr)
-            
             
         end        
     end

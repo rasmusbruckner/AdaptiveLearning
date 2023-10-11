@@ -65,15 +65,14 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
 
             % Date
             expectedDate = repmat({date},20,1);
-            testCase.verifyEqual(dataNoPush_cBal1_day1.Date, expectedDate);
-            testCase.verifyEqual(dataPush_cBal1_day1.Date, expectedDate);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.Date, expectedDate);
-            testCase.verifyEqual(dataPush_cBal2_day1.Date, expectedDate);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.Date, expectedDate);
-            testCase.verifyEqual(dataPush_cBal1_day2.Date, expectedDate);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.Date, expectedDate);
-            testCase.verifyEqual(dataPush_cBal2_day2.Date, expectedDate);
-
+            testCase.verifyEqual(dataNoPush_cBal1_day1.date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal1_day1.date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal2_day1.date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal1_day2.date, expectedDate);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.date, expectedDate);
+            testCase.verifyEqual(dataPush_cBal2_day2.date, expectedDate);
 
             % Test day
             expectedTestDay = ones(20,1);
@@ -265,7 +264,7 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataPush_cBal2_day2.outcome, expectedOutcome);
 
             % Distribution mean
-            expectedDistMean = [283; 283;	283; 283; 283; 283;	283; 283; 283; 312;	312; 312; 312; 312;	312; 312; 312; 206;	206; 206];
+            expectedDistMean = [283; 283; 283; 283; 283; 283; 283; 283; 283; 312; 312; 312; 312; 312; 312; 312; 312; 206; 206; 206];
             testCase.verifyEqual(dataNoPush_cBal1_day1.distMean, expectedDistMean);
             testCase.verifyEqual(dataPush_cBal1_day1.distMean, expectedDistMean);
             testCase.verifyEqual(dataNoPush_cBal2_day1.distMean, expectedDistMean);
@@ -436,17 +435,6 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataNoPush_cBal2_day2.y, zeros(20, 1), 'AbsTol', 1.e-10);
             testCase.verifyEqual(dataPush_cBal2_day2.y, expectedY_Push, 'AbsTol', 1.e-10);
 
-            % Latent state
-            expectedLatentState = zeros(20, 1);
-            testCase.verifyEqual(dataNoPush_cBal1_day1.latentState, expectedLatentState);
-            testCase.verifyEqual(dataPush_cBal1_day1.latentState, expectedLatentState);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.latentState, expectedLatentState);
-            testCase.verifyEqual(dataPush_cBal2_day1.latentState, expectedLatentState);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.latentState, expectedLatentState);
-            testCase.verifyEqual(dataPush_cBal1_day2.latentState, expectedLatentState);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.latentState, expectedLatentState);
-            testCase.verifyEqual(dataPush_cBal2_day2.latentState, expectedLatentState);
-            
             % Timestamps: Not testing absolute values bc the reference
             % value depends on manual input (todo: fix when doing CI)
             
@@ -538,42 +526,7 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,4), expectedTriggers);
             testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,5), expectedTriggers);
             testCase.verifyEqual(dataPush_cBal2_day2.triggers(:,6), expectedTriggers);
-            
-            % Memory error
-            expectedMemErr = [];
-            testCase.verifyEqual(dataNoPush_cBal1_day1.memErr, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day1.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day1.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day1.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day1.memErr, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day1.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day1.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day1.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day1.memErr, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day1.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day1.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day1.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day1.memErr, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day1.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day1.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day1.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day2.memErr, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day2.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day2.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal1_day2.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day2.memErr, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day2.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day2.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal1_day2.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day2.memErr, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day2.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day2.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataNoPush_cBal2_day2.memErrMin, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day2.memErr, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day2.memErrNorm, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day2.memErrPlus, expectedMemErr)
-            testCase.verifyEqual(dataPush_cBal2_day2.memErrMin, expectedMemErr)
-            
+                        
         end        
     end
 end

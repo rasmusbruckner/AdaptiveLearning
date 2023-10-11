@@ -170,7 +170,7 @@ if isequal(condition, 'main') || isequal(condition, 'followOutcome') || isequal(
                     catchTrial(i:i+2) = 0;
                 end
             else
-                catchTrial(i) = al_generateCatchTrial(cp(i));
+                catchTrial(i) = al_generateCatchTrial(taskParam, cp(i));
             end
         end
         

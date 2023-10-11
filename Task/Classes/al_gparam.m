@@ -20,8 +20,6 @@ classdef al_gparam
         % Trials on which participants can take a break
         blockIndices
         
-        % Size of text font
-        %textSize
 
         % Variability of the drift in the "oddball" versions (drugstudy, eLife)
         driftConc
@@ -41,6 +39,15 @@ classdef al_gparam
         % Hazard rate determining probability of a changepoint
         haz
 
+        % Mean shield size
+        mu                         
+        
+        % Minimum angular shield size
+        minASS 
+        
+        % Maximium angular shield size 
+        maxASS
+        
         % Indicates if EEG triggers are going to be sent
         sendTrigger
       
@@ -167,6 +174,9 @@ classdef al_gparam
             gparamobj.concentration = nan;
             gparamobj.pushConcentration = nan;
             gparamobj.haz = 0.125; 
+            gparamobj.mu = 15;                   
+            gparamobj.minASS = 10;
+            gparamobj.maxASS = 180;
             gparamobj.sendTrigger = false; 
             gparamobj.trials = nan; 
             gparamobj.trialsS1 = nan; 

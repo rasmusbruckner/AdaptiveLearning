@@ -52,7 +52,7 @@ for i = 1:trial
     taskData.age(i) = taskParam.subject.age;
     taskData.ID{i} = taskParam.subject.ID;
     taskData.sex{i} = taskParam.subject.sex;
-    taskData.Date{i} = taskParam.subject.date;
+    taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
     taskData.startingBudget(i) = taskParam.subject.startingBudget;
@@ -216,7 +216,7 @@ for i = 1:trial
     end
 
     % Send fixation cross 2 trigger
-    %taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 4);
+    % taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 4);
 
     % 6. Trial phase: Shield
     % ----------------------
@@ -374,11 +374,11 @@ end
 % Give feedback and save data
 % ----------------------------
 
-% Todo: update this and potentially get rid of condition
 if ~taskParam.unitTest
 
-    whichBlock = taskData.block;
-    [txt, header] = al_feedback(taskData, taskParam, taskParam.subject, condition, whichBlock, trial);
+    currPoints = sum(taskData.hit, 'omitnan');
+    txt = sprintf('In diesem Block hast Du %.0f Punkte verdient.', currPoints);
+    header = 'Zwischenstand';
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 

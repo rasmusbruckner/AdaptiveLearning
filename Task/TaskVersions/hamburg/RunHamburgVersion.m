@@ -98,7 +98,7 @@ blockIndices = [1 50 100 150];
 useCatchTrials = true;
 
 % Catch-trial probability
-catchTrialProb = 0.0; %0.1;
+catchTrialProb = 0.1;
 
 % Set sentence length
 sentenceLength = 100;
@@ -108,7 +108,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -131,7 +131,7 @@ enter = 37; % Hamburg: Hier bitte anpassen
 % kbDev = 19;
 
 % Run task in debug mode with smaller window
-debug = false;
+debug = true;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -198,6 +198,8 @@ trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "confetti";
 trialflow.reward = "standard";
+trialflow.shield = "fixed";
+trialflow.shieldType = "constant";
 
 % ---------------------------------------------
 % Create object instance with cannon parameters

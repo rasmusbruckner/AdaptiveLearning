@@ -1,12 +1,12 @@
 function block = al_indicateBlock(i, blockIndices)
-%AL_INDICATEBLOCK   This function codes the current block of in the cannon task.
+%AL_INDICATEBLOCK This function codes the current block of in the cannon task.
 %
 %   Input
 %       i: current trial number
-%       blockIndices: indices defined in AdaptiveLearning.m when blocks start
+%       blockIndices: indices when blocks start
 %
 %   Output
-%       block: block number
+%       block: Block number
 
     if i >= blockIndices(1) && i < blockIndices(2)
         block = 1;

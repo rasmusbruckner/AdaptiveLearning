@@ -28,7 +28,7 @@ classdef al_unittests < matlab.unittest.TestCase
 %   all alGenereateOutcomes 
 % 
 % Other relevant function not yet tested
-%   getShieldSize
+%   al_getShieldSize
 %   al_indicateBlock
 %   al_instrLoopTxt 
 %   al_keyboardLoop

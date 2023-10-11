@@ -43,19 +43,19 @@ al_bigScreen(taskParam, header, txt, feedback);
 % ---------------------------
 
 % Load taskData-object instance
-taskData = al_taskDataMain();
+nTrials = 4;
+taskData = al_taskDataMain(nTrials);
 
 % Generate practice-phase data
-n_trials = 4;
-taskData.catchTrial(1:n_trials) = 0; % no catch trials
-taskData.initiationRTs(1:n_trials) = nan; % set initiation RT to nan to indicate that this is the first response
-taskData.initialTendency(1:n_trials) = nan; % set initial tendency of mouse movement
-taskData.block(1:n_trials) = 1; % block number
-taskData.allASS(1:n_trials) = rad2deg(2*sqrt(1/12)); % shield size TODO: Adjust to new noise conditions
-taskData.shieldType(1:n_trials) = 1; % shield color
+taskData.catchTrial(1:nTrials) = 0; % no catch trials
+taskData.initiationRTs(1:nTrials) = nan; % set initiation RT to nan to indicate that this is the first response
+taskData.initialTendency(1:nTrials) = nan; % set initial tendency of mouse movement
+taskData.block(1:nTrials) = 1; % block number
+taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size TODO: Adjust to new noise conditions
+taskData.shieldType(1:nTrials) = 1; % shield color
 taskData.distMean = [300, 240, 300, 65]; % aim of the helicopter
 taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
-taskData.pred(1:n_trials) = nan; % initialize predictions
+taskData.pred(1:nTrials) = nan; % initialize predictions
 
 % Introduce helicopter
 current_trial = 1;

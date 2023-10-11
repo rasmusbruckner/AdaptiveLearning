@@ -1,35 +1,35 @@
-classdef al_test_generate_outcomes < matlab.unittest.TestCase
-    %AL_UNITTESTS  This class definition file specifies the unit tests
-    
-    % To run the tests: runtests('al_test_generate_outcomes')
-    
+classdef al_testGenerateOutcomes < matlab.unittest.TestCase
+    %AL_TESTGENERATEOUTCOMES This class definition file specifies the
+    %integration test for the al_testGenerateOutcomes class
+        
     methods (Test)
         
         function testChangepoint(testCase)
-            % XX
+            % TESTCHANGEPOINT This function tests the function that
+            % generates the main outcomes of changepoint condition
         
-            
-            rng('default')
+        
+            % Control random number for reproducible results
+            rng('default')            
 
-            
-            % Initialize
-            gparam_init = al_gparaminit();
-            gparam_init.trials = 200;
-            gparam_init.blockIndices = [1 101 999 999];
-            gparam_init.useCatchTrials = true;
-            gparam_init.concentration = [8 8 99999999]; % [16 8 99999999];
+            % Create gParam-object instance
+            gParam = al_gparam();
 
-            % Create object instance
-            gParam = al_gparam(gparam_init);
+            gParam.trials = 200; % number of trials in the test
+            gParam.blockIndices = [1 101 999 999]; % breaks
+            gParam.useCatchTrials = true; % turn catch trials on
+            gParam.concentration = [8 8 99999999]; % concentration parameter
+            gParam.catchTrialProb = 0.1; % catch-trial probability
 
-            taskParam = ColorClass();
+            % TaskParam object that harbors all relevant object instances
+            taskParam = al_objectClass();
             taskParam.gParam = gParam;
 
             % ---------------
             % Run ARC version
             % ---------------
             
-            % This has to be updated to object style
+            % For old function, field names were still required
             fieldNames = struct('actJitter', 'actJitter', 'block', 'block',...
             'initiationRTs', 'initiationRTs', 'timestampOnset', 'timestampOnset',...
             'timestampPrediction', 'timestampPrediction', 'timestampOffset',...
@@ -43,15 +43,13 @@ classdef al_test_generate_outcomes < matlab.unittest.TestCase
             'pred','predErr', 'predErr', 'memErr', 'memErr', 'UP', 'UP',...
             'hit', 'hit', 'cBal', 'cBal', 'perf', 'perf', 'accPerf', 'accPerf',...
             'reversalProb', 'reversalProb');
-        
             taskParam.fieldNames = fieldNames;
 
-            % unitTest = false;
+             % Generate outcomes using function
             condition = 'main';
             taskData = al_generateOutcomes(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration(1), condition);
             
-            % Apply diff function and test output
-            % diff=al_diff(0, 1);
+            % Run integration test
             testData = load('testChangepoint.mat');
             testData = testData.taskData;
             testCase.verifyEqual(taskData, testData)

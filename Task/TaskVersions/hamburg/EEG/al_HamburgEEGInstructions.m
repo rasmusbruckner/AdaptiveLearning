@@ -33,10 +33,10 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 % -----------------------
 
 % Load taskData-object instance
-taskData = al_taskDataMain();
+nTrials = 4;
+taskData = al_taskDataMain(nTrials);
 
 % Generate practice-phase data
-nTrials = 4;
 taskData.catchTrial(1:nTrials) = 0; % no catch trials
 taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
 taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
@@ -205,29 +205,40 @@ al_bigScreen(taskParam, header, txt, feedback);
 
 if cBal == 1
 
-
     % Monetary reward first...
     % ------------------------
 
     taskParam.trialflow.reward = "monetary";
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
 
-    % Get data
-    taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'main');
+    % TaskData-object instance
+    taskData = al_taskDataMain(taskParam.gParam.practTrials);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
 
     % Run task
     al_indicateSocial(taskParam)
-    al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
+    al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials); % todo: here and in other practice blocks: 'main' -> 'practice'?
 
     % ... social reward second
     % ------------------------
 
+    % Turn on social condition
     taskParam.trialflow.reward = "social";
 
+    % TaskData-object instance
+    taskData = al_taskDataMain(taskParam.gParam.practTrials);
 
-    % Get data
-    taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'main');
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
 
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
     % Run task
     al_indicateSocial(taskParam)
     al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
@@ -240,9 +251,14 @@ else
     taskParam.trialflow.reward = "social";
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
     
-    % Get data
-    taskData = al_generateEEGOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'main');
+    % TaskData-object instance
+    taskData = al_taskDataMain(taskParam.gParam.practTrials);
 
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
     % Run task
     al_indicateSocial(taskParam)
     al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
@@ -252,15 +268,19 @@ else
 
     taskParam.trialflow.reward = "monetary";
 
-    % Get data
-    taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'main');
+    % TaskData-object instance
+    taskData = al_taskDataMain(taskParam.gParam.practTrials);
 
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
     % Run task
     al_indicateSocial(taskParam)
     al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
 
 end
-
 
 % 11. Instructions experimental blocks
 % ------------------------------------

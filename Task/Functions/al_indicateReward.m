@@ -9,10 +9,10 @@ function al_indicateReward(taskParam)
 %       ~
 
 if strcmp(taskParam.trialflow.reward, 'standard')
-    header = 'Gleich viel Konfetti';
+    header = 'Buntes Konfetti';
     txt = 'Im folgenden Block wird die Konfetti-Kanone buntes Konfetti verschießen.';
 elseif strcmp(taskParam.trialflow.reward, 'asymmetric')
-    header = 'Unterschiedlich viel Konfetti';
+    header = 'Rot-Grünes Konfetti';
     txt = 'Im folgenden Block wird die Konfetti-Kanone rot-grünes Konfetti verschießen.';
 end
 

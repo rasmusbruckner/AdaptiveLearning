@@ -16,7 +16,7 @@ function [window, windowRect, textures] = OpenWindow(debug, screenNumber)
 
 % Open psychtoolbox window
 if debug == true
-    [window, windowRect] = Screen('OpenWindow', screenNumber-1, [66 66 66], [1    1    2560    1440]); % 1920 0 1920+1920 1080   %420 250 1020 650 %[1    1    2560    1440
+    [window, windowRect] = Screen('OpenWindow', screenNumber-1, [66 66 66], [1920 0 1920+1920 1080]); % 1    1    2560    1440 % 1920 0 1920+1920 1080   %420 250 1020 650 %[1    1    2560    1440
     %[window, windowRect] = Screen('OpenWindow', screenNumber-1, [66 66 66], [0 0 1 1]);
 else
     %[window, windowRect] = Screen('OpenWindow', screenNumber-1, [66 66 66], []);

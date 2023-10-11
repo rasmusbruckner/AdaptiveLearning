@@ -53,7 +53,16 @@ if cBal == 1
 
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam);
+
     else
         load('integrationTest_Hamburg.mat','taskData')
     end
@@ -65,10 +74,18 @@ if cBal == 1
     % ... high noise second
     % ---------------------
 
-
     % Get data
     if ~unitTest
-        taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
+
+        % TaskData-object instance
+        taskData = al_taskDataMain(trial);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, haz, concentration(2), taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam);
+
     else
         load('integrationTest_Hamburg.mat','taskData')
     end

@@ -36,10 +36,10 @@ if testDay == 1
     % -----------------------
 
     % Load taskData-object instance
-    taskData = al_taskDataMain();
+    nTrials = 4;
+    taskData = al_taskDataMain(nTrials);
 
     % Generate practice-phase data
-    nTrials = 4;
     taskData.catchTrial(1:nTrials) = 0; % no catch trials
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
@@ -188,11 +188,17 @@ if testDay == 1
         feedback = false;
         al_bigScreen(taskParam, header, txt, feedback);
 
-        
+        % Turn on standard confetti condition
         taskParam.trialflow.reward = "standard";
 
-        % Get data
-        taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'asymRewardPractice');
+        % TaskData-object instance
+        taskData = al_taskDataMain(taskParam.gParam.practTrials);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
 
         % Run task
         al_indicateReward(taskParam)
@@ -201,9 +207,6 @@ if testDay == 1
         % ... asymmetric-reward task second
         % ---------------------------------
 
-        taskParam.trialflow.reward = "asymmetric";
-
-        
         % Display instructions
         txt = ['Im zweiten Block schießt die Konfetti-Kanone nur rotes und grünes Konfetti. Für jedes eingefangene grüne Konfetti gewinnen Sie einen '...
           'Punkt, für jedes rote Konfetti verlieren Sie einen Punkt. Der Anteil von rotem und grünem Konfetti ändert sich, je weiter der aktuelle Schuss '...
@@ -219,10 +222,17 @@ if testDay == 1
         feedback = false;
         al_bigScreen(taskParam, header, txt, feedback);
 
+        % Turn on asymmetric confetti condition
         taskParam.trialflow.reward = "asymmetric";
 
-        % Get data
-        taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, 'asymRewardPractice');
+        % TaskData-object instance
+        taskData = al_taskDataMain(taskParam.gParam.practTrials);
+
+        % Generate outcomes using cannonData function
+        taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
+
+        % Generate outcomes using confettiData function
+        taskData = taskData.al_confettiData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
 
         % Run task
         al_indicateReward(taskParam)

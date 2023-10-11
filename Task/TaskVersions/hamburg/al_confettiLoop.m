@@ -51,12 +51,12 @@ for i = 1:trial
     % Manage breaks
     taskParam = al_takeBreak(taskParam, taskData, i);
 
-    % Save constant variables on each trial
+    % Save constant variables on each trial  
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
     taskData.ID{i} = taskParam.subject.ID;
     taskData.sex{i} = taskParam.subject.sex;
-    taskData.Date{i} = taskParam.subject.date;
+    taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
     taskData.testDay(i) = taskParam.subject.testDay;
@@ -139,7 +139,7 @@ for i = 1:trial
         taskData.perf(i) = taskData.greenCaught(i) - taskData.redCaught(i);
         
         % Reward prediction error: actual reward - (green minus red confetti particles assuming that all particles would be collected)
-        taskData.rpe(i) = taskData.perf(i) - (taskData.nGreenParticles(i) - (taskData.nParticles(i)-taskData.nGreenParticles(i)));
+        taskData.RPE(i) = taskData.perf(i) - (taskData.nGreenParticles(i) - (taskData.nParticles(i)-taskData.nGreenParticles(i)));
 
     else
 
@@ -244,11 +244,16 @@ end
 % Give feedback and save data
 % ----------------------------
 
-% Todo: update this and potentially get rid of condition
 if ~taskParam.unitTest
-
-    whichBlock = taskData.block;
-    [txt, header] = al_feedback(taskData, taskParam, taskParam.subject, condition, whichBlock, trial);
+    
+    if ~isequal(taskParam.trialflow.reward, 'asymmetric')
+        currPoints = sum(taskData.hit, 'omitnan');
+        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
+    else
+        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
+    end
+    
+    header = 'Zwischenstand';
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 

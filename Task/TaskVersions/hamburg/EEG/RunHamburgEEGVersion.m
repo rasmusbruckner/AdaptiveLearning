@@ -60,7 +60,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10;  % 200;  Hier bitte anpassen
+trialsExp = 5;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -204,8 +204,9 @@ trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
-trialflow.cannonType = "confetti";
-trialflow.reward = "standard";
+trialflow.cannonType = 'confetti';
+trialflow.reward = 'standard';
+trialflow.shieldType = 'constant';
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
