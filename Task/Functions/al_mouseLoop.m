@@ -17,8 +17,7 @@ function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, tr
 
 
 % Todo: needs to be properly cleaned and commented. Also integrate
-% trialflow. Get rid of al_instrLoopTxt when this is finished.
-% well.
+% trialflow. Get rid of al_instrLoopTxt when this is finished
 
 if ~exist('breakKey', 'var') ||  isempty(breakKey)
     breakKey = nan;  
