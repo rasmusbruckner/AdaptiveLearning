@@ -58,7 +58,7 @@ xyThres = [xThres yThres]';
 dotPredDist = al_diff(spreadWide, taskData.pred(currTrial))'; 
 
 % Determine which particles will be caught
-[whichParticlesCaught, taskData.nParticlesCaught(currTrial)] = al_getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
+[whichParticlesCaught, taskData.nParticlesCaught(currTrial)] = taskData.getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
 
 % Dot color, size, and confetti cloud
 dotCol = taskData.dotCol(currTrial).rgb;

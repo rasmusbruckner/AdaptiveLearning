@@ -51,7 +51,7 @@ xyThres = [xThres yThres]';
 dotPredDist = al_diff(spread_wide, taskData.pred(currTrial))'; 
 
 % Determine which items will be caught using confetti function
-[whichParticlesCaught, nParticlesCaught] = al_getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
+[whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
 
 % Store caught supplies is separate matrix for illustration below
 xyThresCatch = xyThres;

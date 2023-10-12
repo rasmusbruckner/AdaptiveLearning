@@ -457,5 +457,101 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             testCase.verifyEqual(nGreenParticles, 28);
 
         end
+
+            function testGetParticlesCaughPartial(testCase)
+            %TEST_GETPARTICLESCAUGHTPARTIAL This function tests the function
+            % which computes which particles are caught in the shield
+            %
+            %   Here we test the case where some particles are caught
+            
+            % TaskData-object instance
+            taskData = al_taskDataMain(123);
+
+            % Control random number generator
+            rng(1)
+                        
+            % Confetti parameters
+            nParticles = 10;
+            confettiStd = 10; 
+            outcome = 45;
+            pred = 45;
+            shieldSize = 10;
+
+            % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
+            spread_wide = normrnd(outcome, confettiStd, nParticles, 1); 
+
+            % Compute distance between confetti and prediction to determine when it is a catch
+            dotPredDist = al_diff(spread_wide, pred)'; 
+
+            % Apply function and test output    
+            [whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, shieldSize);
+            expectedwhichParticlesCaught = [false,false,false,false,false,false,false,true,true,false];
+            testCase.verifyEqual(whichParticlesCaught, expectedwhichParticlesCaught)
+            testCase.verifyEqual(nParticlesCaught, 2)
+        end
+
+        function testGetParticlesCaughNone(testCase)
+            %TEST_GETPARTICLESCAUGHTNONE This function tests the function
+            % which computes which particles are caught in the shield
+            %
+            %   Here we test the case where none of the particles is caught
+            
+            % TaskData-object instance
+            taskData = al_taskDataMain(123);
+            
+            % Control random number generator
+            rng(1)
+                        
+            % Confetti parameters
+            nParticles = 10;
+            confettiStd = 10; 
+            outcome = 45;
+            pred = 100;
+            shieldSize = 10;
+
+            % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
+            spread_wide = normrnd(outcome, confettiStd, nParticles, 1); 
+
+            % Compute distance between confetti and prediction to determine when it is a catch
+            dotPredDist = al_diff(spread_wide, pred)'; 
+
+            % Apply function and test output    
+            [whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, shieldSize);
+            expectedwhichParticlesCaught = false(1, nParticles);
+            testCase.verifyEqual(whichParticlesCaught, expectedwhichParticlesCaught)
+            testCase.verifyEqual(nParticlesCaught, 0)
+        end
+
+        function testGetParticlesCaughAll(testCase)
+            %TEST_GETPARTICLESCAUGHTALL This function tests the function
+            % which computes which particles are caught in the shield
+            %
+            %   Here we test the case where all particles are caught.
+
+            % TaskData-object instance
+            taskData = al_taskDataMain(123);
+
+            % Control random number generator
+            rng(1)
+                        
+            % Confetti parameters
+            nParticles = 10;
+            confettiStd = 1; 
+            outcome = 45;
+            pred = 45;
+            shieldSize = 10;
+
+            % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
+            spread_wide = normrnd(outcome, confettiStd, nParticles, 1); 
+
+            % Compute distance between confetti and prediction to determine when it is a catch
+            dotPredDist = al_diff(spread_wide, pred)'; 
+
+            % Apply function and test output    
+            [whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, shieldSize);
+            expectedwhichParticlesCaught = true(1, nParticles);
+            testCase.verifyEqual(whichParticlesCaught, expectedwhichParticlesCaught)
+            testCase.verifyEqual(nParticlesCaught, 10)
+        end
     end
 end
