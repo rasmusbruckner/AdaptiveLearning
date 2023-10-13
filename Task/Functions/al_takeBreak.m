@@ -1,6 +1,6 @@
 function taskParam = al_takeBreak(taskParam, taskData, currTrial)
 %AL_TAKEBREAK This function manages the breaks in the cannon task
-%  
+%
 %   Input
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
