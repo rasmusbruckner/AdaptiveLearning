@@ -1,5 +1,5 @@
 function al_tickMark(taskParam, parameter, type)
-%AL_TICKMARK This function draws the tickmark in the cannon task
+%AL_TICKMARK This function displays the tickmarks in the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -7,7 +7,7 @@ function al_tickMark(taskParam, parameter, type)
 %       type: Tick-mark type
 %
 %   Output
-%       ~
+%       None
 
 
 % Depending on tick-mark type, choose properties of tickmark
@@ -26,11 +26,6 @@ elseif isequal(type,'aim')
     tickLength = 40;
     tickNormalization = 15;
     tickWidth = 3;
-elseif isequal(type,'saved') || isequal(type,'update')
-    col = [255 0 0];
-    tickLength = 30;
-    tickNormalization = 10;
-    tickWidth = taskParam.circle.tickWidth;
 end
 
 % Compute location of tickmark
