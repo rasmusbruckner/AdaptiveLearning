@@ -28,7 +28,7 @@ if trial == 1 || strcmp(taskParam.trialflow.push, 'practiceNoPush')
     taskData.y(trial) = 0;
 elseif trial > 1 && strcmp(taskParam.trialflow.push, 'push')
     if ~taskParam.unitTest
-        taskData.z(trial) = al_sampleOutcome(taskData.pred(trial-1), taskParam.gParam.pushConcentration);
+        taskData.z(trial) = taskData.sampleOutcome(taskData.pred(trial-1), taskParam.gParam.pushConcentration);
     else
         if rem(trial, 2) == 0
             taskData.z(trial) = taskData.pred(trial-1) + 10;
