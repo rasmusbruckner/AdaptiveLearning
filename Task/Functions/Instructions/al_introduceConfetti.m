@@ -22,9 +22,8 @@ if strcmp(taskParam.gParam.taskType, 'Sleep')
 elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'asymReward') || strcmp(taskParam.gParam.taskType, 'Leipzig') || strcmp(taskParam.gParam.taskType, 'HamburgEEG') 
     
     % Participant indicates prediction
-    press = 0;
     condition = 'main';
-    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt);
 
 end
 

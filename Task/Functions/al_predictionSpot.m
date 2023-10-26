@@ -5,7 +5,7 @@ function al_predictionSpot(taskParam)
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       ~
+%       None
 
 
 % Compute coordinates of prediction spot

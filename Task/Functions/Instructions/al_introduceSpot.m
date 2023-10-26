@@ -69,9 +69,8 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
-    press = 0;
     condition = 'main';
-    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt);
 
     % Prediction error
     taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
@@ -96,9 +95,8 @@ elseif strcmp(taskParam.gParam.taskType, 'Leipzig')
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
-    press = 0;
     condition = 'main';
-    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt);
 
     % Prediction error
     taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));

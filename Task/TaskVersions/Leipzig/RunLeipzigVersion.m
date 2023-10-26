@@ -61,7 +61,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 5;  % 200;  Hier bitte anpassen
+trialsExp = 2;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;

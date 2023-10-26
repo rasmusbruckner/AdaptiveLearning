@@ -15,9 +15,8 @@ function [taskData, taskParam] = al_introduceHelicopter(taskParam, taskData, tri
 initRT_Timestamp = 0;
 
 % Participant indicates prediction
-press = 0;
 condition = 'main';
-[taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt);
+[taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt);
 
 % Confetti animation
 background = true; % todo: include this in trialflow

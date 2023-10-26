@@ -85,8 +85,7 @@ for i = 1:trial
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
-    press = 0;
-    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp, press);
+    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
 
     % send fixation cross 1 trigger
     % todo: this should be done in mouse loop, like I did for keyboardLoop

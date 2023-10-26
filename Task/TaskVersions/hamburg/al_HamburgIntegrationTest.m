@@ -152,8 +152,11 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
             expectedAccPerf = [0.1; 0.2; 0.2; 0.2; 0.2; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.3; 0.4; 0.5; 0.6];
             testCase.verifyEqual(dataMain.accPerf, expectedAccPerf, 'AbsTol', 1.e-10);
             
-            % Initial tendency
-            testCase.verifyEqual(dataMain.initialTendency, expectedPred);
+            % Initial tendency 
+            % Changed expected values to radians, after updating al_mouseLoop
+            % Todo: adjust in future version so that transformation in unit test is not
+            % necessary anymore
+            testCase.verifyEqual(dataMain.initialTendency, deg2rad(expectedPred));
             
             % Cannon deviation
             expectedCannonDev = [-24; 13; -67; -16; 83; -30; -87; -88; -17; 150; 150; 150; 150; 162; -121; -121; -121; 16; 5; 5];

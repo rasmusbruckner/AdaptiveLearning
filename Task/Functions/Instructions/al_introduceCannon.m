@@ -30,9 +30,8 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
-    press = 0;
     condition = 'main';
-    [~, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt, breakKey);
+    [~, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt, breakKey);
 
 end
 WaitSecs(0.1);

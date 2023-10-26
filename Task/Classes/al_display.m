@@ -169,6 +169,9 @@ classdef al_display
             %       cannonType: Which type of cannon should be shown
             %
 
+            % Todo: these should be methods that are specific to these
+            % versions
+            
             % Load images
             %[cannonPic, ~, alpha]  = imread('cannon.png');
             if strcmp(cannonType, "standard")

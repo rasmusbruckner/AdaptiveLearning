@@ -1,29 +1,24 @@
-function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, press, txt, breakKey)
-%AL_MOUSELOOP This function manages the interaction between participants and the task via the computer mouse 
+function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt, breakKey)
+%AL_MOUSELOOP This function manages the interaction between participants and the task via the computer mouse
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
-%       condition: noise condition type
-%       trial: trial index
-%       initRT_Timestamp: initiation reaction time
-%       press: indext if mouse button has been pressed
-%       txt: 
-%       breakKey:
+%       condition: Current task condition
+%       trial: Current trial
+%       initRT_Timestamp: Tnitiation reaction time
+%       txt: Instructions text
+%       breakKey: Key to break out of the loop
 %
 %   Output
 %       taskData: Task-parameter-object instance
 %       taskParam: Task-data-object instance
 
 
-% Todo: needs to be properly cleaned and commented. Also integrate
-% trialflow. Get rid of al_instrLoopTxt when this is finished
-
+% Key to get out of the loop
 if ~exist('breakKey', 'var') ||  isempty(breakKey)
-    breakKey = nan;  
+    breakKey = nan;
 end
-
-[~, ~] = RectCenter(taskParam.display.windowRect);
 
 while 1
 
@@ -31,7 +26,7 @@ while 1
     % background if required
     if ~exist('txt', 'var') ||  isempty(txt)
 
-        % Present background picture, if required
+        % Present background picture
         if isequal(taskParam.trialflow.background, 'picture')
             Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.textures.backgroundTxt,[], [], []);
         end
@@ -39,190 +34,134 @@ while 1
         % Otherwise present text and background together
     else
         al_lineAndBack(taskParam)
-        sentenceLength = taskParam.strings.sentenceLength;
-        DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], sentenceLength);
+        DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);
     end
 
     % If break key equals enter button, ask subject to press enter to continue
     if breakKey == taskParam.keys.enter
         DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter ,'center', taskParam.display.screensize(4)*0.9);
     end
-    
-    % For unit test: simulate keyIsDown, keyCode, and record RT
-    if ~taskParam.unitTest
-        [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
-            
-    screensize = taskParam.display.screensize;
-    
-    x = x-(screensize(3)/2);
-    y = (y-(screensize(4)/2))*-1;
 
-    currentDegree = mod(atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
-    if currentDegree > 360
-        degree = currentDegree - 360;
-    else
-        degree = currentDegree;
-    end
+    % Record mouse movements
+    if ~taskParam.unitTest
+
+        % Get current mouse coordinates
+        [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
+
+        % Extract screen coordinates
+        screensize = taskParam.display.screensize;
+
+        % Compute mouse x and y position given screen coordinates
+        x = x-(screensize(3)/2);
+        y = (y-(screensize(4)/2))*-1;
+
+        % Translate x and y coordinates to degrees
+        currentDegree = mod(atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
+        if currentDegree > 360
+            degree = currentDegree - 360;
+        else
+            degree = currentDegree;
+        end
+
+        % For unit test: simulate keyIsDown, keyCode, and record prediction
     else
         buttons(1) = 1;
         buttons(2) = 0;
         degree = taskData.pred(trial);
-        %taskParam.circle.rotAngle = deg2rad(taskData.pred(trial));
-        %x = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
-        %y = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
-
-        %x = x+720;
-        %y = (-1*y+450);
     end
-    
+
+    % Translate degrees to rotation angle
     taskParam.circle.rotAngle = degree * taskParam.circle.unit;
+
+    % Show circle on screen
     al_drawCircle(taskParam)
 
-    if isequal(taskParam.gParam.taskType, 'chinese') && ~isequal(condition,'shield') && ~isequal(condition, 'chinesePractice_1') && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3')
-        al_drawContext(taskParam,taskData.currentContext(trial))
-        al_drawCross(taskParam)
-        
-        if taskParam.gParam.showCue 
-            if trial == 1 || taskParam.gParam.cueAllTrials == true
-                al_showCue(taskParam, taskData.latentState(trial))
-            elseif taskParam.gParam.cueAllTrials == false && trial > 1 && taskData.latentState(trial) ~= taskData.latentState(trial-1)
-                al_showCue(taskParam, taskData.latentState(trial))
-            end
-        end
-    elseif isequal(condition,'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
-        
-        if isequal(taskParam.gParam.taskType, 'chinese')
-            al_drawContext(taskParam,taskData.currentContext(trial))
-            al_drawCross(taskParam)
-        end
-        al_drawCannon(taskParam, taskData.distMean(trial), taskData.latentState(trial))
-        al_aim(taskParam, taskData.distMean(trial))
-    elseif strcmp(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(trial)
-       if strcmp(taskParam.trialflow.cannonType, 'helicopter')
+    if strcmp(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(trial)
+        if strcmp(taskParam.trialflow.cannonType, 'helicopter')
+            % In helicopter version, show heli and heli aim
             al_showHelicopter(taskParam, taskData.distMean(trial))
             al_tickMark(taskParam, taskData.distMean(trial), 'aim')
-       else
+        else
+            % In regular versions, show cannon and cannon aim
             al_drawCannon(taskParam, taskData.distMean(trial))
             al_aim(taskParam, taskData.distMean(trial))
-       end
-    else
+        end
 
+    else
+        % Optionally, show confetti cloud
         if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
-            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-            %Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, center, 1); 
-            Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 
+            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud(); % load pre-generated particles
+            Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
             al_drawCross(taskParam)
         else
+            % Otherwise just fixation cross
             al_drawCross(taskParam)
         end
     end
- 
-%     if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
-%         [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-%         %Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, center, 1); 
-%         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 
-% 
-%         al_drawCross(taskParam)
-% 
-%     end
-    
 
-    % todo: check if still in use
-    if (taskData.catchTrial(trial) == 1 && isequal(condition, 'onlinePractice'))
+    % Todo: potentially move up when working on ARC again
+    if (taskData.catchTrial(trial) == 1 && isequal(taskParam.gParam.taskType, 'ARC'))
         al_drawCannon(taskParam, taskData.distMean(trial), taskData.latentState(trial))
         al_aim(taskParam, taskData.distMean(trial))
-        txt = 'As you can now directly see the cannon, you should move your orange spot exactly to aim of the cannon!';
-        sentenceLength = taskParam.gParam.sentenceLength;
-        DrawFormattedText(taskParam.gParam.window.onScreen, txt, 'center', 50, [255 255 255], sentenceLength);
-        
-    elseif (taskData.catchTrial(trial) == 1 && isequal(taskParam.gParam.taskType, 'ARC'))
-        
-        al_drawCannon(taskParam, taskData.distMean(trial), taskData.latentState(trial))
-        al_aim(taskParam, taskData.distMean(trial))
-        
     end
-    
-   % if taskParam.unitTest
-    %    taskParam.circle.rotAngle = deg2rad(taskData.pred(trial));
-    %end
+
+    % Show prediction spot
     if ~taskParam.unitTest
+
+        % Check if prediction spot exceeds circle
         hyp = sqrt(x^2 + y^2);
+
+        % If so, ensure that prediction spot sticks to cicle
         if hyp <= taskParam.circle.rotationRad-2
-            al_predictionSpotReversal(taskParam, x ,y*-1)
+            al_predictionSpotSticky(taskParam, x ,y*-1)
+            % Otherwise move freely within circle
         else
             al_predictionSpot(taskParam)
         end
     else
+        % For unit test, simulate prediction spot
         al_predictionSpot(taskParam)
         WaitSecs(0.25);
         hyp = nan;
     end
-    
+
+    % Store initial tendency and initiation RT:
+    % Only entering the condition when no initial tendency has been
+    % recorded (first movement) or unit testing
     if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest
-        taskData.initialTendency(trial) = degree;  % todo: save in radians for consistency
+        taskData.initialTendency(trial) = degree * taskParam.circle.unit;
         taskData.initiationRTs(trial,:) = GetSecs() - initRT_Timestamp;
     end
-    
-%     if ~isequal(taskParam.gParam.taskType, 'chinese') || ~isequal(taskParam.gParam.taskType, 'ARC')
-%         if  (buttons(2) == 1 && trial ~= taskParam.gParam.blockIndices(1) && trial ~= taskParam.gParam.blockIndices(2) + 1 && trial ~= taskParam.gParam.blockIndices(3) + 1 && trial ~= taskParam.gParam.blockIndices(4) + 1)
-%             
-%             taskData.savedTickmark(trial) = ((taskParam.circle.rotAngle)/taskParam.circle.unit);
-%             WaitSecs(0.2);
-%             press = 1;
-%             
-%         %elseif i > 1 && press == 0
-%             % Todo: re-implement when working on reversal version again
-%             %taskData.savedTickmarkPrevious(i) = taskData.savedTickmarkPrevious(i - 1);
-%             %taskData.savedTickmark(i) = taskData.savedTickmark(i - 1);
-%         %elseif i == 1
-%             % Todo: re-implement when working on reversal version again
-%             % taskData.savedTickmarkPrevious(i) = 0;
-%         end
-%         
-%         if press == 1
-%             
-%             taskData.savedTickmarkPrevious(trial) = taskData.savedTickmark(trial-1);
-%         end
-%     end
-    
+
     % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
-
         al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
-
-        % Todo: Test this new version with trialflow object instance for
-        % reversal task
-        if isequal(taskParam.trialflow.savedTickmark, 'show')
-            al_tickMark(taskParam, taskParam.savedTickmark(trial-1), 'saved')
-        end
     end
 
+    % Flip screen and present changes
     t = GetSecs();
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    
     Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
-    
+
+    % For unit test, we simulate RT = 0.5 in total (other half above)
     if taskParam.unitTest
-        WaitSecs(0.25);  % simulate RT = 0.5
+        WaitSecs(0.25);
     end
 
+    % For instructions, determine when to break out of the loop
     if breakKey == taskParam.keys.enter
         [keyIsDown, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
         if keyIsDown && keyCode(breakKey)
             break
         end
+        % Todo: Trialflow
     elseif ((~isequal(condition,'ARC_controlSpeed') && buttons(1) == 1) || (isequal(condition,'ARC_controlSpeed') && hyp >= 150)) || ((~isequal(condition,'ARC_controlAccuracy') && buttons(1) == 1)...
             || (isequal(condition,'ARC_controlAccuracy') && hyp >= 150)) || ((~isequal(condition,'ARC_controlPractice') && buttons(1) == 1) || (isequal(condition,'ARC_controlPractice') && hyp >= 150))
         taskData.pred(trial) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
         taskData.RT(trial) = GetSecs() - initRT_Timestamp;
         break
-    elseif isequal(condition, 'chinese') && isequal(taskParam.gParam.useTrialConstraints, 'aging') && (GetSecs() - initRT_Timestamp>3)
-        
-        taskData.pred(trial) = nan;
-        taskData.RT(trial) = nan;
-        break
     end
-    
+
 end
 end
