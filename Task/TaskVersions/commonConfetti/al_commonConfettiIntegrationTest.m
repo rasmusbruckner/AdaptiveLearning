@@ -1,4 +1,4 @@
-classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
+classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
     % This function runs an integration test for the Hamburg version
     % To run the test, put run(al_HamburgIntegrationTest) in command window
 
@@ -13,7 +13,7 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
 
             cBal = '1';
             day = '1';
-            [dataMain, ~] = RunHamburgVersion(true, cBal, day);
+            [dataMain, ~] = RunCommonConfettiVersion(true, cBal, day);
 
             % Todo: Test both noise conditions
             
@@ -126,7 +126,7 @@ classdef al_HamburgIntegrationTest < matlab.unittest.TestCase
                         
             % Prediction
             expectedPred = [307; 270; 350; 299; 200; 313; 10; 11; 300; 162; 162; 162; 162; 150; 73; 73; 73; 190; 201; 201];
-            testCase.verifyEqual(dataMain.pred, expectedPred);
+            testCase.verifyEqual(dataMain.pred, expectedPred, "AbsTol", 1.e-10);
             
             % Prediction error
             expectedPredErr = [-12; 6; -48; -32; 99; 0; -70; -73; -27; 149; 169; 145; 163; 132; -156; -129; -118; -1;	-7;	-2];

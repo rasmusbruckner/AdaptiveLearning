@@ -190,6 +190,7 @@ trialflow.confetti = 'none';
 trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.shieldType = "constant";
+trialflow.input = "keyboard";
 
 % ---------------------------------------------
 % Create object instance with color parameters

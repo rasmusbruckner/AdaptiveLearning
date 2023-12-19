@@ -49,6 +49,15 @@ classdef al_trialflow
 
         % Shield variable vs. fixed
         shield
+
+        % Input device
+        input
+
+        % Mean of distribution
+        distMean 
+
+         % Noise conditions (stable vs. changepoints)
+        variability
         
     end
     
@@ -75,7 +84,10 @@ classdef al_trialflow
             trialflowobj.cannonPosition = 'inside';
             trialflowobj.shieldType = "contant";
             trialflowobj.shield = "fixed";
-            
+            trialflowobj.input = "mouse";
+            trialflowobj.distMean = "fixed";
+            trialflowobj.variability = "stable";
+            trialflowobj.currentTickmarks = "standard";
         end
     end
     

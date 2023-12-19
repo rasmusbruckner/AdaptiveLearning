@@ -19,7 +19,6 @@ classdef al_gparam
          
         % Trials on which participants can take a break
         blockIndices
-        
 
         % Variability of the drift in the "oddball" versions (drugstudy, eLife)
         driftConc
@@ -38,6 +37,9 @@ classdef al_gparam
                  
         % Hazard rate determining probability of a changepoint
         haz
+        
+        % Variability hazard rate
+        hazVar
 
         % Mean shield size
         mu                         
@@ -69,9 +71,12 @@ classdef al_gparam
         % Number of trials of the control versions (Dresden)
         controlTrials
 
-        % Number of trials after changepoint during which no changepoint
+        % Number of trials after changepoint during which no change point
         % occurs
         safe
+
+        % Safe trials variability changepoint
+        safeVar
 
         % Reward magnitude when "hit"
         rewMag
@@ -121,37 +126,38 @@ classdef al_gparam
         dataDirectory
 
         % Critical distance between enemies in chinese version
-        critDist
+       % critDist
 
          % Number of practice trials of chinese version
         % (todo: when versions are independent, this should work with "trials")
-        chinesePractTrials
+       % chinesePractTrials
 
         % Number of planets of chinese version
-        nPlanets
+       % nPlanets
 
         % Number of enemies of chinese version
-        nEnemies
+        %nEnemies
 
         % Hazard rate determining switches between plantes in chinese version
-        planetHaz
+        %planetHaz
 
         % Hazard rate determining switches between enemies in chinese version        
-        enemyHaz
+        %enemyHaz
 
         % Equivalent to safe but for planets and enemies in chinese version
-        safePlanet
-        safeEnemy
+        %safePlanet
+        %safeEnemy
 
         % In chinese version: if true, outcomes are generated in a more
         % balanced way, based on some constraints
-        useTrialConstraints
+        %useTrialConstraints
 
         % Number of blocks in chinese version
-        nb
+        %nb
 
         % Hidden or observalbe enemy in chinese version
-        cueAllTrials
+       % cueAllTrials
+
                
     end
     
@@ -168,7 +174,7 @@ classdef al_gparam
             
             gparamobj.taskType = nan; 
             gparamobj.blockIndices = nan; 
-            gparamobj.driftConc = [30 99999999];
+            gparamobj.driftConc = 30;
             gparamobj.oddballProb = [.25 0];
             gparamobj.reversalProb = [.5 1]; 
             gparamobj.concentration = nan;
@@ -185,6 +191,7 @@ classdef al_gparam
             gparamobj.practTrials = nan; 
             gparamobj.controlTrials = nan;
             gparamobj.safe = 3;
+            gparamobj.safeVar = 10;
             gparamobj.rewMag = 0.1; 
             gparamobj.screensize = nan; 
             gparamobj.practiceTrialCriterionNTrials = nan; 
@@ -200,17 +207,17 @@ classdef al_gparam
             gparamobj.printTiming = false;
             gparamobj.runIntro = nan;
             gparamobj.dataDirectory = nan;  
-            gparamobj.critDist = nan; 
-            gparamobj.chinesePractTrials = nan; 
-            gparamobj.nPlanets = 1;
-            gparamobj.nEnemies = nan; 
-            gparamobj.planetHaz = nan; 
-            gparamobj.enemyHaz = nan;
-            gparamobj.safePlanet = nan; 
-            gparamobj.safeEnemy = nan;
-            gparamobj.useTrialConstraints = false; 
-            gparamobj.nb = nan; 
-            gparamobj.cueAllTrials = nan; 
+            %gparamobj.critDist = nan; 
+            %gparamobj.chinesePractTrials = nan; 
+            %gparamobj.nPlanets = 1;
+            %gparamobj.nEnemies = nan; 
+            %gparamobj.planetHaz = nan; 
+            %gparamobj.enemyHaz = nan;
+            %gparamobj.safePlanet = nan; 
+            %gparamobj.safeEnemy = nan;
+            %gparamobj.useTrialConstraints = false; 
+            %gparamobj.nb = nan; 
+            %gparamobj.cueAllTrials = nan; 
 
         end
     end

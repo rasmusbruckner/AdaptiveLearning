@@ -1,4 +1,4 @@
-function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt, breakKey)
+function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, startTimestamp, txt, breakKey)
 %AL_KEYBOARDLOOP This function implementens the participants' interaction
 % with the cannon task via the keyboard
 %
@@ -6,7 +6,7 @@ function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, ini
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
 %       trial: Current trial number
-%       initRT_Timestamp: Onset of prediction phase for computing initRT
+%       startTimestamp: Onset of prediction phase for computing initRT
 %       text: Presented text
 %       breakKey: Key code to lock prediction
 %   Ouptut
@@ -75,8 +75,6 @@ while 1
     al_drawCircle(taskParam)
     al_predictionSpot(taskParam)
 
-    % Todo: Test this new version with trialflow object instance for
-    % other task versions than "sleep"
     % If requested, show cannon and cannon aim, otherwise fixation cross
     if (taskData.catchTrial(trial) == 1) || isequal(taskParam.trialflow.cannon, 'show cannon')
         al_drawCannon(taskParam, taskData.distMean(trial))
@@ -90,12 +88,6 @@ while 1
 
         al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
-
-        % Todo: Test this new version with trialflow object instance for
-        % reversal task
-        if isequal(taskParam.trialflow.savedTickmark, 'show')
-            al_tickMark(taskParam, taskParam.savedTickmark(trial-1), 'saved')
-        end
     end
 
     % Tell PTB that all elements have been drawn and flip screen
@@ -104,7 +96,7 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
 
     % Update location of prediction spot depending on participant input
-    [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam, taskData, trial, initRT_Timestamp, breakKey);
+    [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey);
 
     % Break out of while condition if prediction has been confirmed
     if breakLoop == true

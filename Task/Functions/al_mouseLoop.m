@@ -1,4 +1,4 @@
-function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt, breakKey)
+function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, startTimestamp, txt, breakKey)
 %AL_MOUSELOOP This function manages the interaction between participants and the task via the computer mouse
 %
 %   Input
@@ -6,7 +6,7 @@ function [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, tr
 %       taskData: Task-data-object instance
 %       condition: Current task condition
 %       trial: Current trial
-%       initRT_Timestamp: Tnitiation reaction time
+%       startTimestamp: Onset of prediction phase for computing RTs
 %       txt: Instructions text
 %       breakKey: Key to break out of the loop
 %
@@ -71,7 +71,7 @@ while 1
     end
 
     % Translate degrees to rotation angle
-    taskParam.circle.rotAngle = degree * taskParam.circle.unit;
+    taskParam.circle.rotAngle = deg2rad(degree); %degree * taskParam.circle.unit;
 
     % Show circle on screen
     al_drawCircle(taskParam)
@@ -129,13 +129,37 @@ while 1
     % Only entering the condition when no initial tendency has been
     % recorded (first movement) or unit testing
     if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest
-        taskData.initialTendency(trial) = degree * taskParam.circle.unit;
-        taskData.initiationRTs(trial,:) = GetSecs() - initRT_Timestamp;
+        taskData.initialTendency(trial) = deg2rad(degree); %degree * taskParam.circle.unit;
+        taskData.initiationRTs(trial,:) = GetSecs() - startTimestamp;
     end
 
-    % Optionally, present tick marks
+    % Optionally, present tick marks        
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
         al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+        al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
+    elseif isequal(taskParam.trialflow.currentTickmarks, 'workingMemory') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
+        if trial > 5 && (taskData.block(trial) == taskData.block(trial-5))
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-5), 'outc')
+        elseif trial > 4 && (taskData.block(trial) == taskData.block(trial-4))
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc')
+        elseif trial > 3 && (taskData.block(trial) == taskData.block(trial-3))
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc')
+        elseif trial > 2 && (taskData.block(trial) == taskData.block(trial-2))
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
+        elseif trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+        end
+        
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
     end
 
@@ -156,10 +180,19 @@ while 1
             break
         end
         % Todo: Trialflow
-    elseif ((~isequal(condition,'ARC_controlSpeed') && buttons(1) == 1) || (isequal(condition,'ARC_controlSpeed') && hyp >= 150)) || ((~isequal(condition,'ARC_controlAccuracy') && buttons(1) == 1)...
-            || (isequal(condition,'ARC_controlAccuracy') && hyp >= 150)) || ((~isequal(condition,'ARC_controlPractice') && buttons(1) == 1) || (isequal(condition,'ARC_controlPractice') && hyp >= 150))
-        taskData.pred(trial) = ((taskParam.circle.rotAngle) / taskParam.circle.unit);
-        taskData.RT(trial) = GetSecs() - initRT_Timestamp;
+    %elseif ((~isequal(condition,'ARC_controlSpeed') && buttons(1) == 1) || (isequal(condition,'ARC_controlSpeed') && hyp >= 150)) || ((~isequal(condition,'ARC_controlAccuracy') && buttons(1) == 1)...
+     %       || (isequal(condition,'ARC_controlAccuracy') && hyp >= 150)) || ((~isequal(condition,'ARC_controlPractice') && buttons(1) == 1) || (isequal(condition,'ARC_controlPractice') && hyp >= 150))
+    elseif buttons(1) == 1
+        taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle); %((taskParam.circle.rotAngle) / taskParam.circle.unit);
+        taskData.RT(trial) = GetSecs() - startTimestamp;
+        
+        % If initiation RT has not been stored (if button press occurs between check above and here [unlikely, but possible])
+        if isnan(taskData.initiationRTs(trial))
+            taskData.initialTendency(trial) = deg2rad(degree); %degree * taskParam.circle.unit;
+            taskData.initiationRTs(trial) = taskData.RT(trial);
+        end
+
+        % Break out of loop
         break
     end
 

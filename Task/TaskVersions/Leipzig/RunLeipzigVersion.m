@@ -197,6 +197,7 @@ trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "helicopter";
 trialflow.reward = "standard";
 trialflow.shieldType = "constant";
+trialflow.input = "mouse";
 
 % ---------------------------------------------
 % Create object instance with cannon parameters

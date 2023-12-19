@@ -263,7 +263,8 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
     elseif isequal(Tevent, 'fix')
         
         trigger = 101;
-       
+    
+    % Hier noch eine Zahl hinzu die reward und punishment codiert.    
     % Prediction error
     elseif isequal(Tevent, 'outcome')
         
@@ -278,6 +279,7 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
         end
     
     % Shield
+    % todo: hier auch noch reward und punishment Zahl hinzufügen
     elseif isequal(Tevent, 'shield')
         
         if isequal(condition, 'monetary') && taskData.hit(trial) == 0
@@ -300,6 +302,7 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
 
 
     % Reward
+    % todo: block typ (punishment und reward)
     elseif isequal(Tevent, 'reward')
         
         if isequal(condition, 'monetary') && taskData.hit(trial) == 0

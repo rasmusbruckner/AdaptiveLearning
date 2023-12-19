@@ -105,7 +105,7 @@ classdef al_dresden_conditions
                         taskData.critical_trial = nan;
                         trial = taskParam.gParam.practTrials;
                         % ------------------------------------
-                        al_mainLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'mainPractice_3', subject, taskData, trial);
+                        al_dresdenLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'mainPractice_3', subject, taskData, trial);
                         feedback = false;
                         %al_bigScreen(taskParam, condobj.txtPressEnter, condobj.header, txtStartTask, feedback);
                         al_bigScreen(taskParam, condobj.txtPressEnter, 'Erste Aufgabe...', txtStartTask, feedback);
@@ -243,8 +243,25 @@ classdef al_dresden_conditions
 %             end
                         %[taskData, trial] = al_loadTaskData(taskParam, 'main', condobj.haz(1), currentConcentration);
             trial = taskParam.gParam.trials;
-            taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), currentConcentration, 'main');
-            [~, condobj.DataMain] = al_mainLoop(taskParam, condobj.haz(1), currentConcentration, 'main', subject, taskData, trial);
+            % TaskData-object instance
+            taskData = al_taskDataMain(trial);
+
+            % -----------------------------------------------------
+            % 0. Extract some variables from task-parameters object
+            % -----------------------------------------------------
+            
+            runIntro = taskParam.gParam.runIntro;
+            unitTest = taskParam.unitTest;
+            concentration = taskParam.gParam.concentration;
+            haz = taskParam.gParam.haz;
+            %testDay = taskParam.subject.testDay;
+            cBal = taskParam.subject.cBal;
+            % Generate outcomes using cannonData function
+            taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
+
+ 
+            %taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), currentConcentration, 'main');
+            [~, condobj.DataMain] = al_dresdenLoop(taskParam, condobj.haz(1), currentConcentration, 'main', subject, taskData, trial);
             
 %             function ARC_indicateCondition(condition, taskParam, txtPressEnter)
 %                 % ARC_CONTROLCONDITION
@@ -484,6 +501,10 @@ classdef al_dresden_conditions
             %   Output
             %       DataFollowOutcome: Participant data
             
+            % TaskData-object instance
+            trial = taskParam.gParam.controlTrials;
+            taskData = al_taskDataMain(trial);
+
             if condobj.runIntro && ~condobj.unitTest
                 
                 if isequal(subject.group, '1')
@@ -523,18 +544,18 @@ classdef al_dresden_conditions
                 taskData.RT = nan(length(trial),1);
                 taskData.critical_trial = nan(length(trial),1);
                  % ---------------------------------------------
-                al_mainLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'followOutcomePractice', subject, taskData, trial);
+                al_dresdenLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'followOutcomePractice', subject, taskData, trial);
                 feedback = false;
                 header = 'Anfang der Aufgabe'; 
                 al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
                 
             else
                 
-                Screen('TextSize', taskParam.gParam.window.onScreen, 30);
-                Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
+                Screen('TextSize', taskParam.display.window.onScreen, 30);
+                Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
                 % IndicateFollowCannon = 'Follow Cannon Task';
                 % IndicateFollowOutcome = 'Follow Outcome Task';
-                al_conditionIndication(taskParam, 'Follow Outcome Task', condobj.txtPressEnter)
+                al_indicateDresdenCondition(taskParam, 'Follow Outcome Task')
                 
             end
             
@@ -542,9 +563,19 @@ classdef al_dresden_conditions
             % --------------------------------------
           
             trial = taskParam.gParam.controlTrials;
-            taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
+            %trial = taskParam.gParam.trials;
+            %taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
+            runIntro = taskParam.gParam.runIntro;
+            unitTest = taskParam.unitTest;
+            concentration = taskParam.gParam.concentration;
+            haz = taskParam.gParam.haz;
+            %testDay = taskParam.subject.testDay;
+            cBal = taskParam.subject.cBal;
+            % Generate outcomes using cannonData function
+            taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
+
             % -----------------------------------------------------------------------
-            [~, condobj.DataFollowOutcome] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject, taskData, trial);
+            [~, condobj.DataFollowOutcome] = al_dresdenLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject, taskData, trial);
             
         end
         
@@ -562,6 +593,12 @@ classdef al_dresden_conditions
             %   Output
             %       DataFollowCannon: Participant data
             
+             % TaskData-object instance
+            trial = taskParam.gParam.controlTrials;
+            taskData = al_taskDataMain(trial);
+
+    
+
             if condobj.runIntro && ~condobj.unitTest
                 
                 if isequal(subject.group, '1')
@@ -594,21 +631,39 @@ classdef al_dresden_conditions
                 taskData.RT = nan(length(trial),1);
                 taskData.critical_trial = nan(length(trial),1);
                 % ----
-                al_mainLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'followCannonPractice', subject, taskData, trial);
+                al_dresdenLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'followCannonPractice', subject, taskData, trial);
                 feedback = false;
                 header = 'Anfang der Aufgabe'; 
                 al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
             else
-                Screen('TextSize', taskParam.gParam.window.onScreen, 30);
-                Screen('TextFont', taskParam.gParam.window.onScreen, 'Arial');
-                al_conditionIndication(taskParam, 'Follow Cannon Task', condobj.txtPressEnter)
+                Screen('TextSize', taskParam.display.window.onScreen, 30);
+                Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
+                %al_conditionIndication(taskParam, 'Follow Cannon Task', condobj.txtPressEnter)
+                al_indicateDresdenCondition(taskParam, 'Follow Outcome Task')
             end
             %[taskData, trial] = al_loadTaskData(taskParam, 'followOutcome', condobj.haz(1), condobj.concentration(1));
             % ----
-            trial = taskParam.gParam.controlTrials;
-            taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
+            %trial = taskParam.gParam.controlTrials;
+            trial = taskParam.gParam.controlTrials; % sollte eig. controlTrials sein
+
+            %taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
             % -----
-            [~, condobj.DataFollowCannon] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject, taskData, trial);
+            trial = taskParam.gParam.trials;
+            %taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
+            runIntro = taskParam.gParam.runIntro;
+            unitTest = taskParam.unitTest;
+            concentration = taskParam.gParam.concentration;
+            haz = taskParam.gParam.haz;
+            %testDay = taskParam.subject.testDay;
+            cBal = taskParam.subject.cBal;
+            % Generate outcomes using cannonData function
+            taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
+
+            % -----------------------------------------------------------------------
+           % [~, condobj.DataFollowOutcome] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject, taskData, trial);
+
+            
+            [~, condobj.DataFollowCannon] = al_dresdenLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followCannon', subject, taskData, trial);
         end
         
     end

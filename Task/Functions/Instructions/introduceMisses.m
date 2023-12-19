@@ -1,4 +1,4 @@
-function [Data, taskParam] = introduceMisses(taskParam, Data, whichPractice, txt)
+function [taskData, taskParam] = introduceMisses(taskParam, taskData, whichPractice, txt)
 %INTRODUCEMISSES This function introduce misses of the cannonball to participants
 %
 %   Input
@@ -14,8 +14,8 @@ function [Data, taskParam] = introduceMisses(taskParam, Data, whichPractice, txt
 %       taskParam: structure containing task parameters
 
 
-outcome = Data.distMean;
-Data.outcome = Data.distMean;
+outcome = taskData.distMean;
+taskData.outcome = taskData.distMean;
 background = true;
 % al_cannonball(taskParam, distMean, outcome, background, 1, 0)
 % absTrialStartTime = GetSecs;
@@ -23,13 +23,15 @@ if ~ isequal(taskParam.trialflow.shotAndShield, 'sequential')
 %al_cannonball(taskParam, outcome, outcome, background, 1, 0, 1, Data, absTrialStartTime)
     i = 1;
     tUpdated = GetSecs + 0.001;
-        Data.hit = 0; 
-    al_cannonMiss(taskParam, Data.distMean(i), Data.outcome(i), background, 1, 0, Data.allASS(i), Data.pred(i), Data.shieldType(i), Data.hit(i), tUpdated)
+        taskData.hit = 0; 
+%    al_cannonMiss(taskParam, Data.distMean(i), Data.outcome(i), background, 1, 0, Data.allASS(i), Data.pred(i), Data.shieldType(i), Data.hit(i), tUpdated)
+    al_cannonMiss(taskParam, taskData, i, background, tUpdated)
+
 end
 WaitSecs(taskParam.timingParam.outcomeLength);
-if (isequal(whichPractice, 'mainPractice') && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'followCannonPractice')...
-        && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'oddballPractice') && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'reversal')...
-        && abs(Data.predErr) >= 9) || (isequal(whichPractice, 'chinese') && abs(Data.predErr) >= 9)
+if (isequal(whichPractice, 'mainPractice') && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'followCannonPractice')...
+        && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'oddballPractice') && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'reversal')...
+        && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'chinese') && abs(taskData.predErr) >= 9)
 
     al_lineAndBack(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
@@ -41,7 +43,7 @@ if (isequal(whichPractice, 'mainPractice') && abs(Data.predErr) >= 9) || (isequa
     %al_drawCross(taskParam);
     al_predictionSpot(taskParam);
     al_drawOutcome(taskParam, outcome);
-    al_drawCannon(taskParam, Data.distMean, 0)
+    al_drawCannon(taskParam, taskData.distMean, 0)
     
     DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.display.screensize(4)*0.9, [255 255 255]);
     DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);

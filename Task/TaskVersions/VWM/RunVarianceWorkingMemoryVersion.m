@@ -1,6 +1,6 @@
-function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
-%RUNHAMBURGVERSION This function runs the first Hamburg pilot version
-%  of the cannon task.
+function [dataLowNoise, dataHighNoise] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
+%RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version
+%  including variance change points and working memory manipulations
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -21,7 +21,7 @@ function [dataLowNoise, dataHighNoise] = RunHamburgVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/23
+%       12/23
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -62,7 +62,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 5;  % 200;  Hier bitte anpassen
+trialsExp = 200;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -71,13 +71,21 @@ trialsTesting = 20;
 practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
-concentration = [16, 8];
+concentration = [12, 16, 8]; % the first value is the concentration
+% in the versions without variability changepoints. The second and third
+% are for the different variability changepoints.
 
 % Factor that translates concentration into shield size
 shieldFixedSizeFactor = 2;
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
+
+% Variability hazard rate
+hazVar = 0.1;
+
+% Safe trials variance changepoint
+safeVar = 10;
 
 % Number of confetti particles 
 nParticles = 40;
@@ -86,19 +94,19 @@ nParticles = 40;
 confettiStd = 1;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 150];
+blockIndices = [1 3 5 7]; % [1 50 100 150];
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
 
 % Catch-trial probability
-catchTrialProb = 0.1;
+catchTrialProb = 0.1; %0.1;
 
 % Set sentence length
 sentenceLength = 100;
@@ -178,6 +186,8 @@ gParam.showConfettiThreshold = showConfettiThreshold;
 gParam.printTiming = printTiming;
 gParam.concentration = concentration;
 gParam.haz = haz;
+gParam.hazVar = hazVar;
+gParam.safeVar = safeVar;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 
@@ -198,8 +208,9 @@ trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "confetti";
 trialflow.reward = "standard";
-trialflow.shield = "fixed";
+trialflow.shield = "variable";
 trialflow.shieldType = "constant";
+trialflow.input = "mouse"; 
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -385,7 +396,7 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam);
+[dataLowNoise, dataHighNoise] = al_varianceWorkingMemoryConditions(taskParam);
 totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 
 % -----------

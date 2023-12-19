@@ -17,11 +17,11 @@ initRT_Timestamp = 0;
 
 
 % Todo update using trialflow mouse vs. keyboard
-if strcmp(taskParam.gParam.taskType, 'Sleep')
+if strcmp(taskParam.trialflow.input, 'keyboard')
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg')
+elseif strcmp(taskParam.trialflow.input, 'mouse')
     
     % Participant indicates prediction
     press = 0;

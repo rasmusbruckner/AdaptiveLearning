@@ -72,7 +72,6 @@ for i = 1:trial
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp);
    
-
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
         fprintf('RT: %.5f\n', taskData.RT(i))
@@ -95,7 +94,7 @@ for i = 1:trial
     taskData.estErr(i) = al_diff(taskData.distMean(i), taskData.pred(i));
     % todo: compare to memory error in other versions
 
-    % Record hit
+    % Record hit and performance
     if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
         taskData.hit(i) = 1;
         taskData.perf(i) = taskParam.gParam.rewMag;

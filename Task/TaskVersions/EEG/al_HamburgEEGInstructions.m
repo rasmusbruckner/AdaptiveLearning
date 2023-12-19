@@ -55,25 +55,25 @@ for t = 1:nTrials  % determine random colors for each trial
 end
 
 % Introduce cannon
-current_trial = 1;
+currTrial = 1;
 txt = ['Du blickst von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Deine Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
     'Punkt kannst Du angeben, wo auf dem Kreis Du Deinen Eimer platzieren möchten, um das Konfetti zu fangen. Du kannst den Punkt mit der '...
     'Maus steuern.'];
-taskParam = al_introduceCannon(taskParam, taskData, current_trial, txt);
+taskParam = al_introduceCannon(taskParam, taskData, currTrial, txt);
 
 % 3. Introduce confetti
 % ---------------------
 
-current_trial = 2; % update trial number
+currTrial = 2; % update trial number
 txt = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Drücke die linke Maustaste, damit die Konfetti-Kanone schießt.';
-[taskData, taskParam] = al_introduceConfetti(taskParam, taskData, current_trial, txt);
+[taskData, taskParam] = al_introduceConfetti(taskParam, taskData, currTrial, txt);
 
 % 4. Introduce prediction spot and ask participant to catch confetti
 % ------------------------------------------------------------------
 
 % Add tickmarks to introduce them to participant
 taskParam.trialflow.currentTickmarks = 'show';
-current_trial = 3; % update trial number
+currTrial = 3; % update trial number
 
 
 % Repeat as long as subject misses confetti
@@ -81,10 +81,10 @@ while 1
 
     txt=['Der schwarze Strich zeigt Dir die mittlere Position der letzten Konfettiwolke. Der violette Strich zeigt Dir die '...
         'Position Deines letzten Eimers. Steuere den violetten Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücke die linke Maustaste.'];
-    [taskData, taskParam, xyExp, dotSize] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+    [taskData, taskParam, xyExp, dotSize] = al_introduceSpot(taskParam, taskData, currTrial, txt);
 
     % If it is a miss, repeat instruction
-    if abs(taskData.predErr(current_trial)) >= taskParam.gParam.practiceTrialCriterionEstErr
+    if abs(taskData.predErr(currTrial)) >= taskParam.gParam.practiceTrialCriterionEstErr
         header = 'Leider nicht gefangen!';
         txt = 'Du has leider zu wenig Konfetti gefangen. Versuche es noch mal!';
         feedback = false; % indicate that this is the instruction mode
@@ -99,23 +99,23 @@ end
 
 win = true; % color of shield when catch is rewarded
 txt = 'Wenn Du mindestens die Hälfte des Konfettis im Eimer fängst, zählt es als Treffer und Du erhälst eine Belohnung.';
-taskData = al_introduceShield(taskParam, taskData, win, current_trial, txt, xyExp, taskData.dotCol(current_trial).rgb, dotSize);
+taskData = al_introduceShield(taskParam, taskData, win, currTrial, txt, xyExp, taskData.dotCol(currTrial).rgb, dotSize);
 
 % 6. Ask participant to miss confetti
 % -----------------------------------
 
 % Update trial number
-current_trial = 4;
+currTrial = 4;
 
 % Repeat as long as subject catches confetti
 while 1
 
     % Introduce miss with bucket
     txt = 'Versuche nun Deinen Eimer so zu positionieren, dass Du das Konfetti verfehlst. Drücke dann die linke Maustaste.';
-    [taskData, taskParam, xyExp, dotSize] = al_introduceShieldMiss(taskParam, taskData, current_trial, txt);
+    [taskData, taskParam, xyExp, dotSize] = al_introduceShieldMiss(taskParam, taskData, currTrial, txt);
 
     % If it is a hit, repeat instruction
-    if abs(taskData.predErr(current_trial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
+    if abs(taskData.predErr(currTrial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
 
         WaitSecs(0.5)
         header = 'Leider gefangen!';
@@ -132,7 +132,7 @@ end
 % -------------------------------------
 win = true;
 txt = 'In diesem Fall hast Du das Konfetti verfehlt.';
-al_confirmMiss(taskParam, taskData, win, current_trial, txt, xyExp, taskData.dotCol(current_trial).rgb, dotSize);
+al_confirmMiss(taskParam, taskData, win, currTrial, txt, xyExp, taskData.dotCol(currTrial).rgb, dotSize);
 
 % 8. Introduce practice blocks
 % ----------------------------

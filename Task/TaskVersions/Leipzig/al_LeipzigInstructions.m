@@ -58,34 +58,34 @@ taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are 
 taskData.pred(1:nTrials) = nan; % initialize predictions
 
 % Introduce helicopter
-current_trial = 1;
+currTrial = 1;
 txt = ['Sie blicken von oben auf das Gefahrengebiet und den Hubschrauber, der die Medikamente abwirft. Ihre Aufgabe ist es, die Medikamente mit einem Eimer zu fangen. Mit dem violetten '...
     'Punkt können Sie angeben, wo auf dem Kreis Sie Ihren Eimer platzieren möchten, um die Medikamente zu fangen. Sie können den Punkt mit der Maus steuern.'];
-taskParam = al_introduceCannon(taskParam, taskData, current_trial, txt);
+taskParam = al_introduceCannon(taskParam, taskData, currTrial, txt);
 
 % 3. Introduce supply items
 % -------------------------
 
-current_trial = 2; % update trial number
+currTrial = 2; % update trial number
 txt = 'Das Ziel des Hubschraubers wird mit der roten Linie angezeigt. Drücken Sie die linke Maustaste, damit der Hubschrauber die Medikamente abwirft.';
-[taskData, taskParam] = al_introduceHelicopter(taskParam, taskData, current_trial, txt);
+[taskData, taskParam] = al_introduceHelicopter(taskParam, taskData, currTrial, txt);
 
 % 4. Introduce prediction spot and ask participant to catch supplies
 % ------------------------------------------------------------------
 
 % Add tickmarks to introduce them to participant
 taskParam.trialflow.currentTickmarks = 'show';
-current_trial = 3; % update trial number
+currTrial = 3; % update trial number
 
 % Repeat as long as subject misses supply items
 while 1
 
     txt=['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Medikamente. Der violette Strich zeigt Ihnen die '...
         'Position Ihres letzten Eimers. Steuern Sie den violetten Punkt jetzt bitte auf das Ziel des Hubschraubers und drücken Sie die linke Maustaste.'];
-    [taskData, taskParam, xyExp] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+    [taskData, taskParam, xyExp] = al_introduceSpot(taskParam, taskData, currTrial, txt);
 
     % If it is a miss, repeat instruction
-    if abs(taskData.predErr(current_trial)) >= taskParam.gParam.practiceTrialCriterionEstErr
+    if abs(taskData.predErr(currTrial)) >= taskParam.gParam.practiceTrialCriterionEstErr
         header = 'Leider nicht gefangen!';
         txt = 'Sie haben leider zu wenige Medikamente gefangen. Versuchen Sie es noch mal!';
         feedback = false; % indicate that this is the instruction mode
@@ -99,23 +99,23 @@ end
 % -------------------
 
 txt = 'Wenn Sie mindestens die Hälfte der Medikamente im Eimer fangen, zählt es als Rettung und Sie erhalten einen Punkt.';
-taskData = al_introduceHelicopterBucket(taskParam, taskData, current_trial, txt, xyExp);
+taskData = al_introduceHelicopterBucket(taskParam, taskData, currTrial, txt, xyExp);
 
 % 6. Ask participant to miss supplies
 % -----------------------------------
 
 % Update trial number
-current_trial = 4;
+currTrial = 4;
 
 % Repeat as long as subject catches supplies
 while 1
 
     % Introduce miss with bucket
     txt = 'Versuchen Sie nun Ihren Eimer so zu positionieren, dass Sie die Medikamente verfehlen. Drücken Sie dann die linke Maustaste.';
-    [taskData, taskParam, xyExp] = al_introduceShieldMiss(taskParam, taskData, current_trial, txt);
+    [taskData, taskParam, xyExp] = al_introduceShieldMiss(taskParam, taskData, currTrial, txt);
 
     % If it is a hit, repeat instruction
-    if abs(taskData.predErr(current_trial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
+    if abs(taskData.predErr(currTrial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
 
         WaitSecs(0.5)
         header = 'Leider gefangen!';
@@ -131,7 +131,7 @@ end
 % 7. Confirm that outcome was missed
 % -------------------------------------
 txt = 'In diesem Fall haben Sie die Medikamente verfehlt.';
-al_confirmHelicopterMiss(taskParam, taskData, current_trial, txt, xyExp);
+al_confirmHelicopterMiss(taskParam, taskData, currTrial, txt, xyExp);
 
 % 8. Introduce practice blocks
 % ----------------------------

@@ -319,14 +319,14 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             
             % Prediction
             expectedPred = [307; 270; 350; 299; 200; 313; 10; 11; 300; 162; 162; 162; 162; 150; 73; 73; 73; 190; 201; 201];
-            testCase.verifyEqual(dataNoPush_cBal1_day1.pred, expectedPred);
-            testCase.verifyEqual(dataPush_cBal1_day1.pred, expectedPred);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.pred, expectedPred);
-            testCase.verifyEqual(dataPush_cBal2_day1.pred, expectedPred);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.pred, expectedPred);
-            testCase.verifyEqual(dataPush_cBal1_day2.pred, expectedPred);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.pred, expectedPred);
-            testCase.verifyEqual(dataPush_cBal2_day2.pred, expectedPred);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.pred, expectedPred, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.pred, expectedPred, 'AbsTol', 1.e-10);
 
             % Prediction error
             expectedPredErr = [-12; 6; -48; -32; 99; 0; -70; -73; -27; 149; 169; 145; 163; 132; -156; -129; -118; -1;	-7;	-2];
@@ -416,14 +416,14 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             expectedY_Push = repmat([-10, 10], 1,10)';
             expectedY_Push(1) = 0;
             expectedZ_noPush = [0; 307; 270; 350; 299; 200; 313; 10; 11; 300; 162; 162; 162; 162; 150; 73; 73; 73; 190; 201];
-            testCase.verifyEqual(dataNoPush_cBal1_day1.z, expectedZ_noPush);
-            testCase.verifyEqual(dataPush_cBal1_day1.z, expectedY_Push + expectedZ_noPush);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.z, expectedZ_noPush);
-            testCase.verifyEqual(dataPush_cBal2_day1.z, expectedY_Push + expectedZ_noPush);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.z, expectedZ_noPush);
-            testCase.verifyEqual(dataPush_cBal1_day2.z, expectedY_Push + expectedZ_noPush);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.z, expectedZ_noPush);
-            testCase.verifyEqual(dataPush_cBal2_day2.z, expectedY_Push + expectedZ_noPush);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.z, expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.z, expectedY_Push + expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.z, expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.z, expectedY_Push + expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.z, expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.z, expectedY_Push + expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.z, expectedZ_noPush, 'AbsTol', 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.z, expectedY_Push + expectedZ_noPush, 'AbsTol', 1.e-10);
             
             % Push magnitude
             testCase.verifyEqual(dataNoPush_cBal1_day1.y, zeros(20, 1), 'AbsTol', 1.e-10);

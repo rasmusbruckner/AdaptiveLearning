@@ -19,12 +19,12 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 initRT_Timestamp = GetSecs(); % reference value to compute initiation RT
 breakKey = taskParam.keys.enter; % enter required to continue
 
-% Todo update using trialflow mouse vs. keyboard
-if strcmp(taskParam.gParam.taskType, 'Sleep')
+% Use mouse or keyboard depending on trialflow
+if strcmp(taskParam.trialflow.input, 'keyboard')
     
     [~, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt, breakKey);
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'asymReward') || strcmp(taskParam.gParam.taskType, 'HamburgEEG') || strcmp(taskParam.gParam.taskType, 'Leipzig')
+elseif strcmp(taskParam.trialflow.input, 'mouse')
     
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
@@ -34,6 +34,7 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.
     [~, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt, breakKey);
 
 end
+
 WaitSecs(0.1);
 
 end

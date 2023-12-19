@@ -48,35 +48,35 @@ if testDay == 1
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
 
     % Introduce cannon
-    current_trial = 1;
+    currTrial = 1;
     txt = ['Eine Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem violetten '...
         'Punkt können Sie angeben, wo Sie Ihr Schild platzieren möchten, um die Kanonenkugel abzuwehren.\nSie können den Punkt mit den '...
         'grünen und blauen Tasten steuern. Grün können Sie für schnelle Bewegungen und blau für langsame Bewegungen benutzen.'];
-    taskParam = al_introduceCannon(taskParam, taskData, current_trial, txt);
+    taskParam = al_introduceCannon(taskParam, taskData, currTrial, txt);
 
     % 3. Introduce shot of the cannon
     % -------------------------------
 
-    current_trial = 2; % update trial number
+    currTrial = 2; % update trial number
     txt = 'Das Ziel der Kanone wird mit der schwarzen Linie angezeigt. Drücken Sie die Leertaste, damit die Kanone schießt.';
-    [taskData, taskParam] = al_introduceShot(taskParam, taskData, current_trial, txt);
+    [taskData, taskParam] = al_introduceShot(taskParam, taskData, currTrial, txt);
 
     % 4. Introduce prediction spot and ask participant to catch cannonball
     % --------------------------------------------------------------------
 
     % Add tickmarks to introduce them to participant
     taskParam.trialflow.currentTickmarks = 'show';
-    current_trial = 3; % update trial number
+    currTrial = 3; % update trial number
 
     % Repeat as long as subject misses cannonball
     while 1
 
         txt=['Der schwarze Strich zeigt Ihnen die Position der letzten Kugel. Der violette Strich zeigt Ihnen die '...
             'Position Ihres letzten Schildes. Steuern Sie den violetten Punkt jetzt bitte auf das Ziel der Kanone und drücken Sie LEERTASTE.'];
-        [taskData, taskParam] = al_introduceSpot(taskParam, taskData, current_trial, txt);
+        [taskData, taskParam] = al_introduceSpot(taskParam, taskData, currTrial, txt);
 
         % If it is a miss, repeat instruction
-        if abs(taskData.predErr(current_trial)) >= taskParam.gParam.practiceTrialCriterionEstErr
+        if abs(taskData.predErr(currTrial)) >= taskParam.gParam.practiceTrialCriterionEstErr
             header = 'Leider nicht gefangen!';
             txt = 'Sie haben die Kanonenkugel verfehlt. Versuchen Sie es noch mal!';
             feedback = false; % indicate that this is the instruction mode
@@ -92,20 +92,20 @@ if testDay == 1
     win = true; % Color of shield when catch is rewarded
     txt = ['Das Schild erscheint während des Schusses. In diesem Fall haben Sie die Kanonenkugel abgewehrt. '...
         'Wenn mindestens die Hälfte der Kugel auf dem Schild ist, zählt es als Treffer.'];
-    taskData = al_introduceShield(taskParam, taskData, win, current_trial, txt);
+    taskData = al_introduceShield(taskParam, taskData, win, currTrial, txt);
 
     % 6. Ask participant to miss cannonball
     % -------------------------------------
 
     % Update trial number
-    current_trial = 4;
+    currTrial = 4;
 
     % Repeat as long as subject catches cannonball
     while 1
 
         % Introduce miss with shield
         txt = 'Versuchen Sie nun Ihr Schild so zu positionieren, dass Sie die Kanonenkugel verfehlen. Drücken Sie dann die LEERTASTE.';
-        [taskData, taskParam] = al_introduceShieldMiss(taskParam, taskData, current_trial, txt);
+        [taskData, taskParam] = al_introduceShieldMiss(taskParam, taskData, currTrial, txt);
 
         % If it is a hit, repeat instruction
         if abs(taskData.predErr) <= taskParam.gParam.practiceTrialCriterionEstErr
@@ -125,7 +125,7 @@ if testDay == 1
     % -------------------------------------
     win = true;
     txt = 'In diesem Fall haben Sie die Kanonenkugel verfehlt.';
-    al_confirmMiss(taskParam, taskData, win, current_trial, txt);
+    al_confirmMiss(taskParam, taskData, win, currTrial, txt);
 
     % 8. Introduce variability of the cannon
     % --------------------------------------

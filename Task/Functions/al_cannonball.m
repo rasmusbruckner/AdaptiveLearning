@@ -65,10 +65,10 @@ tUpdate = GetSecs - timestamp;
 % Cycle over number of frames to run the animation
 for i = 1:nFrames
 
-    % Todo: Currently only for sleep condition. Add if condition for other
-    % versions based on trialflow
-    Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.backgroundTxt, [], [taskParam.display.backgroundCoords], []);  %[],[]
-
+    % Optionally present background image
+    if isequal(taskParam.trialflow.background, "picture")
+        Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.backgroundTxt, [], [taskParam.display.backgroundCoords], []);
+    end
     % Print background, if desired
     if lineAndBack
         al_lineAndBack(taskParam)
@@ -85,7 +85,7 @@ for i = 1:nFrames
         al_drawCross(taskParam)
     end
 
-    if isequal(taskParam.trialflow.shot, 'animate cannonball')
+    if isequal(taskParam.trialflow.shot, 'animate cannonball') && isequal(taskParam.trialflow.shotAndShield, 'simultaneously')
         al_shield(taskParam, taskData.allASS(trial), taskData.pred(trial), taskData.shieldType(trial))
     else
         al_predictionSpot(taskParam)

@@ -92,7 +92,7 @@ nParticles = 30;
 confettiStd = 3;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -202,6 +202,7 @@ trialflow.currentTickmarks = 'show';
 trialflow.cannonType = "confetti";
 trialflow.reward = "asymmetric";
 trialflow.shieldType = "constant";
+trialflow.input = "mouse";
 
 % ---------------------------------------------
 % Create object instance with cannon parameters

@@ -1,19 +1,20 @@
-function [dataMonetaryReward, dataSocialReward] = RunHamburgEEGVersion(unitTest, cBal, day)
-%RUNHAMBURGEEGVERSION This function runs the EEG version of the confetti-cannon task
+function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal, day)
+%RUNHAMBURGVERSION This function runs the first Hamburg pilot version
+%  of the cannon task.
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
-%       day: Current test day (only allowed when running unit test)
+%       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataMonetaryReward: Task-data object monetary-reward condition
-%       dataSocialReward: Task-data object social-reward condition
+%       dataLowNoise: Task-data object low-noise condition
+%       dataHighNoise: Task-data object high-noise condition
 %
 %   Documentation
-%       This function runs the EEG version of the confetti-cannon task.
+%       This function runs the Hamburg pilot version of the cannon task.
 %       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there is a monetary and a social condition.
+%       Currently, there are two different noise conditions.
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
@@ -22,11 +23,12 @@ function [dataMonetaryReward, dataSocialReward] = RunHamburgEEGVersion(unitTest,
 %   Last updated
 %       09/23
 
-
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;
 end
+
+KbName('UnifyKeyNames')
 
 % Check optional input related to unit test
 % -----------------------------------------
@@ -69,31 +71,28 @@ trialsTesting = 20;
 practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
-concentration = 12;
+concentration = [16, 8];
 
 % Factor that translates concentration into shield size
-% shieldFixedSizeFactor = 2;
+shieldFixedSizeFactor = 2;
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 100;
+nParticles = 40;
 
 % Confetti standard deviations
-confettiStd = 1;  % Todo: the confetti EEG "dot" is not yet generated using this setting
-
-% Start-up budget in Euros
-startingBudget = 20;
+confettiStd = 1;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 150];
+blockIndices = [1 3 5 7]; % [1 51 101 151]
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -109,7 +108,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440]; %[1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -132,7 +131,7 @@ enter = 37; % Hamburg: Hier bitte anpassen
 % kbDev = 19;
 
 % Run task in debug mode with smaller window
-debug = false;
+debug = true;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -146,17 +145,11 @@ hidePtbCursor = true;
 % Reward magnitude
 rewMag = 0.1;
 
-% Send EEG trigge in this case
-sendTrigger = false;  % In Hamburg bitte auf true setzten  
-sampleRate = 500;  % hier ggf. anpassen
-port = hex2dec('E050');  % hier ggf. anpassen
-  
 % Specify data directory
 dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
-socialFeedbackRect = [0 0 562 762]/4;
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -170,7 +163,7 @@ end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'HamburgEEG';
+gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -186,7 +179,6 @@ gParam.printTiming = printTiming;
 gParam.concentration = concentration;
 gParam.haz = haz;
 gParam.rewMag = rewMag;
-gParam.sendTrigger = sendTrigger;
 gParam.dataDirectory = dataDirectory;
 
 % Save directory
@@ -204,10 +196,11 @@ trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
-trialflow.cannonType = 'confetti';
-trialflow.reward = 'standard';
-trialflow.shieldType = 'constant';
-trialflow.input = "mouse";
+trialflow.cannonType = "confetti";
+trialflow.reward = "standard";
+trialflow.shield = "fixed";
+trialflow.shieldType = "constant";
+trialflow.input = "mouse"; 
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -229,10 +222,9 @@ colors = al_colors();
 % Create object instance with key parameters
 % ------------------------------------------
 
- % Check the keyboard device, which is necessary on some Macs
 keys = al_keys();
-if ~exist('kbDev')
-  keys = al_kbdev(keys);
+if ~exist( 'kbDev' )
+  keys = al_kbdev( keys );
 else
   keys.kbDev = kbDev;
 end
@@ -247,12 +239,8 @@ keys.enter = enter;
 % Create object instance with timing parameters
 % ---------------------------------------------
 
-% Ensure this is properly documented in al_confettiEEGLoop
 timingParam = al_timing();
-timingParam.fixCrossLength = 1; 
-timingParam.outcomeLength = 0.5;
-timingParam.shieldLength = 0.5;
-timingParam.rewardLength = 1.0;
+timingParam.cannonBallAnimation = 1.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -332,9 +320,6 @@ else
     subject.checkTestDay();
 end
 
-% Add starting bugdet
-subject.startingBudget = startingBudget;
-
 % ------------------
 % Display properties
 % ------------------
@@ -350,7 +335,6 @@ display = al_display();
 display.screensize = screensize;
 display.backgroundCol = [66, 66, 66];
 display.imageRect = imageRect;
-display.socialFeedbackRect = socialFeedbackRect;
 
 % Open psychtoolbox window
 display = display.openWindow(gParam);
@@ -375,17 +359,8 @@ circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-% circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
-circle.outcSize = 5;
+circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
 circle = circle.compute_circle_props();
-
-% ----------------------------------------------
-% Create object instance with trigger parameters
-% ----------------------------------------------
-
-triggers = al_triggers();
-triggers.sampleRate = sampleRate;
-triggers.port = port;
 
 % ---------------------------------------
 % Put all object instances in task object
@@ -406,21 +381,20 @@ taskParam.timingParam = timingParam;
 taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
-taskParam.triggers = triggers;
 
 % --------
 % Run task
 % --------
 
-[dataMonetaryReward, dataSocialReward] = al_HamburgEEGConditions(taskParam);
-totWin = sum(dataMonetaryReward.hit) + sum(dataMonetaryReward.hit);
+[dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam);
+totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 
 % -----------
 % End of task
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = 'Vielen Dank für Deine Teilnahme! Wir hoffen, es hat Dir gefallen.';
+txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 

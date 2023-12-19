@@ -1,68 +1,44 @@
 function taskData = al_introduceShield(taskParam, taskData, win, trial, txt, xyExp, dotCol, dotSize)
 %AL_INTRODUCESHIELD This function introduces the shield to participants
 %
-%   Input 
+%   Input
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
 %       win: Determines color of shield
 %       trial: Current trial number
 %       txt: Presented text
+%       xyExp: Optional confetti-particles (location)
+%       dotCol: Optional confetti-particles (color)
+%       dotSize: Optional confetti-particles (size)
 %
 %   Output
 %       taskData: Task-data-object instance
 
 
-% todo: check what can be deleted for other verisions. for sleep
-% not necessary anymore
+% If shield and shot presented separately, show fixation cross first
+if isequal(taskParam.trialflow.shotAndShield, 'separately')
+    al_lineAndBack(taskParam)
+    al_drawCircle(taskParam)
+    al_drawCross(taskParam)
 
-% if isequal(taskParam.trialflow.shotAndShield, 'sequential')
-%     outcome = taskData.distMean(trial);
-%     al_lineAndBack(taskParam)
-%     al_drawCircle(taskParam);
-%     if isequal(taskParam.gParam.taskType, 'chinese')
-%         currentContext = 1;
-%         al_drawContext(taskParam, currentContext)
-%     end
-%     al_drawCross(taskParam);
-%     al_predictionSpot(taskParam);
-%     al_drawOutcome(taskParam, outcome);
-%     al_drawCannon(taskParam, taskData.distMean(trial), 0)
-%     Screen('DrawingFinished', taskParam.display.window.onScreen);
-%     t = GetSecs;
-%     Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
-% else
-     tUpdated = GetSecs;
-%     outcome = taskData.distMean(trial);
-% end
-% 
-% if isequal(taskParam.trialflow.shotAndShield, 'sequential')
-% 
-% al_lineAndBack(taskParam)
-% if isequal(taskParam.gParam.taskType, 'chinese')
-%     currentContext = 1;
-%     al_drawContext(taskParam, currentContext)
-% end
-% al_drawCross(taskParam)
-% al_drawCircle(taskParam)
-% Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-% Screen('Flip', taskParam.display.window.onScreen, t + 0.6, 1);
-% end 
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
+    tUpdated = GetSecs;
+    Screen('Flip', taskParam.display.window.onScreen, tUpdated +0.5);
+end
+
+% Time stamp
+tUpdated = GetSecs();
 
 % Repeat until participant presses Enter
 while 1
-    
+
     % Print background, cannon, and circle
     al_lineAndBack(taskParam)
     al_drawCannon(taskParam, taskData.distMean(trial))
     al_drawCircle(taskParam)
-    % todo: use trialflow
-    if isequal(taskParam.gParam.taskType, 'chinese')
-        currentContext = 1;
-        al_drawContext(taskParam, currentContext)
-        al_drawCross(taskParam);
-    end
 
-    % XX
+    % Present different shield types
     if (taskParam.subject.rew == 1 && win) || (taskParam.subject.rew == 2 && ~win)
         al_shield(taskParam, 20, taskData.pred(trial), 1)
     elseif (taskParam.subject.rew == 2 && win) || (taskParam.subject.rew == 1 && ~win)
@@ -70,12 +46,12 @@ while 1
     else
         al_shield(taskParam, taskData.allASS(trial), taskData.pred(trial), 1)
     end
-    
+
     if ~exist('xyExp', 'var') && ~exist('dotCol', 'var') && ~exist('dotSize', 'var')
-    
-        % Added this 21.06.22
-        outcome = taskData.distMean(trial);  
-        al_drawOutcome(taskParam, outcome) 
+        
+        % Present outcome 
+        outcome = taskData.distMean(trial);
+        al_drawOutcome(taskParam, outcome)
 
     elseif exist('xyExp', 'var') && exist('dotCol', 'var') && exist('dotSize', 'var')
 
@@ -83,19 +59,19 @@ while 1
         Screen('DrawDots', taskParam.display.window.onScreen, round(xyExp), dotSize, dotCol, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
     end
 
-    % Present instructions
+    % Show text
     DrawFormattedText(taskParam.display.window.onScreen, txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);
     DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.display.screensize(4)*0.9, [255 255 255]);
-    
+
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-    Screen('Flip', taskParam.display.window.onScreen, tUpdated + 1.6);
-    
+    Screen('Flip', taskParam.display.window.onScreen, tUpdated +0.5);% 1.6
+
     % Terminate when subject presses enter
     [keyIsDown, ~, keyCode ] = KbCheck( taskParam.keys.kbDev );
     if keyIsDown
         if keyCode(taskParam.keys.enter)
-            break    
+            break
         end
     end
 end

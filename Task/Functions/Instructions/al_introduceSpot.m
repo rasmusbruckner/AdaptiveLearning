@@ -35,8 +35,7 @@ WaitSecs(0.5);
 % Reference value to compute initiation RT
 initRT_Timestamp = GetSecs();
 
-% Todo update using trialflow mouse vs. keyboard
-if strcmp(taskParam.gParam.taskType, 'Sleep')
+if strcmp(taskParam.trialflow.input, 'keyboard')
 
     % Show cannon and instructions
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
@@ -62,8 +61,8 @@ if strcmp(taskParam.gParam.taskType, 'Sleep')
     varargout{1} = taskData;
     varargout{2} = taskParam;
 
-    % Todo: more shared code across these versions.
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.taskType, 'asymReward') || strcmp(taskParam.gParam.taskType, 'HamburgEEG')
+elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.cannonType, "confetti")
+
     
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
@@ -89,7 +88,8 @@ elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || isequal(taskParam.gParam.
     varargout{3} = xyExp;
     varargout{4} = dotSize;
 
-elseif strcmp(taskParam.gParam.taskType, 'Leipzig')
+elseif strcmp(taskParam.gParam.taskType, 'Leipzig') && strcmp(taskParam.trialflow.cannonType, "helicopter")
+
 
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,

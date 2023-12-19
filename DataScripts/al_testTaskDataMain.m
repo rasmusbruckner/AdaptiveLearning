@@ -323,6 +323,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % Block 1
             % -------
             currTrial = 10;
+            taskData.block(currTrial-1) = 1;
             block = taskData.indicateBlock(taskParam, currTrial);
 
             % Test outcome
@@ -331,6 +332,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % Block 2
             % -------
             currTrial = 60;
+            taskData.block(currTrial-1) = 2;
             block = taskData.indicateBlock(taskParam, currTrial);
 
             % Test outcome
@@ -339,6 +341,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % Block 3
             % -------
             currTrial = 120;
+            taskData.block(currTrial-1) = 3;
             block = taskData.indicateBlock(taskParam, currTrial);
 
             % Test outcome
@@ -347,9 +350,10 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % Block 4
             % -------
             currTrial = 199;
+            taskData.block(currTrial-1) = 4;
+            block = taskData.indicateBlock(taskParam, currTrial);
 
             % Test outcome
-            block = taskData.indicateBlock(taskParam, currTrial);
             testCase.verifyEqual(block, 4);
 
         end

@@ -43,7 +43,7 @@ classdef al_unittests < matlab.unittest.TestCase
             %negative result is expected
             
             % Apply diff function and test output
-            diff=al_diff(0, 1);
+            diff = al_diff(0, 1);
             testCase.verifyEqual(diff,-1)
         end
         
@@ -52,7 +52,7 @@ classdef al_unittests < matlab.unittest.TestCase
             %positive result is expected
             
             % Apply diff function and test output
-            diff=al_diff(60, 10);
+            diff = al_diff(60, 10);
             testCase.verifyEqual(diff, 50, 'AbsTol', 0.01)
         end
         
@@ -62,7 +62,7 @@ classdef al_unittests < matlab.unittest.TestCase
             %smaller than 180 degrees
             
             % Apply diff function and test output
-            diff=al_diff(181, 0);
+            diff = al_diff(181, 0);
             testCase.verifyEqual(diff, -179)
         end
         
@@ -72,18 +72,21 @@ classdef al_unittests < matlab.unittest.TestCase
             %smaller than 180 degrees
             
             % Apply diff function and test output
-            diff=al_diff(0, 181);
+            diff = al_diff(0, 181);
             testCase.verifyEqual(diff, 179)
         end
         
         function testOutcome_normal(testCase)
             %TEST_OUTCOME_NORMAL  This function tests the outcome function
             
+            % TaskData-object instance
+            taskData = al_taskDataMain(200);
+            
             % Control random number generator
             rng('default')
             
             % Sample outcome and test output
-            outcome = al_sampleOutcome(10, 8);
+            outcome = taskData.sampleOutcome(10, 8);
             testCase.verifyEqual(outcome, 19)
         end
         
@@ -91,11 +94,14 @@ classdef al_unittests < matlab.unittest.TestCase
             %TEST_OUTCOME_RIGHT_SIDE  This function tests the outcome function
             % when the mean is on the left but outcome appears on the right
             
+             % TaskData-object instance
+            taskData = al_taskDataMain(200);
+
             % Control random number generator
             rng('default')
             
             % Sample outcome and test output
-            outcome = al_sampleOutcome(358, 8);
+            outcome = taskData.sampleOutcome(358, 8);
             testCase.verifyEqual(outcome, 7)
         end
         
@@ -103,11 +109,14 @@ classdef al_unittests < matlab.unittest.TestCase
             %TEST_OUTCOME_LEFT_SIDE  This function tests the outcome function
             % when the mean is zero and outcome appears on the left
             
+             % TaskData-object instance
+            taskData = al_taskDataMain(200);
+
             % Control random number generator
             rng(1)
             
             % Sample outcome and test output
-            outcome = al_sampleOutcome(0, 8);
+            outcome = taskData.sampleOutcome(0, 8);
             testCase.verifyEqual(outcome, 345)
         end
     end

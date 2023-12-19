@@ -38,7 +38,8 @@ WaitSecs(0.5);
 initRT_Timestamp = GetSecs(); % reference value to compute initiation RT
 
 % Todo update using trialflow mouse vs. keyboard
-if strcmp(taskParam.gParam.taskType, 'Sleep')
+% and explosion only optionally
+if strcmp(taskParam.gParam.taskType, 'Sleep') || strcmp(taskParam.gParam.taskType, 'dresden')
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
     

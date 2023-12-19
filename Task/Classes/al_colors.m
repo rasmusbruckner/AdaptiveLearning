@@ -21,6 +21,8 @@ classdef al_colors
         gray
         background % background color
         lineAndBack % color for lineAndBack function
+        winColor
+        neutralColor
         
     end
     
@@ -44,6 +46,9 @@ classdef al_colors
             colorsobj.gray = [66 66 66];
             colorsobj.background = 'gray';
             colorsobj.lineAndBack = 'blue';
+            colorsobj.winColor = colorsobj.blue;
+            colorsobj.neutralColor = colorsobj.green;
+
         end
     end
 end

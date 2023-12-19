@@ -1,40 +1,19 @@
 function al_shield(taskParam, allASS, pred, color)
-%AL_SHIELD   This function draws the shield in the cannon task
+%AL_SHIELD This function draws the shield in the cannon task
 %
 %   Input
-%       taskParam: structure containing task parameters
-%       allASS: all angular shield size
-%       pred: current prediction
-%       color: color of printed shield
+%       taskParam: Task-parameter-object instance
+%       allASS: All angular shield size
+%       pred: Current prediction
+%       color: Color of displayed shield
 %
-%   Output 
-%       ~ 
+%   Output
+%       None
 
-% todo: implement trialflow
-
-if isequal(taskParam.gParam.taskType, 'dresden')
-    
-    % For Dresden version use gold and silver
-    % --------------------------------------
-    if color == 1
-        shieldColor = taskParam.colors.gold;
-    elseif color == 0
-        shieldColor = taskParam.colors.silver;
-    end
-elseif isequal(taskParam.gParam.taskType, 'chinese')
-
-    % For Chinese version use black
-    % -----------------------------
-    shieldColor = taskParam.colors.black;
-else
-
-    % For all other versions, use blue and green
-    % ------------------------------------------
-    if color == 1
-        shieldColor = taskParam.colors.blue;
-    elseif color == 0
-        shieldColor = taskParam.colors.green;
-    end
+if color == 1
+    shieldColor = taskParam.colors.winColor;
+elseif color == 0
+    shieldColor = taskParam.colors.neutralColor;
 end
 
 
