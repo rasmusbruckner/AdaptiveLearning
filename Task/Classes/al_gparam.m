@@ -125,6 +125,9 @@ classdef al_gparam
         % Data directory to save data
         dataDirectory
 
+        % Indicates if experiment takes place in scanner
+        scanner
+
         % Critical distance between enemies in chinese version
        % critDist
 
@@ -207,6 +210,7 @@ classdef al_gparam
             gparamobj.printTiming = false;
             gparamobj.runIntro = nan;
             gparamobj.dataDirectory = nan;  
+            gparamobj.scanner = false;
             %gparamobj.critDist = nan; 
             %gparamobj.chinesePractTrials = nan; 
             %gparamobj.nPlanets = 1;

@@ -62,7 +62,7 @@ classdef al_keys
                 end
             end
             
-            if numel( kbdevs > 1 )
+            if numel(kbdevs > 1)
               keysobj.kbDev = -1; % "merge" all keyboard in KbCheck
             else
               keysobj.kbDev = kbdevs;

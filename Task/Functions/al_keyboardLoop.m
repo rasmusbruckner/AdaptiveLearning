@@ -47,6 +47,10 @@ end
 % 2. Update prediction spot until prediction is confirmed
 % -------------------------------------------------------
 
+RestrictKeysForKbCheck([taskParam.keys.rightKey taskParam.keys.leftKey 52]);
+KbQueueCreate
+KbQueueStart
+
 while 1
 
     % If no text as input, assume we're in the main task and just present
@@ -104,5 +108,10 @@ while 1
     end
 
 end
+
+KbQueueStop
+RestrictKeysForKbCheck([]);
+
+
 end
 

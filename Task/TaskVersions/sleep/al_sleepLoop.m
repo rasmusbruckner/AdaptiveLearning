@@ -28,6 +28,39 @@ function taskData = al_sleepLoop(taskParam, condition, taskData, trial)
 % Wait until keys released
 KbReleaseWait();
 
+if taskParam.gParam.scanner 
+    n_Vols = 0;
+    s.SkipVolumesNumber = 10; 
+    s.TriggerButton = KbName('t'); % 116
+    %%%%%%%%%%% Hans code
+    % check only for MR trigger
+    DisableKeysForKbCheck([]);
+    RestrictKeysForKbCheck(s.TriggerButton);
+    % Loop as long as volumes should be skipped
+    %while n_Vols<s.SkipVolumesNumber
+    keyIsDown = 0;
+    % check for MR trigger. For example letter "t"
+    while keyIsDown == 0
+        [keyIsDown, t_Vol, ~] = KbCheck;
+        %if n_Vols == 1
+       % first_trigger = t_Vol;
+        %end
+    end
+    n_Vols=n_Vols+1;
+   % end
+    %TimeStart = first_trigger;
+    DisableKeysForKbCheck([]);
+    RestrictKeysForKbCheck([]);
+
+    % rasmus: das hier quasi als timestamp bei mr-onset?
+    taskParam.timingParam.ref = t_Vol; %denke ich
+
+
+end
+
+%%%%%%%%%%%%%%
+
+
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');

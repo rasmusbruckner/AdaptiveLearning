@@ -13,6 +13,8 @@ function [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam
 %       taskData: Task-parameter-object instance
 %       taskParam: Task-data-object instance
 
+
+
 % Initialize variable indicating if response loop is terminated or not
 breakLoop = false;
 
@@ -24,7 +26,16 @@ breakLoop = false;
 
 % For unit test: simulate keyIsDown, keyCode, and record RT
 if ~taskParam.unitTest
-    [keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
+    %[keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
+    %[keyIsDown, ~, keyCode] = KbCheck();
+    % 50 = taste links gedrück und 54 losgelassen
+    % 51 = taste rechts und 55 losgelassen
+    [keyIsDown, firstPress, ~, ~, ~]=KbQueueCheck();
+    if keyIsDown
+        keyCode = zeros(1, 256);
+        keyCode(find(firstPress,1)) = 1;
+    end
+
 else
     WaitSecs(0.5); % simulate RT = 0.5
     keyIsDown = 1;

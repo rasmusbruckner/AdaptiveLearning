@@ -132,7 +132,7 @@ classdef al_display
             % screenNumbers=Screen('Screens', 2);
             % Open psychtoolbox window
             if gParam.debug == true
-                [displayobj.window.onScreen, displayobj.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, displayobj.backgroundCol, [1920 0 1920+1920 1080]); % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
+                [displayobj.window.onScreen, displayobj.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, displayobj.backgroundCol, [0 0 600 400]);%[1920 0 1920+1920 1080] % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
             else
                 [displayobj.window.onScreen, displayobj.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, displayobj.backgroundCol, displayobj.screensize); % []% displayobj.screensize% [] %  1    1    2560    1440  1    1    2560 1440 1707.6    9602560x1440   66 66 66
             end
