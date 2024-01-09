@@ -98,7 +98,7 @@ runIntro = false;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 999];  % 2 breaks in pilot session
+blockIndices = [1 51 101 999];  % 2 breaks in pilot session
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;

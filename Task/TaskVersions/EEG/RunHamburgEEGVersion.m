@@ -20,7 +20,9 @@ function [dataMonetaryReward, dataSocialReward] = RunHamburgEEGVersion(unitTest,
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/23
+%       01/24
+
+% Todo: remuneration
 
 
 % Check if unit test is requested
@@ -60,7 +62,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 5;  % 200;  Hier bitte anpassen
+trialsExp = 10;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -93,7 +95,7 @@ runIntro = false;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 50 100 150];
+blockIndices = [1 4 7 150];
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -412,7 +414,9 @@ taskParam.triggers = triggers;
 % Run task
 % --------
 
-[dataMonetaryReward, dataSocialReward] = al_HamburgEEGConditions(taskParam);
+[dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_HamburgEEGConditions(taskParam);
+
+% Tode: determine payment
 totWin = sum(dataMonetaryReward.hit) + sum(dataMonetaryReward.hit);
 
 % -----------

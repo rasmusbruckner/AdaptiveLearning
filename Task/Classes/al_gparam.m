@@ -127,6 +127,9 @@ classdef al_gparam
 
         % Indicates if experiment takes place in scanner
         scanner
+        
+        % Name of output file
+        saveName 
 
         % Critical distance between enemies in chinese version
        % critDist
@@ -211,6 +214,7 @@ classdef al_gparam
             gparamobj.runIntro = nan;
             gparamobj.dataDirectory = nan;  
             gparamobj.scanner = false;
+            gparamobj.saveName = 'standard';
             %gparamobj.critDist = nan; 
             %gparamobj.chinesePractTrials = nan; 
             %gparamobj.nPlanets = 1;

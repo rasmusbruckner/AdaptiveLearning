@@ -131,7 +131,7 @@ enter = 37; % Hamburg: Hier bitte anpassen
 % kbDev = 19;
 
 % Run task in debug mode with smaller window
-debug = true;
+debug = false;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;

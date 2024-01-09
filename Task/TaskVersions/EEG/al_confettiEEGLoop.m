@@ -43,9 +43,6 @@ for i = 1:trial
     
     % 1. Trial phase: Trial Onset
     % ---------------------------
-
-    % Manage breaks
-    taskParam = al_takeBreak(taskParam, taskData, i);
     
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
@@ -78,20 +75,21 @@ for i = 1:trial
     % -------------------------------------
 
     % Send trial-onset trigger
-    taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'onset'); % this is the trial onset trigger
+    taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'onset', true);
     taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Reset mouse to screen center
-    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
+    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen)
 
     % Participant indicates prediction
     [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
 
-    % send fixation cross 1 trigger
+    % Send fixation cross 1/prediction trigger
     % todo: this should be done in mouse loop, like I did for keyboardLoop
-    taskData.triggers(i,2) = al_sendTrigger(taskParam, taskData, condition, i, 'response'); % this is the prediction / fixation 1 trigger
+    taskData.triggers(i,2) = al_sendTrigger(taskParam, taskData, condition, i, 'response', true);
     taskData.timestampPrediction(i) = GetSecs - taskParam.timingParam.ref;
 
+    % Print timing
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
         fprintf('RT: %.5f\n', taskData.RT(i))
@@ -119,11 +117,13 @@ for i = 1:trial
         taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
 
-    % Performance depends on hit vs miss
-    if taskData.hit(i) == 1
+    % Performance depends on hit vs miss and condition
+    if taskData.hit(i) == 1 && isequal(taskParam.trialflow.reward, 'monetaryReward')
         taskData.perf(i) = taskParam.gParam.rewMag;
-    else
+    elseif taskData.hit(i) == 0 && isequal(taskParam.trialflow.reward, 'monetaryPunishment')
         taskData.perf(i) = -1*taskParam.gParam.rewMag;
+    else 
+        taskData.perf(i) = 0;
     end
 
     % Accumulated performance
@@ -132,8 +132,10 @@ for i = 1:trial
     % 3. Trial phase: Fixation cross 1
     % --------------------------------
 
+    % Draw circle
     al_drawCircle(taskParam)
-
+    
+    % Cannon optionally
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
     else
@@ -144,6 +146,7 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
+    
     % Extract current time and determine when screen should be flipped
     % for accurate timing
     timestamp = GetSecs + 0.01;
@@ -172,15 +175,13 @@ for i = 1:trial
     
     % Extract current time and determine when screen should be flipped
     % for accurate timing
-    % timestamp = GetSecs;
-    timestamp = timestamp + 0.5;
-    % timestamp = timestamp + taskParam.timingParam.cannonBallAnimation;
+    timestamp = timestamp + taskParam.timingParam.outcomeLength; 
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
     
-    taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'outcome'); % this is the PE
+    % Send outcome trigger
+    taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'outcome', true);
     
     if taskParam.gParam.printTiming
-        %fixCrossTiming = GetSecs() - taskParam.timingParam.ref;
         taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
         fprintf('Fix-cross 1 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampPrediction(i))
     end
@@ -194,7 +195,6 @@ for i = 1:trial
         al_drawContext(taskParam, taskData.currentContext(i))
         al_drawCross(taskParam)
     end
-    Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
 
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
@@ -204,18 +204,18 @@ for i = 1:trial
         al_drawCross(taskParam)
     end
 
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
     timestamp = timestamp + taskParam.timingParam.outcomeLength;
     Screen('Flip', taskParam.display.window.onScreen, timestamp, 1);
-    taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix'); % this is the 2nd fixation
+    
+    % Send fixation cross 2 trigger
+    taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix', true);
     
     if taskParam.gParam.printTiming
-        %shotTiming = GetSecs() - taskParam.timingParam.ref;
         taskData.timestampOutcome(i) = GetSecs() - taskParam.timingParam.ref;
         fprintf('Shot duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross2(i))
     end
-
-    % Send fixation cross 2 trigger
-    % taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 4);
 
     % 6. Trial phase: Shield
     % ----------------------
@@ -231,6 +231,7 @@ for i = 1:trial
     % Draw circle and confetti cloud
     al_drawCircle(taskParam)
 
+    % Draw shield
     al_shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
 
     % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
@@ -240,10 +241,11 @@ for i = 1:trial
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     timestamp = timestamp + taskParam.timingParam.fixCrossLength;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'shield'); % this is the shield trigger
+    
+    % Send shield trigger
+    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'shield', true);
 
     if taskParam.gParam.printTiming
-        %fixCrossTiming = GetSecs - taskParam.timingParam.ref;
         taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
         fprintf('Fix-cross 2 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
     end
@@ -266,67 +268,80 @@ for i = 1:trial
         al_drawCross(taskParam)
     end
 
-    %Screen('Flip', taskParam.gParam.window.onScreen, t + 1.1, 1);
+    % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-
     timestamp = timestamp + taskParam.timingParam.shieldLength;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix'); % this is fixation 3
+    
+    % Send fixation cross 3 trigger
+    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix', true);
 
     if taskParam.gParam.printTiming
-        % shieldTiming = GetSecs() - taskParam.timingParam.ref;
         taskData.timestampShield(i) = GetSecs() - taskParam.timingParam.ref;
         fprintf('Shield duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross2(i))
     end
 
     % 8. Trial phase: Reward
     % ----------------------
-
+    
+    % Extract screen center
     zero = taskParam.display.zero;
+    
+    % Monetary-reward condition
+    if isequal(taskParam.trialflow.reward, 'monetaryReward') && taskData.hit(i)
 
-    if isequal(taskParam.trialflow.reward, 'social')
+        txt = sprintf('<color=32CD32>Gewinn: +%.1f Euro\n<color=ffffff>Total: %.1f Euro', taskData.perf(i), taskData.accPerf(i));
+        DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
+    
+    % Monetary-punishment condition
+    elseif isequal(taskParam.trialflow.reward, 'monetaryPunishment') && ~taskData.hit(i)
 
-        if taskData.hit(i)
+        txt = sprintf('<color=ff0000>Gewinn: %.1f Euro\n<color=ffffff>Total: %.1f Euro', taskData.perf(i), taskData.accPerf(i));
+        DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
 
-            % Display reward feedback
+    % Social-reward condition
+    elseif isequal(taskParam.trialflow.reward, 'socialReward') && taskData.hit(i)
+
             txt = 'Super!';
             DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', taskParam.display.screensize(4)*.35, 'xalign','center','yalign','center');
 
             r = randi([1,taskParam.display.nHas]);
-            Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialHasTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);  %  taskParam.display.dstRect taskData.distMean(i)
-        else
-
-            % Display reward feedback
+            Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialHasTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);
+        
+    % Social-punishment condition
+    elseif isequal(taskParam.trialflow.reward, 'socialPunishment') && ~taskData.hit(i)
+    
             txt = 'Schlecht!';
             DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', taskParam.display.screensize(4)*.35, 'xalign','center','yalign','center');
 
             r = randi([1,taskParam.display.nDis]);
-            Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialDisTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);  %  taskParam.display.dstRect taskData.distMean(i)
-        end
-
+            Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialDisTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);
+   
     else
+        
+        % If not feedback is shown, show circle
+        al_drawCross(taskParam)
+        al_drawCircle(taskParam)
 
-        if taskData.hit(i)
-            % Display reward feedback
-            txt = sprintf('<color=32CD32>Gewinn: +%.1f Euro\n<color=000000>Total: %.1f Euro', taskData.perf(i), taskData.accPerf(i));
-            DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
-
+        % Optionally, show cannon
+        if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+            al_drawCannon(taskParam, taskData.distMean(i))
         else
-            % Display reward feedback
-            txt = sprintf('<color=ff0000>Gewinn: %.1f Euro\n<color=000000>Total: %.1f Euro', taskData.perf(i), taskData.accPerf(i));
-            DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
-
+            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+            Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+            al_drawCross(taskParam)
         end
-
     end
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     timestamp = timestamp + taskParam.timingParam.fixCrossLength;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'reward'); % this is reward
+    
+    % Send reward trigger
+    taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'reward', true);
 
-
+    % Print timing
     if taskParam.gParam.printTiming
         taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
         fprintf('Fix-cross 3 duration: %.5f\n', taskData.timestampFixCross3(i) - taskData.timestampShield(i))
@@ -350,8 +365,11 @@ for i = 1:trial
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     timestamp = timestamp + taskParam.timingParam.rewardLength;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'fix'); % this is fix cross ITI
+    
+    % Send fixation cross ITI trigger
+    taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'fix', true); 
 
+    % Print timing
     if taskParam.gParam.printTiming
         %rewardTiming = GetSecs - taskParam.timingParam.ref;
         taskData.timestampReward(i) = GetSecs - taskParam.timingParam.ref;
@@ -363,10 +381,12 @@ for i = 1:trial
 
     % Reward timestamp
     if taskParam.gParam.printTiming
-        %taskData.timestamp(i) = GetSecs - taskParam.timingParam.ref;
         taskData.timestampOffset(i) = GetSecs - taskParam.timingParam.ref;
         fprintf('Fix-cross ITI duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampReward(i))
     end
+
+    % Manage breaks
+    taskParam = al_takeBreak(taskParam, taskData, i, false);
    
 end
 
@@ -389,8 +409,15 @@ if ~taskParam.unitTest
         % todo: do we want to save practice?
         concentration = unique(taskData.concentration);
         savename = sprintf('confetti_EEG_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+        
+        
+        checkString = dir([savename '*']);            
+        fileNames = {checkString.name};            
+        if  ~isempty(fileNames)
+            savename = [savename '_new'];
+        end
         save(savename, 'taskData')
-
+        
         % Wait until keys released
         KbReleaseWait();
     end

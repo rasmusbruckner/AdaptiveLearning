@@ -1,13 +1,15 @@
-function [dataMonetaryReward, dataSocialReward] = al_HamburgEEGConditions(taskParam)
-%AL_HAMBURGEEGCONDITIONS This function runs the changepoint condition of
-%the EEG confetti-cannon task
+function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_HamburgEEGConditions(taskParam)
+%AL_HAMBURGEEGCONDITIONS This function runs the monetary and social
+% conditions of the EEG confetti-cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %
 %   Output
 %       dataMonetaryReward: Task-data object monetary-reward condition
+%       dataMonetaryPunishment: Task-data object monetary-punishment condition
 %       dataSocialReward: Task-data object social-reward condition
+%       dataSocialPunishment: Task-data object social-punishment condition
 %
 %  Todo: Write a unit test and integration test
 
@@ -36,18 +38,67 @@ end
 % 2. Main task
 % ------------
 
-% Note that days and cBal are not yet implemented.
-% Will probably be done after first pilot
 
 % Extract number of trials
 trial = taskParam.gParam.trials;
 
+% Counterbalancing
+% ----------------
+
+% cBal = 1: ABCD
+% 1) Monetary reward
+% 2) Monetary punishment
+% 3) Social reward
+% 4) Social punishment
+
+% cBal = 2: ABDC
+% 1) Monetary reward
+% 2) Monetary punishment
+% 3) Social punishment
+% 4) Social reward
+%
+% cBal = 3: BACD
+% 1) Monetary punishment
+% 2) Monetary reward
+% 3) Social reward
+% 4) Social punishment 
+%
+% cBal = 4: BADC
+% 1) Monetary punishment
+% 2) Monetary reward
+% 3) Social punishment
+% 4) Social reward
+
+% cBal = 5: CDAB
+% 1) Social reward
+% 2) Social punishment
+% 3) Monetary reward
+% 4) Monetary punishment
+
+% cBal = 6: CDBA
+% 1) Social reward
+% 2) Social punishment
+% 3) Monetary punishment
+% 4) Monetary reward
+
+% cBal = 7: DCAB
+% 1) Social punishment 
+% 2) Social reward
+% 3) Monetary reward
+% 4) Monetary punishment
+%
+% cBal = 8: DCBA
+% 1) Social punishment
+% 2) Social reward
+% 3) Monetary punishment
+% 4) Monetary reward
+
 if cBal == 1
 
-    % Monetary reward first...
-    % ------------------------
+    % 1) Monetary reward
+    % ------------------
 
-    taskParam.trialflow.reward = "monetary";
+    taskParam.trialflow.reward = "monetaryReward";
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial);
@@ -57,37 +108,15 @@ if cBal == 1
 
     % Generate outcomes using confettiData function
     taskData = taskData.al_confettiData(taskParam);
-
 
     % Run task
     al_indicateSocial(taskParam)
     dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
 
-    % ... social reward second
-    % ------------------------
-
-    taskParam.trialflow.reward = "social";
-
-    % TaskData-object instance
-    taskData = al_taskDataMain(trial);
-
-    % Generate outcomes using cannonData function
-    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
-
-    % Generate outcomes using confettiData function
-    taskData = taskData.al_confettiData(taskParam);
-
-
-    % Run task
-    al_indicateSocial(taskParam)
-    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
-
-else
-
-    % Social reward first...
+    % 2) Monetary punishment
     % ----------------------
 
-    taskParam.trialflow.reward = "social";
+    taskParam.trialflow.reward = "monetaryPunishment";
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial);
@@ -98,15 +127,14 @@ else
     % Generate outcomes using confettiData function
     taskData = taskData.al_confettiData(taskParam);
 
-
     % Run task
     al_indicateSocial(taskParam)
-    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
 
-    % ... monetary reward second
-    % --------------------------
+    % 3) Social reward
+    % ----------------
 
-    taskParam.trialflow.reward = "monetary";
+    taskParam.trialflow.reward = "socialReward";
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial);
@@ -120,6 +148,544 @@ else
     % Run task
     al_indicateSocial(taskParam)
     dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+elseif cBal == 2
+
+        % 1) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+    
+    % 4) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+    
+elseif cBal == 3
+
+    
+    % 1) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+elseif cBal == 4
+
+    % 1) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+elseif cBal == 5
+
+    % 1) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+elseif cBal == 6
+
+    % 1) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+elseif cBal == 7
+
+    % 1) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+elseif cBal == 8
+
+    % 1) Social punishment
+    % --------------------
+
+    taskParam.trialflow.reward = "socialPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 2) Social reward
+    % ----------------
+
+    taskParam.trialflow.reward = "socialReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataSocialReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 3) Monetary punishment
+    % ----------------------
+
+    taskParam.trialflow.reward = "monetaryPunishment";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
+    % 4) Monetary reward
+    % ------------------
+
+    taskParam.trialflow.reward = "monetaryReward";
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+
+    % Run task
+    al_indicateSocial(taskParam)
+    dataMonetaryReward = al_confettiEEGLoop(taskParam, 'main', taskData, trial);
+
 
 end
 end

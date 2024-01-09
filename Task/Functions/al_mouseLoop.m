@@ -111,7 +111,7 @@ while 1
         % Check if prediction spot exceeds circle
         hyp = sqrt(x^2 + y^2);
 
-        % If so, ensure that prediction spot sticks to cicle
+        % If so, ensure that prediction spot sticks to circle
         if hyp <= taskParam.circle.rotationRad-2
             al_predictionSpotSticky(taskParam, x ,y*-1)
             % Otherwise move freely within circle
@@ -133,7 +133,7 @@ while 1
         taskData.initiationRTs(trial,:) = GetSecs() - startTimestamp;
     end
 
-    % Optionally, present tick marks        
+    % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
         al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
@@ -159,7 +159,7 @@ while 1
         elseif trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
             al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
         end
-        
+
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
     end
 
@@ -171,21 +171,19 @@ while 1
     % For unit test, we simulate RT = 0.5 in total (other half above)
     if taskParam.unitTest
         WaitSecs(0.25);
+        hyp = taskParam.circle.rotationRad;
     end
 
     % For instructions, determine when to break out of the loop
     if breakKey == taskParam.keys.enter
-        [keyIsDown, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
+        [keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
         if keyIsDown && keyCode(breakKey)
             break
         end
-        % Todo: Trialflow
-    %elseif ((~isequal(condition,'ARC_controlSpeed') && buttons(1) == 1) || (isequal(condition,'ARC_controlSpeed') && hyp >= 150)) || ((~isequal(condition,'ARC_controlAccuracy') && buttons(1) == 1)...
-     %       || (isequal(condition,'ARC_controlAccuracy') && hyp >= 150)) || ((~isequal(condition,'ARC_controlPractice') && buttons(1) == 1) || (isequal(condition,'ARC_controlPractice') && hyp >= 150))
-    elseif buttons(1) == 1
+    elseif buttons(1) == 1 && hyp >= taskParam.circle.rotationRad-2 % ensure that prediction is only possible when spot on circle
         taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle); %((taskParam.circle.rotAngle) / taskParam.circle.unit);
         taskData.RT(trial) = GetSecs() - startTimestamp;
-        
+
         % If initiation RT has not been stored (if button press occurs between check above and here [unlikely, but possible])
         if isnan(taskData.initiationRTs(trial))
             taskData.initialTendency(trial) = deg2rad(degree); %degree * taskParam.circle.unit;

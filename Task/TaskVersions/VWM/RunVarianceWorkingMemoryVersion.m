@@ -1,6 +1,6 @@
 function [dataLowNoise, dataHighNoise] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
-%RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version
-%  including variance change points and working memory manipulations
+%RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version of
+%   WMV including variance change points and working memory manipulations
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -11,17 +11,12 @@ function [dataLowNoise, dataHighNoise] = RunVarianceWorkingMemoryVersion(unitTes
 %       dataLowNoise: Task-data object low-noise condition
 %       dataHighNoise: Task-data object high-noise condition
 %
-%   Documentation
-%       This function runs the Hamburg pilot version of the cannon task.
-%       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there are two different noise conditions.
-%
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       12/23
+%       01/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -62,7 +57,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 200;  % 200;  Hier bitte anpassen
+trialsExp = 10; % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -84,7 +79,7 @@ haz = .125;
 % Variability hazard rate
 hazVar = 0.1;
 
-% Safe trials variance changepoint
+% Safe trials variance change point
 safeVar = 10;
 
 % Number of confetti particles 
@@ -94,19 +89,19 @@ nParticles = 40;
 confettiStd = 1;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 3 5 7]; % [1 50 100 150];
+blockIndices = [1 51 101 151]; % These indicate start of new block (e.g., break after 20 trials = 21)
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
 
 % Catch-trial probability
-catchTrialProb = 0.1; %0.1;
+catchTrialProb = 0.1;
 
 % Set sentence length
 sentenceLength = 100;
@@ -139,7 +134,7 @@ enter = 37; % Hamburg: Hier bitte anpassen
 % kbDev = 19;
 
 % Run task in debug mode with smaller window
-debug = true;
+debug = false;
 
 % Show random confetti threshold for validation (don't use in experiment)
 showConfettiThreshold = false;
@@ -171,7 +166,7 @@ end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'Hamburg';
+gParam.taskType = 'Hamburg'; % todo: maybe specific category for this version (let's see)
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -190,6 +185,7 @@ gParam.hazVar = hazVar;
 gParam.safeVar = safeVar;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
+gParam.saveName = 'vwm';
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -233,8 +229,8 @@ colors = al_colors();
 % ------------------------------------------
 
 keys = al_keys();
-if ~exist( 'kbDev' )
-  keys = al_kbdev( keys );
+if ~exist('kbDev')
+  keys = al_kbdev(keys);
 else
   keys.kbDev = kbDev;
 end
@@ -322,7 +318,7 @@ else
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*d%s*%s*', num2str(subject.testDay), num2str(subject.ID)));
+    checkString = dir(sprintf('*id_%s*', num2str(subject.ID)));
     subject.checkID(checkString, 5);
     subject.checkSex();
     subject.checkGroup();
@@ -396,8 +392,8 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_varianceWorkingMemoryConditions(taskParam);
-totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
+[dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar] = al_varianceWorkingMemoryConditions(taskParam);
+totWin = sum(dataStandardTickmarks.hit) + sum(dataAddTickmarks.hit) + sum( dataStandardCannonVar.hit) + sum(dataDriftingCannonVar.hit);
 
 % -----------
 % End of task

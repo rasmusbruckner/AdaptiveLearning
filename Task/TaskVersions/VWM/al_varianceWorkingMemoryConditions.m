@@ -1,5 +1,5 @@
 function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar] = al_varianceWorkingMemoryConditions(taskParam)
-%AL_HAMBURGCONDITIONS This function runs the changepoint condition of the cannon
+%AL_VARIANCEWORKINGMEMORYONDITIONS This function runs the changepoint condition of the cannon
 %   task tailored to the "Hamburg" version
 %
 %   Input
@@ -12,7 +12,7 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 %  Todo: Write a unit test and integratio high/low noise in integration test
 
 % -----------------------------------------------------
-% 0. Extract some variables from task-parameters object
+% 1. Extract some variables from task-parameters object
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
@@ -25,7 +25,7 @@ cBal = taskParam.subject.cBal;
 testDay = taskParam.subject.testDay;
 
 % --------------------------------
-% 1. Show instructions, if desired
+% 2. Show instructions, if desired
 % --------------------------------
 
 if runIntro && ~unitTest
@@ -36,14 +36,14 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
 
 % ------------
-% 2. Main task
+% 3. Main task
 % ------------
 
 % Note that days and cBal are not yet implemented.
 % Will probably be done after first pilot
 
 % ---------------------------------------
-% 2.1 Standard task and tick-mark version
+% 3.1 Standard task and tick-mark version
 % ---------------------------------------
 
 % Todo: save all data and select savename
@@ -53,17 +53,13 @@ trial = taskParam.gParam.trials;
 
 if cBal == 1
 
-
-    % Standard cannon first...
-    % ------------------------
+    % 1) Standard cannon
+    % ------------------
 
     % Get data
     if ~unitTest
 
-
-        % achtung nur test
-        taskParam.trialflow.distMean = "drift";
-
+        taskParam.trialflow.distMean = "fixed";
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial);
@@ -84,8 +80,8 @@ if cBal == 1
     al_indicateTickMark(taskParam)
     dataStandardTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % ... high noise second
-    % ---------------------
+    % 2) Working memory version 
+    % -------------------------
 
     % Get data
     if ~unitTest
@@ -110,8 +106,8 @@ if cBal == 1
 
 else
 
-    % High noise first...
-    % -------------------
+    % 1) Working memory version 
+    % -------------------------
 
     % Get data
     if ~unitTest
@@ -125,8 +121,8 @@ else
     al_indicateTickMark(taskParam)
     dataAddTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % ... low noise second
-    % --------------------
+    % 2) Standard cannon
+    % ------------------
 
 
     % Get data
@@ -144,25 +140,11 @@ else
 end
 
 % ---------------------------------------------------------------
-% 2.2 Confetti-cannon task with mean and variability changepoints
+% 3.2 Confetti-cannon task with mean and variability changepoints
 % ---------------------------------------------------------------
 
 taskParam.trialflow.currentTickmarks = "show";
-%trialflow.distMean = "fixed"; %"drift";
 taskParam.trialflow.variability = "changepoint";
-
-
-% 11. Instructions experimental blocks
-% ------------------------------------
-
-header = 'Jetzt kommen wir zum Experiment';
-txtStartTask = ['Instruktionen mit Noise'];
-% betonen, dass es cp und noise gibt aber keine hinweise
-
-
-feedback = false;
-al_bigScreen(taskParam, header, txtStartTask, feedback);
-
 
 % Get data
 if ~unitTest
@@ -185,22 +167,10 @@ taskParam.trialflow.currentTickmarks = "show";
 al_indicateCannonType(taskParam)
 dataStandardCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-
 % ---------------------------------------------------------------------------------------
 % 2.3 Confetti-cannon task with mean drift (no changepoints) and variability changepoints
 % ---------------------------------------------------------------------------------------
 
-
-header = 'Jetzt kommen wir zum Experiment';
-txtStartTask = ['Instruktionen mit Drift und Noise'];
-% betonen, dass es drift und noise gibt aber keine hinweise
-
-feedback = false;
-al_bigScreen(taskParam, header, txtStartTask, feedback);
-
-
-
-%trialflow.currentTickmarks = "workingMemory";
 taskParam.trialflow.distMean = "drift";
 taskParam.trialflow.variability = "changepoint";
 
@@ -223,7 +193,7 @@ end
 % Run task
 taskParam.trialflow.currentTickmarks = "show";
 al_indicateCannonType(taskParam)
-dataDriftingCannonVar  = al_confettiLoop(taskParam, 'main', taskData, trial);
+dataDriftingCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
 
 
 end

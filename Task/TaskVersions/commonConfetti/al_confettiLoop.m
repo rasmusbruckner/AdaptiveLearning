@@ -48,9 +48,6 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 % -----------------
 for i = 1:trial
 
-    % Manage breaks
-    taskParam = al_takeBreak(taskParam, taskData, i);
-
     % Save constant variables on each trial  
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
@@ -238,6 +235,10 @@ for i = 1:trial
             fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
         end
     end
+
+    % Manage breaks
+    taskParam = al_takeBreak(taskParam, taskData, i);
+
 end
 
 % Give feedback and save data
@@ -256,15 +257,26 @@ if ~taskParam.unitTest
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 
+    % Save data
+    %----------
+
     if ~isequal(condition,'practice')
 
-        % Save data
-        %----------
+        if isequal(taskParam.gParam.saveName, 'vwm')
+            savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
+        else
+            concentration = unique(taskData.concentration);
+            savename = sprintf('confetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+        end
 
-        % todo: do we want to save practice?
-        concentration = unique(taskData.concentration);
-        savename = sprintf('confetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
-        save(savename, 'taskData')
+            % Ensure that files cannot be overwritten
+            checkString = dir([savename '*']);            
+            fileNames = {checkString.name};            
+            if  ~isempty(fileNames)
+                savename = [savename '_new'];
+            end
+            save(savename, 'taskData')
+            
 
         % Wait until keys released
         KbReleaseWait();

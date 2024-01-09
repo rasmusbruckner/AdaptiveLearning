@@ -49,7 +49,7 @@ while 1
     
     % Print "Press Enter" to indicate how to continue with instructions
     if ~endOfTask
-        DrawFormattedText(taskParam.display.window.onScreen,  taskParam.strings.txtPressEnter, 'center',taskParam.display.screensize(4)*0.9);
+        DrawFormattedText(taskParam.display.window.onScreen,  taskParam.strings.txtPressEnter, 'center', taskParam.display.screensize(4)*0.9);
     end
     
     % All text strings are presented

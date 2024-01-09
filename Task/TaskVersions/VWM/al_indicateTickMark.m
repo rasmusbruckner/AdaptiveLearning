@@ -8,7 +8,7 @@ function al_indicateTickMark(taskParam)
 %   Output:
 %       ~
 
-if strcmp(taskParam.trialflow.currentTickmarks, 'standard')
+if strcmp(taskParam.trialflow.currentTickmarks, 'show')
     header = 'Weniger Hinweise über die Konfetti-Kanone';
     txt = 'Im folgenden Block werden Sie nur den Ort der letzten Konfetti-Wolke sehen.';
 else

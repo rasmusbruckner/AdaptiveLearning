@@ -211,7 +211,6 @@ keys.keySpeed = keySpeed;
 keys.slowKeySpeed = slowKeySpeed;
 keys.s = s;
 keys.enter = enter;
-
 keys.leftKey = 50;
 keys.rightKey = 51;
 keys.space = 52;  % optional noch 49
