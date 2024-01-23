@@ -15,7 +15,6 @@ function [taskData, taskParam] = al_introduceShot(taskParam, taskData, trial, tx
 % Show cannon and instructions
 initRT_Timestamp = 0;
 
-
 % Todo update using trialflow mouse vs. keyboard
 if strcmp(taskParam.trialflow.input, 'keyboard')
 

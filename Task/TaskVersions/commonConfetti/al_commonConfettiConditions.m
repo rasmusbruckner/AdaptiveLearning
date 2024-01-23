@@ -1,5 +1,5 @@
-function [dataLowNoise, dataHighNoise] = al_HamburgConditions(taskParam)
-%AL_HAMBURGCONDITIONS This function runs the changepoint condition of the cannon
+function [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam)
+%AL_COMMONCONFETTICONDITIONS This function runs the changepoint condition of the cannon
 %   task tailored to the "Hamburg" version
 %
 %   Input
@@ -29,7 +29,7 @@ testDay = taskParam.subject.testDay;
 % --------------------------------
 
 if runIntro && ~unitTest
-    al_HamburgInstructions(taskParam)
+    al_commonConfettiInstructions(taskParam)
 end
 
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);

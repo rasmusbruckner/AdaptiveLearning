@@ -193,6 +193,9 @@ while 1
         % Break out of loop
         break
     end
+        
+    % Check for escape key 
+    taskParam.keys.checkQuitTask();
 
 end
 end

@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
+function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
 %RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version of
 %   WMV including variance change points and working memory manipulations
 %
@@ -8,8 +8,10 @@ function [dataLowNoise, dataHighNoise] = RunVarianceWorkingMemoryVersion(unitTes
 %       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataLowNoise: Task-data object low-noise condition
-%       dataHighNoise: Task-data object high-noise condition
+%       dataStandardTickmarks: Task-data object standard tick mark
+%       dataAddTickmarks: Task-data object multiple tick marks
+%       dataStandardCannonVar Task-data object change point + variance
+%       dataDriftingCannonVar: Task-data object drift + variance
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
@@ -111,7 +113,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [1    1    2560    1440];% [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;

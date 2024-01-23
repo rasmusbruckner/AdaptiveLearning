@@ -72,6 +72,11 @@ while 1
     if keyIsDown
         if keyCode(taskParam.keys.enter)
             break
+        elseif keyCode(taskParam.keys.esc)
+            ListenChar();
+            ShowCursor;
+            Screen('CloseAll');
+            error('User pressed Escape to finish task')
         end
     end
 end

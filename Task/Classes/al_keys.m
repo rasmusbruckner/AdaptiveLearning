@@ -21,6 +21,7 @@ classdef al_keys
         space
         enter        
         s
+        esc
         kbDev
 
     end
@@ -46,7 +47,8 @@ classdef al_keys
             keysobj.leftSlowKey = KbName('g');
             keysobj.space = KbName('Space');
             keysobj.enter = 37;
-            keysobj.s = 40;  
+            keysobj.s = 40;
+            keysobj.esc = KbName('ESCAPE');
                       
         end
 
@@ -66,6 +68,19 @@ classdef al_keys
               keysobj.kbDev = -1; % "merge" all keyboard in KbCheck
             else
               keysobj.kbDev = kbdevs;
+            end
+        end
+
+
+        function keysobj = checkQuitTask(keysobj)
+                % todo: comment... and maybe turn on and off depending on
+                % input... maybe off in real exp
+            [ ~, ~, keyCode] = KbCheck(keysobj.kbDev);
+            if keyCode(keysobj.esc)
+                ListenChar();
+                ShowCursor;
+                Screen('CloseAll');
+                error('User pressed Escape to finish task')
             end
         end
 

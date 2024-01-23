@@ -68,6 +68,11 @@ while 1
     elseif taskParam.unitTest
         WaitSecs(1);
         break
+    elseif keyCode(taskParam.keys.esc)
+        ListenChar();
+        ShowCursor;
+        Screen('CloseAll');
+        error('User pressed Escape to finish task')
     end
 end
 

@@ -1,5 +1,5 @@
-function al_HamburgInstructions(taskParam)
-%AL_HAMBURGINSTRUCTIONS This function runs the instructions for the
+function al_commonConfettiInstructions(taskParam)
+%AL_COMMONCONFETTIINSTRUCTIONS This function runs the instructions for the
 % "Hamburg" version of the cannon task
 %
 %   Input

@@ -22,9 +22,14 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, t + 0.1);
 
     % Wait for button press
-    [~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
+    [~, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
     if find(keyCode) == taskParam.keys.enter
         break
+    elseif keyCode(taskParam.keys.esc)
+        ListenChar();
+        ShowCursor;
+        Screen('CloseAll');
+        error('User pressed Escape to finish task')
     end
 end
 

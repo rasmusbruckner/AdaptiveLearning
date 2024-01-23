@@ -65,7 +65,7 @@ end
 trialsExp = 5;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
-trialsTesting = 20;
+trialsTesting = 20;  % nach unten schieben
 
 % Number of practice trials
 practTrials = 2; % 20;  Hier bitte anpassen
@@ -108,7 +108,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -240,7 +240,7 @@ keys.enter = enter;
 % ---------------------------------------------
 
 timingParam = al_timing();
-timingParam.cannonBallAnimation = 1.5;
+timingParam.cannonBallAnimation = 0.5; %1.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
