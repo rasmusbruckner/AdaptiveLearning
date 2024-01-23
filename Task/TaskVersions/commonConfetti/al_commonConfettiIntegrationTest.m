@@ -195,7 +195,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(actualOnsetPredDiff, expectedOnsetPredDiff, 'AbsTol', 0.05)
 
             % Difference offset and prediction
-            expectedPredShotPlusITIDiff = repmat(2.4, 20, 1);
+            expectedPredShotPlusITIDiff = repmat(1.4, 20, 1); %2.4
             actualPredShotPlusITIDiff = dataMain.timestampOffset - dataMain.timestampPrediction;
             testCase.verifyEqual(actualPredShotPlusITIDiff, expectedPredShotPlusITIDiff, 'AbsTol', 0.1)
 

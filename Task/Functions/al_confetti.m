@@ -19,7 +19,7 @@ if ~exist('fadeOutEffect', 'var') ||  isempty(fadeOutEffect)
     fadeOutEffect = true;  
 end
 
-nFrames = 80;
+nFrames = taskParam.cannon.nFrames;
 fadeOutp = [zeros(1, round(nFrames/2)) linspace(0, 0.5, round(nFrames/2))];
 nParticles = taskData.nParticles(currTrial);
 
@@ -39,7 +39,7 @@ xyExp(2,:) = yExpStart;
 spreadWide = normrnd(taskData.outcome(currTrial), taskParam.cannon.confettiStd, nParticles, 1); 
 
 % Random confetti flight distance (radius) conditional on circle radius and some arbitrary standard deviation
-spreadLong = taskParam.circle.rotationRad + normrnd(taskParam.circle.rotationRad, 20, nParticles,1);
+spreadLong = taskParam.circle.rotationRad + normrnd(taskParam.cannon.confettiEndMean, taskParam.cannon.confettiEndStd, nParticles,1);
 
 % End points of animation, both spread and distance combined
 xExpEnd = spreadLong .* sind(spreadWide);
@@ -169,6 +169,8 @@ for i = 1:nFrames
     % Flip screen and present changes
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     tUpdate = tUpdate + taskParam.timingParam.cannonBallAnimation / nFrames;
+    
+    % todo: measure flip time to adjust nFrames and timing. 
     Screen('Flip', taskParam.display.window.onScreen, timestamp + tUpdate);
     
     % Check for escape key 

@@ -15,6 +15,15 @@ classdef al_cannon
         
         % Standard deviation of confetti
         confettiStd 
+
+        % Number of frames for shot animation
+        nFrames
+
+        % Average end point of confetti
+        confettiEndMean
+
+        % Standard deviation around aveage end point
+        confettiEndStd
         
     end
     
@@ -29,6 +38,9 @@ classdef al_cannon
           
             cannonobj.nParticles = 41;
             cannonobj.confettiStd = 3;
+            cannonobj.nFrames = 30;
+            cannonobj.confettiEndMean = 150; 
+            cannonobj.confettiEndStd = 20; 
             
         end
     end

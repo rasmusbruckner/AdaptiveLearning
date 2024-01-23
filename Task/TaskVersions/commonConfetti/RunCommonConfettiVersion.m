@@ -92,7 +92,7 @@ runIntro = false;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 3 5 7]; % [1 51 101 151]
+blockIndices = [1 51 101 151];
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -150,6 +150,14 @@ dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/da
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
+
+% Confetti speed
+cannonBallAnimation = 0.5; % 1.5
+nFrames = 30; %30; 80
+
+% Confetti end point
+confettiEndMean = 50; % 150% this is added to the circle radius
+confettiEndStd = 10; % 20 % this is the spread around the average end point
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -210,6 +218,9 @@ trialflow.input = "mouse";
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
+cannon.nFrames = nFrames;
+cannon.confettiEndMean = confettiEndMean;
+cannon.confettiEndStd = confettiEndStd;
 
 % ---------------------------------------------
 % Create object instance with color parameters
@@ -240,7 +251,7 @@ keys.enter = enter;
 % ---------------------------------------------
 
 timingParam = al_timing();
-timingParam.cannonBallAnimation = 0.5; %1.5;
+timingParam.cannonBallAnimation = cannonBallAnimation; %1.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
