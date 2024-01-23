@@ -67,7 +67,7 @@ dotSize = (1+rand(1, nParticles))*3;
  
 % For asymmetric reward version, compute number of red and green particles
 % caught in shield
-if strcmp(taskParam.trialflow.reward, "asymmetric")
+if strcmp(taskParam.trialflow.reward, 'asymmetric')
 
     % Determine particle color
     greenParticles = unique(dotCol == taskParam.colors.green,'rows');
@@ -103,8 +103,12 @@ yExpSteps = y_vals(2:end,:) - y_vals(1:end-1,:);
 
 % Multiply by weight so that step size decays
 weight = linspace(2,0,nFrames);
-xExpSteps = xExpSteps .* weight'; 
-yExpSteps = yExpSteps .* weight';
+xExpSteps = xExpSteps .* repmat(weight', [1, size(xExpSteps, 2)]); 
+yExpSteps = yExpSteps .* repmat(weight', [1, size(xExpSteps, 2)]);
+% The above is included for backward compatibility. In future, when all
+% labs have more recent Matlab versions, potentially change to: 
+% xExpSteps = xExpSteps .* weight'; 
+% yExpSteps = yExpSteps .* weight';
 
 tUpdate = GetSecs - timestamp;
 
@@ -142,12 +146,15 @@ for i = 1:nFrames
     end
     
     % Compute which dots should stick to the shield when caught
-    stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & abs(dotPredDist) <= taskData.allASS(currTrial)/2;
-    
+    stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & repmat(abs(dotPredDist) <= taskData.allASS(currTrial)/2, [2, 1]);
+    % The above is included for backward compatibility. In future, when all
+    % labs have more recent Matlab versions, potentially change to: 
+    % stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & abs(dotPredDist) <= taskData.allASS(currTrial)/2;
+
     % Update dot position
     xyExp(1,stopCrit(1,:)==0) = xyExp(1,stopCrit(1,:)==0) + xExpSteps(i,stopCrit(1,:)==0);
     xyExp(2,stopCrit(2,:)==0) = xyExp(2,stopCrit(2,:)==0) + yExpSteps(i,stopCrit(2,:)==0);
-    
+          
     if fadeOutEffect
         
         % Sample which dots disappear...

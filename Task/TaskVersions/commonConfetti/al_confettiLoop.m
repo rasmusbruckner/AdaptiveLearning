@@ -129,7 +129,7 @@ for i = 1:trial
     taskData = al_confetti(taskParam, taskData, i, background, timestamp);
 
     % Compute performance
-    if strcmp(taskParam.trialflow.reward, "asymmetric")
+    if strcmp(taskParam.trialflow.reward, 'asymmetric')
 
         % Performance depends on green vs. red particles caught
         taskData.perf(i) = taskData.greenCaught(i) - taskData.redCaught(i);
@@ -149,7 +149,10 @@ for i = 1:trial
     end
 
     % Accumulated performance
-    taskData.accPerf(i) = sum(taskData.perf, 'omitnan');
+    taskData.accPerf(i) = nansum(taskData.perf);
+    % The above is included for backward compatibility. In future, when all
+    % labs have more recent Matlab versions, potentially change to: 
+    % taskData.accPerf(i) = sum(taskData.perf, 'omitnan');
 
     % Fixation cross: ITI (standard version) or ISI (asymmetric reward)
     % -----------------------------------------------------------------
@@ -176,7 +179,7 @@ for i = 1:trial
     end
 
     % For asymmetric reward: Display feedback and fixation cross (ISI)
-    if strcmp(taskParam.trialflow.reward, "asymmetric")
+    if strcmp(taskParam.trialflow.reward, 'asymmetric')
 
         % Feedback
         % --------
@@ -229,7 +232,7 @@ for i = 1:trial
     % Offset timestamp
     taskData.timestampOffset(i) = GetSecs - taskParam.timingParam.ref;
     if taskParam.gParam.printTiming
-        if strcmp(taskParam.trialflow.reward, "asymmetric")
+        if strcmp(taskParam.trialflow.reward, 'asymmetric')
             fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampReward(i))
         else
             fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
@@ -247,7 +250,11 @@ end
 if ~taskParam.unitTest
     
     if ~isequal(taskParam.trialflow.reward, 'asymmetric')
-        currPoints = sum(taskData.hit, 'omitnan');
+        currPoints = nansum(taskData.hit);
+        % The above is included for backward compatibility. In future, when all
+        % labs have more recent Matlab versions, potentially change to:     
+        % currPoints = sum(taskData.hit, 'omitnan');
+
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
