@@ -1,12 +1,12 @@
 function al_VWMInstructions(taskParam)
 %AL_VWMINSTRUCTIONS This function runs the instructions for the
-% "Varianc and Woking Memory" version of the cannon task
+% "Variance and Woking Memory" version of the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       ~
+%       None
 
 % Extract test day and cBal variables
 testDay = taskParam.subject.testDay;
@@ -43,7 +43,7 @@ if testDay == 1
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
     taskData.block(1:nTrials) = 1; % block number
-    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
+    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions (maybe use variable size)
     taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -100,7 +100,7 @@ if testDay == 1
     % -------------------
 
     win = true; % color of shield when catch is rewarded
-    txt = ['Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.'];
+    txt = 'Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.';
     taskData = al_introduceShield(taskParam, taskData, win, currTrial, txt, xyExp, taskData.dotCol(currTrial).rgb, dotSize);
 
     % 6. Ask participant to miss confetti
@@ -155,13 +155,16 @@ if testDay == 1
         'dennoch fangen Sie am meisten Konfetti, wenn Sie den violetten Punkt genau auf die Stelle '...
         'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
         'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den violetten Punkt bitte immer auf die anvisierte '...
-        'Stelle.'];
+        'Stelle.\n\nDie Größe des Eimers kann sich von Durchgang '...
+        'zu Durchgang ändern. Diese Veränderung können Sie nicht beeinflussen '...
+        'und auch nicht vorhersagen. Daher ist es immer die beste Strategie, '...
+        'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.'];
     feedback = false; % indicate that this is the instruction mode
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Load outcomes for practice
     condition = 'practice';
-    taskData = load('visCannonPracticeHamburg.mat');
+    taskData = load('visCannonPracticeVWM.mat');
     taskData = taskData.taskData;
     taskParam.condition = condition;
     taskData.initialTendency = nan(length(taskData.ID), 1);
@@ -211,24 +214,24 @@ if testDay == 1
         % ------------------
     
         % Get data
-        taskData = load('hidCannonPracticeHamburg_c16.mat');
+        taskData = load('hidCannonPracticeVWM_c16.mat');
         taskData = taskData.taskData;
     
         % Run task
         taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
         taskParam.trialflow.confetti = 'show confetti cloud';
-        al_indicateNoise(taskParam, 'lowNoise')
+        al_indicateNoise(taskParam, 'lowNoise', true)
         al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
     
         % ... high noise second
         % ---------------------
     
         % Get data
-        taskData = load('hidCannonPracticeHamburg_c8.mat');
+        taskData = load('hidCannonPracticeVWM_c8.mat');
         taskData = taskData.taskData;
     
         % Run task
-        al_indicateNoise(taskParam, 'highNoise')
+        al_indicateNoise(taskParam, 'highNoise', true)
         al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
     
     elseif cBal == 2
@@ -237,24 +240,24 @@ if testDay == 1
         % ------------------
     
         % Get data
-        taskData = load('hidCannonPracticeHamburg_c8.mat');
+        taskData = load('hidCannonPracticeVWM_c8.mat');
         taskData = taskData.taskData;
     
         % Run task
         taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
         taskParam.trialflow.confetti = 'show confetti cloud';
-        al_indicateNoise(taskParam, 'highNoise')
+        al_indicateNoise(taskParam, 'highNoise', true)
         al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
     
         % ... low noise second
         % ---------------------
     
         % Get data
-        taskData = load('hidCannonPracticeHamburg_c16.mat');
+        taskData = load('hidCannonPracticeVWM_c16.mat');
         taskData = taskData.taskData;
     
         % Run task
-        al_indicateNoise(taskParam, 'lowNoise')
+        al_indicateNoise(taskParam, 'lowNoise', true)
         al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
 
     end
@@ -300,7 +303,7 @@ txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst 
     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. Beachten Sie, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen und können Ihre Leistung '...
     'verbessern, indem Sie den Eimer genau auf das Ziel steuern.\n\n'...
-    'Sie werden wie in der Übung zwei Blöcke spielen. In jedem Block gibt es 3 kurze Pausen.\n\nViel Erfolg!'];
+    '\n\nViel Erfolg!']; % 'Sie werden wie in der Übung zwei Blöcke spielen. In jedem Block gibt es 3 kurze Pausen.
 
 feedback = false;
 al_bigScreen(taskParam, header, txtStartTask, feedback);

@@ -1,10 +1,11 @@
-function taskParam = al_takeBreak(taskParam, taskData, currTrial, siezen)
+function taskParam = al_takeBreak(taskParam, taskData, currTrial, lastTrial, siezen)
 %AL_TAKEBREAK This function manages the breaks in the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
-%       trial: Current trial
+%       curTrial: Current trial
+%       maxTrial: Last trial of block
 %       siezen: "Sie" vs "Du" 
 %
 %   Output
@@ -16,7 +17,7 @@ if ~exist('siezen', 'var') || isempty(siezen)
     siezen = true;
 end
 
-if currTrial > 1 && currTrial < taskParam.gParam.trials
+if currTrial > 1 && currTrial < lastTrial
     
     if taskData.block(currTrial+1) ~= taskData.block(currTrial)
 

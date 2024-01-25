@@ -1,5 +1,4 @@
 % Angular shield size:
-%UorExp=
 mu=10;
 minASS=10;
 maxASS=360;

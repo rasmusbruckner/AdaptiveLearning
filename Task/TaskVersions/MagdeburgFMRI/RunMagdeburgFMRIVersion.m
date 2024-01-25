@@ -1,6 +1,6 @@
 function [dataNoPush, dataPush] = RunMagdeburgFMRIVersion(unitTest, cBal, day)
 %RUNMAGDEBURGFMRIVERSION This function runs the fMRI version
-%  for the study in Magdeburg.
+%  for the study in Magdeburg
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -22,7 +22,14 @@ function [dataNoPush, dataPush] = RunMagdeburgFMRIVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       12/23
+%       01/24
+
+% todo: update fMRI first trigger like at CCNB
+% todo: high vs. low noise instead of push
+% todo: variable shield size
+% todo: integration test
+% todo: instructions separate from main task (before in scanner)
+
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -62,7 +69,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 20;  % 180;  Hier bitte anpassen
+trialsExp = 2;  % 180;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -125,11 +132,14 @@ tickWidth = 1;
 % Key codes
 keySpeed = 1.5; %2;
 slowKeySpeed = 0.5; % 0.5;
-s = 83; %40; % Für MD KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen  Lavinia: Hier eventuell anpassen
-enter = 13; %37; % md = 13   MD: Hier bitte anpassen, müsste bei euch 13 sein
+leftKey = 42; %50;  % 42
+rightKey = 45; %51;  % 45
+space = 66; 
+s = 40; % MD83; %40; % Für MD KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen  Lavinia: Hier eventuell anpassen
+enter = 37;%13; %37; % md = 13   MD: Hier bitte anpassen, müsste bei euch 13 sein
 
 % Run task in debug mode with smaller window
-debug = true; %true; %false;
+debug = false; %true; %false;
 
 % Print timing for checking
 printTiming = true;
@@ -141,9 +151,12 @@ hidePtbCursor = false;
 rewMag = 0.05;
 
 % Specify data directory
-dataDirectory = 'DataDirectory';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';%'DataDirectory';  % Hier bitte anpassen
 
-scanner = true; %false;
+scanner = false; %false;
+scannerDummy = false; % true
+leftRelease = 43;
+rightRelease = 44;
 % ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
@@ -177,6 +190,7 @@ gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.scanner = scanner;
+gParam.scannerDummy = scannerDummy; 
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -207,13 +221,18 @@ colors.background = 'black';
 % ------------------------------------------
 
 keys = al_keys();
-keys.keySpeed = keySpeed;
-keys.slowKeySpeed = slowKeySpeed;
 keys.s = s;
 keys.enter = enter;
-keys.leftKey = 50;
-keys.rightKey = 51;
-keys.space = 52;  % optional noch 49
+keys.keySpeed = keySpeed;
+keys.slowKeySpeed = slowKeySpeed;
+
+if scanner || scannerDummy
+    keys.leftKey = leftKey; %50;
+    keys.rightKey = rightKey; %51;
+    keys.space = space;% 52;  % optionally also 49
+    keys.leftRelease = leftRelease;
+    keys.rightRelease = rightRelease;
+end
 
 % ---------------------------------------------
 % Create object instance with timing parameters
@@ -323,7 +342,11 @@ display = display.createTextures("standard");
 if hidePtbCursor == true
     HideCursor;
 end
-%ListenChar(2); nicht kompatibel mit der Que
+
+if ~scanner && ~scannerDummy
+
+    ListenChar(2); % not compatible with KbQueue
+end
 
 % ---------------------------------------------
 % Create object instance with circle parameters

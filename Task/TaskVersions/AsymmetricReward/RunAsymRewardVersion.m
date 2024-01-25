@@ -25,7 +25,7 @@ function [dataStandard, dataAsymReward] = RunAsymRewardVersion(unitTest, cBal, d
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/23
+%       01/24   
 
 % Todo: At some point, we have to determine incentives and remuneration
 
@@ -92,7 +92,7 @@ nParticles = 30;
 confettiStd = 3;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -114,7 +114,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 2560 1440]; %[1 1 1920 1080]; %[1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
+screensize = [1 1 1920 1080];%[1 1 2560 1440]; %[1 1 1920 1080]; %[1    1    2560    1440];%[1 1 1920 1080];  % get(0,'MonitorPositions');  fu ohne bildschirm [1    1    2560    1440];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -385,7 +385,7 @@ taskParam.unitTest = unitTest;
 % --------
 
 [dataStandard, dataAsymReward] = al_asymRewardConditions(taskParam);
-totWin = round(sum(dataStandard.nParticlesCaught)/10) + dataAsymReward.accPerf(end);
+totWin = round(sum(dataStandard.nParticlesCaught)/10) + round(sum(dataAsymReward.nParticlesCaught)/10);
 
 % -----------
 % End of task

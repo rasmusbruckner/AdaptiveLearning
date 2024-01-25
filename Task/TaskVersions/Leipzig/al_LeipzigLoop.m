@@ -36,9 +36,6 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 % -----------------
 for i = 1:trial
 
-    % Manage breaks
-    taskParam = al_takeBreak(taskParam, taskData, i);
-
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
@@ -155,12 +152,17 @@ for i = 1:trial
     if taskParam.gParam.printTiming
         fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
     end
+
+     % Manage breaks
+    taskParam = al_takeBreak(taskParam, taskData, i, trial);
+
 end
 
 % Give feedback and save data
 % ----------------------------
 
 % Todo: update this and potentially get rid of condition
+% add _new to avoid overwriting
 if ~taskParam.unitTest
 
     currPoints = sum(taskData.hit, 'omitnan');

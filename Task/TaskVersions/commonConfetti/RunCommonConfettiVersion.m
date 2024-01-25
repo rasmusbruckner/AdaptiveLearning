@@ -1,6 +1,6 @@
 function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal, day)
-%RUNHAMBURGVERSION This function runs the first Hamburg pilot version
-%  of the cannon task.
+%RUNCOMMONCONFETTIVERSION This function runs the common confetti version
+%  of the cannon task
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -21,7 +21,7 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/23
+%       01/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -86,7 +86,7 @@ nParticles = 40;
 confettiStd = 1;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;

@@ -1,12 +1,12 @@
 function al_HamburgEEGInstructions(taskParam)
-%AL_HAMBURGINSTRUCTIONS This functio,,n runs the instructions for the
-% "Hamburg" version of the cannon task
+%AL_HAMBURGINSTRUCTIONS This function runs the instructions for the
+% "HamburgEEG" version of the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       ~
+%       None    
 
 % Extract test day and cBal variables (relevant for later)
 testDay = taskParam.subject.testDay;
@@ -208,7 +208,7 @@ if cBal == 1
     % Monetary reward first...
     % ------------------------
 
-    taskParam.trialflow.reward = "monetary";
+    taskParam.trialflow.reward = 'monetaryReward';
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
 
     % TaskData-object instance
@@ -222,13 +222,13 @@ if cBal == 1
 
     % Run task
     al_indicateSocial(taskParam)
-    al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials); % todo: here and in other practice blocks: 'main' -> 'practice'?
+    al_confettiEEGLoop(taskParam, 'practice', taskData, taskParam.gParam.practTrials); % todo: here and in other practice blocks: 'main' -> 'practice'?
 
     % ... social reward second
     % ------------------------
 
     % Turn on social condition
-    taskParam.trialflow.reward = "social";
+    taskParam.trialflow.reward = "socialReward";
 
     % TaskData-object instance
     taskData = al_taskDataMain(taskParam.gParam.practTrials);
@@ -241,14 +241,14 @@ if cBal == 1
     
     % Run task
     al_indicateSocial(taskParam)
-    al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
+    al_confettiEEGLoop(taskParam, 'practice', taskData, taskParam.gParam.practTrials);
 
 else
 
     % Social reward first...
     % ----------------------
 
-    taskParam.trialflow.reward = "social";
+    taskParam.trialflow.reward = "socialReward";
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
     
     % TaskData-object instance
@@ -261,12 +261,12 @@ else
     taskData = taskData.al_confettiData(taskParam);
     % Run task
     al_indicateSocial(taskParam)
-    al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
+    al_confettiEEGLoop(taskParam, 'practice', taskData, taskParam.gParam.practTrials);
 
     % ... monetary reward second
     % --------------------------
 
-    taskParam.trialflow.reward = "monetary";
+    taskParam.trialflow.reward = "monetaryReward";
 
     % TaskData-object instance
     taskData = al_taskDataMain(taskParam.gParam.practTrials);
@@ -278,7 +278,7 @@ else
     taskData = taskData.al_confettiData(taskParam);
     % Run task
     al_indicateSocial(taskParam)
-    al_confettiEEGLoop(taskParam, 'main', taskData, taskParam.gParam.practTrials);
+    al_confettiEEGLoop(taskParam, 'practice', taskData, taskParam.gParam.practTrials);
 
 end
 

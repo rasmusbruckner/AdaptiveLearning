@@ -97,10 +97,11 @@ classdef al_circle
             % the circle
             %
             %   Input
-            %       circleobj: Circle objects
+            %       circleobj: Circle object with default values
             %       
             %   Output
-            %       ~
+            %       circleobj: Circle object with default values
+
             % Todo: rename function to computeCircleProps
             
             circleobj.predSpotDiam = circleobj.predSpotRad * 2;
@@ -116,6 +117,44 @@ classdef al_circle
             circleobj.outcCentSpotRect = CenterRect(circleobj.outcRect, circleobj.windowRect);
             circleobj.cannonEndCent = CenterRect(circleobj.cannonEndRect, circleobj.windowRect);
             circleobj.centSpotRectMean = CenterRect(circleobj.spotRectMean, circleobj.windowRect);
+        end
+
+        function circleobj = rightMovement(circleobj, keySpeed)
+            % RIGHTMOVEMENT This function implements keyboard mvements to the right
+            % 
+            %   Input
+            %       circleobj: Circle object with current values
+            %       keySpeed: Determines speed with which spot moves around
+            %       circle
+            %   
+            %   Output
+            %       circleobj: Circle object with current values
+
+
+            if circleobj.rotAngle < 360*circleobj.unit
+                circleobj.rotAngle = circleobj.rotAngle + keySpeed*circleobj.unit;
+            else
+                circleobj.rotAngle = 0;
+            end
+        end
+
+        function circleobj = leftMovement(circleobj, keySpeed)
+            % LEFTMOVEMENT This function implements keyboard mvements to
+            % the left
+            % 
+            %   Input
+            %       circleobj: Circle object with current values
+            %       keySpeed: Determines speed with which spot moves around
+            %       circle
+            %   
+            %   Output
+            %       circleobj: Circle object with current values
+
+            if circleobj.rotAngle > 0*circleobj.unit
+                circleobj.rotAngle = circleobj.rotAngle - keySpeed*circleobj.unit;
+            else
+                circleobj.rotAngle = 360*circleobj.unit;
+            end
         end
     end
 end

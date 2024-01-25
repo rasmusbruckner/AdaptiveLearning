@@ -38,7 +38,7 @@ classdef al_cannon
           
             cannonobj.nParticles = 41;
             cannonobj.confettiStd = 3;
-            cannonobj.nFrames = 30;
+            cannonobj.nFrames = 80;
             cannonobj.confettiEndMean = 150; 
             cannonobj.confettiEndStd = 20; 
             

@@ -1,4 +1,4 @@
-function [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey)
+function [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey, keyCode)
 % AL_CONTROLPREDSPOTKEYBOARD This function manages the interaction between
 % participants and task if the keyboard is used.
 %
@@ -8,32 +8,33 @@ function [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam
 %       trial: Current trial number
 %       startTimestamp: Onset of prediction phase for computing RTs
 %       breakKey: Key code to lock prediction
+%       keyCode: Array of current key press
+%
 %   Ouptut
 %       breakLoop: Index response loop should be terminated
-%       taskData: Task-parameter-object instance
-%       taskParam: Task-data-object instance
-
+%       taskParam: Task-parameter-object instance
+%       taskData: Task-data-object instance
+%       keyCode: Array of current key press
 
 
 % Initialize variable indicating if response loop is terminated or not
 breakLoop = false;
 
-% Get initiation RT
-% -----------------
-% initationRT is nan before first button press. When button is
-% pressed for the first time, store time. Thereafter variable is
-% not nan anymore and not saved again.
-
 % For unit test: simulate keyIsDown, keyCode, and record RT
 if ~taskParam.unitTest
-    %[keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
-    %[keyIsDown, ~, keyCode] = KbCheck();
-    % 50 = taste links gedrück und 54 losgelassen
-    % 51 = taste rechts und 55 losgelassen
-    [keyIsDown, firstPress, ~, ~, ~]=KbQueueCheck();
-    if keyIsDown
-        keyCode = zeros(1, 256);
-        keyCode(find(firstPress,1)) = 1;
+
+    if taskParam.gParam.scanner || taskParam.gParam.scannerDummy
+        
+        % MD scanner settings
+        % 50 = left key pressed and 54 = released
+        % 51 = right key pressed and 55 = released
+        [keyIsDown, firstPress, ~, ~, ~] = KbQueueCheck();
+        if keyIsDown
+            keyCode = zeros(1, 256);
+            keyCode(find(firstPress, 1)) = 1;
+        end
+    else
+        [keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
     end
 
 else
@@ -42,6 +43,12 @@ else
     keyCode = zeros(1, 256);
     keyCode(taskParam.keys.space) = 1;
 end
+
+% Get initiation RT
+% -----------------
+% initationRT is nan before first button press. When button is
+% pressed for the first time, store time. Thereafter variable is
+% not nan anymore and not saved again.
 
 % First case: First keypress (when initiation RT should be recorded)
 if keyIsDown && isnan(taskData.initiationRTs(trial))
@@ -79,6 +86,7 @@ if keyIsDown && isnan(taskData.initiationRTs(trial))
     end
 end
 
+
 % Here, we separated both conditions for initRT and prediction control
 % to make sure that both would be completed even if button press was
 % extremely fast (which practically does not happen bc button press is
@@ -86,57 +94,77 @@ end
 
 % Second case: When other keys are pressed before space, update orange spot until space
 % is pressed
-if keyIsDown && ~breakLoop
 
-    % Fast right movement
-    if keyCode(taskParam.keys.rightKey)
-        if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-            taskParam.circle.rotAngle = taskParam.circle.rotAngle + taskParam.keys.keySpeed*taskParam.circle.unit;
-        else
-            taskParam.circle.rotAngle = 0;
+% This is for behavioral cases
+if ~taskParam.gParam.scanner && ~taskParam.gParam.scannerDummy
+
+    if keyIsDown && ~breakLoop
+
+        % Fast right movement
+        if keyCode(taskParam.keys.rightKey)
+
+            taskParam.circle = rightMovement(taskParam.circle, taskParam.keys.keySpeed);
+
+            % Slow right movement
+        elseif keyCode(taskParam.keys.rightSlowKey)
+
+            taskParam.circle = rightMovement(taskParam.circle, taskParam.keys.slowKeySpeed);
+
+            % Fast left movement
+        elseif keyCode(taskParam.keys.leftKey)
+
+            taskParam.circle = leftMovement(taskParam.circle, taskParam.keys.keySpeed);
+
+
+            % Slow left movement
+        elseif keyCode(taskParam.keys.leftSlowKey)
+
+            taskParam.circle = leftMovement(taskParam.circle, taskParam.keys.slowKeySpeed);
+
+            % Commit to prediction and terminate response loop
+        elseif keyCode(breakKey)
+
+            % Record prediction
+            taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle);
+
+            % Record the difference between now (RT_Timestamp) and
+            % beginning of trial (startTimestamp)
+            RT_Timestamp = GetSecs;
+            taskData.timestampPrediction(trial) = RT_Timestamp - taskParam.timingParam.ref;
+            taskData.RT(trial) = RT_Timestamp - startTimestamp;
+            breakLoop = true;
         end
-
-        % Slow right movement
-    elseif keyCode(taskParam.keys.rightSlowKey)
-
-        if taskParam.circle.rotAngle < 360*taskParam.circle.unit
-            taskParam.circle.rotAngle = taskParam.circle.rotAngle + taskParam.keys.slowKeySpeed*taskParam.circle.unit;
-        else
-            taskParam.circle.rotAngle = 0;
-        end
-
-        % Fast left movement
-    elseif keyCode(taskParam.keys.leftKey)
-
-        if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-            taskParam.circle.rotAngle = taskParam.circle.rotAngle - taskParam.keys.keySpeed*taskParam.circle.unit;
-        else
-            taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-        end
-
-        % Slow left movement
-    elseif keyCode(taskParam.keys.leftSlowKey)
-
-        if taskParam.circle.rotAngle > 0*taskParam.circle.unit
-            taskParam.circle.rotAngle = taskParam.circle.rotAngle - taskParam.keys.slowKeySpeed*taskParam.circle.unit;
-        else
-            taskParam.circle.rotAngle = 360*taskParam.circle.unit;
-        end
-
-        % Commit to prediction and terminate response loop
-    elseif keyCode(breakKey)
-
-        % Record prediction
-        taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle);
-        %(taskParam.circle.rotAngle / taskParam.circle.unit);
-
-        % Record the difference between now (RT_Timestamp) and
-        % beginning of trial (startTimestamp)
-        RT_Timestamp = GetSecs;
-        taskData.timestampPrediction(trial) = RT_Timestamp - taskParam.timingParam.ref;
-        taskData.RT(trial) = RT_Timestamp - startTimestamp;
-        breakLoop = true;
     end
 
+else
+
+    % This is for scanner and scanner dummy with different keyboard
+    % properties
+    if ~breakLoop
+
+        % Fast right movement
+        if keyCode(taskParam.keys.rightKey)
+
+            taskParam.circle = rightMovement(taskParam.circle, taskParam.keys.keySpeed);
+
+            % Fast left movement
+        elseif keyCode(taskParam.keys.leftKey)
+
+            taskParam.circle = leftMovement(taskParam.circle, taskParam.keys.keySpeed);
+
+            % Commit to prediction and terminate response loop
+        elseif keyCode(breakKey)
+
+            % Record prediction
+            taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle);
+
+            % Record the difference between now (RT_Timestamp) and
+            % beginning of trial (startTimestamp)
+            RT_Timestamp = GetSecs;
+            taskData.timestampPrediction(trial) = RT_Timestamp - taskParam.timingParam.ref;
+            taskData.RT(trial) = RT_Timestamp - startTimestamp;
+            breakLoop = true;
+        end
+    end
 end
 end

@@ -9,6 +9,7 @@ function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, sta
 %       startTimestamp: Onset of prediction phase for computing initRT
 %       text: Presented text
 %       breakKey: Key code to lock prediction
+%
 %   Ouptut
 %       taskData: Task-parameter-object instance
 %       taskParam: Task-data-object instance
@@ -47,9 +48,16 @@ end
 % 2. Update prediction spot until prediction is confirmed
 % -------------------------------------------------------
 
-RestrictKeysForKbCheck([taskParam.keys.rightKey taskParam.keys.leftKey 52]);
-KbQueueCreate
-KbQueueStart
+% Keyboard settings for MD scanner
+if taskParam.gParam.scanner || taskParam.gParam.scannerDummy
+    RestrictKeysForKbCheck([taskParam.keys.rightKey, taskParam.keys.leftRelease, ...
+        taskParam.keys.rightRelease, taskParam.keys.leftKey, taskParam.keys.space, taskParam.keys.esc]);
+    KbQueueCreate
+    KbQueueStart
+end
+
+% Initialize key codes with zeros
+keyCode = zeros(1, 256);
 
 while 1
 
@@ -100,18 +108,25 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
 
     % Update location of prediction spot depending on participant input
-    [breakLoop, taskParam, taskData] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey);
+    [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey, keyCode);
 
     % Break out of while condition if prediction has been confirmed
     if breakLoop == true
         break
     end
 
+    % Check for escape key 
+    taskParam.keys.checkQuitTask();
+
 end
 
-KbQueueStop
-RestrictKeysForKbCheck([]);
+% Relax restrictions for scanner after prediction
+if taskParam.gParam.scanner || taskParam.gParam.scannerDummy
 
+    KbQueueStop
+    RestrictKeysForKbCheck([]);
+
+end
 
 end
 

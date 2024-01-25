@@ -1,4 +1,4 @@
-function [dataMonetaryReward, dataSocialReward] = RunHamburgEEGVersion(unitTest, cBal, day)
+function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = RunHamburgEEGVersion(unitTest, cBal, day)
 %RUNHAMBURGEEGVERSION This function runs the EEG version of the confetti-cannon task
 %
 %   Input
@@ -8,7 +8,9 @@ function [dataMonetaryReward, dataSocialReward] = RunHamburgEEGVersion(unitTest,
 %
 %   Output
 %       dataMonetaryReward: Task-data object monetary-reward condition
+%       dataMonetaryPunishment: Task-data object monetary-punishment condition
 %       dataSocialReward: Task-data object social-reward condition
+%       dataSocialPunishment: Task-data object social-punishment condition
 %
 %   Documentation
 %       This function runs the EEG version of the confetti-cannon task.
@@ -23,6 +25,7 @@ function [dataMonetaryReward, dataSocialReward] = RunHamburgEEGVersion(unitTest,
 %       01/24
 
 % Todo: remuneration
+% todo: tailored integration tests
 
 
 % Check if unit test is requested
@@ -62,7 +65,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10;  % 200;  Hier bitte anpassen
+trialsExp = 2;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -416,7 +419,8 @@ taskParam.triggers = triggers;
 
 [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_HamburgEEGConditions(taskParam);
 
-% Tode: determine payment
+% Todo: determine payment
+% todo: should be actual amount of money
 totWin = sum(dataMonetaryReward.hit) + sum(dataMonetaryReward.hit);
 
 % -----------

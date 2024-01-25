@@ -127,6 +127,9 @@ classdef al_gparam
 
         % Indicates if experiment takes place in scanner
         scanner
+
+        % Simulates scanner settings, including different keyboard input
+        scannerDummy
         
         % Name of output file
         saveName 
@@ -215,6 +218,8 @@ classdef al_gparam
             gparamobj.dataDirectory = nan;  
             gparamobj.scanner = false;
             gparamobj.saveName = 'standard';
+            gparamobj.scanner = false;
+            gparamobj.scannerDummy = false;
             %gparamobj.critDist = nan; 
             %gparamobj.chinesePractTrials = nan; 
             %gparamobj.nPlanets = 1;

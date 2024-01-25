@@ -22,7 +22,7 @@ function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       11/22
+%       01/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -56,7 +56,6 @@ else
     rng(1)
 end
 
-
 % ----------------------------
 % Set relevant task parameters
 % ----------------------------
@@ -80,7 +79,7 @@ pushConcentration = 4;
 haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = false; %true;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;

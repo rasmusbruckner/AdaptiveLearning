@@ -1,6 +1,6 @@
-function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
+function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
 %RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version of
-%   WMV including variance change points and working memory manipulations
+%   VWM including variance change points and working memory manipulations
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
@@ -12,6 +12,8 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 %       dataAddTickmarks: Task-data object multiple tick marks
 %       dataStandardCannonVar Task-data object change point + variance
 %       dataDriftingCannonVar: Task-data object drift + variance
+%       dataDriftingCannonVarWM: Task-data object drift + variance + tick
+%       marks
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
@@ -59,7 +61,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10; % 200;  Hier bitte anpassen
+trialsExp = 20; % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -71,6 +73,9 @@ practTrials = 2; % 20;  Hier bitte anpassen
 concentration = [12, 16, 8]; % the first value is the concentration
 % in the versions without variability changepoints. The second and third
 % are for the different variability changepoints.
+
+% Cannon drift in drift conditions
+driftConc = 30;
 
 % Factor that translates concentration into shield size
 shieldFixedSizeFactor = 2;
@@ -91,7 +96,7 @@ nParticles = 40;
 confettiStd = 1;
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false; %true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -188,6 +193,7 @@ gParam.safeVar = safeVar;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.saveName = 'vwm';
+gParam.driftConc = driftConc;
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -394,8 +400,8 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar] = al_varianceWorkingMemoryConditions(taskParam);
-totWin = sum(dataStandardTickmarks.hit) + sum(dataAddTickmarks.hit) + sum( dataStandardCannonVar.hit) + sum(dataDriftingCannonVar.hit);
+[dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = al_varianceWorkingMemoryConditions(taskParam);
+totWin = sum(dataStandardTickmarks.hit) + sum(dataAddTickmarks.hit) + sum(dataStandardCannonVar.hit) + sum(dataDriftingCannonVar.hit) + sum(dataDriftingCannonVarWM.hit);
 
 % -----------
 % End of task

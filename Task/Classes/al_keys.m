@@ -23,6 +23,8 @@ classdef al_keys
         s
         esc
         kbDev
+        leftRelease
+        rightRelease
 
     end
     
@@ -49,6 +51,8 @@ classdef al_keys
             keysobj.enter = 37;
             keysobj.s = 40;
             keysobj.esc = KbName('ESCAPE');
+            keysobj.leftRelease = 43;
+            keysobj.rightRelease = 44; 
                       
         end
 
@@ -73,14 +77,15 @@ classdef al_keys
 
 
         function keysobj = checkQuitTask(keysobj)
-                % todo: comment... and maybe turn on and off depending on
-                % input... maybe off in real exp
+            % CHECKQUITTASK This function checks if esc was pressed to
+            % quit task
+                
             [ ~, ~, keyCode] = KbCheck(keysobj.kbDev);
             if keyCode(keysobj.esc)
                 ListenChar();
                 ShowCursor;
                 Screen('CloseAll');
-                error('User pressed Escape to finish task')
+                error('User pressed Escape to quit task')
             end
         end
 

@@ -240,7 +240,7 @@ for i = 1:trial
     end
 
     % Manage breaks
-    taskParam = al_takeBreak(taskParam, taskData, i);
+    taskParam = al_takeBreak(taskParam, taskData, i, trial);
 
 end
 
