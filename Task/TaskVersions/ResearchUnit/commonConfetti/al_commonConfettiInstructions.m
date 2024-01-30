@@ -34,7 +34,7 @@ if testDay == 1
     % 2. Introduce the cannon
     % -----------------------
 
-    % Load taskData-object instance
+    % Load task-data-object instance
     nTrials = 4;
     taskData = al_taskDataMain(nTrials);
 
@@ -76,7 +76,6 @@ if testDay == 1
     taskParam.trialflow.currentTickmarks = 'show';
     currTrial = 3; % update trial number
 
-
     % Repeat as long as subject misses confetti
     while 1
 
@@ -100,7 +99,7 @@ if testDay == 1
     % -------------------
 
     win = true; % color of shield when catch is rewarded
-    txt = ['Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.'];
+    txt = 'Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.';
     taskData = al_introduceShield(taskParam, taskData, win, currTrial, txt, xyExp, taskData.dotCol(currTrial).rgb, dotSize);
 
     % 6. Ask participant to miss confetti
@@ -141,7 +140,7 @@ if testDay == 1
 
     % Display instructions
     header = '';
-    txt=['Im Folgenden durchlaufen Sie zwei Übungsdurchgänge\nund im Anschluss zwei Durchgänge des Experiments.'];
+    txt = 'Im Folgenden durchlaufen Sie zwei Übungsdurchgänge\nund im Anschluss zwei Durchgänge des Experiments.';
     feedback = true; % present text centrally
     al_bigScreen(taskParam, header, txt, feedback);
 

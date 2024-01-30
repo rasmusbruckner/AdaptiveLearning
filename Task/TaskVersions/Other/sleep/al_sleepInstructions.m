@@ -108,7 +108,7 @@ if testDay == 1
         [taskData, taskParam] = al_introduceShieldMiss(taskParam, taskData, currTrial, txt);
 
         % If it is a hit, repeat instruction
-        if abs(taskData.predErr) <= taskParam.gParam.practiceTrialCriterionEstErr
+        if abs(taskData.predErr(currTrial)) <= taskParam.gParam.practiceTrialCriterionEstErr
 
             WaitSecs(0.5)
             header = 'Leider gefangen!';
@@ -170,7 +170,6 @@ if testDay == 1
         else
             break
         end
-
     end
 
     % 9. Introduce hidden cannon

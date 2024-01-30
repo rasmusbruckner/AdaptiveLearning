@@ -23,6 +23,6 @@ elseif strcmp(taskParam.trialflow.reward, 'socialPunishment')
 end
 
 feedback = true;
-al_bigScreen(taskParam, header, txt, feedback);
+al_bigScreen(taskParam, header, txt, feedback, true);
 
 end

@@ -113,8 +113,8 @@ for i = 1:trial
     % for accurate timing
     timestamp = GetSecs;
 
-    % Outcome: Animate cannonball
-    %----------------------------
+    % Outcome: Compute performance
+    % ----------------------------
 
     % Deviation from cannon (estimation error) to compute performance
     % criterion in practice

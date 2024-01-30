@@ -37,6 +37,9 @@ KbReleaseWait();
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 
+% Load static confetti cloud
+[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+
 % Cycle over trials
 % -----------------
 for i = 1:trial
@@ -139,7 +142,7 @@ for i = 1:trial
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
     else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        % [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
         al_drawCross(taskParam)
     end
@@ -158,7 +161,7 @@ for i = 1:trial
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
     else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        % [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
         al_drawCross(taskParam)
     end
@@ -167,118 +170,118 @@ for i = 1:trial
     al_drawCircle(taskParam)
     al_tickMark(taskParam, taskData.pred(i), 'pred')
 
-    % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
-    al_confettiOutcome(taskParam, taskData, i)
+    % Confetti animation
+    background = false; % todo: include this in trialflow
+    taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+    %al_confettiOutcome(taskParam, taskData, i)
     
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
+%     % Tell PTB that everything has been drawn and flip screen
+%     Screen('DrawingFinished', taskParam.display.window.onScreen);
+%     
+%     % Extract current time and determine when screen should be flipped
+%     % for accurate timing
+%     timestamp = timestamp + taskParam.timingParam.outcomeLength; 
+%     Screen('Flip', taskParam.display.window.onScreen, timestamp);
     
-    % Extract current time and determine when screen should be flipped
-    % for accurate timing
-    timestamp = timestamp + taskParam.timingParam.outcomeLength; 
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    
-    % Send outcome trigger
-    taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'outcome', true);
-    
-    if taskParam.gParam.printTiming
-        taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
-        fprintf('Fix-cross 1 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampPrediction(i))
-    end
+%     % Send outcome trigger
+%     taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'outcome', true);
+%     
+%     if taskParam.gParam.printTiming
+%         taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
+%         fprintf('Fix-cross 1 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampPrediction(i))
+%     end
 
-    % 5. Trial phase: Fixation cross 2
+%     % 5. Trial phase: Fixation cross 2
+%     % --------------------------------
+% 
+%     al_drawCross(taskParam)
+%     al_drawCircle(taskParam)
+%     if isequal(taskParam.gParam.taskType, 'chinese')
+%         al_drawContext(taskParam, taskData.currentContext(i))
+%         al_drawCross(taskParam)
+%     end
+% 
+%     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+%         al_drawCannon(taskParam, taskData.distMean(i))
+%     else
+%         [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+%         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+%         al_drawCross(taskParam)
+%     end
+% 
+%     % Tell PTB that everything has been drawn and flip screen
+%     Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
+%     timestamp = timestamp + taskParam.timingParam.outcomeLength;
+%     Screen('Flip', taskParam.display.window.onScreen, timestamp, 1);
+%     
+%     % Send fixation cross 2 trigger
+%     taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix', true);
+%     
+%     if taskParam.gParam.printTiming
+%         taskData.timestampOutcome(i) = GetSecs() - taskParam.timingParam.ref;
+%         fprintf('Shot duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross2(i))
+%     end
+
+%     % 6. Trial phase: Shield
+%     % ----------------------
+% 
+%     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+%         al_drawCannon(taskParam, taskData.distMean(i))
+%     else
+%         [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+%         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+%         al_drawCross(taskParam)
+%     end
+% 
+%     % Draw circle and confetti cloud
+%     al_drawCircle(taskParam)
+% 
+%     % Draw shield
+%     al_shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
+% 
+%     % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+%     al_confettiOutcome(taskParam, taskData, i)
+% 
+%     % Tell PTB that everything has been drawn and flip screen
+%     Screen('DrawingFinished', taskParam.display.window.onScreen);
+%     timestamp = timestamp + taskParam.timingParam.fixCrossLength;
+%     Screen('Flip', taskParam.display.window.onScreen, timestamp);
+%     
+%     % Send shield trigger
+%     taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'shield', true);
+% 
+%     if taskParam.gParam.printTiming
+%         taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+%         fprintf('Fix-cross 2 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
+%     end
+% 
+    % 7. Trial phase: Fixation cross 2
     % --------------------------------
 
     al_drawCross(taskParam)
     al_drawCircle(taskParam)
-    if isequal(taskParam.gParam.taskType, 'chinese')
-        al_drawContext(taskParam, taskData.currentContext(i))
-        al_drawCross(taskParam)
-    end
 
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
     else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-        al_drawCross(taskParam)
-    end
-
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-    timestamp = timestamp + taskParam.timingParam.outcomeLength;
-    Screen('Flip', taskParam.display.window.onScreen, timestamp, 1);
-    
-    % Send fixation cross 2 trigger
-    taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix', true);
-    
-    if taskParam.gParam.printTiming
-        taskData.timestampOutcome(i) = GetSecs() - taskParam.timingParam.ref;
-        fprintf('Shot duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross2(i))
-    end
-
-    % 6. Trial phase: Shield
-    % ----------------------
-
-    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-        al_drawCannon(taskParam, taskData.distMean(i))
-    else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-        al_drawCross(taskParam)
-    end
-
-    % Draw circle and confetti cloud
-    al_drawCircle(taskParam)
-
-    % Draw shield
-    al_shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
-
-    % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
-    al_confettiOutcome(taskParam, taskData, i)
-
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.fixCrossLength;
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    
-    % Send shield trigger
-    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'shield', true);
-
-    if taskParam.gParam.printTiming
-        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
-        fprintf('Fix-cross 2 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
-    end
-
-    % 7. Trial phase: Fixation cross 3
-    % --------------------------------
-
-    al_drawCross(taskParam)
-    al_drawCircle(taskParam)
-    if isequal(taskParam.gParam.taskType, 'chinese')
-        al_drawContext(taskParam, taskData.currentContext(i))
-        al_drawCross(taskParam)
-    end
-
-    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-        al_drawCannon(taskParam, taskData.distMean(i))
-    else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        % [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
         al_drawCross(taskParam)
     end
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.shieldLength;
+    timestamp = timestamp + taskParam.timingParam.cannonBallAnimation; %taskParam.timingParam.shieldLength;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
     
     % Send fixation cross 3 trigger
     taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix', true);
 
     if taskParam.gParam.printTiming
-        taskData.timestampShield(i) = GetSecs() - taskParam.timingParam.ref;
-        fprintf('Shield duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross2(i))
+        % taskData.timestampShield(i) = GetSecs() - taskParam.timingParam.ref;
+        shotTiming = GetSecs() - taskParam.timingParam.ref;
+        %timestamp = timestamp + taskParam.timingParam.cannonBallAnimation;
+        fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampPrediction(i))
     end
 
     % 8. Trial phase: Reward
@@ -290,13 +293,13 @@ for i = 1:trial
     % Monetary-reward condition
     if isequal(taskParam.trialflow.reward, 'monetaryReward') && taskData.hit(i)
 
-        txt = sprintf('<color=32CD32>Gewinn: +%.1f Euro\n<color=ffffff>Total: %.1f Euro', taskData.perf(i), taskData.accPerf(i));
+        txt = sprintf('<color=32CD32>+%.1f Euro', taskData.perf(i));
         DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
     
     % Monetary-punishment condition
     elseif isequal(taskParam.trialflow.reward, 'monetaryPunishment') && ~taskData.hit(i)
 
-        txt = sprintf('<color=ff0000>Gewinn: %.1f Euro\n<color=ffffff>Total: %.1f Euro', taskData.perf(i), taskData.accPerf(i));
+        txt = sprintf('<color=ff0000>%.1f Euro\n<color=ffffff>', taskData.perf(i));
         DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
 
     % Social-reward condition
@@ -327,7 +330,7 @@ for i = 1:trial
         if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
             al_drawCannon(taskParam, taskData.distMean(i))
         else
-            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+            %[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
             Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
             al_drawCross(taskParam)
         end
@@ -343,8 +346,9 @@ for i = 1:trial
 
     % Print timing
     if taskParam.gParam.printTiming
-        taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
-        fprintf('Fix-cross 3 duration: %.5f\n', taskData.timestampFixCross3(i) - taskData.timestampShield(i))
+        % todo: check if there is any task with 3 fix crosses
+        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+        fprintf('Fix-cross 2 duration: %.5f\n', taskData.timestampFixCross2(i) - shotTiming)
     end
 
     % 9. Trial phase: Fixation cross: ITI
@@ -353,7 +357,7 @@ for i = 1:trial
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
     else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        % [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
         Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
         al_drawCross(taskParam)
     end
@@ -373,7 +377,7 @@ for i = 1:trial
     if taskParam.gParam.printTiming
         %rewardTiming = GetSecs - taskParam.timingParam.ref;
         taskData.timestampReward(i) = GetSecs - taskParam.timingParam.ref;
-        fprintf('Reward duration: %.5f\n', taskData.timestampReward(i) - taskData.timestampFixCross3(i))
+        fprintf('Reward duration: %.5f\n', taskData.timestampReward(i) - taskData.timestampFixCross2(i))
     end
 
     % Fixed inter-trial interval
@@ -386,7 +390,7 @@ for i = 1:trial
     end
 
     % Manage breaks
-    taskParam = al_takeBreak(taskParam, taskData, i, false);
+    taskParam = al_takeBreak(taskParam, taskData, i, trial, false);
    
 end
 
@@ -395,12 +399,25 @@ end
 
 if ~taskParam.unitTest
 
-    currPoints = sum(taskData.hit, 'omitnan');
-    txt = sprintf('In diesem Block hast Du %.0f Punkte verdient.', currPoints);
+    % currPoints = sum(taskData.hit, 'omitnan');
+    if isequal(taskParam.trialflow.reward, "monetaryReward") || isequal(taskParam.trialflow.reward, "monetaryPunishment")
+
+        txt = sprintf('In diesem Block hast Du inklusive Deines Startbudgets %.1f Euro verdient.', taskData.accPerf(end));
+    elseif isequal(taskParam.trialflow.reward, "socialReward")
+        
+        txt = sprintf('In diesem Block hast Du %.0f Likes erhalten.', sum(taskData.hit==1)); 
+
+    else
+
+        txt = sprintf('In diesem Block hast Du %.0f Dislikes erhalten.', sum(taskData.hit==0)); 
+
+    end
+    
     header = 'Zwischenstand';
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 
+    % todo: update!
     if ~isequal(condition,'practice')
 
         % Save data
@@ -410,7 +427,7 @@ if ~taskParam.unitTest
         concentration = unique(taskData.concentration);
         savename = sprintf('confetti_EEG_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
         
-        
+        % Todo: create function for this
         checkString = dir([savename '*']);            
         fileNames = {checkString.name};            
         if  ~isempty(fileNames)

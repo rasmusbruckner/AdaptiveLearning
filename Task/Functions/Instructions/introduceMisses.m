@@ -1,4 +1,4 @@
-function [taskData, taskParam] = introduceMisses(taskParam, taskData, whichPractice, txt)
+function [taskData, taskParam] = introduceMisses(taskParam, taskData, whichPractice, txt, trial)
 %INTRODUCEMISSES This function introduce misses of the cannonball to participants
 %
 %   Input
@@ -29,9 +29,9 @@ if ~ isequal(taskParam.trialflow.shotAndShield, 'sequential')
 
 end
 WaitSecs(taskParam.timingParam.outcomeLength);
-if (isequal(whichPractice, 'mainPractice') && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'followCannonPractice')...
-        && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'oddballPractice') && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'reversal')...
-        && abs(taskData.predErr) >= 9) || (isequal(whichPractice, 'chinese') && abs(taskData.predErr) >= 9)
+if (isequal(whichPractice, 'mainPractice') && abs(taskData.predErr(trial)) >= 9) || (isequal(whichPractice, 'followCannonPractice')...
+        && abs(taskData.predErr(trial)) >= 9) || (isequal(whichPractice, 'oddballPractice') && abs(taskData.predErr(trial)) >= 9) || (isequal(whichPractice, 'reversal')...
+        && abs(taskData.predErr(trial)) >= 9) || (isequal(whichPractice, 'chinese') && abs(taskData.predErr(trial)) >= 9)
 
     al_lineAndBack(taskParam)
     if isequal(taskParam.gParam.taskType, 'chinese')
@@ -42,11 +42,11 @@ if (isequal(whichPractice, 'mainPractice') && abs(taskData.predErr) >= 9) || (is
     al_drawCircle(taskParam);
     %al_drawCross(taskParam);
     al_predictionSpot(taskParam);
-    al_drawOutcome(taskParam, outcome);
-    al_drawCannon(taskParam, taskData.distMean, 0)
+    al_drawOutcome(taskParam, outcome(trial));
+    al_drawCannon(taskParam, taskData.distMean(trial))
     
     DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.display.screensize(4)*0.9, [255 255 255]);
-    DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.gParam.sentenceLength);
+    DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     t = GetSecs;
     Screen('Flip', taskParam.display.window.onScreen, t + 0.1);

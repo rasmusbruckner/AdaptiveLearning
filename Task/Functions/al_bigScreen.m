@@ -9,7 +9,7 @@ function al_bigScreen(taskParam, header, txt, feedback, endOfTask)
 %       endOfTask: Optional input argument for different breakKey
 %
 %   Output
-%       ~
+%       None
 
 
 % Manage optional breakKey input: if not provided, use SPACE as default
@@ -50,6 +50,8 @@ while 1
     % Print "Press Enter" to indicate how to continue with instructions
     if ~endOfTask
         DrawFormattedText(taskParam.display.window.onScreen,  taskParam.strings.txtPressEnter, 'center', taskParam.display.screensize(4)*0.9);
+    else
+        DrawFormattedText(taskParam.display.window.onScreen,  'Bitte auf Versuchtsleiter:in warten...', 'center', taskParam.display.screensize(4)*0.9);
     end
     
     % All text strings are presented

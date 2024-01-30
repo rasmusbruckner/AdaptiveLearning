@@ -1,5 +1,5 @@
 function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
-%AL_CONFETTILOOP This function runs the cannon-task trials for the "confetti-cannon version"
+%AL_CONFETTILOOP This function runs the cannon-task trials for the common confetti-cannon version
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -9,6 +9,8 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %
 %   Output
 %       taskData: Task-data-object instance
+%   
+%   TODO: Put in respectice Run... functions
 %
 %   Events standard condition
 %       1: Trial Onset
@@ -41,7 +43,6 @@ KbReleaseWait();
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
-
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
 % Cycle over trials

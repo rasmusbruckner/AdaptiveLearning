@@ -62,7 +62,7 @@ practTrials = 2;
 shieldTrials = 4; 
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -124,7 +124,7 @@ trialflow = al_trialflow();
 % trialflow.shot = ' ';
 % trialflow.confetti = 'show confetti cloud';
 % trialflow.cannonball_start = 'center';
-% trialflow.cannon = 'hide cannon';
+trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 % trialflow.currentTickmarks = 'show';
 % trialflow.cannonType = "confetti";
@@ -132,8 +132,11 @@ trialflow.background = 'noPicture';
 % trialflow.shield = "fixed";
 % trialflow.shieldType = "constant";
 trialflow.input = "keyboard";
-trialflow.shotAndShield = "separately";
+trialflow.shotAndShield = "sequential";
+trialflow.shot = "static";
 
+
+% todo update in line with more recent versions
 
 % User Input
 % ----------
@@ -222,7 +225,7 @@ elseif askSubjInfo == true
     
     % Put all relevant subject info in structure
     % ------------------------------------------
-    subject = struct('ID', subjInfo(1), 'age', subjInfo(2), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
+    subject = struct('ID', subjInfo(1), 'age', str2double(subjInfo(2)), 'sex', subjInfo(4), 'group', subjInfo(3), 'cBal', str2double(cell2mat(subjInfo(5))), 'rew',...
         str2double(cell2mat(subjInfo(6))), 'date', subjInfo(7), 'session', '1');
 
     
@@ -618,86 +621,104 @@ cd('~/Dropbox/AdaptiveLearning/DataDirectory');
     %cond_init.testDay = testDay;
     cond_init.showTickmark = taskParam.gParam.showTickmark;
     
+
+    [dataMain] = al_dresdenConditions(taskParam); %dataFollowCannon, dataFollowOutcome
+
     % Condition-object instance
     % --------------------------
     
     
       % todo: init anpassen dass für arc spezifisch ist. 
-    cond = al_dresden_conditions(cond_init);
+   % cond = al_dresden_conditions(cond_init);
     
-    % hier noch comments!
-    
-    if subject.cBal == 1
-        %DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-         %  header, testDay, cBal, showTickmark);
-        cond = cond.MainCondition(taskParam, subject);
-        DataMain = cond.DataMain;
-        %taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam,
-        %debug, unitTest);
-        cond = cond.FollowOutcomeCondition(taskParam, subject);
-        DataFollowOutcome = cond.DataFollowOutcome;
-        %taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        cond = cond.FollowCannonCondition(taskParam, subject);
-        DataFollowCannon = cond.DataFollowCannon;
-        
-    elseif subject.cBal == 2
-        
-        DataMain = cond.MainCondition(runIntro, unitTest, taskType,subject, taskParam, haz, concentration, txtPressEnter,...
-            header, testDay, cBal, showTickmark);
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataFollowCannon = cond.FollowCannonCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataFollowOutcome = cond.FollowOutcomeCondition;
-        
-    elseif subject.cBal == 3
-        
-        DataFollowOutcome = cond.FollowOutcomeCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-            header, testDay, cBal, showTickmark);
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataFollowCannon = cond.FollowCannonCondition;
-        
-    elseif subject.cBal == 4
-        
-        DataFollowCannon = cond.FollowCannonCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-            header, testDay, cBal, showTickmark);
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataFollowOutcome = cond.FollowOutcomeCondition;
-        
-    elseif subject.cBal == 5
-        
-        DataFollowOutcome = cond.FollowOutcomeCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataFollowCannon = cond.FollowCannonCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-            header, testDay, cBal, showTickmark);
-        
-    elseif subject.cBal == 6
-        
-        DataFollowCannon = cond.FollowCannonCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataFollowOutcome = cond.FollowOutcomeCondition;
-        taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
-        DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
-            header, testDay, cBal, showTickmark);
-        
-    end
+%     % hier noch comments!
+%     % all of this has to happen in dresdenConditions
+%     if subject.cBal == 1
+% 
+%         % Main task using function
+% 
+%         % FollowOutcome using function
+% 
+%         % FollowCannon using function
+% 
+%         
+%         %DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
+%          %  header, testDay, cBal, showTickmark);
+%        
+%          
+%          % cond = cond.MainCondition(taskParam, subject);
+%         
+%        %DataMain = cond.DataMain;
+%         %taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam,
+%         %debug, unitTest);
+%         
+%         
+%         %cond = cond.FollowOutcomeCondition(taskParam, subject);
+%         %DataFollowOutcome = cond.DataFollowOutcome;
+%         
+%         
+%         %taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         %cond = cond.FollowCannonCondition(taskParam, subject);
+%         %DataFollowCannon = cond.DataFollowCannon;
+%         
+%     elseif subject.cBal == 2
+%         
+%         DataMain = cond.MainCondition(runIntro, unitTest, taskType,subject, taskParam, haz, concentration, txtPressEnter,...
+%             header, testDay, cBal, showTickmark);
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataFollowCannon = cond.FollowCannonCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataFollowOutcome = cond.FollowOutcomeCondition;
+%         
+%     elseif subject.cBal == 3
+%         
+%         DataFollowOutcome = cond.FollowOutcomeCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
+%             header, testDay, cBal, showTickmark);
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataFollowCannon = cond.FollowCannonCondition;
+%         
+%     elseif subject.cBal == 4
+%         
+%         DataFollowCannon = cond.FollowCannonCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
+%             header, testDay, cBal, showTickmark);
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataFollowOutcome = cond.FollowOutcomeCondition;
+%         
+%     elseif subject.cBal == 5
+%         
+%         DataFollowOutcome = cond.FollowOutcomeCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataFollowCannon = cond.FollowCannonCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
+%             header, testDay, cBal, showTickmark);
+%         
+%     elseif subject.cBal == 6
+%         
+%         DataFollowCannon = cond.FollowCannonCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataFollowOutcome = cond.FollowOutcomeCondition;
+%         taskParam.gParam.window = CloseScreenAndOpenAgain(taskParam, debug, unitTest);
+%         DataMain = cond.MainCondition(runIntro, unitTest, taskType, subject, taskParam, haz, concentration, txtPressEnter,...
+%             header, testDay, cBal, showTickmark);
+%         
+%     end
     
     % Translate performance into monetary reward
     % ------------------------------------------
     
-    totWin = DataFollowOutcome.accPerf(end) + DataMain.accPerf(end) + DataFollowCannon.accPerf(end);
+    totWin = dataMain.accPerf(end);% + DataFollowOutcome.accPerf(end) + DataFollowCannon.accPerf(end);
     
     % Combine data in one structure
     % -----------------------------
 
-    Data.DataMain = DataMain;
-    Data.DataFollowOutcome = DataFollowOutcome;
-    Data.DataFollowCannon = DataFollowCannon;
+    %Data.DataMain = DataMain;
+    %Data.DataFollowOutcome = DataFollowOutcome;
+    %Data.DataFollowCannon = DataFollowCannon;
 
 %     % End of task
 %     % -----------

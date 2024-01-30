@@ -36,7 +36,7 @@ end
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
 % -------------------------------------
-% 3 Standard task and tick-mark version
+% 3. Standard task and tick-mark version
 % -------------------------------------
 
 % Extract number of trials
@@ -48,7 +48,7 @@ taskParam.trialflow.variability = "stable";
 
 if cBal == 1
 
-    % 1 Standard cannon
+    % 1. Standard cannon
     % -----------------
 
     % Get data
@@ -73,7 +73,7 @@ if cBal == 1
     al_indicateCannonType(taskParam)
     dataStandardTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % 2 Working memory version
+    % 2. Working memory version
     % ------------------------
 
     % Get data
@@ -150,9 +150,9 @@ else
 
 end
 
-% -------------------------------------------------------------
-% 4 Confetti-cannon task with mean and variability changepoints
-% -------------------------------------------------------------
+% --------------------------------------------------------------
+% 4. Confetti-cannon task with mean and variability changepoints
+% --------------------------------------------------------------
 
 taskParam.trialflow.currentTickmarks = "show";
 taskParam.trialflow.variability = "changepoint";
@@ -179,14 +179,14 @@ end
 al_indicateCannonType(taskParam)
 dataStandardCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-% --------------------------------------------------------------------------------
-% 5 Confetti-cannon task with drift and variability changepoints
-% --------------------------------------------------------------------------------
+% ----------------------------------
+% 5. Confetti-cannon task with drift 
+% ----------------------------------
 
 if cBal == 1
 
-    % 1 One tick mark and variability change points
-    % ---------------------------------------------
+    % 1. One tick mark, variability change points, and mean change points 
+    % -------------------------------------------------------------------
 
     taskParam.trialflow.distMean = "drift";
     taskParam.trialflow.variability = "changepoint";
@@ -212,8 +212,8 @@ if cBal == 1
     al_indicateCannonType(taskParam)
     dataDriftingCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % 2 Multiple tick marks but no variability change points
-    % ------------------------------------------------------
+    % 2. Multiple tick marks, no variability change points, and mean change points
+    % ----------------------------------------------------------------------------
 
     taskParam.trialflow.distMean = "drift";
     taskParam.trialflow.variability = "stable";
@@ -241,8 +241,8 @@ if cBal == 1
 
 else
 
-    % 1 Multiple tick marks but no variability change points
-    % ------------------------------------------------------
+    % 1. Multiple tick marks, no variability change points, and mean change points
+    % ----------------------------------------------------------------------------
 
     taskParam.trialflow.distMean = "drift";
     taskParam.trialflow.variability = "stable";
@@ -268,8 +268,8 @@ else
     al_indicateCannonType(taskParam)
     dataDriftingCannonVarWM = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % 2 One tick mark and variability change points 
-    % ---------------------------------------------
+    % 2. One tick mark, variability change points, and mean change points 
+    % -------------------------------------------------------------------
 
     taskParam.trialflow.distMean = "drift";
     taskParam.trialflow.variability = "changepoint";

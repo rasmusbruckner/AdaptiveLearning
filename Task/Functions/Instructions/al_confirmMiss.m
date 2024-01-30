@@ -43,12 +43,7 @@ while 1
     
     % Present background, cross, and circle
     al_lineAndBack(taskParam)
-    % todo: update with trialflow
-    if isequal(taskParam.gParam.taskType, 'chinese')
-        currentContext = 1;
-        al_drawContext(taskParam, currentContext)
-        al_drawCross(taskParam);
-    end
+    
     al_drawCannon(taskParam, taskData.distMean(trial))
     al_drawCircle(taskParam)
     

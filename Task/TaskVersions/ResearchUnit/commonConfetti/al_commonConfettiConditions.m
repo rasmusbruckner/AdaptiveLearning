@@ -1,6 +1,6 @@
 function [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam)
 %AL_COMMONCONFETTICONDITIONS This function runs the changepoint condition of the cannon
-%   task tailored to the "Hamburg" version
+%   task tailored to the common task shared across projects
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -9,10 +9,10 @@ function [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam)
 %       dataLowNoise: Task-data object low-noise condition
 %       dataHighNoise: Task-data object high-noise condition
 %
-%  Todo: Write a unit test and integratio high/low noise in integration test
+%  Todo: Write a unit test and integration high/low noise in integration test
 
 % -----------------------------------------------------
-% 0. Extract some variables from task-parameters object
+% 1. Extract some variables from task-parameters object
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
@@ -25,7 +25,7 @@ cBal = taskParam.subject.cBal;
 testDay = taskParam.subject.testDay;
 
 % --------------------------------
-% 1. Show instructions, if desired
+% 2. Show instructions, if desired
 % --------------------------------
 
 if runIntro && ~unitTest
@@ -34,9 +34,8 @@ end
 
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
-
 % ------------
-% 2. Main task
+% 3. Main task
 % ------------
 
 % Note that days and cBal are not yet implemented.
@@ -44,6 +43,11 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
 % Extract number of trials
 trial = taskParam.gParam.trials;
+
+% Todo: ensure that outcome generation is done only once for each
+% condition.. just order is adjusted. this will be especially 
+% relevant to longer cBal cases such as Dresden or M/EEG
+
 
 if cBal == 1
 
@@ -57,10 +61,10 @@ if cBal == 1
         % TaskData-object instance
         taskData = al_taskDataMain(trial);
 
-        % Generate outcomes using cannonData function
+        % Generate outcomes using cannon-data function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
 
-        % Generate outcomes using confettiData function
+        % Generate outcomes using confetti-data function
         taskData = taskData.al_confettiData(taskParam);
 
     else

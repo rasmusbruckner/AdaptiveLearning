@@ -13,7 +13,15 @@ function [screenIndex, Data] = ShieldPractice(taskParam, subject, screenIndex)
 
     condition = 'shield';
     %[taskData, trial] = al_loadTaskData(taskParam, condition, taskParam.gParam.haz(2), taskParam.gParam.concentration(3)); 
-    taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz(2), taskParam.gParam.concentration(3), condition);
+    %taskData = al_generateOutcomesMain(taskParam, taskParam.gParam.haz(2), taskParam.gParam.concentration(3), condition);
+    % TaskData-object instance
+    
+    taskData = al_taskDataMain(taskParam.gParam.shieldTrials);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz(3), taskParam.gParam.concentration(1), taskParam.gParam.safe);
+
+    
     taskParam.condition = condition;
     trial = taskData.trial;
     taskData.initialTendency = nan(trial,1);
