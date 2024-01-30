@@ -255,6 +255,7 @@ for i = 1:trial
 %         fprintf('Fix-cross 2 duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
 %     end
 % 
+
     % 7. Trial phase: Fixation cross 2
     % --------------------------------
 

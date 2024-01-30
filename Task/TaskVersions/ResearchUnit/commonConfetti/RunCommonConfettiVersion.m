@@ -159,6 +159,9 @@ nFrames = 30; %30; 80
 confettiEndMean = 50; % 150% this is added to the circle radius
 confettiEndStd = 10; % 20 % this is the spread around the average end point
 
+meg = false;
+
+eyeTracker = false;
 % ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
@@ -188,6 +191,8 @@ gParam.concentration = concentration;
 gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
+gParam.meg = meg; 
+gParam.eyeTracker = eyeTracker;
 
 % Save directory
 cd(gParam.dataDirectory);

@@ -45,9 +45,24 @@ Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
+% Start Eyelink recording - calibration and validation of eye-tracker before each block 
+if taskParam.gParam.eyeTracker
+    Eyelink('StartRecording');
+    WaitSecs(0.1);
+    Eyelink('message', 'Start recording Eyelink');
+end
+% send triggers to ET: start/end of blocks, start/end of each trial, event(s) within each trial etc...
+
+
 % Cycle over trials
 % -----------------
 for i = 1:trial
+
+    % Presenting trial number at the bottom of the eyetracker display - optional %
+    if taskParam.gParam.eyeTracker
+        Eyelink('command', 'record_status_message "TRIAL %d/%d"', current_trial, n_trials);
+        Eyelink('message', 'TRIALID %d', t);
+    end
 
     % Save constant variables on each trial  
     taskData.currTrial(i) = i;
@@ -80,6 +95,11 @@ for i = 1:trial
 
     % Self-paced prediction phase
     % ---------------------------
+
+    % Test trigger for eye tracker -- will add the same as for EEG and MEG
+    if taskParam.gParam.eyeTracker
+        Eyelink('message', '1'); % should potentially match the MEG triggers (so, a different trigger to each event...)
+    end
 
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
@@ -244,6 +264,23 @@ for i = 1:trial
     taskParam = al_takeBreak(taskParam, taskData, i, trial);
 
 end
+
+% Save Eyelink data
+% Todo: After each block?
+if taskParam.gParam.eyeTracker
+    fprintf('Saving EyeLink data to %s\n', et_path)
+    eyefilename = fullfile(et_path,et_file_name);
+    Eyelink('CloseFile');
+    Eyelink('WaitForModeReady', 500);
+    try
+        status = Eyelink('ReceiveFile', et_file_name, eyefilename);
+        disp(['File ' eyefilename ' saved to disk']);
+    catch
+        warning(['File ' eyefilename ' not saved to disk']);
+    end
+    Eyelink('StopRecording');
+end
+
 
 % Give feedback and save data
 % ----------------------------

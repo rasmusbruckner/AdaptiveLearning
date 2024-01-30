@@ -134,6 +134,12 @@ classdef al_gparam
         % Name of output file
         saveName 
 
+        % Indicates if experiment takes place with MEG
+        meg
+
+        % Indicates if experiment takes place with eyeTracker
+        eyeTracker
+
         % Critical distance between enemies in chinese version
        % critDist
 
@@ -220,6 +226,8 @@ classdef al_gparam
             gparamobj.saveName = 'standard';
             gparamobj.scanner = false;
             gparamobj.scannerDummy = false;
+            gparamobj.meg = false;
+            gparamobj.eyeTracker = false;
             %gparamobj.critDist = nan; 
             %gparamobj.chinesePractTrials = nan; 
             %gparamobj.nPlanets = 1;
