@@ -174,9 +174,9 @@ classdef al_display
             
             % Load images
             %[cannonPic, ~, alpha]  = imread('cannon.png');
-            if strcmp(cannonType, "standard")
+            if strcmp(cannonType, 'standard')
                 [cannonPic, ~, alpha]  = imread('cannon_not_centered.png');
-            elseif strcmp(cannonType, "helicopter")
+            elseif strcmp(cannonType, 'helicopter')
                 [cannonPic, ~, alpha]  = imread('helicopter.png');
                 [doctorPic, ~, doctorAlpha]  = imread('doctor.png');
                 [heliPic, ~, heliAlpha]  = imread('helicopter.png');
@@ -220,7 +220,7 @@ classdef al_display
             % Create pictures based on images   
             cannonPic(:,:,4) = alpha(:,:);
             % backgroundPic(:,:,4) = backgroundPicAlpha(:,:);
-            if strcmp(cannonType, "helicopter")
+            if strcmp(cannonType, 'helicopter')
                 doctorPic(:,:,4) = doctorAlpha(:,:);
                 heliPic(:,:,4) = heliAlpha(:,:);
                 pill1Pic(:,:,4) = pill1Alpha(:,:);
@@ -237,7 +237,7 @@ classdef al_display
             displayobj.cannonTxt = Screen('MakeTexture', displayobj.window.onScreen, cannonPic);
             displayobj.backgroundTxt = Screen('MakeTexture', displayobj.window.onScreen, backgroundPic);
           
-            if strcmp(cannonType, "helicopter")
+            if strcmp(cannonType, 'helicopter')
                 displayobj.doctorTxt = Screen('MakeTexture', displayobj.window.onScreen, doctorPic);
                 displayobj.heliTxt = Screen('MakeTexture', displayobj.window.onScreen, heliPic);
                 displayobj.pill1Txt = Screen('MakeTexture', displayobj.window.onScreen, pill1Pic);

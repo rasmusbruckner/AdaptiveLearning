@@ -65,7 +65,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10;  % 200;  Hier bitte anpassen
+trialsExp = 2;  % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -98,7 +98,7 @@ runIntro = false;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 6 150 150];
+blockIndices = [1 150 150 150];
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -107,14 +107,14 @@ useCatchTrials = true;
 catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 100;
+sentenceLength = 80; %100;
 
 % Set text and header size
 textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440]; %[1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize =  get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -130,8 +130,8 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; % Hamburg: Hier bitte anpassen
+s = 83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 13; %37; % Hamburg: Hier bitte anpassen
 
 % Keyboard device number
 % kbDev = 19;
@@ -157,7 +157,8 @@ sampleRate = 500;  % hier ggf. anpassen
 port = hex2dec('E050');  % hier ggf. anpassen
   
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+%dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG\AdaptiveLearningET\DataDirectory';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
@@ -168,8 +169,8 @@ cannonBallAnimation = 0.5; % 1.5
 nFrames = 30; %30; 80
 
 % Confetti end point
-confettiEndMean = 50; % 150% this is added to the circle radius
-confettiEndStd = 10; % 20 % this is the spread around the average end point
+confettiEndMean = 0; %50; % 150% this is added to the circle radius
+confettiEndStd = 10;%10; % 20 % this is the spread around the average end point
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -434,14 +435,14 @@ taskParam.triggers = triggers;
 
 % Todo: determine payment
 % todo: should be actual amount of money
-totWin = sum(dataMonetaryReward.hit) + sum(dataMonetaryReward.hit);
+totWin = sum(dataMonetaryReward.accPerf(end)) + sum(dataMonetaryReward.accPerf(end));
 
 % -----------
 % End of task
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = 'Vielen Dank für Deine Teilnahme! Wir hoffen, es hat Dir gefallen.';
+txt = sprintf('Vielen Dank f�r Ihre Teilnahme!\n\n\nDu hast insgesamt %.0f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 

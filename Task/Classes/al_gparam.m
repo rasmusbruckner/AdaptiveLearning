@@ -215,7 +215,7 @@ classdef al_gparam
             gparamobj.showTickmark = nan; 
             gparamobj.useCatchTrials = nan; 
             gparamobj.catchTrialProb = nan; 
-            gparamobj.screenNumber = 1;
+            gparamobj.screenNumber = 1; %1 2
             gparamobj.language = 2; 
             gparamobj.debug = nan;
             gparamobj.showConfettiThreshold = false;

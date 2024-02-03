@@ -294,20 +294,28 @@ for i = 1:trial
     % Monetary-reward condition
     if isequal(taskParam.trialflow.reward, 'monetaryReward') && taskData.hit(i)
 
-        txt = sprintf('<color=32CD32>+%.1f Euro', taskData.perf(i));
-        DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
-    
+        %txt = sprintf('<color=32CD32>+%.1f Euro', taskData.perf(i));
+        txt = sprintf('+%.1f Euro', taskData.perf(i));
+
+        %DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
+        DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', [50 205 50]);
+
     % Monetary-punishment condition
     elseif isequal(taskParam.trialflow.reward, 'monetaryPunishment') && ~taskData.hit(i)
 
-        txt = sprintf('<color=ff0000>%.1f Euro\n<color=ffffff>', taskData.perf(i));
-        DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
+        %txt = sprintf('<color=ff0000>%.1f Euro\n<color=ffffff>', taskData.perf(i));
+        txt = sprintf('%.1f Euro', taskData.perf(i));
 
+        %DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', zero(2), 'xalign','center','yalign','center');
+        DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', [255 0 0]);
+        
     % Social-reward condition
     elseif isequal(taskParam.trialflow.reward, 'socialReward') && taskData.hit(i)
 
             txt = 'Super!';
-            DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', taskParam.display.screensize(4)*.35, 'xalign','center','yalign','center');
+            %DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', taskParam.display.screensize(4)*.35, 'xalign','center','yalign','center');
+            %DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', taskParam.display.screensize(4)*0.1, [255 255 255]);       
+            DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', taskParam.display.screensize(4)*0.35, [50 205 50]);
 
             r = randi([1,taskParam.display.nHas]);
             Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialHasTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);
@@ -316,7 +324,8 @@ for i = 1:trial
     elseif isequal(taskParam.trialflow.reward, 'socialPunishment') && ~taskData.hit(i)
     
             txt = 'Schlecht!';
-            DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', taskParam.display.screensize(4)*.35, 'xalign','center','yalign','center');
+           % DrawFormattedText2(txt,'win',taskParam.display.window.onScreen, 'sx' ,zero(1), 'sy', taskParam.display.screensize(4)*.35, 'xalign','center','yalign','center');
+           DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', taskParam.display.screensize(4)*0.35, [255 0 0]);
 
             r = randi([1,taskParam.display.nDis]);
             Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialDisTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);

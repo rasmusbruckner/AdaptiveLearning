@@ -73,21 +73,21 @@ classdef al_trialflow
             trialflowobj.shot = 'animate cannonball';
             trialflowobj.confetti = 'show confetti cloud';
             trialflowobj.cannonball_start = 'cannon';
-            trialflowobj.cannon = "show cannon";
-            trialflowobj.cannonType = "standard";
-            trialflowobj.reward = "standard";
-            trialflowobj.savedTickmark = "no previous tickmark";
-            trialflowobj.currentTickmarks = "show";
-            trialflowobj.background = "picture";
-            trialflowobj.shotAndShield = "simultaneously";
+            trialflowobj.cannon = 'show cannon';
+            trialflowobj.cannonType = 'standard';
+            trialflowobj.reward = 'standard';
+            trialflowobj.savedTickmark = 'no previous tickmark';
+            trialflowobj.currentTickmarks = 'show';
+            trialflowobj.background = 'picture';
+            trialflowobj.shotAndShield = 'simultaneously';
             trialflowobj.push = 'noPush';
             trialflowobj.cannonPosition = 'inside';
-            trialflowobj.shieldType = "contant";
-            trialflowobj.shield = "fixed";
-            trialflowobj.input = "mouse";
-            trialflowobj.distMean = "fixed";
-            trialflowobj.variability = "stable";
-            trialflowobj.currentTickmarks = "standard";
+            trialflowobj.shieldType = 'contant';
+            trialflowobj.shield = 'fixed';
+            trialflowobj.input = 'mouse';
+            trialflowobj.distMean = 'fixed';
+            trialflowobj.variability = 'stable';
+            trialflowobj.currentTickmarks = 'standard';
         end
     end
     
