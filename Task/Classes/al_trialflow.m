@@ -58,7 +58,10 @@ classdef al_trialflow
 
          % Noise conditions (stable vs. changepoints)
         variability
-        
+
+        % Standard deviation tick marks for validation
+        stdTickmark
+
     end
     
     methods
@@ -88,6 +91,8 @@ classdef al_trialflow
             trialflowobj.distMean = 'fixed';
             trialflowobj.variability = 'stable';
             trialflowobj.currentTickmarks = 'standard';
+            trialflowobj.stdTickmark = 'hide'; 
+
         end
     end
     

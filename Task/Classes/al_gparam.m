@@ -17,6 +17,9 @@ classdef al_gparam
         % Task version (ARC, chinese, dresden, drugstudy, eLife, hamburg, reversal, sleep)
         taskType 
          
+        % Sub-version (currently in use for VWM version)
+        whichVersion 
+
         % Trials on which participants can take a break
         blockIndices
 
@@ -56,12 +59,12 @@ classdef al_gparam
         % Number of trials
         trials
         
-        % Trials session 1 in drug version
-        trialsS1
+        % Trials variance condition Gläscher version
+        trialsVarCPs
         
-        % Trials session 2 & 3 in drug version
-        trialsS2S3
-        
+        % Trials drift condition Gläscher version
+        trialsDrift
+
         % Number of shield-practice trials 
         shieldTrials
         
@@ -77,6 +80,9 @@ classdef al_gparam
 
         % Safe trials variability changepoint
         safeVar
+
+        % Safe trials drift conditions
+        safeDrift
 
         % Reward magnitude when "hit"
         rewMag
@@ -188,6 +194,7 @@ classdef al_gparam
             %   are often used across tasks.
             
             gparamobj.taskType = nan; 
+            gparamobj.whichVersion = nan; 
             gparamobj.blockIndices = nan; 
             gparamobj.driftConc = 30;
             gparamobj.oddballProb = [.25 0];
@@ -200,13 +207,14 @@ classdef al_gparam
             gparamobj.maxASS = 180;
             gparamobj.sendTrigger = false; 
             gparamobj.trials = nan; 
-            gparamobj.trialsS1 = nan; 
-            gparamobj.trialsS2S3 = nan;
+            gparamobj.trialsVarCPs = nan; 
+            gparamobj.trialsDrift = nan;
             gparamobj.shieldTrials = nan; 
             gparamobj.practTrials = nan; 
             gparamobj.controlTrials = nan;
             gparamobj.safe = 3;
-            gparamobj.safeVar = 10;
+            gparamobj.safeVar = nan;
+            gparamobj.safeDrift = nan;
             gparamobj.rewMag = 0.1; 
             gparamobj.screensize = nan; 
             gparamobj.practiceTrialCriterionNTrials = nan; 

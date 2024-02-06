@@ -1,4 +1,4 @@
-function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
+function taskData = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
 %RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version of
 %   VWM including variance change points and working memory manipulations
 %
@@ -8,19 +8,14 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 %       day: Current tes day (only allowed when running unit test)
 %
 %   Output
-%       dataStandardTickmarks: Task-data object standard tick mark
-%       dataAddTickmarks: Task-data object multiple tick marks
-%       dataStandardCannonVar Task-data object change point + variance
-%       dataDriftingCannonVar: Task-data object drift + variance
-%       dataDriftingCannonVarWM: Task-data object drift + variance + tick
-%       marks
+%      taskData: Task-data object
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       01/24
+%       02/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -60,34 +55,48 @@ end
 % Set relevant task parameters
 % ----------------------------
 
-% Set number of trials for experiment
-trialsExp = 20; % 200;  Hier bitte anpassen
+% Choose task vesion here:
+whichVersion = 1; 
 
-% Set number of trials for integration test
-trialsTesting = 20;
+% 1: standard
+% 2: standard + tick marks
+% 3: mean and variance change points 
+% 4: mean and variance change points + tick marks
+% 5: drift 
+% 6: drift + tick marks
+
+% Set number of trials for experiment
+trialsExp = 20; % 90;  for  common version 1 & 2
+
+trialsVarCPs = 20; % 140 for variance version (3 & 4)
+
+trialsDrift = 20; % 240 for drift versions (5 & 6)
 
 % Number of practice trials
 practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
-concentration = [12, 16, 8]; % the first value is the concentration
+concentration = [12, 16, 8]; %[12, 16, 8]; % the first value is the concentration
 % in the versions without variability changepoints. The second and third
 % are for the different variability changepoints.
 
 % Cannon drift in drift conditions
-driftConc = 30;
-
-% Factor that translates concentration into shield size
-shieldFixedSizeFactor = 2;
+driftConc = 12; %30;
 
 % Hazard rate determining a priori changepoint probability
-haz = .125;
+haz = 0.125;  %0.125;
 
 % Variability hazard rate
-hazVar = 0.1;
+hazVar = 0.1; % 0.1
 
-% Safe trials variance change point
+% Safe trials change-point condition
+safe = 8;
+
+% Safe trials variance-change-point condition
 safeVar = 10;
+
+% Safe trials drift condition
+safeDrift = 11;
 
 % Number of confetti particles 
 nParticles = 40;
@@ -102,13 +111,16 @@ runIntro = true;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 51 101 151]; % These indicate start of new block (e.g., break after 20 trials = 21)
+blockIndices = [1 101 201 301]; % These indicate start of new block (e.g., break after 20 trials = 21)
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
 
 % Catch-trial probability
 catchTrialProb = 0.1;
+
+% Tick mark indicating standard deviation of cannon
+stdTickmark = 'hide';  % ;"show";
 
 % Set sentence length
 sentenceLength = 100;
@@ -118,7 +130,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440];% [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [1 1 1920 1080]; %[1    1    2560    1440];% [1 1 1920 1080]; %[1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -166,14 +178,14 @@ imageRect = [0 00 60 200];
 % ---------------------------------------------------
 
 if unitTest
-    trials = trialsTesting;
+    trials = 20;
 else
     trials = trialsExp;
 end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'Hamburg'; % todo: maybe specific category for this version (let's see)
+gParam.taskType = 'VWM'; % todo: maybe specific category for this version (let's see)
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -189,11 +201,16 @@ gParam.printTiming = printTiming;
 gParam.concentration = concentration;
 gParam.haz = haz;
 gParam.hazVar = hazVar;
+gParam.safe = safe;
 gParam.safeVar = safeVar;
+gParam.safeDrift = safeDrift;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.saveName = 'vwm';
 gParam.driftConc = driftConc;
+gParam.trialsVarCPs = trialsVarCPs;
+gParam.trialsDrift = trialsDrift;
+gParam.whichVersion = whichVersion;
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -215,6 +232,7 @@ trialflow.reward = "standard";
 trialflow.shield = "variable";
 trialflow.shieldType = "constant";
 trialflow.input = "mouse"; 
+trialflow.stdTickmark = stdTickmark; "show"; % show
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -326,8 +344,8 @@ else
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*id_%s*', num2str(subject.ID)));
-    subject.checkID(checkString, 5);
+    % checkString = dir(sprintf('*id_%s*', num2str(subject.ID)));
+    % subject.checkID(checkString, 5);
     subject.checkSex();
     subject.checkGroup();
     subject.checkCBal(),
@@ -373,7 +391,6 @@ circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
 circle = circle.compute_circle_props();
 
 % ---------------------------------------
@@ -400,8 +417,8 @@ taskParam.unitTest = unitTest;
 % Run task
 % --------
 
-[dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = al_varianceWorkingMemoryConditions(taskParam);
-totWin = sum(dataStandardTickmarks.hit) + sum(dataAddTickmarks.hit) + sum(dataStandardCannonVar.hit) + sum(dataDriftingCannonVar.hit) + sum(dataDriftingCannonVarWM.hit);
+taskData = al_varianceWorkingMemoryConditions(taskParam);
+totWin = sum(taskData.hit);
 
 % -----------
 % End of task

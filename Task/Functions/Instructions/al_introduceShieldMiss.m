@@ -54,9 +54,10 @@ if strcmp(taskParam.gParam.taskType, 'Sleep') || strcmp(taskParam.gParam.taskTyp
     varargout{1} = taskData;
     varargout{2} = taskParam;
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'HamburgEEG')
-% Todo: share more code between Hamburg and Leipzig here. Major difference
-% is task loop
+elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'HamburgEEG') || strcmp(taskParam.gParam.taskType, 'VWM') 
+
+    % Todo: share more code between Hamburg and Leipzig here. Major difference
+    % is task loop
     
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,

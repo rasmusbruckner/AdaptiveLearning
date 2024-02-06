@@ -1,4 +1,4 @@
-function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = al_varianceWorkingMemoryConditions(taskParam)
+function taskData = al_varianceWorkingMemoryConditions(taskParam)
 %AL_VARIANCEWORKINGMEMORYONDITIONS This function runs the changepoint condition of the cannon
 %   task tailored to the "Hamburg" version
 %
@@ -6,26 +6,21 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       dataStandardTickmarks: Task-data object standard tick mark
-%       dataAddTickmarks: Task-data object multiple tick marks
-%       dataStandardCannonVar Task-data object change point + variance
-%       dataDriftingCannonVar: Task-data object drift + variance
-%       dataDriftingCannonVarWM: Task-data object drift + variance + multiple tick marks
+%       taskData: Task-data object
 %
-%  Todo: Write a unit test and integrate high/low noise in integration test
+%  Todo: Write tests
 
 % -----------------------------------------------------
-% 1. Extract some variables from task-parameters object
+% Extract some variables from task-parameters object
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
 unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
-cBal = taskParam.subject.cBal;
 
 % --------------------------------
-% 2. Show instructions, if desired
+% Show instructions, if desired
 % --------------------------------
 
 if runIntro && ~unitTest
@@ -35,265 +30,200 @@ end
 % Gray background
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
-% -------------------------------------
-% 3. Standard task and tick-mark version
-% -------------------------------------
+% -------------
+% Task versions 
+% -------------
 
-% Extract number of trials
-trial = taskParam.gParam.trials;
-
-% Standard change-point task first
-taskParam.trialflow.distMean = "fixed";
-taskParam.trialflow.variability = "stable";
-
-if cBal == 1
+if taskParam.gParam.whichVersion == 1
 
     % 1. Standard cannon
-    % -----------------
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-            taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
-    % Run task
+    % ------------------
+    
+    % Extract number of trials
+    trial = taskParam.gParam.trials;
+    
+    % Standard change-point task first
+    taskParam.trialflow.distMean = "fixed";
+    taskParam.trialflow.variability = "stable";
     taskParam.trialflow.currentTickmarks = "show";
-
+    
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+    
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
+    
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
+    % Run task
     al_indicateCannonType(taskParam)
-    dataStandardTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
+    taskData = al_confettiLoop(taskParam, 'main', taskData, trial);
 
+elseif taskParam.gParam.whichVersion == 2
+    
     % 2. Working memory version
-    % ------------------------
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
-    % Run task
+    % -------------------------
+    
+    % Extract number of trials
+    trial = taskParam.gParam.trials;
+    
+    % Standard change-point task first
+    taskParam.trialflow.distMean = "fixed";
+    taskParam.trialflow.variability = "stable";
     taskParam.trialflow.currentTickmarks = "workingMemory";
-    al_indicateCannonType(taskParam)
-    dataAddTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
-
-else
-
-    % 1 Working memory version
-    % ------------------------
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
-    % Run task
-    taskParam.trialflow.currentTickmarks = "workingMemory";
-    al_indicateCannonType(taskParam)
-    dataAddTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
-
-    % 2 Standard cannon
-    % -----------------
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
-    % Run task
-    taskParam.trialflow.currentTickmarks = "show";
-
-    al_indicateCannonType(taskParam)
-    dataStandardTickmarks = al_confettiLoop(taskParam, 'main', taskData, trial);
-
-end
-
-% --------------------------------------------------------------
-% 4. Confetti-cannon task with mean and variability changepoints
-% --------------------------------------------------------------
-
-taskParam.trialflow.currentTickmarks = "show";
-taskParam.trialflow.variability = "changepoint";
-taskParam.trialflow.currentTickmarks = "show";
-taskParam.trialflow.distMean = "fixed";
-
-% Get data
-if ~unitTest
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial);
-
+    
     % Generate outcomes using cannonData function
-    taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
-
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
+    
     % Generate outcomes using confettiData function
     taskData = taskData.al_confettiData(taskParam);
+    
+    % Run task
+    al_indicateCannonType(taskParam)
+    taskData = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-else
-    load('integrationTest_Hamburg.mat','taskData')
-end
+elseif taskParam.gParam.whichVersion == 3
 
-% Run task
-al_indicateCannonType(taskParam)
-dataStandardCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
+    % 3. One tick mark with mean and variability changepoints
+    % -------------------------------------------------------
+    
+    % Extract number of trials
+    trial = taskParam.gParam.trialsVarCPs;
+    
+    taskParam.trialflow.currentTickmarks = "show";
+    taskParam.trialflow.variability = "changepoint";
+    taskParam.trialflow.distMean = "fixed";
+    taskParam.trialflow.currentTickmarks = "show";
 
-% ----------------------------------
-% 5. Confetti-cannon task with drift 
-% ----------------------------------
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+    
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
+    
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
+    % Run task
+    al_indicateCannonType(taskParam)
+    taskData = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-if cBal == 1
+elseif taskParam.gParam.whichVersion == 4
 
-    % 1. One tick mark, variability change points, and mean change points 
-    % -------------------------------------------------------------------
 
+    % 4. Multiple tick marks with mean and variability changepoints
+    % --------------------------------------------------------------
+    
+    % Extract number of trials
+    trial = taskParam.gParam.trialsVarCPs;
+    
+    taskParam.trialflow.currentTickmarks = "show";
+    taskParam.trialflow.variability = "changepoint";
+    taskParam.trialflow.distMean = "fixed";
+    taskParam.trialflow.currentTickmarks = "workingMemory";
+    
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+    
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
+    
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
+    % Run task
+    al_indicateCannonType(taskParam)
+    taskData = al_confettiLoop(taskParam, 'main', taskData, trial);
+
+elseif taskParam.gParam.whichVersion == 5
+
+    % 5. One tick mark and switch between drift state and stable state with variance change points 
+    % --------------------------------------------------------------------------------------------
+    
+    % Extract number of trials
+    trial = taskParam.gParam.trialsDrift;
+    
     taskParam.trialflow.distMean = "drift";
     taskParam.trialflow.variability = "changepoint";
     taskParam.trialflow.currentTickmarks = "show";
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
+    
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+    
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safeDrift);
+    
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
     % Run task
     al_indicateCannonType(taskParam)
-    dataDriftingCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
+    taskData = al_confettiLoop(taskParam, 'main', taskData, trial);
 
-    % 2. Multiple tick marks, no variability change points, and mean change points
-    % ----------------------------------------------------------------------------
+elseif taskParam.gParam.whichVersion == 6
 
-    taskParam.trialflow.distMean = "drift";
-    taskParam.trialflow.variability = "stable";
-    taskParam.trialflow.currentTickmarks = "workingMemory";
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
-    % Run task
-    al_indicateCannonType(taskParam)
-    dataDriftingCannonVarWM = al_confettiLoop(taskParam, 'main', taskData, trial);
-
-else
-
-    % 1. Multiple tick marks, no variability change points, and mean change points
-    % ----------------------------------------------------------------------------
-
-    taskParam.trialflow.distMean = "drift";
-    taskParam.trialflow.variability = "stable";
-    taskParam.trialflow.currentTickmarks = "workingMemory";
-
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
-    % Run task
-    al_indicateCannonType(taskParam)
-    dataDriftingCannonVarWM = al_confettiLoop(taskParam, 'main', taskData, trial);
-
-    % 2. One tick mark, variability change points, and mean change points 
-    % -------------------------------------------------------------------
-
+    % 6. Multiple tick marks and switch between drift state and stable state with variance change points
+    % --------------------------------------------------------------------------------------------------
+    
+    % TODO: ADD Short instructions
+    
     taskParam.trialflow.distMean = "drift";
     taskParam.trialflow.variability = "changepoint";
-    taskParam.trialflow.currentTickmarks = "show";
+    taskParam.trialflow.currentTickmarks = "workingMemory";
 
-    % Get data
-    if ~unitTest
+    % Generate instruction trials
+    % ---------------------------
 
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
+    % Extract number of trials
+    trial = taskParam.gParam.practTrials; 
+    
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+    
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safeDrift);
+    
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
     % Run task
-    al_indicateCannonType(taskParam)
-    dataDriftingCannonVar = al_confettiLoop(taskParam, 'main', taskData, trial);
+    %al_indicateCannonType(taskParam)
+    header = 'Übungsaufgabe';
+    txt = ['Zunächst kommt eine kurze Übungsaufgabe. Bitte beachten Sie:\n\n'...
+        'Im folgenden Block wird sich die Konfetti-Kanone in manchen Phasen langsam bewegen.\n\n'...
+        'Außerdem werden Sie den Ort der letzten 5 Konfetti-Wolken sehen.'];
+    feedback = false; % indicate that this is the instruction mode
+    al_bigScreen(taskParam, header, txt, feedback);
+    al_confettiLoop(taskParam, 'practice', taskData, trial);
 
-end
+    % Generate main trials
+    % --------------------
+
+    % Extract number of trials
+    trial = taskParam.gParam.trialsDrift;
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial);
+    
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
+    
+    % Generate outcomes using confettiData function
+    taskData = taskData.al_confettiData(taskParam);
+    
+    % Run task
+    % TODO: Big Screen indicating main task
+    
+    header = 'Beginn der Aufgabe';
+    txt = ['Sie fangen jetzt mit der Aufgabe an. Beachten Sie:\n\nIm folgenden Block wird sich die Konfetti-Kanone in manchen Phasen langsam bewegen.\n\n'...
+        'Außerdem werden Sie den Ort der letzten 5 Konfetti-Wolken sehen.'];
+    feedback = false; % indicate that this is the instruction mode
+    al_bigScreen(taskParam, header, txt, feedback);
+    taskData = al_confettiLoop(taskParam, 'main', taskData, trial);
+
+
 end

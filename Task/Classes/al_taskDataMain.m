@@ -26,10 +26,12 @@ classdef al_taskDataMain
         concentration % concentration of the outcome-generating distribution
         haz % hazard rate
         hazVar % variance hazard rate
+        currHaz % dynamic hazard rate VWM
         rew % reward condition
         cBal % counterbalancing condition
         safe % number of safe trials without changepoints
         safeVar % number of safe trials without variability changepoints
+        safeDrift % number of safe trials without drift changepoints
         nParticles % number of confetti particles in Hamburg version
         confettiStd % standard deviation of confetti particles
         pushConcentration % concentration of push manipulation
@@ -57,6 +59,8 @@ classdef al_taskDataMain
         asymRewardSign % reward sign in asymReward version
         nGreenParticles % number of green particles
         dotCol % color of confetti particles
+        driftState % drift state variance-working-memory pilot
+        tickMark % tick-mark condition
 
         % Task-participant interaction
         % ----------------------------
@@ -93,7 +97,7 @@ classdef al_taskDataMain
 
     end
 
-    % Methods of the taskDataMain object
+    % Methods of the task-data-main object
     % ----------------------------------
 
     methods
@@ -126,6 +130,7 @@ classdef al_taskDataMain
             self.concentration = nan(trials, 1);
             self.haz = nan(trials, 1);
             self.hazVar = nan(trials, 1);
+            self.currHaz = nan(trials, 1);
             self.rew = nan(trials, 1);
             self.cBal = nan(trials, 1);
             self.safe = nan(trials, 1);
@@ -133,6 +138,7 @@ classdef al_taskDataMain
             self.confettiStd = nan(trials, 1);
             self.pushConcentration = nan(trials, 1);
             self.startingBudget = nan(trials, 1);
+            self.driftConc = nan(trials, 1);
 
             % Task-generated data
             self.currTrial = nan(trials, 1);
@@ -153,6 +159,8 @@ classdef al_taskDataMain
             self.asymRewardSign = nan(trials, 1);
             self.nGreenParticles = nan(trials, 1);
             self.dotCol = struct;
+            self.driftState = nan(trials, 1);
+            self.tickMark = cell(trials, 1);
 
             % Task-participant interaction
             self.pred = nan(trials, 1);
@@ -198,7 +206,7 @@ classdef al_taskDataMain
             %   Output
             %       self: Data-object instance
 
-            
+
             % Provide warning when more than one concentration but not in
             % variability condition with concentration change points
             if length(concentration) > 1 && ~isequal(taskParam.trialflow.variability, 'changepoint')
@@ -209,14 +217,25 @@ classdef al_taskDataMain
                 error('This version requires an even number of trials');
             end
 
-            % Initialize safe variable
-            s = safe;
-
             % If variability condition "concentration change points",
-            % extract s variable and determine which conentration comes first
+            % extract s variable and determine which concentration comes first
             if isequal(taskParam.trialflow.variability, 'changepoint')
                 sVar = taskParam.gParam.safeVar;
                 concIndex = randi([1,2]);
+            end
+
+            % Create "change-point list": Determine change points
+            % a priori instead of sampling them online
+            if isequal(taskParam.gParam.taskType, 'VWM')
+                self = offlineCps(self, taskParam, safe); 
+            else
+                % Initialize safe variable for online change-point generation
+                s = safe;
+            end
+
+            % Offline distribution means for variance-working-memory version
+            if isequal(taskParam.gParam.taskType, 'VWM')
+                self = offlineDistMeans(self, taskParam);
             end
 
             % Generate outcomes
@@ -228,13 +247,18 @@ classdef al_taskDataMain
                 % Extract current block
                 self.block(i) = indicateBlock(self, taskParam, i);
 
-                % Sample change points
-                [self, s] = generateCP(self, taskParam, haz, s, safe, i);
+                % Sample online change points in all versions except VWM
+                if ~isequal(taskParam.gParam.taskType, 'VWM')
+                    [self, s] = generateCP(self, taskParam, haz, s, safe, i);
+                end
 
-                % Sample variance change points when in the variability
+                % Sample variance change points when in the variability-
                 % change-point condition
                 if isequal(taskParam.trialflow.variability, 'changepoint')
-                    [self, concIndex, sVar] = generateVarCP(self, taskParam, concIndex, sVar, i);
+                    
+                    if self.driftState(i) == 0
+                        [self, concIndex, sVar] = generateVarCP(self, taskParam, concIndex, sVar, i);
+                    end
                     self.concentration(i) = concentration(concIndex); % store current concentration
                 else
 
@@ -260,10 +284,13 @@ classdef al_taskDataMain
             end
 
             % Add hazard rate and safe variable to data
-            self.haz = repmat(haz, length(self.trials), 1);
-            self.hazVar = repmat(self.hazVar, length(self.trials), 1);
-            self.safe = repmat(safe, length(self.trials), 1);
-            self.safeVar = repmat(self.safeVar, length(self.trials), 1);
+            % Todo: ensure that this is updated in main branch as well
+            self.haz = repmat(haz, self.trials, 1);
+            self.hazVar = repmat(taskParam.gParam.hazVar, self.trials, 1);
+            self.safe = repmat(safe, self.trials, 1);
+            self.safeVar = repmat(taskParam.gParam.safeVar, self.trials, 1);
+            self.safeDrift = repmat(taskParam.gParam.safeDrift, self.trials, 1);
+            self.tickMark = repmat(taskParam.trialflow.currentTickmarks, self.trials, 1);
 
             % Generate shield types
             if isequal(taskParam.trialflow.shieldType, 'constant')
@@ -290,13 +317,14 @@ classdef al_taskDataMain
             %       currTrial: Current trial
             %
             %   Output
+            %       self: Data-object instance
             %       s: Update safe counter
-            %
-            
-           % Sampled change points and new blocks count as change points 
-           if (self.sampleRand('rand') < haz && s == 0) || ismember(currTrial, taskParam.gParam.blockIndices)
-                
-               % Indicate current change point
+
+
+            % Sampled change points and new blocks count as change points
+            if (self.sampleRand('rand') < haz && s == 0) || ismember(currTrial, taskParam.gParam.blockIndices)
+
+                % Indicate current change point
                 self.cp(currTrial) = 1;
 
                 % Draw mean of current distribution
@@ -315,7 +343,7 @@ classdef al_taskDataMain
                 % Update safe criterion
                 s = max([s-1, 0]);
 
-                % Set change-point to false
+                % Set change point to false
                 self.cp(currTrial) = 0;
 
                 % Mean of outcome-generating distribution
@@ -324,11 +352,242 @@ classdef al_taskDataMain
                     % Add von Mises drift if required:
                     % We use the same function as for outcome generation
                     self.distMean(currTrial) = self.sampleOutcome(self.distMean(currTrial-1), taskParam.gParam.driftConc);
-
+                    self.driftConc(currTrial) = taskParam.gParam.driftConc; % store current value
                 else
 
                     self.distMean(currTrial) = self.distMean(currTrial-1);
 
+                end
+            end
+        end
+
+
+        function self = offlineCps(self, taskParam, safe)
+            % OFFLINECPS This function generates all change points offline
+            %
+            %   The idea is that we fist generate when change points occur,
+            %   to then generate the magnitude of these change points in
+            %   a separate function (offlineDistMeans). That way, we can
+            %   achieve more "uniform-like" change-point distributions with
+            %   limited tials.
+            %
+            %   Input
+            %       self: Data-object instance
+            %       taskParam: Task-parameter-object instance
+            %       safe: Safe criterion
+            %
+            %   Output
+            %       self: Data-object instance
+
+
+            % Initialize safe variable for offline change-point generation
+            s = safe;
+
+            % Initialize "trials-after safe" (tas) variable:
+            % tas starts counting after safe criterion has been reached
+            % (e.g., after 8 trials when safe = 8)
+            tas = 0;
+
+            % Cycle over trials
+            for i = 1:self.trials
+
+                % Compute current value of dynamic hazard rate
+                [self, self.currHaz(i), s, tas] = dynamicHazardRate(self, s, tas);
+
+                % Sampled change points and new blocks count as change points
+                if (self.sampleRand('rand') < self.currHaz(i)) || ismember(i, taskParam.gParam.blockIndices)
+
+                    % Indicate current change point
+                    self.cp(i) = 1;
+
+                    % Take into account that in some conditions, change points can only occur after a few trials
+                    s = safe;
+
+                    % Reset trials after change point
+                    self.TAC(i) = 0;
+
+                else
+
+                    % Indicate current change point
+                    self.cp(i) = 0;
+
+                    % Increase trials after change point
+                    self.TAC(i) = self.TAC(i-1) + 1;
+
+                end
+            end
+        end
+
+
+        function [self, currHaz, s, tas] = dynamicHazardRate(self, s, tas)
+            % DYNAMICHAZARDRATE This function computes the dynamic hazard
+            % rate for offline data generation
+            %
+            %   The idea is that the hazard rate currHaz = 0 as long as we
+            %   are below the safe criterion (and tas = 0). When we are
+            %   above safe criterion, the dynamic hazard rate increases,
+            %   and so does tas.
+            %
+            %   Input
+            %       self: Data-object instance
+            %       s: Current safe value determining when change points are possible
+            %       tas: "Trials-after-safe" value
+            %
+            %   Output
+            %       self: Data-object instance
+            %       currHaz: Current hazard rate
+            %       s: Updated safe value
+            %       tas: Updated "trials-after-safe" value
+
+
+            % Dynamic hazard rate and tas = 0 as long as s below criterion
+            if s > 0
+                currHaz = 0;
+                tas = 0;
+
+                % When s below criterion, hazard rate increases and so does tas
+            else
+                tas = tas + 1;
+                currHaz = 1 - (1/(tas+1));
+            end
+
+            % Update safe criterion
+            s = max([s-1, 0]);
+
+        end
+
+
+        function self = offlineDistMeans(self, taskParam)
+            % OFFLINEDISTMEANS This function computes the means of the
+            % outcome distribution a priori
+            %
+            %   The function works in two modes:
+            %       1. Mean-change-point condition
+            %       2. Drift-change-point condition
+            %
+            %   1. Mean-change-point condition:
+            %      The distribution means are more balanced than a fully
+            %      random generation based on the uniform distribution. We
+            %      have three bins of mean differences (w.r.t to last mean):
+            %
+            %       1. mean difference in [0, 59]
+            %       2. mean difference in [60, 119]
+            %       3. mean difference in [120, 170]
+            %
+            %      Moreover, the sign of the difference is randomly positive
+            %      or negative
+            %
+            %      The function accounts for the number of trials: When the
+            %      number of trials cannot be divided into 3 bins with an equal
+            %      number of trials (e.g., 100 trials where remainder in division
+            %      with remainder would be 1).
+            %
+            %   2. Drift-change-point condition
+            %      Switch between stable (drift state 0) and drifting 
+            %      (drift state 1) state  
+
+            % 1. Mean-change-point condition
+            % ------------------------------
+
+            if ~isequal(taskParam.trialflow.distMean, 'drift')
+
+                % Compute shifts in distribution means
+                % ------------------------------------
+
+                % Compute number of trials per bin
+                nMeans = floor(self.trials/3);
+
+                % Compute remainder
+                rest = mod(self.trials, 3);
+
+                % Sample means from low, mid, and high bins and add samples
+                % from uniform for remainder
+                distMeanShifts = [randi([0,59], nMeans,1); randi([60,119], nMeans,1); randi([120,179], nMeans,1); randi([0, 179], rest, 1)];
+
+                % Shuffle means
+                distMeanShifts = Shuffle(distMeanShifts);
+
+                % Compute sign of shift
+                % ---------------------
+
+                % Compute number of equally sized bins
+                nBins = floor(self.trials/2);
+
+                % If no remainder, sample sign randomly
+                if mod(self.trials, 2) == 0
+                    sign = Shuffle([ones(nBins,1); -ones(nBins,1)]);
+
+                    % If with remainder, add remainder sample
+                else
+                    sign = Shuffle([ones(nBins,1); -ones(nBins,1); randsample([-1, 1], 1) ]);
+                end
+
+                % Combine mean differences and signs
+                % ----------------------------------
+
+                distMeanShifts = distMeanShifts .* sign;
+
+                % Cycle over trials to determine distibution means
+                for i = 1:self.trials
+
+                    % Stable drift state when sampling stable means
+                    self.driftState(i) = 0;
+
+                    % Sample first mean
+                    if i == 1
+                        self.distMean(i) = round(self.sampleRand('rand').*359);
+
+                        % Sample all other means taking into account
+                        % sampled differences
+                    elseif i > 1
+
+                        % Add mean differences to current means
+                        if self.cp(i)
+                            self.distMean(i) = self.circleOperation(self.distMean(i-1), distMeanShifts(i));
+
+                            % Take previous mean for no-change-point trials
+                        else
+                            self.distMean(i) = self.distMean(i-1);
+                        end
+                    end
+                end
+            else
+
+                % 2. Drift-change-point condition
+                % -------------------------------
+
+                % Sample first drift state at random
+                self.driftState(1) = randi([0,1]);
+
+                % Cycle over trials to determine distibution means
+                for i = 1:self.trials
+
+                    % Sample first mean
+                    if i == 1
+                        self.distMean(i) = round(self.sampleRand('rand').*359);
+
+                        % Sample all other means
+                    elseif i > 1
+
+                        % On change point, we switch the drift state
+                        if self.cp(i)
+                            self.driftState(i) = 1 - self.driftState(i-1);
+                        else
+                            self.driftState(i) = self.driftState(i-1);
+                        end
+
+                        % If drift state 0, we have drifting mean
+                        if self.driftState(i) == 1
+
+                            % Add von Mises drift if required:
+                            % We use the same function as for outcome generation
+                            self.distMean(i) = self.sampleOutcome(self.distMean(i-1), taskParam.gParam.driftConc);
+
+                            % In drift state 1, outcome mean is stable
+                        else
+                            self.distMean(i) = self.distMean(i-1);
+                        end
+                    end
                 end
             end
         end
@@ -357,7 +616,7 @@ classdef al_taskDataMain
             if (~exist('safe', 'var') || isempty(safe)) && isequal(taskParam.trialflow.reward, 'asymmetric')
                 error('safe for asymmetric version required')
             elseif isequal(taskParam.trialflow.reward, 'asymmetric')
-                
+
                 % Initialize safe variable
                 s = safe;
 
@@ -420,6 +679,7 @@ classdef al_taskDataMain
                 end
             end
         end
+
 
         function sample = sampleRand(~, type, currMean, currConcentration)
             % SAMPLERAND This function calls functions that we use to
@@ -529,7 +789,6 @@ classdef al_taskDataMain
 
         end
 
-
         function [self, concIndex, sVar] = generateVarCP(self, taskParam, concIndex, sVar, currTrial)
             % GENERATEVARCP This function generates variance change points
             %
@@ -541,9 +800,10 @@ classdef al_taskDataMain
             %       currTrial: Current trial
             %
             %   Output
+            %       self: Data-object instance
             %       concIndex: Updated concentration index
             %       sVar: Updated safe variable
-            
+
             if (self.sampleRand('rand') < taskParam.gParam.hazVar && sVar == 0) || currTrial == taskParam.gParam.blockIndices(1) || currTrial == taskParam.gParam.blockIndices(2) || currTrial == taskParam.gParam.blockIndices(3) || currTrial == taskParam.gParam.blockIndices(4)
 
                 % Indicate current change point
@@ -595,12 +855,12 @@ classdef al_taskDataMain
 
             % Find current block
             while true
-                
+
                 % First blocks
                 if blockCounter <= nBlocks(end)-1 && currTrial >= taskParam.gParam.blockIndices(blockCounter) && currTrial < taskParam.gParam.blockIndices(blockCounter+1)
                     block = blockCounter;
                     break
-                
+
                     % Very last block
                 elseif currTrial >= taskParam.gParam.blockIndices(end)
                     block = nBlocks;
@@ -662,6 +922,29 @@ classdef al_taskDataMain
             nParticlesCaught = sum(whichParticlesCaught);
 
         end
+
+
+        function result = circleOperation(value, change)
+            % CIRCLEOPERATIOM This function performs addition or
+            % subtraction on a circle
+            %
+            % Input
+            %   value: Starting angle (should be in the range [0, 359])
+            %   change: The amount to add or subtract from the starting angle
+            %
+            % Output
+            %   result: The resulting angle, wrapped within the range [0, 359]
+
+            if change >= 0
+                % Perform addition and wrap the result
+                result = mod(value + change, 360);
+            elseif change <0
+                % Perform subtraction and wrap the result
+                % We add 360 before mod to avoid negative results
+                result = mod(value + change + 360, 360);
+            end
+        end
+
     end
 end
 

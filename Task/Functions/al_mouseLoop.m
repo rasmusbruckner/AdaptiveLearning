@@ -98,6 +98,12 @@ while 1
             al_drawCross(taskParam)
         end
     end
+    
+    % Show standard deviation for validation
+    if isequal(taskParam.trialflow.stdTickmark, 'show')
+        al_tickMark(taskParam, taskData.distMean(trial) -  rad2deg(1/sqrt(taskData.concentration(trial))), 'aim')
+        al_tickMark(taskParam, taskData.distMean(trial) +  rad2deg(1/sqrt(taskData.concentration(trial))), 'aim')
+    end
 
     % Todo: potentially move up when working on ARC again
     if (taskData.catchTrial(trial) == 1 && isequal(taskParam.gParam.taskType, 'ARC'))
