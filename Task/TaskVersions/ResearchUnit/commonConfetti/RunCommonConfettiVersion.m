@@ -16,7 +16,7 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       02/24
+%       04/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
