@@ -48,13 +48,14 @@ if cBal == 1
     % Standard task first...
     % ----------------------
     
-    taskParam.trialflow.reward = "standard";
-    
+    taskParam.trialflow.reward = 'standard';
+    taskParam.gParam.saveName = 'standard';
+
     % Get data
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
@@ -73,13 +74,15 @@ if cBal == 1
     % ... asymmetric-reward task second
     % ---------------------------------
 
-    taskParam.trialflow.reward = "asymmetric";
+    taskParam.trialflow.reward = 'asymmetric';
+    taskParam.gParam.saveName = 'asymmetric';
+
 
     % Get data
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
@@ -100,13 +103,14 @@ else
     % Asymmetric-reward task first...
     % -------------------------------
 
-    taskParam.trialflow.reward = "asymmetric";
+    taskParam.trialflow.reward = 'asymmetric';
+    taskParam.gParam.saveName = 'asymmetric';
 
     % Get data
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
@@ -125,13 +129,15 @@ else
     % ... standard task second
     % ------------------------
 
-    taskParam.trialflow.reward = "standard";
+    taskParam.trialflow.reward = 'standard';
+    taskParam.gParam.saveName = 'standard';
+
     
     % Get data
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);

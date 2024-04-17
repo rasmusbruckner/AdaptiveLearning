@@ -42,13 +42,13 @@ classdef al_gparam
         hazVar
 
         % Mean shield size
-        mu                         
+        shieldMu                     
         
         % Minimum angular shield size
-        minASS 
+        shieldMin
         
         % Maximium angular shield size 
-        maxASS
+        shieldMax
         
         % Indicates if EEG triggers are going to be sent
         sendTrigger
@@ -61,6 +61,9 @@ classdef al_gparam
         
         % Trials session 2 & 3 in drug version
         trialsS2S3
+
+        % Number of blocks
+        nBlocks
         
         % Number of shield-practice trials 
         shieldTrials
@@ -119,17 +122,17 @@ classdef al_gparam
         % Whether or not trial timing is displayed for debugging
         printTiming
 
+        % Should triggers be printed out?
+        printTrigger
+
         % Determines if practice phase will be completed before main task
         runIntro
 
         % Data directory to save data
         dataDirectory
 
-        % Indicates if experiment takes place in scanner
+        % Indicates if experiment takes place in Magdeburg scanner
         scanner
-
-        % Simulates scanner settings, including different keyboard input
-        scannerDummy
         
         % Name of output file
         saveName 
@@ -140,39 +143,20 @@ classdef al_gparam
         % Indicates if experiment takes place with eyeTracker
         eyeTracker
 
-        % Critical distance between enemies in chinese version
-       % critDist
+        % Indicates uke fMRI scanner
+        uke
 
-         % Number of practice trials of chinese version
-        % (todo: when versions are independent, this should work with "trials")
-       % chinesePractTrials
+        % Potentially temporary joystick variable
+        joy
 
-        % Number of planets of chinese version
-       % nPlanets
+        % Determine if we use threshold for max response time
+        useResponseThreshold
 
-        % Number of enemies of chinese version
-        %nEnemies
+        % Response threshold value
+        responseThreshold
 
-        % Hazard rate determining switches between plantes in chinese version
-        %planetHaz
-
-        % Hazard rate determining switches between enemies in chinese version        
-        %enemyHaz
-
-        % Equivalent to safe but for planets and enemies in chinese version
-        %safePlanet
-        %safeEnemy
-
-        % In chinese version: if true, outcomes are generated in a more
-        % balanced way, based on some constraints
-        %useTrialConstraints
-
-        % Number of blocks in chinese version
-        %nb
-
-        % Hidden or observalbe enemy in chinese version
-       % cueAllTrials
-
+        % Set background to average of stimuli?
+        automaticBackgroundRGB
                
     end
     
@@ -180,66 +164,60 @@ classdef al_gparam
     % ----------------------------
     methods
         
-        function gparamobj = al_gparam()
+        function self = al_gparam()
             %AL_GPARAM This function creates a gParam object of
             % class al_gparam
             %
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.
             
-            gparamobj.taskType = nan; 
-            gparamobj.blockIndices = nan; 
-            gparamobj.driftConc = 30;
-            gparamobj.oddballProb = [.25 0];
-            gparamobj.reversalProb = [.5 1]; 
-            gparamobj.concentration = nan;
-            gparamobj.pushConcentration = nan;
-            gparamobj.haz = 0.125; 
-            gparamobj.mu = 15;                   
-            gparamobj.minASS = 10;
-            gparamobj.maxASS = 180;
-            gparamobj.sendTrigger = false; 
-            gparamobj.trials = nan; 
-            gparamobj.trialsS1 = nan; 
-            gparamobj.trialsS2S3 = nan;
-            gparamobj.shieldTrials = nan; 
-            gparamobj.practTrials = nan; 
-            gparamobj.controlTrials = nan;
-            gparamobj.safe = 3;
-            gparamobj.safeVar = 10;
-            gparamobj.rewMag = 0.1; 
-            gparamobj.screensize = nan; 
-            gparamobj.practiceTrialCriterionNTrials = nan; 
-            gparamobj.practiceTrialCriterionEstErr = nan; 
-            gparamobj.askSubjInfo = nan;
-            gparamobj.showTickmark = nan; 
-            gparamobj.useCatchTrials = nan; 
-            gparamobj.catchTrialProb = nan; 
-            gparamobj.screenNumber = 1; %1 2
-            gparamobj.language = 2; 
-            gparamobj.debug = nan;
-            gparamobj.showConfettiThreshold = false;
-            gparamobj.printTiming = false;
-            gparamobj.runIntro = nan;
-            gparamobj.dataDirectory = nan;  
-            gparamobj.scanner = false;
-            gparamobj.saveName = 'standard';
-            gparamobj.scanner = false;
-            gparamobj.scannerDummy = false;
-            gparamobj.meg = false;
-            gparamobj.eyeTracker = false;
-            %gparamobj.critDist = nan; 
-            %gparamobj.chinesePractTrials = nan; 
-            %gparamobj.nPlanets = 1;
-            %gparamobj.nEnemies = nan; 
-            %gparamobj.planetHaz = nan; 
-            %gparamobj.enemyHaz = nan;
-            %gparamobj.safePlanet = nan; 
-            %gparamobj.safeEnemy = nan;
-            %gparamobj.useTrialConstraints = false; 
-            %gparamobj.nb = nan; 
-            %gparamobj.cueAllTrials = nan; 
-
+            self.taskType = nan; 
+            self.blockIndices = nan; 
+            self.driftConc = 30;
+            self.oddballProb = [.25 0];
+            self.reversalProb = [.5 1]; 
+            self.concentration = nan;
+            self.pushConcentration = nan;
+            self.haz = 0.125; 
+            self.shieldMu = 15;                   
+            self.shieldMin = 10;
+            self.shieldMax = 150;
+            self.sendTrigger = false; 
+            self.trials = nan; 
+            self.trialsS1 = nan; 
+            self.trialsS2S3 = nan;
+            self.shieldTrials = nan; 
+            self.practTrials = nan; 
+            self.controlTrials = nan;
+            self.nBlocks = nan;
+            self.safe = 3;
+            self.safeVar = 10;
+            self.rewMag = 0.1; 
+            self.screensize = nan; 
+            self.practiceTrialCriterionNTrials = nan; 
+            self.practiceTrialCriterionEstErr = nan; 
+            self.askSubjInfo = nan;
+            self.showTickmark = nan; 
+            self.useCatchTrials = nan; 
+            self.catchTrialProb = nan; 
+            self.screenNumber = 1; %1 2
+            self.language = 2; 
+            self.debug = nan;
+            self.showConfettiThreshold = false;
+            self.printTiming = false;
+            self.printTrigger = false;
+            self.runIntro = nan;
+            self.dataDirectory = nan;  
+            self.scanner = false;
+            self.saveName = 'standard';
+            self.scanner = false;
+            self.meg = false;
+            self.eyeTracker = false;
+            self.uke = false;
+            self.joy = nan;
+            self.useResponseThreshold = false;
+            self.responseThreshold = 6;
+            self.automaticBackgroundRGB = false;
         end
     end
 end

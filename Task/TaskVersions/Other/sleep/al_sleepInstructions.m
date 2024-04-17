@@ -36,13 +36,13 @@ if testDay == 1
 
     % Load taskData-object instance
     nTrials = 4;
-    taskData = al_taskDataMain(nTrials);
+    taskData = al_taskDataMain(nTrials, taskParam.gParam.taskType);
 
     % Generate practice-phase data
     taskData.catchTrial(1:nTrials) = 0; % no catch trials
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.block(1:nTrials) = 1; % block number
-    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/taskParam.gParam.concentration)); % shield size
+    taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/taskParam.gParam.concentration)); % shield size
     taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -143,11 +143,9 @@ if testDay == 1
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Load outcomes for practice
-    condition = 'practice';
+    taskParam.trialflow.exp = 'practVis';
     taskData = load('visCannonPracticeSleep.mat');
     taskData = taskData.taskData;
-    taskParam.condition = condition;
-    taskData.initialTendency = nan(length(taskData.ID), 1);
 
     % Reset roation angle to starting location
     taskParam.circle.rotAngle = 0;
@@ -156,7 +154,7 @@ if testDay == 1
     while 1
 
         % Task loop
-        al_sleepLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+        al_sleepLoop(taskParam, taskData, taskParam.gParam.practTrials);
 
         % If estimation error is larger than a criterion on more than five
         % trials, we repeat the instructions
@@ -191,8 +189,9 @@ if testDay == 1
     taskData = taskData.taskData;
 
     % Run task
+    taskParam.trialflow.exp = 'practHid';
     taskParam.trialflow.cannon = 'none'; % don't show cannon anymore
-    al_sleepLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    al_sleepLoop(taskParam, taskData, taskParam.gParam.practTrials);
 
     % 10. Introduce bucket push
     % -------------------------
@@ -215,7 +214,8 @@ if testDay == 1
     % Run task
     taskParam.trialflow.cannon = 'none'; % don't show cannon anymore
     taskParam.trialflow.push = 'push';
-    al_sleepLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    taskParam.trialflow.exp = 'practHidPush';
+    al_sleepLoop(taskParam, taskData, taskParam.gParam.practTrials);
 
 else
 
@@ -254,8 +254,8 @@ else
         taskParam.trialflow.push = 'noPush';
         al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
-        condition = 'practice';
-        al_sleepLoop(taskParam, condition, taskData, trial);
+        taskParam.trialflow.exp = 'pract';
+        al_sleepLoop(taskParam, taskData, trial);
 
         % ... push second
         % ----------------
@@ -268,7 +268,7 @@ else
         taskParam.trialflow.push = 'push';
         al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
-        al_sleepLoop(taskParam, condition, taskData, trial);
+        al_sleepLoop(taskParam, taskData, trial);
 
     else
 

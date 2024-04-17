@@ -60,7 +60,7 @@ if (cBal == 1 && testDay == 1) ||...
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
@@ -72,7 +72,7 @@ if (cBal == 1 && testDay == 1) ||...
     % Run task
     taskParam.trialflow.push = 'noPush';
     al_indicatePush(taskParam)
-    dataNoPush = al_sleepLoop(taskParam, 'main', taskData, trial);
+    dataNoPush = al_sleepLoop(taskParam, taskData, trial);
 
     % ... push second
     % ---------------
@@ -81,7 +81,7 @@ if (cBal == 1 && testDay == 1) ||...
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
@@ -93,7 +93,7 @@ if (cBal == 1 && testDay == 1) ||...
     % Run task
     taskParam.trialflow.push = 'push';
     al_indicatePush(taskParam)
-    dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);
+    dataPush = al_sleepLoop(taskParam, taskData, trial);
 
 elseif (cBal == 2 && testDay == 2) ||...
         (cBal == 3 && testDay == 1) ||...
@@ -107,7 +107,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     if ~unitTest
        
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
@@ -119,7 +119,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     % Run task
     taskParam.trialflow.push = 'push';
     al_indicatePush(taskParam)
-    dataPush = al_sleepLoop(taskParam, 'main', taskData, trial);
+    dataPush = al_sleepLoop(taskParam, taskData, trial);
 
     % ... no-push second
     % ------------------
@@ -128,7 +128,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(2), taskParam.gParam.safe);
@@ -140,7 +140,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     % Run task
     taskParam.trialflow.push = 'noPush';
     al_indicatePush(taskParam)
-    dataNoPush = al_sleepLoop(taskParam, 'main', taskData, trial);
+    dataNoPush = al_sleepLoop(taskParam, taskData, trial);
 
 end
 end

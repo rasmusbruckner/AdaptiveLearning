@@ -20,12 +20,6 @@ end
 
 al_drawCircle(taskParam)
 
-% Todo: add trialflow
-if isequal(taskParam.gParam.taskType, 'chinese')
-    currentContext = 1;
-    al_drawContext(taskParam, currentContext)
-end
-
 % Tell PTB that everything has been drawn and flip screen
 tUpdated = GetSecs;
 Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
@@ -42,6 +36,9 @@ if strcmp(taskParam.trialflow.input, 'keyboard')
 
     % Prediction error
     taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
+
+    % Difference prediction and last outcome
+    taskData.diffLastOutcPred(trial) = al_diff(taskData.pred(trial), taskData.outcome(trial-1));
 
     % Show cannonball
     background = true; % show background image TODO: maybe via trialflow
@@ -63,7 +60,6 @@ if strcmp(taskParam.trialflow.input, 'keyboard')
 
 elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.cannonType, "confetti")
 
-    
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
@@ -73,7 +69,7 @@ elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.
 
     % Prediction error
     taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
-
+    
     % Confetti animation
     background = true; % todo: include this in trialflow
 
@@ -89,7 +85,6 @@ elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.
     varargout{4} = dotSize;
 
 elseif strcmp(taskParam.gParam.taskType, 'Leipzig') && strcmp(taskParam.trialflow.cannonType, "helicopter")
-
 
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,

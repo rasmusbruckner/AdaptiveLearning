@@ -12,21 +12,16 @@ function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSoci
 %       dataSocialReward: Task-data object social-reward condition
 %       dataSocialPunishment: Task-data object social-punishment condition
 %
-%   Documentation
-%       This function runs the EEG version of the confetti-cannon task.
-%       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there is a monetary and a social condition.
-%
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       01/24
+%       04/24
 
-% Todo: remuneration
 % todo: tailored integration tests
-
+% todo: starting budet also in reward condition (and social?)
+%
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -67,32 +62,26 @@ end
 % Set number of trials for experiment
 trialsExp = 2;  % 200;  Hier bitte anpassen
 
-% Set number of trials for integration test
-trialsTesting = 20;
-
 % Number of practice trials
 practTrials = 2; % 20;  Hier bitte anpassen
 
 % Risk parameter: Precision of confetti average
 concentration = 12;
 
-% Factor that translates concentration into shield size
-% shieldFixedSizeFactor = 2;
-
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 100;
+nParticles = 40;
 
 % Confetti standard deviations
-confettiStd = 1;  % Todo: the confetti EEG "dot" is not yet generated using this setting
+confettiStd = 6;
 
 % Start-up budget in Euros
-startingBudget = 20;
+startingBudget = 20;  % only for monetaryPunishment?
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -114,27 +103,24 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize =  get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = get(0, 'MonitorPositions');% [1 1 1920 1080];% get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
-rotationRad = 200;
+rotationRad = 140;
 
 % Radius of prediction spot
 predSpotRad = 10;
 
 % Tickmark width
-tickWidth = 1;
+tickWidth = 2;
 
 % Key codes
-s = 83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 13; %37; % Hamburg: Hier bitte anpassen
-
-% Keyboard device number
-% kbDev = 19;
+s = 40; %83; %40; %%83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; %13; %37; % Hamburg: 13
 
 % Run task in debug mode with smaller window
 debug = false;
@@ -153,20 +139,14 @@ rewMag = 0.2;
 
 % Send EEG trigge in this case
 sendTrigger = false;  % In Hamburg bitte auf true setzten  
-sampleRate = 500;  % hier ggf. anpassen
-port = hex2dec('E050');  % hier ggf. anpassen
-  
+
 % Specify data directory
-%dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
-dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG\AdaptiveLearningET\DataDirectory';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+%dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG_March\AdaptiveLearning\DataDirectory';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
 socialFeedbackRect = [0 0 562 762]/4;
-
-% Confetti speed
-cannonBallAnimation = 0.5; % 1.5
-nFrames = 30; %30; 80
 
 % Confetti end point
 confettiEndMean = 0; %50; % 150% this is added to the circle radius
@@ -177,7 +157,7 @@ confettiEndStd = 10;%10; % 20 % this is the spread around the average end point
 % ---------------------------------------------------
 
 if unitTest
-    trials = trialsTesting;
+    trials = 20;
 else
     trials = trialsExp;
 end
@@ -221,26 +201,29 @@ trialflow.currentTickmarks = 'show';
 trialflow.cannonType = 'confetti';
 trialflow.reward = 'standard';
 trialflow.shieldType = 'constant';
+trialflow.shield = 'variableWithSD';
 trialflow.input = "mouse";
+trialflow.shieldAppearance = 'lines';
+trialflow.colors = 'dark';
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-% Todo: Add some of the other cannon properties
+%% Todo: Add some of the other cannon properties
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
-cannon.nFrames = nFrames;
 cannon.confettiEndMean = confettiEndMean;
 cannon.confettiEndStd = confettiEndStd;
+cannon = cannon.al_staticConfettiCloud(trialflow.colors);
 
 % ---------------------------------------------
 % Create object instance with color parameters
 % ---------------------------------------------
 
-% Todo: Are all color already part of this class?
-colors = al_colors();
+%% Todo: Are all color already part of this class?
+colors = al_colors(nParticles);
 
 % ------------------------------------------
 % Create object instance with key parameters
@@ -256,22 +239,15 @@ end
 keys.s = s;
 keys.enter = enter;
 
-% -----------------------------------------------------------------
-% Todo: Do we have to create object instance with mouse parameters?
-% -----------------------------------------------------------------
-
 % ---------------------------------------------
 % Create object instance with timing parameters
 % ---------------------------------------------
 
 % Ensure this is properly documented in al_confettiEEGLoop
 timingParam = al_timing();
-timingParam.fixCrossLength = 1; 
-% timingParam.outcomeLength = 0.5;
+timingParam.fixCrossOutcome = 1;
 timingParam.shieldLength = 0.5;
 timingParam.rewardLength = 1.0;
-timingParam.cannonBallAnimation = cannonBallAnimation; %1.5;
-
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -297,7 +273,7 @@ subject = al_subject();
 % Default input
 ID = '99999'; % 5 digits
 age = '99';
-sex = 'f';  % m/f/d
+gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
 if ~unitTest
@@ -311,7 +287,7 @@ if gParam.askSubjInfo == false || unitTest
     % Just add defaults
     subject.ID = ID;
     subject.age = str2double(age);
-    subject.sex = sex;
+    subject.gender = gender;
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
     subject.testDay = str2double(day);
@@ -321,12 +297,12 @@ if gParam.askSubjInfo == false || unitTest
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Sex:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'Day:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, sex, group, cBal, day};
+    defaultanswer = {ID, age, gender, group, cBal, day};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -336,16 +312,16 @@ else
 
     subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
-    subject.sex = subjInfo{3};
+    subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
     subject.testDay = str2double(subjInfo{6});
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*d%s*%s*', num2str(subject.testDay), num2str(subject.ID)));
+    checkString = dir(sprintf('*%s*', num2str(subject.ID)));
     subject.checkID(checkString, 5);
-    subject.checkSex();
+    subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(),
     subject.checkTestDay();
@@ -367,7 +343,7 @@ display = al_display();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = [66, 66, 66];
+display.backgroundCol = [127.5 127.5 127.5];%[66, 66, 66];
 display.imageRect = imageRect;
 display.socialFeedbackRect = socialFeedbackRect;
 
@@ -394,7 +370,6 @@ circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-% circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
 circle.outcSize = 5;
 circle = circle.compute_circle_props();
 
@@ -403,8 +378,10 @@ circle = circle.compute_circle_props();
 % ----------------------------------------------
 
 triggers = al_triggers();
-triggers.sampleRate = sampleRate;
-triggers.port = port;
+if sendTrigger
+    triggers.sampleRate = sampleRate;
+    triggers.session = session;
+end
 
 % ---------------------------------------
 % Put all object instances in task object
@@ -427,22 +404,28 @@ taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 taskParam.triggers = triggers;
 
+colors = colors.computeBackgroundColor(taskParam);
+taskParam.colors = colors;
+
+Screen('FillRect', display.window.onScreen, colors.background);
+Screen('Flip', taskParam.display.window.onScreen);
+
+
 % --------
 % Run task
 % --------
 
 [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_HamburgEEGConditions(taskParam);
 
-% Todo: determine payment
-% todo: should be actual amount of money
-totWin = sum(dataMonetaryReward.accPerf(end)) + sum(dataMonetaryReward.accPerf(end));
+% Compute bonus
+totWin = dataMonetaryReward.accPerf(end) + dataMonetaryPunishment.accPerf(end);
 
 % -----------
 % End of task
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank f�r Ihre Teilnahme!\n\n\nDu hast insgesamt %.0f Euro gewonnen!', totWin);
+txt = sprintf('Vielen Dank f�r Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
 

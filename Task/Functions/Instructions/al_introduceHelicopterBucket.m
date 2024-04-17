@@ -21,7 +21,7 @@ while 1
     al_lineAndBack(taskParam)
     al_showHelicopter(taskParam, taskData.distMean(trial))
     al_drawCircle(taskParam)
-    al_shield(taskParam, taskData.allASS(trial), taskData.pred(trial), 1)
+    al_shield(taskParam, taskData.allShieldSize(trial), taskData.pred(trial), 1)
     al_showDoctor(taskParam, taskData.pred(trial))
     
     % Display drugs etc.

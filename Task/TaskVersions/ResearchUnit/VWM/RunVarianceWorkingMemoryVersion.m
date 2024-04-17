@@ -22,6 +22,8 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 %   Last updated
 %       01/24
 
+% Todo: ensure that practice is saved too
+
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;
@@ -61,7 +63,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 20; % 200;  Hier bitte anpassen
+trialsExp = 2; % 200;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -215,6 +217,7 @@ trialflow.reward = "standard";
 trialflow.shield = "variable";
 trialflow.shieldType = "constant";
 trialflow.input = "mouse"; 
+trialflow.shot = 'animate cannonball';
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -224,6 +227,8 @@ trialflow.input = "mouse";
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
+
+cannon = cannon.al_staticConfettiCloud(trialflow.colors);
 
 % ---------------------------------------------
 % Create object instance with color parameters
@@ -280,7 +285,7 @@ subject = al_subject();
 % Default input
 ID = '99999'; % 5 digits
 age = '99';
-sex = 'f';  % m/f/d
+gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
 if ~unitTest
@@ -294,7 +299,7 @@ if gParam.askSubjInfo == false || unitTest
     % Just add defaults
     subject.ID = ID;
     subject.age = str2double(age);
-    subject.sex = sex;
+    subject.gender = gender;
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
     subject.testDay = str2double(day);
@@ -304,12 +309,12 @@ if gParam.askSubjInfo == false || unitTest
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Sex:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'Day:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, sex, group, cBal, day};
+    defaultanswer = {ID, age, gender, group, cBal, day};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -319,7 +324,7 @@ else
 
     subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
-    subject.sex = subjInfo{3};
+    subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
     subject.testDay = str2double(subjInfo{6});
@@ -328,7 +333,7 @@ else
     % Test user input
     checkString = dir(sprintf('*id_%s*', num2str(subject.ID)));
     subject.checkID(checkString, 5);
-    subject.checkSex();
+    subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(),
     subject.checkTestDay();

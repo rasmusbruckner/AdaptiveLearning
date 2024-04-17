@@ -4,10 +4,10 @@ function diff = al_diff(parameter1, parameter2)
 %   or update
 %
 %   Input
-%       parameter1, parameter2: the 2 input parameters
+%       parameter1, parameter2: The 2 input parameters
 %
 %   Output
-%        diff: computed difference
+%        diff: Computed difference
 
     % Difference expressed in degrees
     diff = rad2deg(circ_dist(deg2rad(parameter1), deg2rad(parameter2)));

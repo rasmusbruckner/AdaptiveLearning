@@ -11,6 +11,7 @@ classdef al_triggers
         
         sampleRate
         port
+        session
         
     end
     
@@ -18,12 +19,13 @@ classdef al_triggers
     % ------------------------------
     methods
         
-        function triggersobj = al_triggers()
+        function self = al_triggers()
             % AL_TRIGGERS This class definition file specifies the 
             % properties and methods of a triggers object
             
-            triggersobj.sampleRate = 500;
-            triggersobj.port = hex2dec('E050');
+            self.sampleRate = 500;
+            self.port = hex2dec('E050');
+            self.session = nan;
         end
     end
 end

@@ -36,7 +36,7 @@ xyExp(1,:) = xExpStart;
 xyExp(2,:) = yExpStart; 
 
 % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
-spreadWide = normrnd(taskData.outcome(currTrial), taskParam.cannon.confettiStd, nParticles, 1); 
+spreadWide = normrnd(taskData.outcome(currTrial), taskParam.cannon.confettiAnimationStd, nParticles, 1); 
 
 % Random confetti flight distance (radius) conditional on circle radius and some arbitrary standard deviation
 spreadLong = taskParam.circle.rotationRad + normrnd(taskParam.cannon.confettiEndMean, taskParam.cannon.confettiEndStd, nParticles,1);
@@ -58,20 +58,19 @@ xyThres = [xThres yThres]';
 dotPredDist = al_diff(spreadWide, taskData.pred(currTrial))'; 
 
 % Determine which particles will be caught
-[whichParticlesCaught, taskData.nParticlesCaught(currTrial)] = taskData.getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
+[whichParticlesCaught, taskData.nParticlesCaught(currTrial)] = taskData.getParticlesCaught(dotPredDist, taskData.allShieldSize(currTrial));
 
 % Dot color, size, and confetti cloud
 dotCol = taskData.dotCol(currTrial).rgb;
-dotSize = (1+rand(1, nParticles))*3;
-[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+dotSize = al_confettiSize(nParticles); %(1+rand(1, nParticles))*3;
  
 % For asymmetric reward version, compute number of red and green particles
 % caught in shield
 if strcmp(taskParam.trialflow.reward, 'asymmetric')
 
     % Determine particle color
-    greenParticles = unique(dotCol == taskParam.colors.green,'rows');
-    redParticles = unique(dotCol == taskParam.colors.red,'rows');
+    greenParticles = unique(dotCol == taskParam.colors.green','rows');
+    redParticles = unique(dotCol == taskParam.colors.red','rows');
     
     % Determine which of those were caught
     taskData.greenCaught(currTrial) = sum(whichParticlesCaught(greenParticles));
@@ -126,30 +125,31 @@ for i = 1:nFrames
         al_drawCannon(taskParam, taskData.distMean(currTrial))
     else
         % If cannon is hidden, show confetti cloud
-        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1); 
-        al_drawCross(taskParam)
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
     end
 
     % Show orange prediction spot
     al_predictionSpot(taskParam)
    
     % Show shield
-    al_shield(taskParam, taskData.allASS(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial));
+    al_shield(taskParam, taskData.allShieldSize(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial));
 
     % Draw updated dots to animate explosion
     Screen('DrawDots', taskParam.display.window.onScreen, round(xyExp), dotSize, dotCol, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
     
-    % Uncomment to see threshold of dots when caught
+    % Checking for threshold
+    % Uncomment to threshold of dots when caught
     if taskParam.gParam.showConfettiThreshold
         Screen('DrawDots', taskParam.display.window.onScreen, round(xyThres), 5, [0 0 0], [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
         Screen('DrawDots', taskParam.display.window.onScreen, round(xyThresCatch), 5, [255 255 255], [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
     end
     
     % Compute which dots should stick to the shield when caught
-    stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & repmat(abs(dotPredDist) <= taskData.allASS(currTrial)/2, [2, 1]);
+    stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & repmat(abs(dotPredDist) <= taskData.allShieldSize(currTrial)/2, [2, 1]);
     % The above is included for backward compatibility. In future, when all
     % labs have more recent Matlab versions, potentially change to: 
-    % stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & abs(dotPredDist) <= taskData.allASS(currTrial)/2;
+    % stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & abs(dotPredDist) <= taskData.allShieldSize(currTrial)/2;
 
     % Update dot position
     xyExp(1,stopCrit(1,:)==0) = xyExp(1,stopCrit(1,:)==0) + xExpSteps(i,stopCrit(1,:)==0);

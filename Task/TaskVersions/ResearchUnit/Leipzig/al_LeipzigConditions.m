@@ -45,7 +45,7 @@ trial = taskParam.gParam.trials;
 if ~unitTest
 
     % TaskData-object instance
-    taskData = al_taskDataMain(trial);
+    taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
     % Generate outcomes using cannonData function
     taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -68,7 +68,7 @@ dataLowNoise = al_LeipzigLoop(taskParam, 'main', taskData, trial);
 if ~unitTest
 
     % TaskData-object instance
-    taskData = al_taskDataMain(trial);
+    taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
     % Generate outcomes using cannonData function
     taskData = taskData.al_cannonData(taskParam, haz, concentration(2), taskParam.gParam.safe);

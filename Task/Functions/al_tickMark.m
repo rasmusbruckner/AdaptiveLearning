@@ -1,14 +1,14 @@
-function al_tickMark(taskParam, parameter, type)
+function [tickLength, col] = al_tickMark(taskParam, parameter, type)
 %AL_TICKMARK This function displays the tickmarks in the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       parameters: Location in which tick mark should be presented
+%       parameter: Location in which tick mark should be presented
 %       type: Tick-mark type
 %
 %   Output
-%       None
-
+%       tickLength: Length of tick mark to compute backgound RGB
+%       col: Color to compute background RGB
 
 % Depending on tick-mark type, choose properties of tickmark
 if isequal(type, 'pred')
@@ -26,6 +26,11 @@ elseif isequal(type,'aim')
     tickLength = 40;
     tickNormalization = 15;
     tickWidth = 3;
+elseif isequal(type,'shield')
+    col = taskParam.colors.purple; %taskParam.colors.blue; %taskParam.colors.purple;
+    tickLength = 50; %30;
+    tickNormalization = 20; %10;
+    tickWidth = taskParam.circle.tickWidth;
 end
 
 % Compute location of tickmark

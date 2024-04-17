@@ -13,7 +13,7 @@ classdef al_subject
         
         ID
         age
-        sex
+        gender
         group
         cBal
         rew
@@ -31,10 +31,10 @@ classdef al_subject
         function subobj = al_subject()
             %AL_GPARAM This function creates a subject object of
             % class al_subject
-
+            
             subobj.ID = nan; 
             subobj.age = nan;
-            subobj.sex = nan;
+            subobj.gender = nan;
             subobj.group = nan; 
             subobj.cBal = nan; 
             subobj.rew = nan; 
@@ -54,7 +54,7 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: subject object
+            %       subobj: Subject object
             %       checkString: XX Comment
             %
             %   Output
@@ -79,7 +79,7 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: subject object
+            %       subobj: Subject object
             %
             %   Output
             %       ~
@@ -92,21 +92,21 @@ classdef al_subject
         end
         
         
-        function checkSex(subobj)
-            %CHECKSEX This function tests input related to the subject's
-            % sex
+        function checkGender(subobj)
+            %CHECKGENDER This function tests input related to the subject's
+            % gender
             %
-            %   If sex is incorrectly specified, the function returns
+            %   If gender is incorrectly specified, the function returns
             %   an error. 
             %
             %   Input
-            %       subobj: subject object
+            %       subobj: Subject object
             %
             %   Output
             %       ~
 
-            if subobj.sex ~= 'm' && subobj.sex ~= 'f' && subobj.sex ~= 'd'
-                error('Sex: "m", "f", or "d"?');
+            if subobj.gender ~= 'm' && subobj.gender ~= 'f' && subobj.gender ~= 'd'
+                error('Gender: "m", "f", or "d"?');
             end
             
         end
@@ -119,7 +119,7 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: subject object
+            %       subobj: Subject object
             %
             %   Output
             %       ~
@@ -140,7 +140,7 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: subject object
+            %       subobj: Subject object
             %
             %   Output
             %       ~
@@ -150,15 +150,25 @@ classdef al_subject
             end
 
         end
+
+        function checkRew(subobj)
+            %CHECKREW This function tests input related to the reward
+            %variable
+            %
+            %   If rewarad is incorrectly specified, the function returns
+            %   an error. 
+            %
+            %   Input
+            %       subobj: Subject object
+            %
+            %   Output
+            %       ~
+
+            if subobj.rew ~= 1 && subobj.rew ~= 2
+                error('Rew: 1 or 2?')
+            end
+
+        end
         
-          % Does not seem to be necessary anymore
-%         % Todo: This should be a static function
-%         % I think not necessary anymore
-%         function check_N_Trials(~, gParam)
-%         if  (gParam.trials > 1 && mod(gParam.trials, 2)) == 1
-%             msgbox('All trials must be even or equal to 1!');
-%             return
-%         end
-%         end
     end
 end

@@ -30,14 +30,14 @@ spreadLong = repmat(taskParam.circle.rotationRad-5, nParticles, 1);
 
 % Confetti position, both spread and distance combined
 xyExp = nan(2, nParticles);
-xyExp(1,:) = spreadLong .* sind(spreadWide) + normrnd(0, 5, nParticles, 1);
-xyExp(2,:) = spreadLong .* -cosd(spreadWide) + normrnd(0, 5, nParticles, 1);
+xyExp(1,:) = spreadLong .* sind(spreadWide) + normrnd(0, taskParam.cannon.confettiStd, nParticles, 1);
+xyExp(2,:) = spreadLong .* -cosd(spreadWide) + normrnd(0, taskParam.cannon.confettiStd, nParticles, 1);
 dotCol = taskData.dotCol(currTrial).rgb;
-dotSize = (1+rand(1, nParticles))*3;
+dotSize = (1+rand(1, nParticles))*taskParam.cannon.particleSize; 
 
 % Display confetti outcome
+%Screen('FillOval', taskParam.display.window.onScreen, [0 0 0], confSpot);
 Screen('DrawDots', taskParam.display.window.onScreen,xyExp, dotSize, dotCol, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-Screen('FillOval', taskParam.display.window.onScreen, [0 0 0], confSpot);
 
 end
 

@@ -9,10 +9,10 @@ function al_lineAndBack(taskParam)
 
 
 % Extract background color
-if isequal(taskParam.colors.background, 'black')
+if isequal(taskParam.trialflow.background, 'picture')
     col = taskParam.colors.black;
 else
-    col = taskParam.colors.gray;
+    col = taskParam.colors.background;
 end
 
 % Display background
@@ -24,7 +24,7 @@ if isequal(taskParam.trialflow.background, 'picture')
 end
 
 % Extract background color of lower and upper screen
-if isequal(taskParam.colors.background, 'black')
+if isequal(taskParam.trialflow.background, 'picture')
     col = taskParam.colors.black;
 else
     col = taskParam.colors.darkBlue;

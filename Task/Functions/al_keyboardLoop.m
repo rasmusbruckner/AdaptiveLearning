@@ -1,4 +1,4 @@
-function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, startTimestamp, txt, breakKey)
+function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, startTimestamp, txt, breakKey, disableResponseThreshold)
 %AL_KEYBOARDLOOP This function implementens the participants' interaction
 % with the cannon task via the keyboard
 %
@@ -9,6 +9,8 @@ function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, sta
 %       startTimestamp: Onset of prediction phase for computing initRT
 %       text: Presented text
 %       breakKey: Key code to lock prediction
+%       disableResponseThreshold: Optionally activate response time
+%                                 limit (if additionally specified in trialflow)
 %
 %   Ouptut
 %       taskData: Task-parameter-object instance
@@ -18,6 +20,13 @@ function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, sta
 % Manage optional breakKey input: if not provided, use SPACE as default
 if ~exist('breakKey', 'var') || isempty(breakKey)
     breakKey = taskParam.keys.space;
+end
+
+% Check for optional response-threshold input:
+% By default, threshold not active, independent of trialflow
+% That way, instructions are without time limit
+if ~exist('disableResponseThreshold', 'var') || isempty(disableResponseThreshold)
+    disableResponseThreshold = true;
 end
 
 % -------------------------------------------------------------
@@ -49,7 +58,7 @@ end
 % -------------------------------------------------------
 
 % Keyboard settings for MD scanner
-if taskParam.gParam.scanner || taskParam.gParam.scannerDummy
+if taskParam.gParam.scanner
     RestrictKeysForKbCheck([taskParam.keys.rightKey, taskParam.keys.leftRelease, ...
         taskParam.keys.rightRelease, taskParam.keys.leftKey, taskParam.keys.space, taskParam.keys.esc]);
     KbQueueCreate
@@ -63,7 +72,7 @@ while 1
 
     % If no text as input, assume we're in the main task and just present
     % background if required
-    if ~exist('txt', 'var') ||  isempty(txt)
+    if ~exist('txt', 'var') || isempty(txt)
 
         % Present background picture, if required
         if isequal(taskParam.trialflow.background, 'picture')
@@ -98,8 +107,8 @@ while 1
     % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
 
-        al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
-        al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
+        al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
+        al_tickMark(taskParam, taskData.pred(trial-1), 'pred');
     end
 
     % Tell PTB that all elements have been drawn and flip screen
@@ -108,7 +117,7 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
 
     % Update location of prediction spot depending on participant input
-    [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey, keyCode);
+    [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey, keyCode, disableResponseThreshold);
 
     % Break out of while condition if prediction has been confirmed
     if breakLoop == true
@@ -121,7 +130,7 @@ while 1
 end
 
 % Relax restrictions for scanner after prediction
-if taskParam.gParam.scanner || taskParam.gParam.scannerDummy
+if taskParam.gParam.scanner
 
     KbQueueStop
     RestrictKeysForKbCheck([]);

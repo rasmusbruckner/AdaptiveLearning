@@ -11,17 +11,12 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal
 %       dataLowNoise: Task-data object low-noise condition
 %       dataHighNoise: Task-data object high-noise condition
 %
-%   Documentation
-%       This function runs the Hamburg pilot version of the cannon task.
-%       Subjects see a confetti cannon shooting confetti particles.
-%       Currently, there are two different noise conditions.
-%
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       01/24
+%       02/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -62,10 +57,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 5;  % 200;  Hier bitte anpassen
-
-% Set number of trials for integration test
-trialsTesting = 20;  % nach unten schieben
+trialsExp = 2;  % 200;  Hier bitte anpassen
 
 % Number of practice trials
 practTrials = 2; % 20;  Hier bitte anpassen
@@ -73,17 +65,17 @@ practTrials = 2; % 20;  Hier bitte anpassen
 % Risk parameter: Precision of confetti average
 concentration = [16, 8];
 
-% Factor that translates concentration into shield size
-shieldFixedSizeFactor = 2;
-
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 40;
+nParticles = 40; 100;%40;
 
 % Confetti standard deviations
-confettiStd = 1;
+confettiStd = 6;
+
+% Standard deviation during animation
+confettiAnimationStd = 2; 
 
 % Choose if task instructions should be shown
 runIntro = true;
@@ -101,7 +93,7 @@ useCatchTrials = true;
 catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 100;
+sentenceLength = 150; %75; % 100
 
 % Set text and header size
 textSize = 35;
@@ -109,19 +101,25 @@ headerSize = 50;
 
 % Screen size
 screensize = [1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+%screensize = [1    1    1400    1050]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+%screensize = [1 1 1920 1080];
+screensize = get(0,'MonitorPositions')*1.0; % *1.5; %*1.25;
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
-rotationRad = 200;
+rotationRad = 170; %140;%; 200;
 
 % Radius of prediction spot
 predSpotRad = 10;
 
+
+outcSpotRad = 10;
+
 % Tickmark width
-tickWidth = 1;
+tickWidth = 2;
 
 % Key codes
 s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
@@ -147,27 +145,46 @@ rewMag = 0.1;
 
 % Specify data directory
 dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+%dataDirectory = '/home/userb/Documents/MATLAB/Ayelet/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+
+% turn scanner on/off
+scanner = false; %false;
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
 
-% Confetti speed
-cannonBallAnimation = 0.5; % 1.5
-nFrames = 30; %30; 80
-
 % Confetti end point
-confettiEndMean = 50; % 150% this is added to the circle radius
-confettiEndStd = 10; % 20 % this is the spread around the average end point
+confettiEndMean = 100; % 150% this is added to the circle radius
+confettiEndStd = 4; % 20 % this is the spread around the average end point
 
+circleWidth = 10;
+
+% Running task in MEG?
 meg = false;
 
+% Running task at UKE (will be harmonized with scanner)
+uke = false;
+
+% Doing eye-tracking?
 eyeTracker = false;
+
+% EEG
+sendTrigger = false;
+
+% ID for UKE joystick
+ID = 1;
+%joy = vrjoystick(ID);
+joy = nan;
+
+
+automaticBackgroundRGB = true;
+
 % ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
 if unitTest
-    trials = trialsTesting;
+    trials = 20;
 else
     trials = trialsExp;
 end
@@ -193,6 +210,14 @@ gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.meg = meg; 
 gParam.eyeTracker = eyeTracker;
+gParam.sendTrigger = sendTrigger;
+gParam.scanner = scanner;
+gParam.uke = uke;
+gParam.joy = joy;
+gParam.screenNumber = 1;  
+%gParam.shieldMu = 1;
+%gParam.shieldMin = 1;
+%gParam.shieldMax = 100;
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -201,7 +226,7 @@ cd(gParam.dataDirectory);
 % Create object instance for trial flow
 % -------------------------------------
 
-% Todo: What is the best way to document this?
+%% Todo: What is the best way to document this?
 trialflow = al_trialflow();
 trialflow.shot = ' ';
 trialflow.confetti = 'show confetti cloud';
@@ -209,30 +234,37 @@ trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
 trialflow.currentTickmarks = 'show';
-trialflow.cannonType = "confetti";
-trialflow.reward = "standard";
-trialflow.shield = "fixed";
-trialflow.shieldType = "constant";
-trialflow.input = "mouse"; 
+trialflow.cannonType = 'confetti';
+trialflow.reward = 'standard';
+trialflow.shield = 'variableWithSD';
+trialflow.shieldType = 'constant';
+trialflow.input = 'mouse'; 
+
+%trialflow.colors = 'dark';
+%trialflow.colors = 'blackWhite';
+trialflow.colors = 'colorful';
+
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-% Todo: Add some of the other cannon properties
+%% Todo: Add some of the other cannon properties
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
-cannon.nFrames = nFrames;
+cannon.confettiAnimationStd = confettiAnimationStd;
+cannon.nFrames = 50;
 cannon.confettiEndMean = confettiEndMean;
 cannon.confettiEndStd = confettiEndStd;
+cannon = cannon.al_staticConfettiCloud(trialflow.colors);
 
 % ---------------------------------------------
 % Create object instance with color parameters
 % ---------------------------------------------
 
-% Todo: Are all color already part of this class?
-colors = al_colors();
+%% Todo: Are all colors already part of this class?
+colors = al_colors(nParticles);
 
 % ------------------------------------------
 % Create object instance with key parameters
@@ -247,16 +279,20 @@ end
 keys.s = s;
 keys.enter = enter;
 
-% -----------------------------------------------------------------
-% Todo: Do we have to create object instance with mouse parameters?
-% -----------------------------------------------------------------
-
 % ---------------------------------------------
 % Create object instance with timing parameters
 % ---------------------------------------------
 
 timingParam = al_timing();
-timingParam.cannonBallAnimation = cannonBallAnimation; %1.5;
+timingParam.cannonBallAnimation = 0.9;
+timingParam.fixCrossOutcome = 2;
+timingParam.fixCrossShield = 0.7;
+timingParam.fixedITI = 1.0;
+timingParam.jitterOutcome = 2;
+timingParam.jitterShield = 0.6;
+timingParam.jitterITI = 0.5;
+timingParam.outcomeLength = 0.5;
+timingParam.shieldLength = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -282,7 +318,7 @@ subject = al_subject();
 % Default input
 ID = '99999'; % 5 digits
 age = '99';
-sex = 'f';  % m/f/d
+gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
 if ~unitTest
@@ -296,7 +332,7 @@ if gParam.askSubjInfo == false || unitTest
     % Just add defaults
     subject.ID = ID;
     subject.age = str2double(age);
-    subject.sex = sex;
+    subject.gender = gender;
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
     subject.testDay = str2double(day);
@@ -306,12 +342,12 @@ if gParam.askSubjInfo == false || unitTest
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Sex:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'Day:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, sex, group, cBal, day};
+    defaultanswer = {ID, age, gender, group, cBal, day};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -321,7 +357,7 @@ else
 
     subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
-    subject.sex = subjInfo{3};
+    subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
     subject.testDay = str2double(subjInfo{6});
@@ -330,7 +366,7 @@ else
     % Test user input
     checkString = dir(sprintf('*d%s*%s*', num2str(subject.testDay), num2str(subject.ID)));
     subject.checkID(checkString, 5);
-    subject.checkSex();
+    subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(),
     subject.checkTestDay();
@@ -343,13 +379,15 @@ end
 % Display-object instance
 display = al_display();
 
+
+
 % Deal with psychtoolbox warnings
-% Todo: Make sure that all tests are passed on task PC
+%% Todo: Make sure that all tests are passed on task PC
 % display.screen_warnings();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = [66, 66, 66];
+display.backgroundCol = colors.background;% [127.5 127.5 127.5];%[66, 66, 66];
 display.imageRect = imageRect;
 
 % Open psychtoolbox window
@@ -374,9 +412,11 @@ ListenChar(2);
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
+circle.outcSize = outcSpotRad;
 circle.tickWidth = tickWidth;
-circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
+circle.circleWidth = circleWidth;
 circle = circle.compute_circle_props();
+
 
 % ---------------------------------------
 % Put all object instances in task object
@@ -398,6 +438,12 @@ taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 
+colors = colors.computeBackgroundColor(taskParam);
+taskParam.colors = colors;
+
+Screen('FillRect', display.window.onScreen, colors.background);
+Screen('Flip', taskParam.display.window.onScreen);
+
 % --------
 % Run task
 % --------
@@ -412,7 +458,7 @@ totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 header = 'Ende des Versuchs!';
 txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
-al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
+al_bigScreen(taskParam, header, txt, feedback, true);
 
 ListenChar();
 ShowCursor;

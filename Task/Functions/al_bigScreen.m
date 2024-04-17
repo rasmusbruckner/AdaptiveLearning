@@ -19,9 +19,8 @@ end
 
 % Display text until keypress
 while 1
-    
     % Draw desired lines and background on the screen
-    Screen('FillRect', taskParam.display.window.onScreen, [66 66 66]);
+    Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
     Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], 0, taskParam.display.screensize(4)*0.16,...
         taskParam.display.screensize(3), taskParam.display.screensize(4)*0.16, 5);
     Screen('DrawLine', taskParam.display.window.onScreen, [0 0 0], 0, taskParam.display.screensize(4)*0.8,...

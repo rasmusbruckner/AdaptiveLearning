@@ -1,35 +1,23 @@
-function [dataNoPush, dataPush] = RunMagdeburgFMRIVersion(unitTest, cBal, day)
+function RunMagdeburgFMRIVersion(unitTest, cBal)
 %RUNMAGDEBURGFMRIVERSION This function runs the fMRI version
 %  for the study in Magdeburg
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
-%       day: Current test day (only allowed when running unit test)
-%
-%   Output
-%       dataNoPush: Task-data object "noPush" condition
-%       dataPush: Task-data object "push" condition
-%
-%   Documentation
-%       This function runs the sleep-study version of the cannon task.
-%       Subjects are sleep deprived and perform the task within
-%       a larger test battery. The version is shorter that usual
-%       and focuses on the most essential intructions.
 %
 %   Testing
 %       To run the integration test, run "al_sleepIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       01/24
+%       03/24
 
-% todo: update fMRI first trigger like at CCNB
-% todo: high vs. low noise instead of push
-% todo: variable shield size
 % todo: integration test
-% todo: instructions separate from main task (before in scanner)
 
+%% Todo: implement manual start of block if sth. goes wrong in scanner
+% - ip-based computer detection for automatic parameters (for all versions)
+% - so instead of starting at 1, start at higher value
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -47,14 +35,6 @@ elseif exist('cBal', 'var') && unitTest
     end
 end
 
-if exist('day', 'var') && ~unitTest
-    error('No unit test: day cannot be used');
-elseif exist('cBal', 'var') && unitTest
-    if ~ischar(day)
-        error('day must be char');
-    end
-end
-
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
 if ~unitTest
@@ -63,25 +43,21 @@ else
     rng(1)
 end
 
-
 % ----------------------------
 % Set relevant task parameters
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 180;  Hier bitte anpassen
-
-% Set number of trials for integration test
-trialsTesting = 20;
+trialsExp = 2;%60;  % 180;  Hier bitte anpassen
 
 % Number of practice trials
 practTrials = 2; % 20;  Hier bitte anpassen
 
-% Risk parameter: Precision of cannonballs
-concentration = 12;
+% Number of blocks per condition
+nBlocks = 2; % usually 3 * 2 = 6
 
-% Push concentration
-pushConcentration = 4;
+% Risk parameter: Precision of cannonballs
+concentration = [16, 8];
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
@@ -93,7 +69,7 @@ runIntro = false;
 askSubjInfo = true;
 
 % Determine blocks
-blockIndices = [1 45 90 135];
+blockIndices = 1;
 
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
@@ -102,7 +78,7 @@ useCatchTrials = true;
 catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 100;
+sentenceLength = 60;
 
 % Set text and header size
 textSize = 35;
@@ -110,11 +86,9 @@ headerSize = 50;
 
 % Screen size
 screensize = [1 1 1280 1024]; %[%1    1    2560    1440]; %[1 1 1920 1080];  %[1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: [screenWidth, screenHeight] = Screen('WindowSize', 0); screenSize = [1, 1, screenWidth, screenHeight];
-
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
 %displayobj.screensize = get(0,'MonitorPositions'); %[1    1
 %2560    1440]%  laptop [1    1    2560    1440];
-
 
 % Maximum number of trials exceeding a certain estimation error during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -130,13 +104,15 @@ predSpotRad = 10;
 tickWidth = 1;
 
 % Key codes
-keySpeed = 1.5; %2;
-slowKeySpeed = 0.5; % 0.5;
+%% TODO: TAKE md SETTINGS   
+keySpeed = 1; %1.5; %2;
+keySpeedScanner = 0.6;
+slowKeySpeed = 0.0; % 0.5;
 leftKey = 42; %50;  % 42
 rightKey = 45; %51;  % 45
 space = 66; 
-s = 40; % MD83; %40; % Für MD KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen  Lavinia: Hier eventuell anpassen
-enter = 37;%13; %37; % md = 13   MD: Hier bitte anpassen, müsste bei euch 13 sein
+s = 40; %83; % MD 83; %40; % Für MD KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen  Lavinia: Hier eventuell anpassen
+enter = 37; %13;%37%;13; %37;% MD 13; %37; % md = 13   MD: Hier bitte anpassen, müsste bei euch 13 sein
 
 % Run task in debug mode with smaller window
 debug = false; %true; %false;
@@ -148,15 +124,31 @@ printTiming = true;
 hidePtbCursor = false;
 
 % Reward magnitude
-rewMag = 0.05;
+rewMag = 0.0;
 
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';%'DataDirectory';  % Hier bitte anpassen
+dataDirectory = 'DataDirectory'; %'~/Dropbox/AdaptiveLearning/DataDirectory'; %'DataDirectory'; %%'~/Dropbox/AdaptiveLearning/DataDirectory';  % MD: 'DataDirectory' vorher cd AdaptiveLearning
 
-scanner = false; %false;
-scannerDummy = false; % true
-leftRelease = 43;
-rightRelease = 44;
+scanner = true;
+
+leftRelease = 43; % MD: 55; %%43;
+rightRelease = 44; % MD: 56; %%44;
+leftKeyScanner = 42; % MD: 50; %42; %50;  % 42
+rightKeyScanner = 45;% MD: 51; %45; %51;  % 45
+spaceScanner = 66; %MD 52;
+
+% leftRelease = 43;
+% rightRelease = 44;
+% leftKeyScanner = 42;
+% rightKeyScanner = 45;
+% spaceScanner = 66;
+
+nFrames = 20; %30; 80
+
+useResponseThreshold = true;
+responseThreshold = 10;
+
+
 % ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
@@ -165,16 +157,17 @@ rightRelease = 44;
 % all variables are still in use.
 
 if unitTest
-    trials = trialsTesting;
+    trials = 20;
 else
     trials = trialsExp;
 end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'Sleep';
+gParam.taskType = 'MagdeburgFMRI';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
+gParam.nBlocks = nBlocks;
 gParam.runIntro = runIntro;
 gParam.askSubjInfo = askSubjInfo;
 gParam.blockIndices = blockIndices;
@@ -185,12 +178,16 @@ gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
 gParam.debug = debug;
 gParam.printTiming = printTiming;
 gParam.concentration = concentration;
-gParam.pushConcentration = pushConcentration;
 gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.scanner = scanner;
-gParam.scannerDummy = scannerDummy; 
+gParam.useResponseThreshold = useResponseThreshold;
+gParam.responseThreshold = responseThreshold;
+gParam.shieldMu = 15;                   
+gParam.shieldMin = 10;
+gParam.shieldMax = 180;
+
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -206,7 +203,16 @@ trialflow.confetti = 'none';
 trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.shieldType = "constant";
+trialflow.shield = 'variable';
 trialflow.input = "keyboard";
+trialflow.currentTickmarks = 'show';
+
+% ---------------------------------------------
+% Create object instance with cannon parameters
+% ---------------------------------------------
+
+cannon = al_cannon();
+cannon.nFrames = nFrames;
 
 % ---------------------------------------------
 % Create object instance with color parameters
@@ -214,7 +220,10 @@ trialflow.input = "keyboard";
 
 % Todo: Are all color already part of this class?
 colors = al_colors();
-colors.background = 'black';
+colors.background = [0, 0, 0];
+colors.circleCol = [224, 224, 224];
+colors.blue = [122, 96, 215];
+colors.winColor = colors.blue;
 
 % ------------------------------------------
 % Create object instance with key parameters
@@ -223,27 +232,47 @@ colors.background = 'black';
 keys = al_keys();
 keys.s = s;
 keys.enter = enter;
-keys.keySpeed = keySpeed;
 keys.slowKeySpeed = slowKeySpeed;
 
-if scanner || scannerDummy
+if scanner
+    keys.keySpeed = keySpeedScanner;
+    keys.leftKey = leftKeyScanner; %50;
+    keys.rightKey = rightKeyScanner; %51;
+    keys.space = spaceScanner;% 52;  % optionally also 49
+    keys.leftRelease = leftRelease;
+    keys.rightRelease = rightRelease;
+else
+    keys.keySpeed = keySpeed;
     keys.leftKey = leftKey; %50;
     keys.rightKey = rightKey; %51;
     keys.space = space;% 52;  % optionally also 49
     keys.leftRelease = leftRelease;
     keys.rightRelease = rightRelease;
+
 end
+
+
 
 % ---------------------------------------------
 % Create object instance with timing parameters
 % ---------------------------------------------
 
 timingParam = al_timing();
+timingParam.cannonBallAnimation = 0.5;
+timingParam.cannonMissAnimation = 0.75;
 
-% This is a reference timestamp at the start of the experiment.
-% This is not equal to the first trial or so. So be carful when using
-% EEG, fMRI or pupillometry and make sure the reference is specified as desired.
-timingParam.ref = GetSecs();
+if runIntro
+    timingParam.jitterITI = 1;
+    timingParam.fixedITI = 1;
+else
+    timingParam.jitterITI = 4;
+    timingParam.jitterOutcome = 4;
+    timingParam.fixCrossOutcome = 2;
+    timingParam.fixedITI = 2;
+end
+
+% Record current time for estimating duraiton of experiment
+timestampBeginExp = GetSecs();
 
 % ----------------------------------------------
 % Create object instance with strings to display
@@ -262,13 +291,11 @@ strings.headerSize = headerSize;
 subject = al_subject();
 
 % Default input
-ID = '01'; % 5 digits
+ID = '01'; % 2 digits
 age = '99';
-sex = 'f';  % m/f/d
-group = '1'; % 1=sleep/2=control
+gender = 'f';  % m/f/d
 if ~unitTest
     cBal = '1'; % 1/2/3/4
-    day = '1'; % 1/2
 end
 
 % If no user input requested
@@ -277,22 +304,20 @@ if gParam.askSubjInfo == false || unitTest
     % Just add defaults
     subject.ID = ID;
     subject.age = str2double(age);
-    subject.sex = sex;
-    subject.group = str2double(group);
+    subject.gender = gender;
     subject.cBal = str2double(cBal);
-    subject.testDay = str2double(day);
     subject.date = date;
 
     % If user input requested
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Sex:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'cBal:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, sex, group, cBal, day};
+    defaultanswer = {ID, age, gender, cBal};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -302,19 +327,15 @@ else
 
     subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
-    subject.sex = subjInfo{3};
-    subject.group = str2double(subjInfo{4});
-    subject.cBal = str2double(subjInfo{5});
-    subject.testDay = str2double(subjInfo{6});
+    subject.gender = subjInfo{3};
+    subject.cBal = str2double(subjInfo{4});
     subject.date = date;
 
     % Test user input and selected number of trials
-    checkString = dir(sprintf('*d%s*MORPHEUS%s*', num2str(subject.testDay), num2str(subject.ID)));
+    checkString = dir(sprintf('*%s*', num2str(subject.ID)));
     subject.checkID(checkString, 2);
-    subject.checkSex();
-    subject.checkGroup();
+    subject.checkGender();
     subject.checkCBal(),
-    subject.checkTestDay();
 end
 
 % ------------------
@@ -343,8 +364,7 @@ if hidePtbCursor == true
     HideCursor;
 end
 
-if ~scanner && ~scannerDummy
-
+if ~scanner
     ListenChar(2); % not compatible with KbQueue
 end
 
@@ -352,8 +372,6 @@ end
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
@@ -371,6 +389,7 @@ taskParam = al_objectClass();
 taskParam.gParam = gParam;
 taskParam.strings = strings;
 taskParam.trialflow = trialflow;
+taskParam.cannon = cannon;
 taskParam.circle = circle;
 taskParam.colors = colors;
 taskParam.keys = keys;
@@ -379,27 +398,43 @@ taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 
-% --------
-% Run talok
-% --------
+% --------------
+% Run intro/task
+% --------------
 
-[dataNoPush, dataPush] = al_MagdeburgFMRIConditions(taskParam);
-totWin = sum(dataNoPush.hit) + sum(dataPush.hit);
+if runIntro 
 
-% -----------
-% End of task
-% -----------
+    al_MagdeburgFMRIConditions(taskParam)
 
-header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
-feedback = true; % indicate that this is the instruction mode
-al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
+    % -------------------
+    % End of instructions
+    % -------------------
+
+    header = 'Übung geschafft!';
+    txt = 'Sie haben die Übung erfolgreich abgeschlossen\n\n\nGleich geht es mit dem Experiment weiter.';
+    feedback = true; % indicate that this is the instruction mode
+    al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
+
+else
+
+    totWin = al_MagdeburgFMRIConditions(taskParam);
+    
+    % -----------
+    % End of task
+    % -----------
+
+    header = 'Ende des Versuchs!';
+    txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
+    feedback = true; % indicate that this is the instruction mode
+    al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
+
+end
 
 ListenChar();
 ShowCursor;
 Screen('CloseAll');
 
 % Inform user about timing
-fprintf('Total time: %.1f minutes\n', char((GetSecs - timingParam.ref)/60));
+fprintf('Total time: %.1f minutes\n', char((GetSecs - timestampBeginExp)/60));
 
 end

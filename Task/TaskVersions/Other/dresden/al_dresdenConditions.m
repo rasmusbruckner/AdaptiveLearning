@@ -1,5 +1,5 @@
-function [dataMain] = al_dresdenConditions(taskParam)
-%AL_DRESDENCONDITIONS This function implements the Dresden-EEG version of the cannon task
+function [dataMain, dataFollowCannon, dataFollowOutcome] = al_dresdenConditions(taskParam)
+%AL_DRESDENCONDITIONS This function implements the Dresden EEG version of the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -10,7 +10,6 @@ function [dataMain] = al_dresdenConditions(taskParam)
 %       dataFollowOutcome: Task-data object control condition (LR = 1)
 
 % Todo: Re-run tests
-% todo: dataFollowCannon, dataFollowOutcome to output
 
 % -----------------------------------------------------
 % 1. Extract some variables from task-parameters object
@@ -22,293 +21,430 @@ concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 cBal = taskParam.subject.cBal;
 
-% --------------------------------
-% 2. Show instructions, if desired
-% --------------------------------
-
-if runIntro && ~unitTest
-    al_commonConfettiInstructions(taskParam)
-end
-
+% Background color
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
 
-% ------------
-% 3. Main task
-% ------------
+% ---------------------------------------
+% 2. Pre-generate data for all conditions
+% ---------------------------------------
+
+% Main condition
+% --------------
 
 % Extract number of trials
 trial = taskParam.gParam.trials;
 
 % TaskData-object instance
-taskData = al_taskDataMain(trial);
+taskDataMain = al_taskDataMain(trial, taskParam.gParam.taskType);
 
-        % Generate outcomes using cannon-data function
-taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
+% Generate outcomes using cannon-data function
+taskDataMain = taskDataMain.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
 
-
-dataMain = al_dresdenLoop(taskParam, 'main', taskData, trial);
-
-
-
-% Todo: ensure that outcome generation is done only once for each
-% condition.. just order is adjusted. this will be especially 
-% relevant to longer cBal cases such as Dresden or M/EEG
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%maybe relevant
-%     % "Du" for younger adults
-%     if isequal(subject.group, '1')
-%         txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst wehrst du also die meisten Kugeln ab, '...
-%             'wenn du den orangenen Punkt auf die Stelle bewegst, auf die die Kanone zielt. Weil du die Kanone meistens nicht mehr '...
-%             'sehen kannst, musst du diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die abgewehrten '...
-%             'Kugeln bekommst du nach der Studie ausgezahlt.\n\nViel Erfolg!'];
-% 
-%         % "Sie" for older adults
-%     else
-%         txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst wehren Sie also die meisten Kugeln ab, '...
-%             'wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone zielt. Weil Sie die Kanone meistens nicht mehr '...
-%             'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Kugeln einschätzen. Das Geld für die abgewehrten '...
-%             'Kugeln bekommen Sie nach der Studie ausgezahlt.\n\nViel Erfolg!'];
-%     end
-
-    % Indicate beginning of main task
-    %al_instructions(taskParam, 'mainPractice', subject);
-%     whichPractice = 'mainPractice';
-%     al_dresdenInstructions(taskParam, subject, true, whichPractice);
-% 
-
-
-%     %[taskData, trial] = al_loadTaskData(taskParam, 'mainPractice_3', condobj.haz(3), condobj.concentration(1));
-%     % ------------------------
-%     taskData = load('pract3');
-%     taskData = taskData.taskData;
-%     taskData.critical_trial = nan;
-%     trial = taskParam.gParam.practTrials;
-%     % ------------------------------------
-%     al_dresdenLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'mainPractice_3', subject, taskData, trial);
-%     feedback = false;
-%     %al_bigScreen(taskParam, condobj.txtPressEnter, condobj.header, txtStartTask, feedback);
-%     al_bigScreen(taskParam, condobj.txtPressEnter, 'Erste Aufgabe...', txtStartTask, feedback);
-% 
-% end
-    
-%currentConcentration = condobj.concentration(1);
-
-%[taskData, trial] = al_loadTaskData(taskParam, 'main', condobj.haz(1), currentConcentration);
-trial = taskParam.gParam.trials;
-% TaskData-object instance
-taskData = al_taskDataMain(trial);
-
-% -----------------------------------------------------
-% 1. Extract some variables from task-parameters object
-% -----------------------------------------------------
-
-runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
-concentration = taskParam.gParam.concentration;
-haz = taskParam.gParam.haz;
-%testDay = taskParam.subject.testDay;
-cBal = taskParam.subject.cBal;
-% Generate outcomes using cannonData function
-taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
-
-
-%taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), currentConcentration, 'main');
-dataMain = al_dresdenLoop(taskParam, 'main', taskData, trial);
-%dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
-
-
-end
-
-function condobj = FollowOutcomeCondition(condobj, taskParam, subject)
-%FOLLOWOUTCOMECONDITION   Runs the follow-outcome condition of the cannon task
-%
-%   Input
-%       runIntro: indicate if practice session should be conducted
-%       unitTest: indicate if unit test should be conducted
-%       haz: hazard rate
-%       concentration: noise in the environment
-%       txtPressEnter: text that is presented to indicate that subject should press "Enter"
-%   Output
-%       DataFollowOutcome: Participant data
+% Follow-outcome condition
+% ------------------------
 
 % TaskData-object instance
-trial = taskParam.gParam.controlTrials;
-taskData = al_taskDataMain(trial);
+taskDataFollowOutcome = al_taskDataMain(trial, taskParam.gParam.taskType);
 
-if condobj.runIntro && ~condobj.unitTest
+% Generate outcomes using cannon-data function
+taskDataFollowOutcome = taskDataFollowOutcome.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
 
-    if isequal(subject.group, '1')
+% Follow-cannon condition
+% -----------------------
 
-        txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst ist es deine Aufgabe Kanonenkugeln aufzusammeln, indem du '...
-            'deinen Korb an der Stelle platzierst, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). Das Geld für die gesammelten '...
-            'Kugeln bekommst du nach der Studie ausgezahlt.\n\nViel Erfolg!'];
+% TaskData-object instance
+taskDataFollowCannon = al_taskDataMain(trial, taskParam.gParam.taskType);
 
-    else
+% Generate outcomes using cannon-data function
+taskDataFollowCannon = taskDataFollowCannon.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
 
-        txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst ist es Ihre Aufgabe Kanonenkugeln aufzusammeln, indem Sie '...
-            'Ihren Korb an der Stelle platzieren, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). Das Geld für die gesammelten '...
-            'Kugeln bekommen Sie nach der Studie ausgezahlt.\n\nViel Erfolg!'];
+% Choose order of conditions according to cBal
+if cBal == 1
 
+    % Main condition
+    % --------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'main';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'main';
+        al_dresdenInstructions(taskParam, whichPractice)
     end
 
-    al_instructions(taskParam, 'followOutcomePractice', subject)
-    %[taskData, trial] = al_loadTaskData(taskParam, 'followOutcomePractice', condobj.haz(3), condobj.concentration(1));
-    % ----------------------------
+    dataMain = al_dresdenLoop(taskParam, taskDataMain, trial);
 
-    taskData = load('CPInvisible');
-    taskData = taskData.taskData;
-    clear taskData.cBal taskData.rew
-    trial = taskParam.gParam.practTrials;
-    taskData.cBal = nan(trial,1);
-    taskData.rew = nan(trial,1);
-    taskData.initiationRTs = nan(trial,1);
-    taskData.initialTendency = nan(trial,1);
-    taskData.actJitter = nan(trial,1);
-    taskData.block = ones(trial,1);
-    taskData.savedTickmark(1) = nan;
-    taskData.reversal = nan(length(trial),1);
-    taskData.currentContext = nan(length(trial),1);
-    taskData.hiddenContext = nan(length(trial),1);
-    taskData.contextTypes = nan(length(trial),1);
-    taskData.latentState = nan(length(trial),1);
-    taskData.RT = nan(length(trial),1);
-    taskData.critical_trial = nan(length(trial),1);
-    % ---------------------------------------------
-    al_dresdenLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'followOutcomePractice', subject, taskData, trial);
-    feedback = false;
-    header = 'Anfang der Aufgabe';
-    al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
+    % Follow-outcome condition
+    % ------------------------
 
-else
+    % Define condition
+    taskParam.trialflow.condition = 'followOutcome';
 
-    Screen('TextSize', taskParam.display.window.onScreen, 30);
-    Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
-    % IndicateFollowCannon = 'Follow Cannon Task';
-    % IndicateFollowOutcome = 'Follow Outcome Task';
-    al_indicateDresdenCondition(taskParam, 'Follow Outcome Task')
-
-end
-
-%[taskData, trial] = al_loadTaskData(taskParam, 'followOutcome', condobj.haz(1), condobj.concentration(1));
-% --------------------------------------
-
-trial = taskParam.gParam.controlTrials;
-%trial = taskParam.gParam.trials;
-%taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
-runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
-concentration = taskParam.gParam.concentration;
-haz = taskParam.gParam.haz;
-%testDay = taskParam.subject.testDay;
-cBal = taskParam.subject.cBal;
-% Generate outcomes using cannonData function
-taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
-
-% -----------------------------------------------------------------------
-[~, condobj.DataFollowOutcome] = al_dresdenLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject, taskData, trial);
-
-end
-
-% function DataFollowCannon = FollowCannonCondition(runIntro, unitTest, haz, concentration, txtPressEnter)
-function condobj = FollowCannonCondition(condobj, taskParam, subject)
-%FOLLOWCANNONCONDITION   Runs the follow-the-cannon condition of the cannon task
-%
-%   Input
-%       runIntro: indicate if practice session should be conducted
-%       unitTest: indicate if unit test should be conducted
-%       haz: hazard rates
-%       concentration: noise in the environment
-%       txtPressEnter: text that is presented to indicate that subject should press "Enter"
-%   Output
-%       DataFollowCannon: Participant data
-
-% TaskData-object instance
-trial = taskParam.gParam.controlTrials;
-taskData = al_taskDataMain(trial);
-
-
-
-if condobj.runIntro && ~condobj.unitTest
-
-    if isequal(subject.group, '1')
-        txtStartTask = ['Du hast die Übungsphase abgeschlossen. Kurz zusammengefasst wehrst du die meisten Kugeln ab, wenn du den orangenen Punkt auf die Stelle bewegst, auf die die Kanone '...
-            'zielt (schwarze Nadel). Dieses Mal kannst du die Kanone sehen.\n\nViel Erfolg!'];
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followOutcome';
+        al_dresdenInstructions(taskParam, whichPractice)
     else
-        txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst wehren Sie die meisten Kugeln ab, wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone '...
-            'zielt (schwarze Nadel). Dieses Mal können Sie die Kanone sehen.\n\nViel Erfolg!'];
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
     end
 
-    al_instructions(taskParam, 'followCannonPractice', subject)
-    %[taskData, trial] = al_loadTaskData(taskParam, 'followCannonPractice', condobj.haz(3), condobj.concentration(1)); % am 15.10.21 hier geändert, um das unabhängig zu machen.
-    % ----
-    taskData = load('CPInvisible');
-    taskData = taskData.taskData;
-    clear taskData.cBal taskData.rew
-    trial = taskParam.gParam.practTrials;
-    taskData.cBal = nan(trial,1);
-    taskData.rew = nan(trial,1);
-    taskData.initiationRTs = nan(trial,1);
-    taskData.initialTendency = nan(trial,1);
-    taskData.actJitter = nan(trial,1);
-    taskData.block = ones(trial,1);
-    taskData.savedTickmark(1) = nan;
-    taskData.reversal = nan(length(trial),1);
-    taskData.currentContext = nan(length(trial),1);
-    taskData.hiddenContext = nan(length(trial),1);
-    taskData.contextTypes = nan(length(trial),1);
-    taskData.latentState = nan(length(trial),1);
-    taskData.RT = nan(length(trial),1);
-    taskData.critical_trial = nan(length(trial),1);
-    % ----
-    al_dresdenLoop(taskParam, condobj.haz(3), condobj.concentration(1), 'followCannonPractice', subject, taskData, trial);
-    feedback = false;
-    header = 'Anfang der Aufgabe';
-    al_bigScreen(taskParam, condobj.txtPressEnter, header, txtStartTask, feedback);
-else
-    Screen('TextSize', taskParam.display.window.onScreen, 30);
-    Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
-    %al_conditionIndication(taskParam, 'Follow Cannon Task', condobj.txtPressEnter)
-    al_indicateDresdenCondition(taskParam, 'Follow Outcome Task')
+    dataFollowOutcome = al_dresdenLoop(taskParam, taskDataFollowOutcome, trial);
+
+    % Follow-cannon condition
+    % -----------------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'followCannon';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        followCannonShortInstructions(taskParam)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    taskParam.trialflow.cannon = 'show cannon';
+    taskParam.trialflow.shot = 'no animation';
+
+    dataFollowCannon = al_dresdenLoop(taskParam, taskDataFollowCannon, trial);
+
+elseif cBal == 2
+
+    % Main condition
+    % --------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'main';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'main';
+        al_dresdenInstructions(taskParam, whichPractice)
+    end
+
+    dataMain = al_dresdenLoop(taskParam, taskDataMain, trial);
+
+    % Follow-cannon condition
+    % -----------------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'followCannon';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        followCannonShortInstructions(taskParam)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    taskParam.trialflow.cannon = 'show cannon';
+    dataFollowCannon = al_dresdenLoop(taskParam, taskDataFollowCannon, trial);
+
+    % Follow-outcome condition
+    % ------------------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'followOutcome';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followOutcome';
+        al_dresdenInstructions(taskParam, whichPractice)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    dataFollowOutcome = al_dresdenLoop(taskParam, taskDataFollowOutcome, trial);
+
+elseif cBal == 3
+
+    % Follow-outcome condition
+    % ------------------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'followOutcome';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followOutcome';
+        al_dresdenInstructions(taskParam, whichPractice)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    dataFollowOutcome = al_dresdenLoop(taskParam, taskDataFollowOutcome, trial);
+
+    % Main condition
+    % --------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'main';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'main';
+        al_dresdenInstructions(taskParam, whichPractice)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    % Main condition
+    dataMain = al_dresdenLoop(taskParam, taskDataMain, trial);
+
+    % Follow-cannon condition
+    % -----------------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'followCannon';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        followCannonShortInstructions(taskParam)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    taskParam.trialflow.cannon = 'show cannon';
+    dataFollowCannon = al_dresdenLoop(taskParam, taskDataFollowCannon, trial);
+
+elseif cBal == 4
+
+    % Follow-cannon condition
+    % -----------------------
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followCannon';
+        al_dresdenInstructions(taskParam, whichPractice)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    % Follow-cannon condition
+    taskParam.trialflow.cannon = 'show cannon';
+    taskParam.trialflow.shot = 'no animation';
+
+    % Follow-cannon condition
+    dataFollowCannon = al_dresdenLoop(taskParam, taskDataMain, trial);
+
+    % Main condition
+    % --------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'main';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        mainShortInstructions(taskParam)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    % Main condition
+    dataMain = al_dresdenLoop(taskParam, taskDataMain, trial);
+
+    % Follow-outcome condition
+    % ------------------------
+
+    % Define condition
+    taskParam.trialflow.condition = 'followOutcome';
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followOutcome';
+        al_dresdenInstructions(taskParam, whichPractice)
+    else
+        header = 'Anfang der Studie';
+        txt = 'Hier käme eine finale Zusammenfassung';
+        feedback = false; % indicate that this is the instruction mode
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
+
+    dataFollowOutcome = al_dresdenLoop(taskParam, taskDataFollowOutcome, trial);
+
+elseif cBal == 5
+
+    % Follow-outcome condition
+    % ------------------------
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followOutcome';
+        al_dresdenInstructions(taskParam, whichPractice)
+    end
+
+    dataFollowOutcome = al_dresdenLoop(taskParam, taskDataFollowOutcome, trial);
+
+    % Just follow cannon
+
+    % Follow-cannon condition
+    dataFollowCannon = al_dresdenLoop(taskParam, taskDataFollowCannon, trial);
+
+    % Just main
+
+    % Main condition
+    dataMain = al_dresdenLoop(taskParam, taskDataMain, trial);
+
+elseif cBal == 6
+
+    % Regular instructions (without flying ball)
+
+    % Follow-cannon condition
+    dataFollowCannon = al_dresdenLoop(taskParam, taskDataFollowCannon, trial);
+
+    % Follow-outcome condition
+    % ------------------------
+
+    % Show instructions
+    if runIntro && ~unitTest
+        whichPractice = 'followOutcome';
+        al_dresdenInstructions(taskParam, whichPractice)
+    end
+
+    dataFollowOutcome = al_dresdenLoop(taskParam, taskDataFollowOutcome, trial);
+
+    % Just main
+
+    % Main condition
+    dataMain = al_dresdenLoop(taskParam, taskDataMain, trial);
+
 end
-%[taskData, trial] = al_loadTaskData(taskParam, 'followOutcome', condobj.haz(1), condobj.concentration(1));
-% ----
-%trial = taskParam.gParam.controlTrials;
-trial = taskParam.gParam.controlTrials; % sollte eig. controlTrials sein
-
-%taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
-% -----
-trial = taskParam.gParam.trials;
-%taskData = al_generateOutcomesMain(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome');
-runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
-concentration = taskParam.gParam.concentration;
-haz = taskParam.gParam.haz;
-%testDay = taskParam.subject.testDay;
-cBal = taskParam.subject.cBal;
-% Generate outcomes using cannonData function
-taskData = taskData.al_cannonData(taskParam, haz(1), concentration(1), taskParam.gParam.safe);
-
-% -----------------------------------------------------------------------
-% [~, condobj.DataFollowOutcome] = al_mainLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followOutcome', subject, taskData, trial);
-
-
-[~, condobj.DataFollowCannon] = al_dresdenLoop(taskParam, condobj.haz(1), condobj.concentration(1), 'followCannon', subject, taskData, trial);
 end
 
-%end
-%end
+function followCannonShortInstructions(taskParam)
+
+% 1. Indicate current task version
+% --------------------------------
+
+al_indicateCondition(taskParam, ['Nächste Aufgabe\n\n'...
+    'Dieses Spiel heißt wieder "Kanonenkugeln Abwehren"'])
+
+% 2. Summary of task
+% ------------------
+
+header = 'Kanonenkugeln Abwehren';
+txt = ['In dieser Aufgabe ist das Ziel wieder möglichst viele Kanonenkugeln abzuwehren. '...
+    'Der Unterschied ist allerdings, dass Sie die Kanone dieses Mal sehen können.'];
+feedback = false; % indicate that this is the instruction mode
+al_bigScreen(taskParam, header, txt, feedback);
+WaitSecs(0.1);
+
+% 3. Practice block
+% ------------------
+
+header = 'Erste Übung';
+txt = ['In dieser Aufgabe sollen Sie wieder versuchen möglichst viele Kanonenkugeln abzuwehren. Da Sie '...
+    'das Ziel der Kanone die ganze Zeit sehen, steuern Sie Ihr Schild am besten genau auf die schwarze Nadel.'];
+feedback = false; % indicate that this is the instruction mode
+al_bigScreen(taskParam, header, txt, feedback);
+WaitSecs(0.1);
+
+% Get data
+taskData = load('CP_Noise.mat');
+taskData = taskData.practData;
+
+% Run task
+taskParam.trialflow.cannon = 'show cannon';
+
+% Practice session
+taskParam.trialflow.exp = 'pract';
+
+% Task loop
+al_dresdenLoop(taskParam, taskData, taskParam.gParam.practTrials);
+
+% 4. Instructions experimental blocks
+% ------------------------------------
+
+header = 'Jetzt kommen wir zum Experiment';
+txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst wehren Sie die meisten Kugeln ab, wenn Sie den orangenen Punkt auf die Stelle bewegen, auf die die Kanone '...
+    'zielt (schwarze Nadel). Dieses Mal können Sie die Kanone sehen.\n\nViel Erfolg!'];
+
+feedback = false;
+al_bigScreen(taskParam, header, txtStartTask, feedback);
+
+end
+
+function mainShortInstructions(taskParam)
 
 
+% 1. Indicate current task version
+% --------------------------------
+
+al_indicateCondition(taskParam, ['Nächste Aufgabe\n\n'...
+    'Dieses Spiel heißt wieder "Kanonenkugeln Abwehren"'])
+
+% 2. Summary of task
+% ------------------
+
+header = 'Kanonenkugeln Abwehren';
+txt = ['In dieser Aufgabe ist das Ziel wieder möglichst viele Kanonenkugeln abzuwehren. '...
+    'Der Unterschied ist allerdings, dass Sie die Kanone diesmal nur noch selten sehen können.'];
+feedback = false; % indicate that this is the instruction mode
+al_bigScreen(taskParam, header, txt, feedback);
+WaitSecs(0.1);
+
+% 3. Practice block
+% ------------------
+
+header = 'Erste Übung';
+txt = ['Bis jetzt kannten Sie das Ziel der Kanone und Sie konnten die meisten '...
+    'Kugeln abwehren. Im nächsten Übungsdurchgang wird die Kanone in den '...
+    'meisten Fällen nicht mehr sichtbar sein. Anstelle der Kanone sehen Sie dann ein Kreuz. '...
+    'Außerdem sehen Sie wo die Kanonenkugeln landen.\n\nUm weiterhin viele Kanonenkugeln '...
+    'abzuwehren, müssen Sie aufgrund der Landeposition einschätzen, auf welche Stelle die Kanone zielt und '...
+    'den orangenen Punkt auf diese Position steuern. Wenn Sie denken, dass die Kanone auf eine neue Stelle zielt, '...
+    'sollten Sie auch den orangenen Punkt dorthin bewegen.\n\nWenn Sie die Kanone sehen, steuern Sie Ihr Schild '...
+    'am besten genau auf das Ziel der Kanone.'];
+feedback = false; % indicate that this is the instruction mode
+al_bigScreen(taskParam, header, txt, feedback);
+WaitSecs(0.1);
+
+% Get data
+taskData = load('CP_Noise.mat');
+taskData = taskData.practData;
+
+% Run task
+taskParam.trialflow.cannon = 'hide cannon';
+
+% Task loop
+al_dresdenLoop(taskParam, taskData, taskParam.gParam.practTrials);
+
+% 4. Instructions experimental blocks
+% -----------------------------------
+
+header = 'Jetzt kommen wir zum Experiment';
+txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst ist es Ihre Aufgabe Kanonenkugeln '...
+    'aufzusammeln, indem Sie Ihren Korb an der Stelle platzieren, wo die letzte Kanonenkugel gelandet ist (schwarzer Strich). '...
+    'Das Geld für die gesammelten Kugeln bekommen Sie nach der Studie ausgezahlt.\n\nViel Erfolg!'];
+feedback = false;
+al_bigScreen(taskParam, header, txtStartTask, feedback);
+
+end

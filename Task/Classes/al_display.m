@@ -104,8 +104,6 @@ classdef al_display
             displayobj.backgroundCol = [0, 0, 0];
             displayobj.imageRect = [0 0 180 270];
             displayobj.socialFeedbackRect = [0 0 562 762]/4;
-            %displayobj.socialTxts = struct;
-
             displayobj.doctorRect = [0 0 100 100];
             displayobj.heliImageRect = [0 0 100 100];
             displayobj.pillImageRect = [0 0 30 30];
@@ -127,12 +125,10 @@ classdef al_display
             % screensize = screensize(taskParam.gParam.screenNumber, :);
             displayobj.screensizePart = displayobj.screensize(3:4);
             displayobj.zero = displayobj.screensizePart / 2;
-            %[window.onScreen, windowRect, textures] = OpenWindow(taskParam.gParam.debug, taskParam.gParam.screenNumber);
-            
-            % screenNumbers=Screen('Screens', 2);
+
             % Open psychtoolbox window
             if gParam.debug == true
-                [displayobj.window.onScreen, displayobj.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, displayobj.backgroundCol, [0 0 600 400]);%[1920 0 1920+1920 1080] % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
+                [displayobj.window.onScreen, displayobj.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, displayobj.backgroundCol, [0 0 1920 1080]);%[1920 0 1920+1920 1080] % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
             else
                 [displayobj.window.onScreen, displayobj.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, displayobj.backgroundCol, displayobj.screensize); % []% displayobj.screensize% [] %  1    1    2560    1440  1    1    2560 1440 1707.6    9602560x1440   66 66 66
             end

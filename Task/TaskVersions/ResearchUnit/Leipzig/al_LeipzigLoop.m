@@ -40,7 +40,7 @@ for i = 1:trial
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
     taskData.ID{i} = taskParam.subject.ID;
-    taskData.sex{i} = taskParam.subject.sex;
+    taskData.gender{i} = taskParam.subject.gender;
     taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
@@ -53,7 +53,7 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps for initiation RT
-    taskData.actJitter(i) = rand * taskParam.timingParam.jitter;
+    taskData.actJitter(i) = rand * taskParam.timingParam.jitterITI;
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
 
@@ -101,7 +101,7 @@ for i = 1:trial
     % todo: compare to memory error in other versions
 
     % Record hit
-    if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
+    if abs(taskData.predErr(i)) <= taskData.allShieldSize(i)/2
         taskData.hit(i) = 1;
         taskData.perf(i) = taskParam.gParam.rewMag;
     else
@@ -170,19 +170,26 @@ if ~taskParam.unitTest
     header = 'Zwischenstand';
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
+    
+    % Save data
+    %----------
 
-    if ~isequal(condition,'practice')
+    concentration = unique(taskData.concentration);
+    savename = sprintf('helicopter_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
 
-        % Save data
-        %----------
-
-        % todo: do we want to save practice?
-        concentration = unique(taskData.concentration);
-        savename = sprintf('helicopter_g%d_d%d_conc%d_%s', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
-        save(savename, 'taskData')
-
-        % Wait until keys released
-        KbReleaseWait();
+    % Ensure that files cannot be overwritten
+    %% todo: common function for this
+    checkString = dir([savename '*']);
+    fileNames = {checkString.name};
+    if  ~isempty(fileNames)
+        savename = [savename '_new'];
     end
+
+    % Save as struct
+    taskData = saveobj(taskData);
+    save(savename, 'taskData');
+
+    % Wait until keys released
+    KbReleaseWait();
 end
 end

@@ -43,14 +43,14 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
 
             % Sex
             expectedSex = repmat({'f'},20,1);
-            testCase.verifyEqual(dataNoPush_cBal1_day1.sex, expectedSex);
-            testCase.verifyEqual(dataPush_cBal1_day1.sex, expectedSex);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.sex, expectedSex);
-            testCase.verifyEqual(dataPush_cBal2_day1.sex, expectedSex);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.sex, expectedSex);
-            testCase.verifyEqual(dataPush_cBal1_day2.sex, expectedSex);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.sex, expectedSex);
-            testCase.verifyEqual(dataPush_cBal2_day2.sex, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.gender, expectedSex);
+            testCase.verifyEqual(dataPush_cBal1_day1.gender, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.gender, expectedSex);
+            testCase.verifyEqual(dataPush_cBal2_day1.gender, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.gender, expectedSex);
+            testCase.verifyEqual(dataPush_cBal1_day2.gender, expectedSex);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.gender, expectedSex);
+            testCase.verifyEqual(dataPush_cBal2_day2.gender, expectedSex);
 
             % Age
             expectedAge = repmat(99,20,1);
@@ -209,15 +209,15 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataNoPush_cBal2_day2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
 
             % All angular shield size
-            expectedAllASS = repmat(rad2deg(2*sqrt(1/12)), 20, 1);
-            testCase.verifyEqual(dataNoPush_cBal1_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush_cBal1_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush_cBal2_day1.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush_cBal1_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
-            testCase.verifyEqual(dataPush_cBal2_day2.allASS, expectedAllASS, "AbsTol", 1.e-10);
+            expectedAllShieldSize = repmat(rad2deg(2*sqrt(1/12)), 20, 1);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day1.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day1.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal1_day2.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
+            testCase.verifyEqual(dataPush_cBal2_day2.allShieldSize, expectedAllShieldSize, "AbsTol", 1.e-10);
 
             % Changepoint
             expectedCP = [1; 0; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0; 0; 0; 0; 0; 0; 1; 0; 0];

@@ -55,7 +55,7 @@ if cBal == 1
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
             taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -80,7 +80,7 @@ if cBal == 1
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -106,7 +106,7 @@ else
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -130,7 +130,7 @@ else
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -163,7 +163,7 @@ taskParam.trialflow.distMean = "fixed";
 if ~unitTest
 
     % TaskData-object instance
-    taskData = al_taskDataMain(trial);
+    taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
     % Generate outcomes using cannonData function
     taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
@@ -196,7 +196,7 @@ if cBal == 1
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);
@@ -223,7 +223,7 @@ if cBal == 1
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -252,7 +252,7 @@ else
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
@@ -279,7 +279,7 @@ else
     if ~unitTest
 
         % TaskData-object instance
-        taskData = al_taskDataMain(trial);
+        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, haz, concentration(2:3), taskParam.gParam.safe);

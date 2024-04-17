@@ -1,12 +1,12 @@
 function al_LeipzigInstructions(taskParam)
 %AL_LEIPZIGINSTRUCTIONS This function runs the instructions for the
-% "Leipzig" version of the cannon task
+% Leipzig version of the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       ~
+%       None
 
 
 % Adjust trialflow
@@ -44,14 +44,14 @@ al_bigScreen(taskParam, header, txt, feedback);
 
 % Load taskData-object instance
 nTrials = 4;
-taskData = al_taskDataMain(nTrials);
+taskData = al_taskDataMain(nTrials, taskParam.gParam.taskType);
 
 % Generate practice-phase data
 taskData.catchTrial(1:nTrials) = 0; % no catch trials
 taskData.initiationRTs(1:nTrials) = nan; % set initiation RT to nan to indicate that this is the first response
 taskData.initialTendency(1:nTrials) = nan; % set initial tendency of mouse movement
 taskData.block(1:nTrials) = 1; % block number
-taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size TODO: Adjust to new noise conditions
+taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size TODO: Adjust to new noise conditions
 taskData.shieldType(1:nTrials) = 1; % shield color
 taskData.distMean = [300, 240, 300, 65]; % aim of the helicopter
 taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -160,7 +160,8 @@ al_bigScreen(taskParam, header, txt, feedback);
 condition = 'practice';
 taskData = load('visCannonPracticeHamburg.mat');
 taskData = taskData.taskData;
-taskParam.condition = condition;
+%taskParam.condition = condition;
+taskParam.trialflow.exp = 'practVis';
 taskData.initialTendency = nan(length(taskData.ID), 1);
 
 % Reset roation angle to starting location
@@ -202,7 +203,7 @@ txt = ['In diesem Übungsdurchgang ist der Hubschrauber leider nicht mehr sichtb
 feedback = false;
 al_bigScreen(taskParam, header, txt, feedback);
 
-% if cBal == 1
+ taskParam.trialflow.exp = 'practHid';
 
 % Low noise first...
 % ------------------

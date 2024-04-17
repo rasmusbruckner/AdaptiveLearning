@@ -21,6 +21,7 @@ classdef al_keys
         space
         enter        
         s
+        five
         esc
         kbDev
         leftRelease
@@ -33,30 +34,31 @@ classdef al_keys
     
     methods
         
-        function keysobj = al_keys()
+        function self = al_keys()
             %AL_KEYS This function creates a keys object of
             % class keys
             
             KbName('UnifyKeyNames')
-            keysobj.delete = KbName('DELETE');
-            keysobj.rightKey = KbName('j');
-            keysobj.keySpeed = 0.75;
-            keysobj.rightArrow = KbName('RightArrow');
-            keysobj.leftArrow = KbName('LeftArrow');
-            keysobj.rightSlowKey = KbName('h');
-            keysobj.slowKeySpeed = 0.1;
-            keysobj.leftKey = KbName('f');
-            keysobj.leftSlowKey = KbName('g');
-            keysobj.space = KbName('Space');
-            keysobj.enter = 37;
-            keysobj.s = 40;
-            keysobj.esc = KbName('ESCAPE');
-            keysobj.leftRelease = 43;
-            keysobj.rightRelease = 44; 
+            self.delete = KbName('DELETE');
+            self.rightKey = KbName('j');
+            self.keySpeed = 0.75;
+            self.rightArrow = KbName('RightArrow');
+            self.leftArrow = KbName('LeftArrow');
+            self.rightSlowKey = KbName('h');
+            self.slowKeySpeed = 0.1;
+            self.leftKey = KbName('f');
+            self.leftSlowKey = KbName('g');
+            self.space = KbName('Space');
+            self.enter = 37;
+            self.s = 40;
+            self.five = '5';
+            self.esc = KbName('ESCAPE');
+            self.leftRelease = 43;
+            self.rightRelease = 44; 
                       
         end
 
-        function keysobj = al_kbdev(keysobj)
+        function self = al_kbdev(self)
             % This function detects the keyboard device, necessary on 
             % some Macs
 
@@ -69,19 +71,19 @@ classdef al_keys
             end
             
             if numel(kbdevs > 1)
-              keysobj.kbDev = -1; % "merge" all keyboard in KbCheck
+              self.kbDev = -1; % "merge" all keyboard in KbCheck
             else
-              keysobj.kbDev = kbdevs;
+              self.kbDev = kbdevs;
             end
         end
 
 
-        function keysobj = checkQuitTask(keysobj)
+        function self = checkQuitTask(self)
             % CHECKQUITTASK This function checks if esc was pressed to
             % quit task
                 
-            [ ~, ~, keyCode] = KbCheck(keysobj.kbDev);
-            if keyCode(keysobj.esc)
+            [ ~, ~, keyCode] = KbCheck(self.kbDev);
+            if keyCode(self.esc)
                 ListenChar();
                 ShowCursor;
                 Screen('CloseAll');

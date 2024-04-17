@@ -15,7 +15,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             trials = 200;
 
             % TaskData-object instance
-            taskData = al_taskDataMain(trials);
+            taskData = al_taskDataMain(trials, 'Hamburg');
 
             % Initialize general task parameters
             gParam = al_gparam();
@@ -54,7 +54,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             testCase.verifyEqual(taskData.outcome, testData.outcome);
 
             % Shield size
-            testCase.verifyEqual(taskData.allASS, testData.allASS);
+            testCase.verifyEqual(taskData.allShieldSize, testData.allShieldSize);
 
             % Changepoints
             testCase.verifyEqual(taskData.cp, testData.cp);
@@ -81,7 +81,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             trials = 200;
 
             % TaskData-object instance
-            taskData = al_taskDataMain(trials);
+            taskData = al_taskDataMain(trials, 'Hamburg');
 
             % Initialize general task parameters
             gParam = al_gparam();
@@ -133,7 +133,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             trials = 200;
 
             % TaskData-object instance
-            taskData = al_taskDataMain(trials);
+            taskData = al_taskDataMain(trials, 'Hamburg');
 
             % Initialize general task parameters
             gParam = al_gparam();
@@ -206,7 +206,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
 
 
             % Create a mock function for sampleRand
-            [mock, behavior] = testCase.createMock(?al_taskDataMain, "MockedMethods", "sampleRand", "constructorInputs", {123});
+            [mock, behavior] = testCase.createMock(?al_taskDataMain, "MockedMethods", "sampleRand", "constructorInputs", {123, 'Hamburg'});
 
             % Test if mock works: Output should be 10 when sampleRand is
             % called
@@ -251,7 +251,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             %   the random number generation.
 
             % Create a mock function for sampleRand
-            [mock, behavior] = testCase.createMock(?al_taskDataMain, "MockedMethods", "sampleRand", "constructorInputs", {123});
+            [mock, behavior] = testCase.createMock(?al_taskDataMain, "MockedMethods", "sampleRand", "constructorInputs", {123, 'Hamburg'});
 
             % Simulate sample = 1
             % -------------------
@@ -310,7 +310,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % samples the outcomes
 
             % TaskData-object instance
-            taskData = al_taskDataMain(200);
+            taskData = al_taskDataMain(200, 'Hamburg');
 
             % Initialize general task parameters
             gParam = al_gparam();
@@ -364,7 +364,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % by Jan Gläscher
 
             % TaskData-object instance
-            taskData = al_taskDataMain(200);
+            taskData = al_taskDataMain(200, 'Hamburg');
 
             % Define number of particles and concentration
             currNParticles = 40;
@@ -469,7 +469,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             %   Here we test the case where some particles are caught
             
             % TaskData-object instance
-            taskData = al_taskDataMain(123);
+            taskData = al_taskDataMain(123, 'Hamburg');
 
             % Control random number generator
             rng(1)
@@ -501,7 +501,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             %   Here we test the case where none of the particles is caught
             
             % TaskData-object instance
-            taskData = al_taskDataMain(123);
+            taskData = al_taskDataMain(123, 'Hamburg');
             
             % Control random number generator
             rng(1)
@@ -533,7 +533,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             %   Here we test the case where all particles are caught.
 
             % TaskData-object instance
-            taskData = al_taskDataMain(123);
+            taskData = al_taskDataMain(123, 'Hamburg');
 
             % Control random number generator
             rng(1)

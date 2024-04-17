@@ -1,5 +1,5 @@
 classdef al_unittests < matlab.unittest.TestCase
-    %AL_UNITTESTS  This class definition file specifies the unit tests
+    %AL_UNITTESTS This class definition file specifies the unit tests
     
     % To run the tests: runtests('al_unittests')
     %
@@ -80,7 +80,7 @@ classdef al_unittests < matlab.unittest.TestCase
             %TEST_OUTCOME_NORMAL  This function tests the outcome function
             
             % TaskData-object instance
-            taskData = al_taskDataMain(200);
+            taskData = al_taskDataMain(200, 'Hamburg');
             
             % Control random number generator
             rng('default')
@@ -95,7 +95,7 @@ classdef al_unittests < matlab.unittest.TestCase
             % when the mean is on the left but outcome appears on the right
             
              % TaskData-object instance
-            taskData = al_taskDataMain(200);
+            taskData = al_taskDataMain(200, 'Hamburg');
 
             % Control random number generator
             rng('default')
@@ -110,7 +110,7 @@ classdef al_unittests < matlab.unittest.TestCase
             % when the mean is zero and outcome appears on the left
             
              % TaskData-object instance
-            taskData = al_taskDataMain(200);
+            taskData = al_taskDataMain(200, 'Hamburg');
 
             % Control random number generator
             rng(1)

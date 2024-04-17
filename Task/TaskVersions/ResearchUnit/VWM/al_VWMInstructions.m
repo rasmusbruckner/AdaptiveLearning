@@ -36,14 +36,14 @@ if testDay == 1
 
     % Load taskData-object instance
     nTrials = 4;
-    taskData = al_taskDataMain(nTrials);
+    taskData = al_taskDataMain(nTrials, taskParam.gParam.taskType);
 
     % Generate practice-phase data
     taskData.catchTrial(1:nTrials) = 0; % no catch trials
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
     taskData.block(1:nTrials) = 1; % block number
-    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions (maybe use variable size)
+    taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions (maybe use variable size)
     taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -214,7 +214,10 @@ if testDay == 1
         % ------------------
     
         % Get data
-        taskData = load('hidCannonPracticeVWM_c16.mat');
+        %% Todo: check if we want colorful or dark confetti
+        %taskData = load('hidCannonPracticeVWM_c16.mat');
+        %taskData = taskData.taskData;
+        taskData = load('hidCannonPracticeHamburg_c16.mat');
         taskData = taskData.taskData;
     
         % Run task
@@ -227,7 +230,9 @@ if testDay == 1
         % ---------------------
     
         % Get data
-        taskData = load('hidCannonPracticeVWM_c8.mat');
+        %taskData = load('hidCannonPracticeVWM_c8.mat');
+        %taskData = taskData.taskData;
+        taskData = load('hidCannonPracticeHamburg_c8.mat');
         taskData = taskData.taskData;
     
         % Run task

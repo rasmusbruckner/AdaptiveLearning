@@ -22,7 +22,7 @@ function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       01/24
+%       03/24
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
@@ -157,7 +157,7 @@ end
 
 % Initialize general task parameters
 gParam = al_gparam();
-gParam.taskType = 'Sleep';
+gParam.taskType = 'sleep';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
@@ -192,12 +192,21 @@ trialflow.shieldType = "constant";
 trialflow.input = "keyboard";
 
 % ---------------------------------------------
+% Create object instance with cannon parameters
+% ---------------------------------------------
+
+cannon = al_cannon();
+
+% ---------------------------------------------
 % Create object instance with color parameters
 % ---------------------------------------------
 
 % Todo: Are all color already part of this class?
 colors = al_colors();
-colors.background = 'black';
+colors.background = [0, 0, 0];
+colors.circleCol = [224, 224, 224];
+colors.blue = [122, 96, 215];
+colors.winColor = colors.blue;
 
 % ------------------------------------------
 % Create object instance with key parameters
@@ -239,7 +248,7 @@ subject = al_subject();
 % Default input
 ID = '01'; % 5 digits
 age = '99';
-sex = 'f';  % m/f/d
+gender = 'f';  % m/f/d
 group = '1'; % 1=sleep/2=control
 if ~unitTest
     cBal = '1'; % 1/2/3/4
@@ -252,7 +261,7 @@ if gParam.askSubjInfo == false || unitTest
     % Just add defaults
     subject.ID = ID;
     subject.age = str2double(age);
-    subject.sex = sex;
+    subject.gender = gender;
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
     subject.testDay = str2double(day);
@@ -262,12 +271,12 @@ if gParam.askSubjInfo == false || unitTest
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Sex:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'Day:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, sex, group, cBal, day};
+    defaultanswer = {ID, age, gender, group, cBal, day};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -277,7 +286,7 @@ else
 
     subject.ID = subjInfo{1};
     subject.age = str2double(subjInfo{2});
-    subject.sex = subjInfo{3};
+    subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
     subject.testDay = str2double(subjInfo{6});
@@ -286,7 +295,7 @@ else
     % Test user input and selected number of trials
     checkString = dir(sprintf('*d%s*MORPHEUS%s*', num2str(subject.testDay), num2str(subject.ID)));
     subject.checkID(checkString, 2);
-    subject.checkSex();
+    subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(),
     subject.checkTestDay();
@@ -342,6 +351,7 @@ taskParam = al_objectClass();
 taskParam.gParam = gParam;
 taskParam.strings = strings;
 taskParam.trialflow = trialflow;
+taskParam.cannon = cannon;
 taskParam.circle = circle;
 taskParam.colors = colors;
 taskParam.keys = keys;

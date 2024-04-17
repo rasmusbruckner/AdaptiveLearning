@@ -13,7 +13,7 @@ function al_cannonMiss(taskParam, taskData, currTrial, background, timestamp)
 
 
 % Number of times that cannonball is printed while flying from cannon to aim
-nFrames = 60;
+nFrames = taskParam.cannon.nFrames;
 fadeOutp = [zeros(1, round(nFrames/2)) linspace(0, 0.5, round(nFrames/2))];
 nDots=41;
 
@@ -71,7 +71,7 @@ for i = 1:nFrames
     else
         al_drawCross(taskParam)
     end
-    al_shield(taskParam, taskData.allASS(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial));
+    al_shield(taskParam, taskData.allShieldSize(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial));
 
     % Show animation when it is a miss
     if taskData.hit(currTrial) == 0

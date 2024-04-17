@@ -1,24 +1,22 @@
-function taskData = al_dresdenLoop(taskParam, condition, taskData, trial)
+function taskData = al_dresdenLoop(taskParam, taskData, trial, fileEnding)
 %AL_DRESDENLOOP This function runs the cannon-task trials for the "Dresden version"
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
+%       fileEnding: Optional condition type
 %
 %   Output
 %       taskData: Task-data-object instance
-%
-%   Events -- Todo: UPDATE
-%        1: Trial Onset
-%        2: Prediction/Fixation1 (500 ms)
-%        3: Outcome              (500 ms)
-%        4: Fixation2            (500 ms)
-%        5: Shield               (500 ms)
-%        6: Fixation3            (500 ms)
-%        8: Jitter:              (0-200 ms)
-%
+
+%% Todo: time stamps currently incomplete
+% add back in when working on integration test
+
+% Check if fileEnding optional input is provided
+if ~exist('fileEnding', 'var') || isempty(fileEnding)
+    fileEnding = '';
+end
 
 % Wait until keys released
 KbReleaseWait();
@@ -34,14 +32,14 @@ for i = 1:trial
 
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
-    taskData.age(i) = str2double(taskParam.subject.age);
+    taskData.age(i) = taskParam.subject.age;
     taskData.ID{i} = taskParam.subject.ID;
-    taskData.sex{i} = taskParam.subject.sex;
+    taskData.gender{i} = taskParam.subject.gender;
     taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
     taskData.group(i) = taskParam.subject.group;
-    taskData.cond{i} = condition;
+    taskData.cond{i} = taskParam.trialflow.condition;
 
     % Determine actual reward (what shield is associate with reward?)
     if taskData.rew(i) == 1 && taskData.shieldType(i) == 1
@@ -58,7 +56,7 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps
-    taskData.actJitter(i) = rand*taskParam.timingParam.jitter;
+    taskData.actJitter(i) = rand*taskParam.timingParam.jitterITI;
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
 
@@ -68,14 +66,14 @@ for i = 1:trial
     end
 
     % Send trial onset trigger
-    taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 1);
+    taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 1);
     taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Self-paced prediction phase
     % ---------------------------
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp);
-   
+
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
         fprintf('RT: %.5f\n', taskData.RT(i))
@@ -83,27 +81,23 @@ for i = 1:trial
 
     % Extract current time and determine when screen should be flipped
     % for accurate timing
-    timestamp = GetSecs; 
+    timestamp = GetSecs;
 
-    % Fixation cross 1  % todo: hier ist jetzt anders als bei sleep
+    % Fixation cross 1
     %-----------------
 
-    t = GetSecs;
-    tUpdated = t + 0.1;  % replace with timestamp for consistency
-    %timestamp = timestamp + taskParam.timingParam.fixedITI;
-    
-    % Todo: check if still used
-    if ~isequal(condition, 'shield') && ~isequal(condition, 'mainPractice_1') && ~isequal(condition, 'mainPractice_2')
+    timestamp = timestamp + 0.001;
+
+    % Static cannon
+    if ~isequal(taskParam.trialflow.shot, "animate cannonball")
 
         al_drawCross(taskParam)
         al_drawCircle(taskParam)
-
-        Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-        %Screen('Flip', taskParam.display.window.onScreen, tUpdated, 1);
-        Screen('Flip', taskParam.display.window.onScreen, timestamp, 1);
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
         % Send fixation cross 1 trigger
-        taskData.triggers(i,2) = al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 2);
+        taskData.triggers(i,2) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 2);
         taskData.timestampPrediction(i,:) = GetSecs - taskParam.timingParam.ref;
 
     end
@@ -112,66 +106,85 @@ for i = 1:trial
     %-----------
 
     % Deviation from cannon to compute performance criterion in practice
-    taskData.estErr(i) = al_diff(taskData.distMean(i), taskData.pred(i)); % changed from cannonDev to estErr
+    taskData.estErr(i) = al_diff(taskData.distMean(i), taskData.pred(i));
 
-    % PredError and memory error
+    % Prediction error and difference between last outcome and current
+    % prediction ("memory error" befoe)
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
     if i > 1
-        taskData.diffLastOutcPred(i) = al_diff(taskData.pred(i), taskData.outcome(i-1));  % was memErr before
+        taskData.diffLastOutcPred(i) = al_diff(taskData.pred(i), taskData.outcome(i-1));
     end
 
     % Record hit
-    if isequal(condition,'followOutcome') || isequal(condition,'followOutcomePractice')
+    if isequal(taskParam.trialflow.condition,'followOutcome') && i > 1
         if abs(taskData.diffLastOutcPred(i)) <= 5
             taskData.hit(i) = 1;
+        else 
+            taskData.hit(i) = 0;
         end
     else
-        if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
+        if abs(taskData.predErr(i)) <= taskData.allShieldSize(i)/2
             taskData.hit(i) = 1;
+        else
+            taskData.hit(i) = 0;
         end
     end
 
     % Record performance
     if taskData.actRew(i) == 1 && taskData.hit(i) == 1
         taskData.perf(i) = taskParam.gParam.rewMag;
+    else
+        taskData.perf(i) = 0;
     end
 
     % Accumulated performance
-    taskData.accPerf(i) = sum(taskData.perf);
+    taskData.accPerf(i) = sum(taskData.perf(1:i));
 
     % Record belief update
     if i > 1
         taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
-    
-    % Outcome
-    %--------
 
     timestamp = timestamp + taskParam.timingParam.fixedITI;
 
     % Draw circle
     al_drawCircle(taskParam)
 
-    % XX
-    if isequal(taskParam.trialflow.cannon, "show cannon") || isequal(taskParam.trialflow.shot, 'animate cannonball')
+    % Present outcome: Depending on mode, w/ or w/o animation
+    if isequal(taskParam.trialflow.shot, 'animate cannonball') && isequal(taskParam.trialflow.cannon, "show cannon")
 
+        % With animation
         background = false;
         al_cannonball(taskParam, taskData, background, i, timestamp)
 
-    else
-        
+    elseif isequal(taskParam.trialflow.cannon, "hide cannon")
+
+        % Static
         al_predictionSpot(taskParam)
         al_drawOutcome(taskParam, taskData.outcome(i))
+        al_drawCross(taskParam)
 
-        Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
+        % Tell PTB that everything has been drawn and flip screen
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
-        tUpdated = tUpdated + taskParam.timingParam.fixCrossLength;
-        Screen('Flip', taskParam.display.window.onScreen, tUpdated);
+    else
 
+        % Static
+        al_predictionSpot(taskParam)
+        al_drawOutcome(taskParam, taskData.outcome(i))
+        al_drawCannon(taskParam, taskData.distMean(i))
+
+        % Tell PTB that everything has been drawn and flip screen
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
     end
 
     % Send outcome 1 trigger
-    taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 3);
+    %% Todo: haz not used in trigger system anymore
+    taskData.triggers(i,3) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 3);
 
     % Fixation cross 2
     % -----------------
@@ -179,63 +192,57 @@ for i = 1:trial
     al_drawCross(taskParam)
     al_drawCircle(taskParam)
 
-    Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-    tUpdated = tUpdated + taskParam.timingParam.outcomeLength;
-    Screen('Flip', taskParam.display.window.onScreen, tUpdated, 1);
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.outcomeLength;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send fixation cross 2 trigger
-    taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 4);
+    taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 4);
 
-    % Outcome 2
-    %----------
+    % Outcome 2 (shield)
+    %-------------------
 
     al_drawCircle(taskParam)
+    al_shield(taskParam, taskData.allShieldSize(i), taskData.pred(i), taskData.shieldType(i))
 
-    al_shield(taskParam, taskData.allASS(i), taskData.pred(i), taskData.shieldType(i))
-
-    % also trialflow
-    if isequal(condition,'shield') || isequal(condition, 'mainPractice_1') || isequal(condition, 'mainPractice_2') || isequal(condition, 'chinesePractice_1') || isequal(condition, 'chinesePractice_2') || isequal(condition, 'chinesePractice_3')
-        al_drawCannon(taskParam, taskData.distMean(i), taskData.latentState(i))
+    %% Todo: check if in this version cannon was shown in shield phase
+    if isequal(taskParam.trialflow.cannon, 'show cannon')
+        al_drawCannon(taskParam, taskData.distMean(i))
     else
         al_drawCross(taskParam)
-
     end
 
-  
     al_drawOutcome(taskParam, taskData.outcome(i))
 
-    Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-
-    tUpdated = tUpdated + taskParam.timingParam.fixCrossLength;
-    Screen('Flip', taskParam.display.window.onScreen, tUpdated);
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.fixCrossShield;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send outcome 2 trigger
-    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 5);
+    %% todo: ditch condition here and in other cases... in future versions done with trialflow.condition
+    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 5);
 
     % Fixation cross 3
     %-----------------
 
     al_drawCross(taskParam)
     al_drawCircle(taskParam)
-    if isequal(taskParam.gParam.taskType, 'chinese')
-        al_drawContext(taskParam,taskData.currentContext(i))
-        al_drawCross(taskParam)
-    end
 
-
+    % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-
-
-    tUpdated = tUpdated + taskParam.timingParam.outcomeLength;
-    Screen('Flip', taskParam.display.window.onScreen, tUpdated);
+    timestamp = timestamp + taskParam.timingParam.outcomeLength;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send fixation cross 3 trigger
-    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 6);
+    %% todo: same here: ditch condition
+    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 6);
     WaitSecs(taskParam.timingParam.fixedITI / 2);
 
     % Send trial summary trigger
-    taskData.triggers(i,7) =  al_sendTrigger(taskParam, taskData, condition, taskParam.gParam.haz, i, 16);
-
+    %% todo: same here: ditch condition
+    taskData.triggers(i,7) =  al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 16);
     WaitSecs(taskParam.timingParam.fixedITI / 2);
     taskData.timestampOffset(i,:) = GetSecs - taskParam.timingParam.ref;
 
@@ -244,124 +251,81 @@ for i = 1:trial
 
 end
 
-
 % Give feedback and save data
-% ----------------------------
+% ---------------------------
 
-if ~taskParam.unitTest
+if ~taskParam.unitTest && (isequal(taskParam.trialflow.condition, 'main') || isequal(taskParam.trialflow.condition, 'followCannon') || isequal(taskParam.trialflow.condition, 'followOutcome'))
+    % Give feedback
+    % -------------
 
-% todo: manage practice for all!
-if taskParam.subject.rew == 1
-    rewName = 'G';
-elseif taskParam.subject.rew == 2
-    rewName = 'S';
+    % Adjust color word depending on reward condition
+    if taskParam.subject.rew == 1
+        colRewCap = 'goldenen';
+    elseif taskParam.subject.rew == 2
+        colRewCap = 'silbernen';
+    end
+
+    % taskParam.trialflow.condition
+    % Shield name depending on condition
+    if isequal(taskParam.trialflow.condition, 'main') || isequal(taskParam.trialflow.condition, 'followCannon')
+
+        schildVsKorb = 'Schild';
+        gefangenVsGesammelt = 'abgewehrt';
+
+    elseif isequal(taskParam.trialflow.condition, 'followOutcome')
+
+        schildVsKorb = 'Korb';
+        gefangenVsGesammelt = 'aufgesammelt';
+
+    end
+
+    % Experimental vs. main condition
+    if isequal(taskParam.trialflow.exp, 'pract')
+        wouldHave = 'hätten';
+    else
+        wouldHave = 'haben';
+    end
+
+    % Present feedback text
+    header = 'Leistung';
+    rewCatches = max(taskData.accPerf)/taskParam.gParam.rewMag;
+    rewTrials = sum(taskData.actRew == 1);
+    maxMon = (length(find(taskData.shieldType == 1)) * taskParam.gParam.rewMag);
+
+    % Display zero for no-catch case
+    if isnan(rewCatches) && isnan(max(taskData.accPerf))
+        rewCatches = 0;
+        bonus = 0;
+    else
+        bonus = max(taskData.accPerf);
+    end
+
+    txt = sprintf('Weil Sie %.0f von %.0f Kugeln mit dem %s %s %s haben,\n\n%s Sie %.2f von maximal %.2f Euro gewonnen.', rewCatches,...
+        rewTrials, colRewCap, schildVsKorb, gefangenVsGesammelt, wouldHave, bonus, maxMon);
+    feedback = true;
+    al_bigScreen(taskParam, header, txt, feedback);
+
+    if taskParam.subject.rew == 1
+        rewName = 'G';
+    elseif taskParam.subject.rew == 2
+        rewName = 'S';
+    end
+    savename = sprintf('Cannon_%s_%s_%s_%s%s', taskParam.trialflow.exp, rewName, taskParam.subject.ID, taskParam.trialflow.condition, fileEnding);
+
+    % Ensure that files cannot be overwritten
+    checkString = dir([savename '*']);
+    fileNames = {checkString.name};
+    if  ~isempty(fileNames)
+        savename = [savename '_new'];
+    end
+    
+    % Save object as structure
+    taskData = saveobj(taskData);
+    save(savename, 'taskData')
+
 end
-savename = sprintf('Cannon_%s_%s_%s', rewName, taskParam.subject.ID, condition);
 
-
-end
-
-% % Give feedback
-% %--------------
-% if ~isequal(condition,'shield') 
-% 
-%    % if isequal(taskParam.gParam.taskType, 'dresden')
-%         %[txt, header] = al_feedback(taskData, taskParam, subject, condition);
-%         currPoints = sum(taskData.hit, 'omitnan');
-%         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
-%         header = 'Zwischenstand';
-%         feedback = true;
-%         al_bigScreen(taskParam, header, txt, feedback);
-%         %end
-% 
-%         al_bigScreen(taskParam, taskParam.strings.txtPressEnter, header, txt, false);
-% end
-
-    %end
-
-    %end
-
-    % necessary?
-    %KbReleaseWait();
-
-    % Todo: Get rid of this and ensure that everything is stored in new
-    % taskData class
-
-    % Save data
-    %----------
-
-   % haz = repmat(1, length(taskData.ID),1);
-    %concentration = repmat(concentration, length(taskData.ID),1);
-   % concentration = unique(taskData.concentration);
-   % oddballProb = repmat(1, length(taskData.ID),1);%repmat(taskParam.gParam.oddballProb(1), length(taskData.ID),1);
-   % driftConc = repmat(1, length(taskData.ID),1);%repmat(taskParam.gParam.driftConc(1), length(taskData.ID),1);
-% 
-%     % todo: use new data class to store data like in sleepLoop
-%     Data = struct('actJitter', taskData.actJitter, 'block', taskData.block,...
-%         'initiationRTs', taskData.initiationRTs, 'timestampOnset',...
-%         taskData.timestampOnset,'timestampPrediction',...
-%         taskData.timestampPrediction,'timestampOffset',...
-%         taskData.timestampOffset, 'allASS', taskData.allASS, 'driftConc',...
-%         driftConc,'oddballProb',oddballProb, ... % 'oddBall', taskData.oddBall,
-%         'ID', {taskData.ID}, 'age',taskData.age, 'rew', {taskData.rew},...
-%         'actRew', taskData.actRew,'sex', {taskData.sex},  'cBal',{taskData.cBal}, 'trial', taskData.currTrial,... % 'cond',...{taskData.cond},
-%         'haz', haz, 'concentration', concentration,'outcome',...
-%         taskData.outcome, 'distMean', taskData.distMean, 'cp',...
-%         taskData.cp, 'TAC',taskData.TAC, 'shieldType', taskData.shieldType,... %'savedTickmark', taskData.savedTickmark,
-%         'catchTrial', taskData.catchTrial, 'triggers', taskData.triggers,...
-%         'pred', taskData.pred,'predErr', taskData.predErr,  'cannonDev', taskData.cannonDev,...
-%         'UP',taskData.UP, 'hit', taskData.hit, 'perf',...
-%         taskData.perf, 'accPerf',taskData.accPerf,...
-%         'RT', taskData.RT, 'Date', {taskData.date},...
-%         'taskParam', taskParam); %'contextTypes', taskData.contextTypes,... 'memErr',...
-%     %taskData.memErr,
-
-
-    %OtherData = struct('criticalTrial', taskData.critical_trial, 'initialTendency',...
-    %   taskData.initialTendency, 'reversal', taskData.reversal, 'currentContext', taskData.currentContext, 'latentState', taskData.latentState);
-    %Data = catstruct(Data, OtherData);
-
-   % Data = catstruct(taskParam.subject, Data);
-
-
-    % A lot of this can be delted but integrate relevant info from
-    % trialflow or gParam, e.g. for integration with ARC later on
-%     if taskParam.gParam.askSubjInfo && ~taskParam.unitTest && ~isequal(condition, 'shield') && ~isequal(condition, 'mainPractice_1') && ~isequal(condition, 'mainPractice_2')...
-%             && ~isequal(condition, 'mainPractice_3') && ~isequal(condition, 'mainPractice_4') && ~isequal(condition, 'onlinePractice') && ~isequal(condition, 'chinesePractice_1')...
-%             && ~isequal(condition, 'chinesePractice_2') && ~isequal(condition, 'chinesePractice_3') && ~isequal(condition, 'chinesePractice_4') && ~isequal(condition, 'ARC_controlPractice')...
-%             && ~isequal(condition, 'reversalPractice') && ~isequal(condition, 'reversalPracticeNoise') && ~isequal(condition, 'reversalPracticeNoiseInv') && ~isequal(condition, 'reversalPracticeNoiseInv2')
-% 
-%         
-%         if isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'main')
-%             if taskParam.gParam.showTickmark
-%                 savename = sprintf('cannon_ARC_g%s_%s_TM_c%.0f',taskParam.subject.group, subject.ID, unique(concentration));
-%             elseif ~taskParam.gParam.showTickmark
-%                 savename = sprintf('cannon_ARC_g%s_%s_NTM_c%.0f',taskParam.subject.group, subject.ID, unique(concentration));
-%             end
-% 
-%         elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'ARC_controlSpeed')
-%             savename = sprintf('cannon_ARC_g%s_%s_ControlSpeed%.0f',subject.group, subject.ID, subject.testDay);
-%         elseif isequal(taskParam.gParam.taskType, 'ARC') && isequal(condition,'ARC_controlAccuracy')
-%             savename = sprintf('cannon_ARC_g%s_%s_ControlAccuracy%.0f', subject.group, subject.ID, subject.testDay);
-%         elseif isequal(taskParam.gParam.taskType, 'dresden')
-        
-        %         elseif isequal(taskParam.gParam.taskType, 'oddball')
-% 
-%             if taskParam.subject.rew == 1
-%                 rewName = 'B';
-%             elseif taskParam.subject.rew == 2
-%                 rewName = 'G';
-%             end
-% 
-%             savename = sprintf('Drugstudy_%s_%s_session%s_%s', rewName, taskParam.subject.ID, subject.session, condition);
-% 
-%         end
-
-
-        save(savename, 'Data')
-
-    %end
-
-    KbReleaseWait();
+% Wait until keys released
+KbReleaseWait();
 
 end

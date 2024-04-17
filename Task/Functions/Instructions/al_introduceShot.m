@@ -39,7 +39,7 @@ al_cannonball(taskParam, taskData, background, trial, absTrialStartTime)
 % show "explosion"
 if isequal(taskParam.trialflow.shotAndShield, 'simultaneously')
 
-    if (abs(al_diff(taskData.outcome(trial), taskData.pred(trial))) >=taskData.allASS(trial)/2) 
+    if (abs(al_diff(taskData.outcome(trial), taskData.pred(trial))) >=taskData.allShieldSize(trial)/2) 
         taskData.hit(trial) = 0; % in this case, it was a miss
     else
         taskData.hit(trial) = 1; % in this case, it was a hit

@@ -17,8 +17,10 @@ classdef al_circle
         cannonEndCent
         cannonEndRect
         outcCentSpotRect
+        fixSpotCentSpotRect
         predSpotRad
         outcSize
+        fixSpotSize
         meanPoint
         rotationRad
         chineseCannonRad
@@ -27,9 +29,11 @@ classdef al_circle
         tendencyThreshold
         predSpotDiam
         outcDiam
+        fixSpotDiam
         spotDiamMean
         predSpotRect
         outcRect
+        fixSpotRect
         spotRectMean
         boatRect
         centBoatRect
@@ -41,6 +45,7 @@ classdef al_circle
         rotAngle
         cannonEndDiam
         tickWidth
+        circleWidth
         
     end
     
@@ -49,7 +54,7 @@ classdef al_circle
     
     methods
         
-        function circleobj = al_circle(windowRect)
+        function self = al_circle(windowRect)
             % AL_CIRCLE This function creates a circle object of
             % class al_circle
             %
@@ -60,100 +65,106 @@ classdef al_circle
             %       windowRect: Window rectangle from PTB Screen
             %
             %   Output
-            %       circleobj: Circle object with default values
+            %       self: Circle object with default values
             
-            circleobj.windowRect = windowRect;
-            circleobj.shieldAngle = 30; % Todo: is this currently used?
-            circleobj.shieldWidth = 30; 
-            circleobj.shieldOffset = 10; 
-            circleobj.shieldFixedSizeFactor = 2; 
-            circleobj.cannonEndCent = nan;
-            circleobj.cannonEndRect = nan;
-            circleobj.outcCentSpotRect = nan;
-            circleobj.predSpotRad = 10; % Todo: can this be combined with diameter?
-            circleobj.outcSize = 10;
-            circleobj.meanPoint = 1;
-            circleobj.rotationRad = 150;
-            circleobj.chineseCannonRad = 500; % Todo: used to be 300; update when getting back to chinese version
-            circleobj.shieldImageRad = 275;
-            circleobj.heliImageRad = 70;
-            circleobj.tendencyThreshold = 15;
-            circleobj.boatRect = [0 0 50 50];
-            circleobj.centBoatRect = nan;
-            circleobj.predCentSpotRect = nan;
-            circleobj.outcCentRect = nan;
-            circleobj.centSpotRectMean = nan;
-            circleobj.unit = 2*pi/360;  % Todo: maybe get rid of unit and use rad2deg for computing pred
-            circleobj.initialRotAngle = 0*circleobj.unit; % Todo: delete unit here when tets are implemented
-            circleobj.rotAngle = circleobj.initialRotAngle;
-            circleobj.cannonEndDiam = 10;
-            circleobj.cannonEndRect = [0 0 circleobj.cannonEndDiam circleobj.cannonEndDiam];
-            circleobj.tickWidth = 2;
+            self.windowRect = windowRect;
+            self.shieldAngle = 30; % Todo: is this currently used?
+            self.shieldWidth = 30; 
+            self.shieldOffset = 10; 
+            self.shieldFixedSizeFactor = 2; 
+            self.cannonEndCent = nan;
+            self.cannonEndRect = nan;
+            self.outcCentSpotRect = nan;
+            self.fixSpotCentSpotRect = nan;
+            self.predSpotRad = 10; % Todo: can this be combined with diameter?
+            self.outcSize = 10;
+            self.fixSpotSize = 10;
+            self.meanPoint = 1;
+            self.rotationRad = 150;
+            self.chineseCannonRad = 500; % Todo: used to be 300; update when getting back to chinese version
+            self.shieldImageRad = 275;
+            self.heliImageRad = 70;
+            self.tendencyThreshold = 15;
+            self.boatRect = [0 0 50 50];
+            self.centBoatRect = nan;  
+            self.predCentSpotRect = nan;
+            self.outcCentRect = nan;
+            self.centSpotRectMean = nan;
+            self.unit = 2*pi/360;  % Todo: maybe get rid of unit and use rad2deg for computing pred
+            self.initialRotAngle = 0*self.unit; % Todo: delete unit here when tets are implemented
+            self.rotAngle = self.initialRotAngle;
+            self.cannonEndDiam = 10;
+            self.cannonEndRect = [0 0 self.cannonEndDiam self.cannonEndDiam];
+            self.tickWidth = 2;
+            self.circleWidth = 10;
             
         end
 
-        function circleobj = compute_circle_props(circleobj)
+        function self = compute_circle_props(self)
             % COMPUTE_CIRCLE_PROPS This function computes the parameters of
             % the circle
             %
             %   Input
-            %       circleobj: Circle object with default values
+            %       self: Circle object with default values
             %       
             %   Output
-            %       circleobj: Circle object with default values
+            %       self: Circle object with default values
 
             % Todo: rename function to computeCircleProps
             
-            circleobj.predSpotDiam = circleobj.predSpotRad * 2;
-            circleobj.outcDiam = circleobj.outcSize * 2;
-            circleobj.spotDiamMean = circleobj.meanPoint * 2;
-            circleobj.predSpotRect = [0 0 circleobj.predSpotDiam circleobj.predSpotDiam];
-            circleobj.outcRect = [0 0 circleobj.outcDiam circleobj.outcDiam];
-            circleobj.spotRectMean = [0 0 circleobj.spotDiamMean circleobj.spotDiamMean];
+            self.predSpotDiam = self.predSpotRad * 2;
+            self.outcDiam = self.outcSize * 2;  % todo: rad instead of size
+            self.fixSpotDiam = self.fixSpotSize * 2; % todo: rad instead of size
+            self.spotDiamMean = self.meanPoint * 2;
+            self.predSpotRect = [0 0 self.predSpotDiam self.predSpotDiam];
+            self.outcRect = [0 0 self.outcDiam self.outcDiam];
+            self.fixSpotRect = [0 0 self.fixSpotDiam self.fixSpotDiam];
+            self.spotRectMean = [0 0 self.spotDiamMean self.spotDiamMean];
 
-            circleobj.centBoatRect = CenterRect(circleobj.boatRect, circleobj.windowRect);
-            circleobj.predCentSpotRect = CenterRect(circleobj.predSpotRect, circleobj.windowRect);
-            circleobj.outcCentRect = CenterRect(circleobj.outcRect, circleobj.windowRect);
-            circleobj.outcCentSpotRect = CenterRect(circleobj.outcRect, circleobj.windowRect);
-            circleobj.cannonEndCent = CenterRect(circleobj.cannonEndRect, circleobj.windowRect);
-            circleobj.centSpotRectMean = CenterRect(circleobj.spotRectMean, circleobj.windowRect);
+            self.centBoatRect = CenterRect(self.boatRect, self.windowRect);
+            self.predCentSpotRect = CenterRect(self.predSpotRect, self.windowRect);
+            self.outcCentRect = CenterRect(self.outcRect, self.windowRect);
+            self.outcCentSpotRect = CenterRect(self.outcRect, self.windowRect);
+            self.fixSpotCentSpotRect = CenterRect(self.fixSpotRect, self.windowRect);
+            self.cannonEndCent = CenterRect(self.cannonEndRect, self.windowRect);
+            self.centSpotRectMean = CenterRect(self.spotRectMean, self.windowRect);
         end
 
-        function circleobj = rightMovement(circleobj, keySpeed)
+        function self = rightMovement(self, keySpeed)
             % RIGHTMOVEMENT This function implements keyboard mvements to the right
             % 
             %   Input
-            %       circleobj: Circle object with current values
+            %       self: Circle object with current values
             %       keySpeed: Determines speed with which spot moves around
             %       circle
             %   
             %   Output
-            %       circleobj: Circle object with current values
+            %       self: Circle object with current values
 
 
-            if circleobj.rotAngle < 360*circleobj.unit
-                circleobj.rotAngle = circleobj.rotAngle + keySpeed*circleobj.unit;
+            if self.rotAngle < 360*self.unit
+                self.rotAngle = self.rotAngle + keySpeed*self.unit;
             else
-                circleobj.rotAngle = 0;
+                self.rotAngle = 0;
             end
         end
 
-        function circleobj = leftMovement(circleobj, keySpeed)
+        function self = leftMovement(self, keySpeed)
             % LEFTMOVEMENT This function implements keyboard mvements to
             % the left
             % 
             %   Input
-            %       circleobj: Circle object with current values
+            %       self: Circle object with current values
             %       keySpeed: Determines speed with which spot moves around
             %       circle
             %   
             %   Output
-            %       circleobj: Circle object with current values
+            %       self: Circle object with current values
 
-            if circleobj.rotAngle > 0*circleobj.unit
-                circleobj.rotAngle = circleobj.rotAngle - keySpeed*circleobj.unit;
+            if self.rotAngle > 0*self.unit
+                self.rotAngle = self.rotAngle - keySpeed*self.unit;
             else
-                circleobj.rotAngle = 360*circleobj.unit;
+                self.rotAngle = 360*self.unit;
             end
         end
     end

@@ -1,12 +1,12 @@
 function al_asymRewardInstructions(taskParam)
 %AL_ASYMREWARDINSTRUCTIONS This function runs the instructions for the
-% asymmetric-reward version of the confetti-cannon task
+% asymmetric reward version of the confetti-cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       ~
+%       None
 
 % Extract test day and cBal variables
 testDay = taskParam.subject.testDay;
@@ -37,14 +37,14 @@ if testDay == 1
 
     % Load taskData-object instance
     nTrials = 4;
-    taskData = al_taskDataMain(nTrials);
+    taskData = al_taskDataMain(nTrials, taskParam.gParam.taskType);
 
     % Generate practice-phase data
     taskData.catchTrial(1:nTrials) = 0; % no catch trials
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
     taskData.block(1:nTrials) = 1; % block number
-    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
+    taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
     taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -130,8 +130,7 @@ if testDay == 1
     condition = 'practice';
     taskData = load('visCannonPracticeHamburg.mat');
     taskData = taskData.taskData;
-    taskParam.condition = condition;
-    taskData.initialTendency = nan(length(taskData.ID), 1);
+    taskParam.trialflow.exp = 'practVis';
 
     % Reset roation angle to starting location
     taskParam.circle.rotAngle = 0;
@@ -189,10 +188,12 @@ if testDay == 1
         al_bigScreen(taskParam, header, txt, feedback);
 
         % Turn on standard confetti condition
-        taskParam.trialflow.reward = "standard";
+        taskParam.trialflow.reward = 'standard';
+        taskParam.trialflow.exp = 'practHidColor';
+        taskParam.gParam.saveName = 'standard';
 
-        % TaskData-object instance
-        taskData = al_taskDataMain(taskParam.gParam.practTrials);
+        % Task-data-object instance
+        taskData = al_taskDataMain(taskParam.gParam.practTrials, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);
@@ -223,10 +224,12 @@ if testDay == 1
         al_bigScreen(taskParam, header, txt, feedback);
 
         % Turn on asymmetric confetti condition
-        taskParam.trialflow.reward = "asymmetric";
+        taskParam.trialflow.reward = 'asymmetric';
+        taskParam.trialflow.exp = 'practHidAsym';
+        taskParam.gParam.saveName = 'asymmetric';
 
         % TaskData-object instance
-        taskData = al_taskDataMain(taskParam.gParam.practTrials);
+        taskData = al_taskDataMain(taskParam.gParam.practTrials, taskParam.gParam.taskType);
 
         % Generate outcomes using cannonData function
         taskData = taskData.al_cannonData(taskParam, taskParam.gParam.haz, taskParam.gParam.concentration, taskParam.gParam.safe);

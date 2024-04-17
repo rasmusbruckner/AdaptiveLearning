@@ -14,13 +14,6 @@ function varargout = al_introduceShieldMiss(taskParam, taskData, trial, txt)
 % Present background, cross, and circle
 al_lineAndBack(taskParam)
 
-% todo: update with trialflow
-if isequal(taskParam.gParam.taskType, 'chinese')
-    currentContext = 1;
-    al_drawContext(taskParam, currentContext)
-    al_drawCross(taskParam);
-end
-
 al_drawCircle(taskParam)
 if ~strcmp(taskParam.gParam.taskType, 'Leipzig')
     al_drawCross(taskParam)
@@ -39,13 +32,16 @@ initRT_Timestamp = GetSecs(); % reference value to compute initiation RT
 
 % Todo update using trialflow mouse vs. keyboard
 % and explosion only optionally
-if strcmp(taskParam.gParam.taskType, 'Sleep') || strcmp(taskParam.gParam.taskType, 'dresden')
+if strcmp(taskParam.gParam.taskType, 'sleep') || strcmp(taskParam.gParam.taskType, 'dresden') || strcmp(taskParam.gParam.taskType, 'MagdeburgFMRI')
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
     
     % Prediction error
     taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
     
+    % Difference prediction and last outcome
+    taskData.diffLastOutcPred(trial) = al_diff(taskData.pred(trial), taskData.outcome(trial-1));
+
     % Show cannonball
     background = true;
     absTrialStartTime = GetSecs;

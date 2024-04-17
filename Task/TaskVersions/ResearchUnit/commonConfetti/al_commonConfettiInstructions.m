@@ -1,6 +1,6 @@
 function al_commonConfettiInstructions(taskParam)
 %AL_COMMONCONFETTIINSTRUCTIONS This function runs the instructions for the
-% "Hamburg" version of the cannon task
+% Hamburg version of the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -16,6 +16,8 @@ cBal = taskParam.subject.cBal;
 taskParam.trialflow.cannon = 'show cannon'; % cannon will be displayed
 taskParam.trialflow.currentTickmarks = 'hide'; % tick marks initially not shown
 taskParam.trialflow.push = 'practiceNoPush'; % turn off push manipulation
+taskParam.trialflow.shot = 'animate cannonball'; % in instructions, we animate the confetti
+taskParam.trialflow.colors = 'colorful';
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
@@ -27,7 +29,7 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 al_indicateCondition(taskParam, 'Herzlich Willkommen Zur Konfetti-Kanonen-Aufgabe!')
 
 % Reset background to gray
-Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
+Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
 
 if testDay == 1
 
@@ -36,14 +38,14 @@ if testDay == 1
 
     % Load task-data-object instance
     nTrials = 4;
-    taskData = al_taskDataMain(nTrials);
+    taskData = al_taskDataMain(nTrials, taskParam.gParam.taskType);
 
     % Generate practice-phase data
     taskData.catchTrial(1:nTrials) = 0; % no catch trials
     taskData.initiationRTs(1:nTrials) = nan;  % set initiation RT to nan to indicate that this is the first response
     taskData.initialTendency(1:nTrials) = nan;  % set initial tendency of mouse movement
     taskData.block(1:nTrials) = 1; % block number
-    taskData.allASS(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
+    taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size  taskParam.gParam.concentration TODO: Adjust to new noise conditions
     taskData.shieldType(1:nTrials) = 1; % shield color
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -57,7 +59,7 @@ if testDay == 1
 
     % Introduce cannon
     currTrial = 1;
-    txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem violetten '...
+    txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem rosafarbenen '...
         'Punkt können Sie angeben, wo auf dem Kreis Sie Ihren Eimer platzieren möchten, um das Konfetti zu fangen. Sie können den Punkt mit der '...
         'Maus steuern.'];
     taskParam = al_introduceCannon(taskParam, taskData, currTrial, txt);
@@ -79,8 +81,8 @@ if testDay == 1
     % Repeat as long as subject misses confetti
     while 1
 
-        txt=['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Konfettiwolke. Der violette Strich zeigt Ihnen die '...
-            'Position Ihres letzten Eimers. Steuern Sie den violetten Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücken Sie die linke Maustaste.'];
+        txt=['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Konfettiwolke. Der rosafarbene Strich zeigt Ihnen die '...
+            'Position Ihres letzten Eimers. Steuern Sie den rosa Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücken Sie die linke Maustaste.'];
         %[taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceSpot(taskParam, taskData, currTrial, txt);
         [taskData, taskParam, xyExp, dotSize] = al_introduceSpot(taskParam, taskData, currTrial, txt);
 
@@ -151,9 +153,9 @@ if testDay == 1
     header = 'Erster Übungsdurchgang';
     txt=['Weil die Konfetti-Kanone schon sehr alt ist, sind die Schüsse ziemlich ungenau. Das heißt, auch wenn '...
         'Sie genau auf das Ziel gehen, können Sie das Konfetti verfehlen. Die Ungenauigkeit ist zufällig, '...
-        'dennoch fangen Sie am meisten Konfetti, wenn Sie den violetten Punkt genau auf die Stelle '...
+        'dennoch fangen Sie am meisten Konfetti, wenn Sie den rosanen Punkt genau auf die Stelle '...
         'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
-        'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den violetten Punkt bitte immer auf die anvisierte '...
+        'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den rosanen Punkt bitte immer auf die anvisierte '...
         'Stelle.'];
     feedback = false; % indicate that this is the instruction mode
     al_bigScreen(taskParam, header, txt, feedback);
@@ -162,8 +164,9 @@ if testDay == 1
     condition = 'practice';
     taskData = load('visCannonPracticeHamburg.mat');
     taskData = taskData.taskData;
-    taskParam.condition = condition;
-    taskData.initialTendency = nan(length(taskData.ID), 1);
+    %taskParam.condition = condition;
+    taskParam.trialflow.exp = 'practVis';
+    taskParam.trialflow.shieldAppearance = 'full';
 
     % Reset roation angle to starting location
     taskParam.circle.rotAngle = 0;
@@ -190,11 +193,11 @@ if testDay == 1
     end
 
     % 10. Introduce hidden confetti cannon
-    % -----------------------------------
+    % ------------------------------------
 
     % Display instructions
     header = 'Zweiter Übungsdurchgang';
-    txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann ein Kreuz. '...
+    txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
         'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
         'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
         'steuern. Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
@@ -203,6 +206,23 @@ if testDay == 1
         'guter Vorhersagen auch häufig nicht fangen können.'];
     feedback = false;
     al_bigScreen(taskParam, header, txt, feedback);
+
+
+    % Display instructions
+    header = 'Zweiter Übungsdurchgang';
+    txt = ['Außerdem sehen Sie das Spiel ab jetzt ohne Animationen und mit weniger bunten Farben. Ihr Eimer wird jetzt durch zwei Striche ' ...
+        'dargestellt. Wie in der vorherigen Übung zählt es als Treffer, wenn mindestens die Hälfte der Konfetti-Wolke im Eimer gefangen wurde.\n\n'...
+        'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
+        'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und Blinzeln '...
+        'so gut es geht zu vermeiden.'];
+    feedback = false;
+    al_bigScreen(taskParam, header, txt, feedback);
+
+    taskParam.trialflow.colors = 'dark';
+    taskParam.trialflow.shot = 'static';
+    taskParam.trialflow.exp = 'practHid';
+    taskParam.trialflow.shieldAppearance = 'lines';
+    taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
 
     if cBal == 1
        
@@ -271,14 +291,13 @@ else
         'Bei jedem Versuch wird eine Konfetti-Kanone auf eine Stelle des Kreises zielen. Das Konfetti wird in der Nähe des Ziels laden. '...
         'Meistens wird die Konfetti-Kanone auf dieselbe Stelle zielen, aber es kommt auch vor, dass sich die Konfetti-Kanone neu ausrichtet.\n\n'...
         'Sie werden die Konfetti-Kanone meistens nicht sehen, sondern müssen das Ziel bestmöglich einschätzen, um möglichst viel Konfetti in Ihrem Eimer zu '...
-        'fangen und das gewonnene Geld zu maximieren.\n\nWenn die Konfetti-Kanone in seltenen Fällen gezeigt wird, sollten Sie Ihren violetten Punkt '...
+        'fangen und das gewonnene Geld zu maximieren.\n\nWenn die Konfetti-Kanone in seltenen Fällen gezeigt wird, sollten Sie Ihren rosanen Punkt '...
         'genau auf das Ziel steuern.'];
 
     feedback = false;
     al_bigScreen(taskParam, header, txtStartTask, feedback);
 
     % Load data set for practice phase
-    % taskData = load('hidCannonPracticeSleep.mat');
     taskData = load('hidCannonPracticeHamburg_c16.mat');
     taskData = taskData.taskData;
 
@@ -295,7 +314,7 @@ end
 
 header = 'Jetzt kommen wir zum Experiment';
 txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst fangen Sie also das meiste Konfetti, '...
-    'wenn Sie den Eimer (violetter Punkt) auf die Stelle bewegen, auf die die Konfetti-Kanone zielt. Weil Sie die Konfetti-Kanone meistens nicht mehr '...
+    'wenn Sie den Eimer (rosafarbener Punkt) auf die Stelle bewegen, auf die die Konfetti-Kanone zielt. Weil Sie die Konfetti-Kanone meistens nicht mehr '...
     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. Beachten Sie, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen und können Ihre Leistung '...
     'verbessern, indem Sie den Eimer genau auf das Ziel steuern.\n\n'...

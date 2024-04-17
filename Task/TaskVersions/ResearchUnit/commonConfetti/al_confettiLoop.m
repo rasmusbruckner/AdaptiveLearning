@@ -9,32 +9,6 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %
 %   Output
 %       taskData: Task-data-object instance
-%   
-%   TODO: Put in respectice Run... functions
-%
-%   Events standard condition
-%       1: Trial Onset
-%       2: Prediction            (self-paced)
-%       3: Confetti animation    (1500 ms)
-%       4: ITI                   (900 ms)
-%       5: Jitter                (0-200 ms)
-%                                ------------
-%                                 2.5 s + pred (~ 2s)
-%
-%   Events asymmetric-reward condition
-%       1: Trial Onset
-%       2: Prediction            (self-paced)
-%       3: Confetti animation    (1500 ms)
-%       4: ISI                   (500 ms)
-%       5: Reward                (1000 ms)
-%       6: ITI                   (900 ms)
-%       7: Jitter                (0-200 ms)
-%                                ------------
-%                                 4.0 s + pred (~ 2s)
-%
-% todo: maybe get rid of "condition" input
-% todo: some comments should be added and some outdated comments should be
-% deleted
 
 
 % Wait until keys released
@@ -43,32 +17,60 @@ KbReleaseWait();
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
-Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.gray);
+Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
 
-% Start Eyelink recording - calibration and validation of eye-tracker before each block 
+% Start Eyelink recording - calibration and validation of eye-tracker before each block
 if taskParam.gParam.eyeTracker
     Eyelink('StartRecording');
     WaitSecs(0.1);
     Eyelink('message', 'Start recording Eyelink');
-end
-% send triggers to ET: start/end of blocks, start/end of each trial, event(s) within each trial etc...
 
+    % Reference time stamp
+    taskParam.timingParam.ref = GetSecs();
+end
+
+% Wait until keys released
+KbReleaseWait();
+
+% Wait for scanner trigger
+if taskParam.gParam.scanner
+
+    triggered = 0;
+    fprintf('Waiting for trigger\n')
+    while triggered == 0
+        [ ~, t_Vol, keyCode] = KbCheck();
+        if keyCode(taskParam.keys.five)
+            triggered = 1;
+            fprintf('Triggered!\n')
+        end
+    end
+
+    % Reference time stamp
+    taskParam.timingParam.ref = t_Vol;
+
+end
 
 % Cycle over trials
 % -----------------
 for i = 1:trial
 
-    % Presenting trial number at the bottom of the eyetracker display - optional %
+    % Presenting trial number at the bottom of the eyetracker display - optional
     if taskParam.gParam.eyeTracker
-        Eyelink('command', 'record_status_message "TRIAL %d/%d"', current_trial, n_trials);
-        Eyelink('message', 'TRIALID %d', t);
+        Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, trial);
+        Eyelink('message', 'TRIALID %d', i);
     end
 
-    % Save constant variables on each trial  
+    % This is a pre-liminary test-trigger for MEG
+    %% Todo: implement all triggers in al_sendTrigger
+    if taskParam.gParam.meg
+        trigger(50);
+    end
+
+    % Save constant variables on each trial
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
     taskData.ID{i} = taskParam.subject.ID;
-    taskData.sex{i} = taskParam.subject.sex;
+    taskData.gender{i} = taskParam.subject.gender;
     taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
@@ -81,7 +83,7 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps for initiation RT
-    taskData.actJitter(i) = rand * taskParam.timingParam.jitter;
+    taskData.actJitter(i) = rand * taskParam.timingParam.jitterITI;
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
 
@@ -90,23 +92,21 @@ for i = 1:trial
         fprintf('\nTrial %.0f:\nJitter duration: %.5f\n', i, GetSecs() - jitTest)
     end
 
-    % Send trial-onset trigger (here only timestamp since task without EEG or pupillometry)
+    % Send trial-onset trigger
+    taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'trialOnset');
     taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Self-paced prediction phase
     % ---------------------------
 
-    % Test trigger for eye tracker -- will add the same as for EEG and MEG
-    if taskParam.gParam.eyeTracker
-        Eyelink('message', '1'); % should potentially match the MEG triggers (so, a different trigger to each event...)
-    end
-
     % Reset mouse to screen center
-    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
+    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen)
 
     % Participant indicates prediction
     [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
+    taskData.timestampPrediction(i) = GetSecs - taskParam.timingParam.ref;
 
+    % Display RT and initiation RT in console
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
         fprintf('RT: %.5f\n', taskData.RT(i))
@@ -115,13 +115,6 @@ for i = 1:trial
     % Extract current time and determine when screen should be flipped
     % for accurate timing
     timestamp = GetSecs;
-
-    % Outcome: Animate confetti
-    %--------------------------
-
-    % send fixation cross 1 trigger
-    % todo: this should be done in mouse loop, like I did for keyboardLoop
-    taskData.timestampPrediction(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Deviation from cannon (estimation error) to compute performance
     % criterion in practice
@@ -134,7 +127,7 @@ for i = 1:trial
     % todo: compare to memory error in other versions
 
     % Record hit
-    if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
+    if abs(taskData.predErr(i)) <= taskData.allShieldSize(i)/2
         taskData.hit(i) = 1;
     else
         taskData.hit(i) = 0;
@@ -145,22 +138,32 @@ for i = 1:trial
         taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
 
-    % Confetti animation
-    background = false; % todo: include this in trialflow
-    taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+    % Optionally, show confetti animation
+    if isequal(taskParam.trialflow.shot, 'animate cannonball')
+
+        % Confetti animation
+        background = false; % todo: include this in trialflow
+        taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+
+        % Display timing info in console
+        if taskParam.gParam.printTiming
+            shotTiming = GetSecs() - taskParam.timingParam.ref;
+            fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampPrediction(i))
+        end
+    end
 
     % Compute performance
     if strcmp(taskParam.trialflow.reward, 'asymmetric')
 
         % Performance depends on green vs. red particles caught
         taskData.perf(i) = taskData.greenCaught(i) - taskData.redCaught(i);
-        
+
         % Reward prediction error: actual reward - (green minus red confetti particles assuming that all particles would be collected)
         taskData.RPE(i) = taskData.perf(i) - (taskData.nGreenParticles(i) - (taskData.nParticles(i)-taskData.nGreenParticles(i)));
 
     else
 
-        % Performance depends on hit vs miss
+        % Performance depends on hit vs. miss
         if taskData.hit(i) == 1
             taskData.perf(i) = taskParam.gParam.rewMag;
         else
@@ -172,40 +175,31 @@ for i = 1:trial
     % Accumulated performance
     taskData.accPerf(i) = nansum(taskData.perf);
     % The above is included for backward compatibility. In future, when all
-    % labs have more recent Matlab versions, potentially change to: 
+    % labs have more recent Matlab versions, potentially change to:
     % taskData.accPerf(i) = sum(taskData.perf, 'omitnan');
 
-    % Fixation cross: ITI (standard version) or ISI (asymmetric reward)
-    % -----------------------------------------------------------------
+    % Fixation cross
+    % --------------
+    if isequal(taskParam.trialflow.shot, 'static')
 
-    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-        al_drawCannon(taskParam, taskData.distMean(i))
-    else
-        [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-        Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-        al_drawCross(taskParam)
+        fixationPhase(taskParam)
+        timestamp = timestamp + 0.001;
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+        
+        % Send fixation cross 1 trigger
+        taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
+        taskData.timestampFixCross1(i) = GetSecs() - taskParam.timingParam.ref;
+
     end
 
-    % Draw circle and confetti cloud
-    al_drawCircle(taskParam)
-
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.cannonBallAnimation;
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
-
-    if taskParam.gParam.printTiming
-        shotTiming = GetSecs() - taskParam.timingParam.ref;
-        fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampPrediction(i))
-    end
-
-    % For asymmetric reward: Display feedback and fixation cross (ISI)
+    % For asymmetric reward: Display feedback and fixation crosss
     if strcmp(taskParam.trialflow.reward, 'asymmetric')
 
         % Feedback
         % --------
 
-        timestamp = timestamp + taskParam.timingParam.fixCrossLength;
+        timestamp = timestamp + taskParam.timingParam.shieldLength;
 
         % Display reward feedback
         txt = sprintf('<color=32CD32>Grünes Konfetti: %.0f\n<color=ff0000>Rotes Konfetti: %.0f\n<color=ffa500>Gewinn: %.0f Punkte', taskData.greenCaught(i), taskData.redCaught(i), taskData.perf(i));
@@ -216,21 +210,17 @@ for i = 1:trial
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
+        % Display timing info in console
         if taskParam.gParam.printTiming
             fixCrossTiming = GetSecs - taskParam.timingParam.ref;
-            fprintf('Fix-cross duration: %.5f\n', fixCrossTiming -  shotTiming)
+            fprintf('Fixation-cross duration: %.5f\n', fixCrossTiming -  shotTiming)
         end
 
         % Fixation cross: ITI
-        % --------------------
+        % -------------------
 
-        if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-            al_drawCannon(taskParam, taskData.distMean(i))
-        else
-            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-            Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-            al_drawCross(taskParam)
-        end
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
 
         % Draw circle and confetti cloud
         al_drawCircle(taskParam)
@@ -240,10 +230,99 @@ for i = 1:trial
         timestamp = timestamp + taskParam.timingParam.rewardLength;
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
-        % Reward timestamp
+        % Display timing info in console
         if taskParam.gParam.printTiming
             taskData.timestampReward(i) = GetSecs - taskParam.timingParam.ref;
             fprintf('Feedback duration: %.5f\n', taskData.timestampReward(i) - fixCrossTiming)
+        end
+    end
+
+    if isequal(taskParam.trialflow.shot, 'static')
+
+        % Draw circle and confetti cloud
+        al_drawCircle(taskParam)
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
+        al_tickMark(taskParam, taskData.pred(i), 'pred');
+        al_confettiOutcome(taskParam, taskData, i)
+
+        % Tell PTB that everything has been drawn and flip screen
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + rand * taskParam.timingParam.jitterOutcome;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+        
+        % Send outcome trigger
+        taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, condition, i, 'outcome');
+        taskData.timestampOutcome(i) = GetSecs - taskParam.timingParam.ref;
+
+        % Display timing info in console
+        if taskParam.gParam.printTiming
+            fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross1(i))
+        end
+    end
+    
+    % Fixation cross (animated version) or shield (static version)
+    % ------------------------------------------------------------
+    if isequal(taskParam.trialflow.shot, 'static')
+
+        % Tell PTB that everything has been drawn and flip screen
+        fixationPhase(taskParam)
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        timestamp = timestamp + taskParam.timingParam.outcomeLength;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+        
+        % Send fixation cross 2 trigger
+        taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
+        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+
+        % Display timing info in console
+        if taskParam.gParam.printTiming
+            fprintf('Outcome duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
+        end
+    end
+
+    % Draw circle and confetti cloud
+    al_drawCircle(taskParam)
+    Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+    al_drawFixPoint(taskParam)
+
+    % Optionally draw outcome and shield
+    if isequal(taskParam.trialflow.shot, 'static')
+        al_shield(taskParam, taskData.allShieldSize(i), taskData.pred(i), taskData.shieldType(i))
+        al_confettiOutcome(taskParam, taskData, i)
+    end
+
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.fixCrossShield + rand * taskParam.timingParam.jitterShield;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+    
+    % Send shield trigger
+    taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, condition, i, 'shield');
+    taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
+
+    % Display timing info in console
+    if taskParam.gParam.printTiming && isequal(taskParam.trialflow.shot, 'static')
+        fprintf('Fixation-cross 2 duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross2(i))
+    end
+
+    % Fixation cross (static version)
+    % -------------------------------
+    if isequal(taskParam.trialflow.shot, 'static')
+
+        % Tell PTB that everything has been drawn and flip screen
+        fixationPhase(taskParam)
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+        timestamp = timestamp + taskParam.timingParam.shieldLength;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+
+        taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
+        taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
+
+        % Display timing info in console
+        if taskParam.gParam.printTiming
+            fprintf('Shield duration: %.5f\n', taskData.timestampFixCross3(i) - taskData.timestampShield(i))
         end
     end
 
@@ -255,8 +334,10 @@ for i = 1:trial
     if taskParam.gParam.printTiming
         if strcmp(taskParam.trialflow.reward, 'asymmetric')
             fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampReward(i))
+        elseif isequal(taskParam.trialflow.shot, 'animate cannonball')
+            fprintf('Shield duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampShield(i))
         else
-            fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - shotTiming)
+            fprintf('Fixation-cross 3 duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampFixCross3(i))
         end
     end
 
@@ -266,7 +347,6 @@ for i = 1:trial
 end
 
 % Save Eyelink data
-% Todo: After each block?
 if taskParam.gParam.eyeTracker
     fprintf('Saving EyeLink data to %s\n', et_path)
     eyefilename = fullfile(et_path,et_file_name);
@@ -281,50 +361,69 @@ if taskParam.gParam.eyeTracker
     Eyelink('StopRecording');
 end
 
-
 % Give feedback and save data
 % ----------------------------
 
 if ~taskParam.unitTest
-    
+
     if ~isequal(taskParam.trialflow.reward, 'asymmetric')
         currPoints = nansum(taskData.hit);
         % The above is included for backward compatibility. In future, when all
-        % labs have more recent Matlab versions, potentially change to:     
+        % labs have more recent Matlab versions, potentially change to:
         % currPoints = sum(taskData.hit, 'omitnan');
 
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
     end
-    
+
     header = 'Zwischenstand';
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Save data
     %----------
-
-    if ~isequal(condition,'practice')
-
-        if isequal(taskParam.gParam.saveName, 'vwm')
-            savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
-        else
-            concentration = unique(taskData.concentration);
-            savename = sprintf('confetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.reward, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
-        end
-
-            % Ensure that files cannot be overwritten
-            checkString = dir([savename '*']);            
-            fileNames = {checkString.name};            
-            if  ~isempty(fileNames)
-                savename = [savename '_new'];
-            end
-            save(savename, 'taskData')
-            
-
-        % Wait until keys released
-        KbReleaseWait();
+    if isequal(taskParam.gParam.saveName, 'vwm')
+        savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
+    elseif isequal(taskParam.gParam.saveName, 'asymmetric')
+        concentration = unique(taskData.concentration);
+        savename = sprintf('confetti_asymrew_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+    else
+        concentration = unique(taskData.concentration);
+        savename = sprintf('commonConfetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
     end
+
+    % Ensure that files cannot be overwritten
+    checkString = dir([savename '*']);
+    fileNames = {checkString.name};
+    if  ~isempty(fileNames)
+        savename = [savename '_new'];
+    end
+
+    % Save as struct
+    taskData = saveobj(taskData);
+    save(savename, 'taskData');
+
+    % Wait until keys released
+    KbReleaseWait();
+
 end
+end
+
+function fixationPhase(taskParam, color)
+
+% Check if reduced shield is requested
+if ~exist('color', 'var') || isempty(color)
+    color = taskParam.colors.fixDot;
+end
+
+Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+al_drawFixPoint(taskParam, color)
+
+% Draw circle and confetti cloud
+al_drawCircle(taskParam)
+
+% Tell PTB that everything has been drawn and flip screen
+Screen('DrawingFinished', taskParam.display.window.onScreen);
+
 end

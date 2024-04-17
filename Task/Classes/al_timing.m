@@ -10,8 +10,11 @@ classdef al_timing
     
     properties
         
-        % Fixation cross timing
-        fixCrossLength
+        % Fixation cross before outcome timing
+        fixCrossOutcome
+        
+        % Fixation cross before shield timing
+        fixCrossShield
 
         % Duration of cannonball animation
         cannonBallAnimation
@@ -27,9 +30,15 @@ classdef al_timing
 
         % Presentation of reward feedback
         rewardLength
+        
+        % Length of jitter before outcome
+        jitterOutcome
+        
+        % Length of jitter before shield
+        jitterShield
 
-        % Length of jitter
-        jitter
+        % Length of jitter for ITI
+        jitterITI
 
         % Fixed inter-trial interval
         fixedITI
@@ -44,19 +53,22 @@ classdef al_timing
 
     methods
         
-        function timingobj = al_timing()
+        function self = al_timing()
             % AL_TIMING This function creates a timing object of
             % class al_timing
             
-            timingobj.fixCrossLength = 0.5;
-            timingobj.cannonBallAnimation = 0.5;
-            timingobj.cannonMissAnimation = 1.0;
-            timingobj.outcomeLength = 0.0;
-            timingobj.shieldLength = 0.0;
-            timingobj.rewardLength = 1.0;
-            timingobj.jitter = 0.2;        
-            timingobj.fixedITI = 0.9;
-            timingobj.ref = nan;
+            self.fixCrossOutcome = 0.5;
+            self.fixCrossShield = 0.5;
+            self.cannonBallAnimation = 0.5;
+            self.cannonMissAnimation = 1.0;
+            self.outcomeLength = 0.0;
+            self.shieldLength = 0.0;
+            self.rewardLength = 1.0;
+            self.jitterOutcome = 2;        
+            self.jitterITI = 0.2;  
+            self.jitterShield = 0.6;
+            self.fixedITI = 0.9;
+            self.ref = nan;
         end
     end
 end

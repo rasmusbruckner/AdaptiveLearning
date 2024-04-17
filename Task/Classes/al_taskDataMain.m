@@ -6,15 +6,15 @@ classdef al_taskDataMain
 
     properties
 
-        % Number of trials
         trials % number of trials
+        taskType % Version
 
         % Participant
         % -----------
 
         ID % participant ID
         age % participant age
-        sex % participant sex
+        gender % participant gender
         date % test date
         testDay % test day
         group % subject group
@@ -41,7 +41,7 @@ classdef al_taskDataMain
 
         currTrial % trial number
         block % block number
-        allASS % all angular shield size
+        allShieldSize% all angular shield size
         actJitter % actual jitter on each trial
         cp % changepoint index
         cpVar % variance changepoint index
@@ -83,6 +83,7 @@ classdef al_taskDataMain
         % --------------------
         timestampOnset
         timestampPrediction
+        timestampFixCross1
         timestampFixCross2
         timestampFixCross3
         timestampOutcome
@@ -98,7 +99,7 @@ classdef al_taskDataMain
 
     methods
 
-        function self = al_taskDataMain(trials)
+        function self = al_taskDataMain(trials, taskType)
             % AL_TASKDATAMAIN This function creates a data object of
             % class al_taskDataMain
             %
@@ -112,10 +113,12 @@ classdef al_taskDataMain
             % Initialize variables
             % --------------------
 
+            self.taskType = taskType ;
+
             % Participant
             self.ID = cell(trials, 1);
             self.age = nan(trials, 1);
-            self.sex = cell(trials, 1);
+            self.gender = cell(trials, 1);
             self.date = cell(trials, 1);
             self.testDay = nan(trials, 1);
             self.group = nan(trials, 1);
@@ -137,7 +140,7 @@ classdef al_taskDataMain
             % Task-generated data
             self.currTrial = nan(trials, 1);
             self.block = nan(trials, 1);
-            self.allASS = nan(trials, 1);
+            self.allShieldSize = nan(trials, 1);
             self.actJitter = nan(trials, 1);
             self.cp = nan(trials, 1);
             self.cpVar = nan(trials, 1);
@@ -158,6 +161,7 @@ classdef al_taskDataMain
             self.pred = nan(trials, 1);
             self.predErr = nan(trials, 1);
             self.estErr = nan(trials, 1);
+            self.diffLastOutcPred = nan(trials, 1);
             self.cannonDev = nan(trials, 1);
             self.UP = nan(trials, 1);
             self.hit = nan(trials, 1);
@@ -175,6 +179,7 @@ classdef al_taskDataMain
             % EEG and pupillometry
             self.timestampOnset = nan(trials, 1);
             self.timestampPrediction = nan(trials, 1);
+            self.timestampFixCross1 = nan(trials, 1);
             self.timestampFixCross2 = nan(trials, 1);
             self.timestampFixCross3 = nan(trials, 1);
             self.timestampOutcome = nan(trials, 1);
@@ -198,15 +203,11 @@ classdef al_taskDataMain
             %   Output
             %       self: Data-object instance
 
-            
+
             % Provide warning when more than one concentration but not in
             % variability condition with concentration change points
             if length(concentration) > 1 && ~isequal(taskParam.trialflow.variability, 'changepoint')
                 error('Too many concentration parameters');
-            end
-
-            if ~isequal(taskParam.trialflow.shieldType, 'constant') && mod(self.trials,2) == 1
-                error('This version requires an even number of trials');
             end
 
             % Initialize safe variable
@@ -252,9 +253,11 @@ classdef al_taskDataMain
 
                 % Generate angular shield size
                 if isequal(taskParam.trialflow.shield, 'variable')
-                    self.allASS(i) = self.getShieldSize(taskParam.gParam.minASS, taskParam.gParam.maxASS, taskParam.gParam.mu);
+                    self.allShieldSize(i) = self.getShieldSize(taskParam.gParam.shieldMin, taskParam.gParam.shieldMax, taskParam.gParam.shieldMu);
+                elseif isequal(taskParam.trialflow.shield, 'variableWithSD')
+                    self.allShieldSize(i) = self.getShieldSize(taskParam.gParam.shieldMin, taskParam.gParam.shieldMax, rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/self.concentration(i))));
                 else
-                    self.allASS(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/self.concentration(i)));
+                    self.allShieldSize(i) = rad2deg(taskParam.circle.shieldFixedSizeFactor*sqrt(1/self.concentration(i)));
                 end
 
             end
@@ -265,15 +268,28 @@ classdef al_taskDataMain
             self.safe = repmat(safe, length(self.trials), 1);
             self.safeVar = repmat(self.safeVar, length(self.trials), 1);
 
+            %% Todo test this properly
             % Generate shield types
             if isequal(taskParam.trialflow.shieldType, 'constant')
 
                 % Here all shields have the same color
                 self.shieldType = ones(self.trials,1);
             else
-                self.shieldType = Shuffle([zeros((self.trials/2),1); ones((self.trials/2),1)]);
-            end
 
+                % If no remainder, sample sign randomly
+                if mod(self.trials, 2) == 0
+
+                    self.shieldType = Shuffle([zeros((self.trials/2),1); ones((self.trials/2),1)]);
+                else
+
+                    % Compute number of trials for each shield
+                    nShield = floor(self.trials/2);
+
+                    % Sample shield types add samples binary distribution for remainder
+                    self.shieldType = Shuffle([zeros(nShield, 1); ones(nShield, 1); randsample([0, 1], 1)]);
+
+                end
+            end
         end
 
 
@@ -292,11 +308,11 @@ classdef al_taskDataMain
             %   Output
             %       s: Update safe counter
             %
-            
-           % Sampled change points and new blocks count as change points 
-           if (self.sampleRand('rand') < haz && s == 0) || ismember(currTrial, taskParam.gParam.blockIndices)
-                
-               % Indicate current change point
+
+            % Sampled change points and new blocks count as change points
+            if (self.sampleRand('rand') < haz && s == 0) || ismember(currTrial, taskParam.gParam.blockIndices)
+
+                % Indicate current change point
                 self.cp(currTrial) = 1;
 
                 % Draw mean of current distribution
@@ -357,7 +373,7 @@ classdef al_taskDataMain
             if (~exist('safe', 'var') || isempty(safe)) && isequal(taskParam.trialflow.reward, 'asymmetric')
                 error('safe for asymmetric version required')
             elseif isequal(taskParam.trialflow.reward, 'asymmetric')
-                
+
                 % Initialize safe variable
                 s = safe;
 
@@ -409,14 +425,22 @@ classdef al_taskDataMain
                     % Confetti-particle colors
                     outcomeDeviation = al_diff(self.outcome(i), self.distMean(i));
                     self.nGreenParticles(i) = self.getParticleColor(taskParam.cannon.nParticles, outcomeDeviation, concentration, self.asymRewardSign(i));
-                    self.dotCol(i).rgb = [repmat(taskParam.colors.green, 1, self.nGreenParticles(i)), repmat(taskParam.colors.red, 1, taskParam.cannon.nParticles-self.nGreenParticles(i))];
+                    self.dotCol(i).rgb = [repmat(taskParam.colors.green', 1, self.nGreenParticles(i)), repmat(taskParam.colors.red', 1, taskParam.cannon.nParticles-self.nGreenParticles(i))];
 
                     % For other conditions
                 else
 
                     % ... and random colors
-                    self.dotCol(i).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
+                    if isequal(taskParam.trialflow.colors, 'colorful')
+                        self.dotCol(i).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
+                    elseif isequal(taskParam.trialflow.colors, 'dark')
+                        self.dotCol(i).rgb = taskParam.colors.colorsDark;
+                    elseif isequal(taskParam.trialflow.colors, 'blackWhite')
+                        self.dotCol(i).rgb = taskParam.colors.colorsBlackWhite;
 
+                    else
+                        error('Color input not defined')
+                    end
                 end
             end
         end
@@ -543,7 +567,7 @@ classdef al_taskDataMain
             %   Output
             %       concIndex: Updated concentration index
             %       sVar: Updated safe variable
-            
+
             if (self.sampleRand('rand') < taskParam.gParam.hazVar && sVar == 0) || currTrial == taskParam.gParam.blockIndices(1) || currTrial == taskParam.gParam.blockIndices(2) || currTrial == taskParam.gParam.blockIndices(3) || currTrial == taskParam.gParam.blockIndices(4)
 
                 % Indicate current change point
@@ -595,12 +619,12 @@ classdef al_taskDataMain
 
             % Find current block
             while true
-                
+
                 % First blocks
                 if blockCounter <= nBlocks(end)-1 && currTrial >= taskParam.gParam.blockIndices(blockCounter) && currTrial < taskParam.gParam.blockIndices(blockCounter+1)
                     block = blockCounter;
                     break
-                
+
                     % Very last block
                 elseif currTrial >= taskParam.gParam.blockIndices(end)
                     block = nBlocks;
@@ -613,10 +637,192 @@ classdef al_taskDataMain
             end
         end
 
+        function s = saveobj(self)
+            % SAVEOBJ This function tranlates data that we want to save
+            % into a structure
+            %
+            %   Background:
+            %       https://www.mathworks.com/help/matlab/ref/saveobj.html
+
+            % General variables
+            s.ID = self.ID;
+            s.age = self.age;
+            s.gender = self.gender;
+            s.date = self.date;
+            s.cond = self.cond;
+            s.concentration = self.concentration;
+            s.haz = self.haz;
+            s.cBal = self.cBal;
+            s.safe = self.safe;
+            s.currTrial = self.currTrial;
+            s.block = self.block;
+            s.allShieldSize = self.allShieldSize;
+            s.actJitter = self.actJitter;
+            s.cp = self.cp;
+            s.outcome = self.outcome;
+            s.distMean = self.distMean;
+            s.TAC = self.TAC;
+            s.catchTrial = self.catchTrial;
+            s.shieldType = self.shieldType;
+            s.pred = self.pred;
+            s.predErr = self.predErr;
+            s.estErr = self.estErr;
+            s.cannonDev = self.cannonDev;
+            s.UP = self.UP;
+            s.hit = self.hit;
+            s.perf = self.perf;
+            s.accPerf = self.accPerf;
+            s.RT = self.RT;
+            s.initiationRTSs = self.initiationRTs;
+
+            % Task specific
+            if isequal(self.taskType, 'dresden')
+
+                s.rew = self.rew;
+                s.group = self.group;
+                s.diffLastOutcPred = self.diffLastOutcPred;
+                s.actRew = self.actRew;
+                s.z = self.z;
+                s.y = self.y;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampFixCross1 = self.timestampFixCross1;
+                s.timestampFixCross2 = self.timestampFixCross2;
+                s.timestampOutcome = self.timestampOutcome;
+                s.timestampShield = self.timestampShield;
+                s.timestampOffset = self.timestampOffset;
+                s.triggers = self.triggers;
+
+            elseif isequal(self.taskType, 'MagdeburgFMRI')
+
+                s.z = self.z;
+                s.y = self.y;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampFixCross2 = self.timestampFixCross2;
+                s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampOutcome = self.timestampOutcome;
+                s.timestampShield = self.timestampShield;
+                s.timestampOffset = self.timestampOffset;
+
+            elseif isequal(self.taskType, 'sleep')
+
+                s.testDay = self.testDay;
+                s.group = self.group;
+                s.pushConcentration = self.pushConcentration;
+                s.z = self.z;
+                s.y = self.y;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampFixCross2 = self.timestampFixCross2;
+                s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampOutcome = self.timestampOutcome;
+                s.timestampShield = self.timestampShield;
+                s.timestampOffset = self.timestampOffset;
+
+            elseif isequal(self.taskType, 'Hamburg')
+
+                s.group = self.group;
+                s.nParticles = self.nParticles;
+                s.confettiStd = self.confettiStd;
+                s.dotCol = self.dotCol;
+                s.initialTendency = self.initialTendency;
+                s.nParticlesCaught = self.nParticlesCaught;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampShield = self.timestampShield;
+                %s.timestampReward = self.timestampReward;
+                s.timestampFixCross1 = self.timestampFixCross1;
+                s.timestampFixCross2 = self.timestampFixCross2;
+                %s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampOffset = self.timestampOffset;
+
+            elseif isequal(self.taskType, 'HamburgEEG')
+
+                s.group = self.group;
+                s.nParticles = self.nParticles;
+                s.confettiStd = self.confettiStd;
+                s.dotCol = self.dotCol;
+                s.initialTendency = self.initialTendency;
+                s.nParticlesCaught = self.nParticlesCaught;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampShield = self.timestampShield;
+                s.timestampReward = self.timestampReward;
+                s.timestampFixCross1 = self.timestampFixCross1;
+                s.timestampFixCross2 = self.timestampFixCross2;
+                s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampOffset = self.timestampOffset;
+
+            elseif isequal(self.taskType, 'asymReward')
+
+                s.nParticles = self.nParticles;
+                s.confettiStd = self.confettiStd;
+                s.cpRew = self.cpRew;
+                s.asymRewardSign = self.asymRewardSign;
+                s.nGreenPartciles = self.nGreenParticles;
+                s.dotCol = self.dotCol;
+                s.initialTendency = self.initialTendency;
+                s.nParticlesCaught = self.nParticlesCaught;
+                s.greenCaught = self.greenCaught;
+                s.redCaught = self.redCaught;
+                s.RPE = self.RPE;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampOutcome = self.timestampOutcome;
+                s.timestampShield = self.timestampShield;
+                s.timestampReward = self.timestampReward;
+                s.timestampOffset = self.timestampOffset;
+
+            elseif isequal(self.taskType, 'Leipzig')
+
+                s.group = self.group;
+
+            else
+
+                %% Todo: get rid of this when everything else implemented
+                s.testDay = self.testDay;
+                s.group = self.group;
+                s.hazVar = self.hazVar;
+                s.safeVar = self.safeVar;
+                s.nParticles = self.nParticles;
+                s.confettiStd = self.confettiStd;
+                s.pushConcentration = self.pushConcentration;
+                s.startingBudget = self.startingBudget;
+                s.driftConc = self.driftConc;
+                s.cpVar = self.cpVar;
+                s.TACVar = self.TACVar;
+                s.cpRew = self.cpRew;
+                s.asymRewardSign = self.asymRewardSign;
+                s.nGreenPartciles = self.nGreenParticles;
+                s.dotCol = self.dotCol;
+                s.initialTendency = self.initialTendency;
+                s.nParticlesCaught = self.nParticlesCaught;
+                s.greenCaught = self.greenCaught;
+                s.redCaught = self.redCaught;
+                s.RPE = self.RPE;
+
+                s.timestampOnset = self.timestampOnset;
+                s.timestampPrediction = self.timestampPrediction;
+                s.timestampShield = self.timestampShield;
+                s.timestampReward = self.timestampReward;
+                s.timestampFixCross1 = self.timestampFixCross1;
+                s.timestampFixCross2 = self.timestampFixCross2;
+                s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampOffset = self.timestampOffset;
+
+            end
+        end
     end
 
-    % Static methods of the taskDataMain object
-    % -----------------------------------------
+    % Static methods of the task-data-main object
+    % -------------------------------------------
 
     methods(Static)
 

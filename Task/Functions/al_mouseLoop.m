@@ -24,7 +24,7 @@ while 1
 
     % If no text as input, assume we're in the main task and just present
     % background if required
-    if ~exist('txt', 'var') ||  isempty(txt)
+    if ~exist('txt', 'var') || isempty(txt)
 
         % Present background picture
         if isequal(taskParam.trialflow.background, 'picture')
@@ -51,9 +51,44 @@ while 1
         % Extract screen coordinates
         screensize = taskParam.display.screensize;
 
-        % Compute mouse x and y position given screen coordinates
-        x = x-(screensize(3)/2);
-        y = (y-(screensize(4)/2))*-1;
+        %% This is a temporary implementation for the joystick which might be updated in the future
+        if taskParam.gParam.uke
+
+            % Raw joystick values -- the multiplication changes the
+            % sensitivity of the joystick
+            xRaw = axis(taskParam.gParam.joy,1)*0.5;
+            yRaw = axis(taskParam.gParam.joy,2)*0.5;
+
+            %% todo: proper parameters for min/max
+            % Normalize current x and y values
+            x = al_minMaxNormalization(xRaw, -0.3741, 0.6909);
+            y = al_minMaxNormalization(yRaw, -0.8286, 0.6052);
+
+            % Normalize biased center values 
+            xBiasCenterPix = al_minMaxNormalization(0, -0.3741, 0.6909) * screensize(3);
+            yBiasCenterPix = al_minMaxNormalization(0, -0.8286, 0.6052) * screensize(4); 
+
+            % Normalize actual center values
+            xCenterPix = al_minMaxNormalization(0.1584, -0.3741, 0.6909) * screensize(3);
+            yCenterPix = al_minMaxNormalization(-0.1117, -0.8286, 0.6052) * screensize(4);
+            
+            % Correct current x and y
+            x = x * screensize(3) + xCenterPix - xBiasCenterPix;
+            y = y * screensize(4) + yCenterPix - yBiasCenterPix;
+
+            % Same as for mouse input for psychtoolbox
+            x = x-(screensize(3)/2);
+            y = (y-(screensize(4)/2))*-1;
+            
+            % Check buttons
+            buttons(2) = button(taskParam.gParam.joy, 1); % top
+            buttons(1) = button(taskParam.gParam.joy, 3); % front
+
+        else
+            % Compute mouse x and y position given screen coordinates
+            x = x-(screensize(3)/2);
+            y = (y-(screensize(4)/2))*-1;
+        end
 
         % Translate x and y coordinates to degrees
         currentDegree = mod(atan2(y,x) .* -180./-pi, -360 )*-1 + 90;
@@ -71,7 +106,7 @@ while 1
     end
 
     % Translate degrees to rotation angle
-    taskParam.circle.rotAngle = deg2rad(degree); %degree * taskParam.circle.unit;
+    taskParam.circle.rotAngle = deg2rad(degree);
 
     % Show circle on screen
     al_drawCircle(taskParam)
@@ -80,7 +115,7 @@ while 1
         if strcmp(taskParam.trialflow.cannonType, 'helicopter')
             % In helicopter version, show heli and heli aim
             al_showHelicopter(taskParam, taskData.distMean(trial))
-            al_tickMark(taskParam, taskData.distMean(trial), 'aim')
+            al_tickMark(taskParam, taskData.distMean(trial), 'aim');
         else
             % In regular versions, show cannon and cannon aim
             al_drawCannon(taskParam, taskData.distMean(trial))
@@ -90,19 +125,12 @@ while 1
     else
         % Optionally, show confetti cloud
         if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
-            [xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud(); % load pre-generated particles
-            Screen('DrawDots', taskParam.display.window.onScreen, xymatrix_ring, s_ring, colvect_ring, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-            al_drawCross(taskParam)
+            Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+            al_drawFixPoint(taskParam)
         else
             % Otherwise just fixation cross
-            al_drawCross(taskParam)
+            al_drawFixPoint(taskParam)
         end
-    end
-
-    % Todo: potentially move up when working on ARC again
-    if (taskData.catchTrial(trial) == 1 && isequal(taskParam.gParam.taskType, 'ARC'))
-        al_drawCannon(taskParam, taskData.distMean(trial), taskData.latentState(trial))
-        al_aim(taskParam, taskData.distMean(trial))
     end
 
     % Show prediction spot
@@ -129,38 +157,44 @@ while 1
     % Only entering the condition when no initial tendency has been
     % recorded (first movement) or unit testing
     if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest
-        taskData.initialTendency(trial) = deg2rad(degree); %degree * taskParam.circle.unit;
+
+        % Initial degrees and initiation RT
+        taskData.initialTendency(trial) = deg2rad(degree);
         taskData.initiationRTs(trial,:) = GetSecs() - startTimestamp;
+
+        % Movement-onset trigger
+        taskData.triggers(trial,2) = al_sendTrigger(taskParam, taskData, condition, trial, 'responseOnset');
+
     end
 
     % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
-        al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
-        al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
+        al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
+        al_tickMark(taskParam, taskData.pred(trial-1), 'pred');
     elseif isequal(taskParam.trialflow.currentTickmarks, 'workingMemory') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
         if trial > 5 && (taskData.block(trial) == taskData.block(trial-5))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-5), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-5), 'outc');
         elseif trial > 4 && (taskData.block(trial) == taskData.block(trial-4))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc');
         elseif trial > 3 && (taskData.block(trial) == taskData.block(trial-3))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc');
         elseif trial > 2 && (taskData.block(trial) == taskData.block(trial-2))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
+            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
         elseif trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc')
+            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
         end
 
-        al_tickMark(taskParam, taskData.pred(trial-1), 'pred')
+        al_tickMark(taskParam, taskData.pred(trial-1), 'pred');
     end
 
     % Flip screen and present changes
@@ -181,6 +215,7 @@ while 1
             break
         end
     elseif buttons(1) == 1 && hyp >= taskParam.circle.rotationRad-2 % ensure that prediction is only possible when spot on circle
+        
         taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle); %((taskParam.circle.rotAngle) / taskParam.circle.unit);
         taskData.RT(trial) = GetSecs() - startTimestamp;
 
@@ -190,11 +225,14 @@ while 1
             taskData.initiationRTs(trial) = taskData.RT(trial);
         end
 
+        % Response trigger
+        taskData.triggers(trial,3) = al_sendTrigger(taskParam, taskData, condition, trial, 'responseLogged');
+
         % Break out of loop
         break
     end
-        
-    % Check for escape key 
+
+    % Check for escape key
     taskParam.keys.checkQuitTask();
 
 end

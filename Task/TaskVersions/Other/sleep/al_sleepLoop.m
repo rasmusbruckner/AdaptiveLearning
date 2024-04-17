@@ -1,67 +1,65 @@
-function taskData = al_sleepLoop(taskParam, condition, taskData, trial)
-%AL_SLEEPLOOP This function runs the cannon-task trials for the "sleep version"
+function taskData = al_sleepLoop(taskParam, taskData, trial, disableResponseThreshold, buttonPractice)
+%AL_SLEEPLOOP This function runs the cannon-task trials for the sleep and Magedeburg-fMRI version
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
-%       practice: Whether or not function is used in practice phase
+%       disableResponseThreshold: Optionally activate response time
+%                                   limit (if additionally specified in trialflow)
+%       buttonPractice: Optional button practice with scanner settings but
+%       no initial trigger
 %
 %   Output
 %       taskData: Task-data-object instance
-%
-%   Events
-%       1: Trial Onset
-%       2: Prediction            (self-paced)
-%       3: Cannonball animation  (500 ms)
-%       4: Miss/Hit animation    (1000 ms)
-%       5: ITI                   (900 ms)
-%       6: Jitter                (0-200 ms)
-%                                ------------
-%                                 3 s + pred (~ 2s)
-%
-% todo: maybe get rid of "condition" input
-% todo: some comments should be added and some outdated comments should be
-% deleted
+
+% Check for optional response-threshold input:
+% By default, threshold not active, independent of trialflow
+% That way, instructions are without time limit
+if ~exist('disableResponseThreshold', 'var') || isempty(disableResponseThreshold)
+    disableResponseThreshold = true;
+end
+
+% Check for optional button-practice input
+if ~exist('buttonPractice', 'var') || isempty(buttonPractice)
+    buttonPractice = false;
+end
 
 % Wait until keys released
 KbReleaseWait();
 
-% Todo: check CCNB time and mechanism before scanning actually starts
-if taskParam.gParam.scanner 
-    n_Vols = 0;
-    s.SkipVolumesNumber = 10; 
-    s.TriggerButton = KbName('t'); % 116
+% Wait for scanner trigger
+if taskParam.gParam.scanner && buttonPractice == false
+
+    % Display that we're waiting for scanner
+    al_waitForScanner(taskParam, 'Messung startet in wenigen Sekunden...')
     
-    %%%%%%%%%%% Hans code
-    % check only for MR trigger
+    fprintf('Waiting for trigger\n')
+   
+    % Deal with buttons
     DisableKeysForKbCheck([]);
-    RestrictKeysForKbCheck(s.TriggerButton);
-    % Loop as long as volumes should be skipped
-    %while n_Vols<s.SkipVolumesNumber
+    RestrictKeysForKbCheck(KbName('t'));
+    
+    % Wait for MR trigger
     keyIsDown = 0;
-    % check for MR trigger. For example letter "t"
     while keyIsDown == 0
         [keyIsDown, t_Vol, ~] = KbCheck;
-        %if n_Vols == 1
-       % first_trigger = t_Vol;
-        %end
     end
-    n_Vols=n_Vols+1;
-    % end
-    % TimeStart = first_trigger;
+    fprintf("Triggered!\n")
+
+    % Reference time stamp right after trigger
+    taskParam.timingParam.ref = t_Vol; 
+
+     % Disable trigger key again
     DisableKeysForKbCheck([]);
     RestrictKeysForKbCheck([]);
 
-    % rasmus: das hier quasi als timestamp bei mr-onset?
-    taskParam.timingParam.ref = t_Vol; %denke ich
+else
 
+    % Reference time stamp at block start
+    taskParam.timingParam.ref = GetSecs; 
 
 end
-
-%%%%%%%%%%%%%%
-
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
@@ -75,7 +73,7 @@ for i = 1:trial
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
     taskData.ID{i} = taskParam.subject.ID;
-    taskData.sex{i} = taskParam.subject.sex;
+    taskData.gender{i} = taskParam.subject.gender;
     taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
@@ -87,13 +85,13 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps for initiation RT
-    taskData.actJitter(i) = rand * taskParam.timingParam.jitter;
+    taskData.actJitter(i) = rand * taskParam.timingParam.jitterITI;
     WaitSecs(taskData.actJitter(i));
     initRT_Timestamp = GetSecs();
 
     % Print out jitter duration, if desired
     if taskParam.gParam.printTiming
-        fprintf('\nTrial %.0f:\nJitter duration: %.5f\n', i, GetSecs() - jitTest)
+        fprintf('\nTrial %.0f:\nJitter 1 duration: %.5f\n', i, GetSecs() - jitTest)
     end
 
     % Send trial-onset trigger (here only timestamp since task without EEG or pupillometry)
@@ -102,7 +100,7 @@ for i = 1:trial
     % Self-paced prediction phase
     % ---------------------------
 
-    [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp);
+    [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp, [], [], disableResponseThreshold);
    
     if taskParam.gParam.printTiming
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
@@ -124,10 +122,10 @@ for i = 1:trial
     % Prediction error & estimation error
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
     taskData.estErr(i) = al_diff(taskData.distMean(i), taskData.pred(i));
-    % todo: compare to memory error in other versions
+    %% todo: compare to memory error in other versions
 
     % Record hit and performance
-    if abs(taskData.predErr(i)) <= taskData.allASS(i)/2
+    if abs(taskData.predErr(i)) <= taskData.allShieldSize(i)/2
         taskData.hit(i) = 1;
         taskData.perf(i) = taskParam.gParam.rewMag;
     else
@@ -143,8 +141,47 @@ for i = 1:trial
         taskData.UP(i) = al_diff(taskData.pred(i), taskData.pred(i-1));
     end
 
+    % For fMRI: Jitter before animation
+    if taskParam.gParam.scanner
+        
+        % Fixation cross: ITI
+        % --------------------
+    
+        % Present background, fixation cross, and circle
+        Screen('FillRect', taskParam.display.window.onScreen, [0 0 0]);
+        Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.backgroundTxt,[], [taskParam.display.backgroundCoords], []);
+        if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+            al_drawCannon(taskParam, taskData.distMean(i))
+        else
+            al_drawCross(taskParam)
+        end
+        al_drawCircle(taskParam)
+    
+        % Tell PTB that everything has been drawn and flip screen
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        Screen('Flip', taskParam.display.window.onScreen, timestamp + 0.001);
+        
+        % Fixation-cross time stamp
+        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+            
+        % Sample fixation length
+        fixCossTemp = taskParam.timingParam.fixCrossOutcome + rand * taskParam.timingParam.jitterOutcome;
+        WaitSecs(fixCossTemp);
+        timestamp = timestamp + fixCossTemp;
+        
+        % Print out length of jitter
+        if taskParam.gParam.printTiming
+            jitterTiming = GetSecs - taskParam.timingParam.ref;
+            fprintf('Jitter 2 duration: %.5f\n', jitterTiming - taskData.timestampPrediction(i))
+        end
+
+    end
+
     % Outcome: Animate hit and miss
     % -----------------------------
+
+    % Record time stamp for onset of outcome animation
+    taskData.timestampOutcome(i) = GetSecs - taskParam.timingParam.ref;
 
     % Animate cannonball
     background = false; % todo: include this in trialflow
@@ -152,8 +189,11 @@ for i = 1:trial
 
     if taskParam.gParam.printTiming
         shotTiming = GetSecs - taskParam.timingParam.ref;
-        fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampPrediction(i))
+        fprintf('Shot duration: %.5f\n', shotTiming - taskData.timestampOutcome(i))  
     end
+    
+    % Record time stamp for onset of miss animation
+    taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
 
     % Animate explosion when it is a miss
     timestamp = timestamp + taskParam.timingParam.cannonBallAnimation;
@@ -165,15 +205,13 @@ for i = 1:trial
     end
 
     % Fixation cross: ITI
-    % --------------------
+    % -------------------
 
     % Present background, fixation cross, and circle
     Screen('FillRect', taskParam.display.window.onScreen, [0 0 0]);
     Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.backgroundTxt,[], [taskParam.display.backgroundCoords], []);
     if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
         al_drawCannon(taskParam, taskData.distMean(i))
-        % al_aim(taskParam, taskData.distMean(i))  # check if this should
-        % be included at all
     else
         al_drawCross(taskParam)
     end
@@ -181,9 +219,12 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.cannonMissAnimation + taskParam.timingParam.outcomeLength; % hier schauen, dass outcomeLength angepasst
+    timestamp = timestamp + taskParam.timingParam.cannonMissAnimation;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
+    % Fixation-cross time stamp
+    taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
+        
     % Fixed inter-trial interval
     WaitSecs(taskParam.timingParam.fixedITI);
 
@@ -196,33 +237,46 @@ for i = 1:trial
     % Manage breaks
     taskParam = al_takeBreak(taskParam, taskData, i, trial);
 
+    if taskParam.gParam.printTiming
+        fprintf('Total trial duration: %.5f\n', GetSecs() - jitTest)
+    end
+
 end
 
 % Give feedback and save data
 % ----------------------------
 
-% Todo: update this and potentially get rid of condition
-% add _new to avoid overwriting
-if ~taskParam.unitTest
+if ~taskParam.unitTest && ~buttonPractice
 
         currPoints = sum(taskData.hit, 'omitnan');
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
         header = 'Zwischenstand';
         feedback = true;
         al_bigScreen(taskParam, header, txt, feedback);
-
-    if ~isequal(condition,'practice')
         
         % Save data
         % ---------
 
-        % Todo: do we want to save practice?
         concentration = unique(taskData.concentration);
-        savename = sprintf('cannon_Sleep_g%d_d%d_conc%d_%s_MORPHEUS%s', taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.trialflow.push, taskParam.subject.ID);
+        block = unique(taskData.block);
+        if isequal(taskParam.gParam.taskType, 'sleep')
+            savename = sprintf('cannon_Sleep_%s_g%d_d%d_conc%d_%s_MORPHEUS%s', taskParam.trialflow.exp, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.trialflow.push, taskParam.subject.ID);
+        else
+            savename = sprintf('cannon_fMRI_%s_run%d_conc%d_%s', taskParam.trialflow.exp, block, concentration, taskParam.subject.ID);
+        end
+
+        % Ensure that files cannot be overwritten
+        checkString = dir([savename '*']);
+        fileNames = {checkString.name};
+        if  ~isempty(fileNames)
+            savename = [savename '_new'];
+        end
+
+        % Save data as struct
+        taskData = saveobj(taskData);
         save(savename, 'taskData')
 
         % Wait until keys released
         KbReleaseWait();
-    end
 end
 end

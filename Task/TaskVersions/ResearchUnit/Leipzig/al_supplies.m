@@ -51,7 +51,7 @@ xyThres = [xThres yThres]';
 dotPredDist = al_diff(spread_wide, taskData.pred(currTrial))'; 
 
 % Determine which items will be caught using confetti function
-[whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, taskData.allASS(currTrial));
+[whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, taskData.allShieldSize(currTrial));
 
 % Store caught supplies is separate matrix for illustration below
 xyThresCatch = xyThres;
@@ -89,7 +89,7 @@ for i = 1:nFrames
     % Display task elements
     al_drawCircle(taskParam)
     al_predictionSpot(taskParam)
-    al_shield(taskParam, taskData.allASS(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial))
+    al_shield(taskParam, taskData.allShieldSize(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial))
     al_showDoctor(taskParam, taskData.pred(currTrial))
 
     % Display drugs etc.
@@ -118,7 +118,7 @@ for i = 1:nFrames
     end
     
     % Compute which items should stick to the shield when caught
-    stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & abs(dotPredDist) <= taskData.allASS(currTrial)/2;
+    stopCrit = abs(round(xyExp)) > abs(round(xyThres)) & abs(dotPredDist) <= taskData.allShieldSize(currTrial)/2;
     
     % Update item position
     xyExp(1,stopCrit(1,:)==0) = xyExp(1,stopCrit(1,:)==0) + xExpSteps(i,stopCrit(1,:)==0);

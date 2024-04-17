@@ -1,4 +1,4 @@
-function [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey, keyCode)
+function [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(taskParam, taskData, trial, startTimestamp, breakKey, keyCode, disableResponseThreshold)
 % AL_CONTROLPREDSPOTKEYBOARD This function manages the interaction between
 % participants and task if the keyboard is used.
 %
@@ -9,6 +9,8 @@ function [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(
 %       startTimestamp: Onset of prediction phase for computing RTs
 %       breakKey: Key code to lock prediction
 %       keyCode: Array of current key press
+%       disableResponseThreshold: Optionally activate response time
+%                                 limit (if additionally specified in trialflow)
 %
 %   Ouptut
 %       breakLoop: Index response loop should be terminated
@@ -16,6 +18,12 @@ function [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(
 %       taskData: Task-data-object instance
 %       keyCode: Array of current key press
 
+% Check for optional response-threshold input:
+% By default, threshold not active, independent of trialflow
+% That way, instructions are without time limit
+if ~exist('disableResponseThreshold', 'var') || isempty(disableResponseThreshold)
+    disableResponseThreshold = true;
+end
 
 % Initialize variable indicating if response loop is terminated or not
 breakLoop = false;
@@ -23,7 +31,7 @@ breakLoop = false;
 % For unit test: simulate keyIsDown, keyCode, and record RT
 if ~taskParam.unitTest
 
-    if taskParam.gParam.scanner || taskParam.gParam.scannerDummy
+    if taskParam.gParam.scanner
         
         % MD scanner settings
         % 50 = left key pressed and 54 = released
@@ -96,7 +104,7 @@ end
 % is pressed
 
 % This is for behavioral cases
-if ~taskParam.gParam.scanner && ~taskParam.gParam.scannerDummy
+if ~taskParam.gParam.scanner
 
     if keyIsDown && ~breakLoop
 
@@ -167,4 +175,15 @@ else
         end
     end
 end
+
+% Third case: Response threshold reached (only if activated)
+if disableResponseThreshold == false && taskParam.gParam.useResponseThreshold
+
+timeFromOnset = GetSecs() - startTimestamp;
+
+    if timeFromOnset >= taskParam.gParam.responseThreshold
+        breakLoop = true;
+    end
+end
+
 end

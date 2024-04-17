@@ -8,6 +8,12 @@ classdef al_trialflow
     
     properties
         
+        % Task condition
+        condition
+
+        % Experiment vs. practice session
+        exp
+
         % Cannonball animation
         shot
 
@@ -50,6 +56,9 @@ classdef al_trialflow
         % Shield variable vs. fixed
         shield
 
+        % Style (full, reduced, lines)
+        shieldAppearance
+
         % Input device
         input
 
@@ -58,36 +67,43 @@ classdef al_trialflow
 
          % Noise conditions (stable vs. changepoints)
         variability
+
+        % Color type (colorful vs. isoluminant)
+        colors
         
     end
     
     methods
         
-        function trialflowobj = al_trialflow()
+        function self = al_trialflow()
             %AL_TRIALFLOW This function creates a trialflow object
             % of classs al_trialflow
             %
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.
             
-            trialflowobj.shot = 'animate cannonball';
-            trialflowobj.confetti = 'show confetti cloud';
-            trialflowobj.cannonball_start = 'cannon';
-            trialflowobj.cannon = 'show cannon';
-            trialflowobj.cannonType = 'standard';
-            trialflowobj.reward = 'standard';
-            trialflowobj.savedTickmark = 'no previous tickmark';
-            trialflowobj.currentTickmarks = 'show';
-            trialflowobj.background = 'picture';
-            trialflowobj.shotAndShield = 'simultaneously';
-            trialflowobj.push = 'noPush';
-            trialflowobj.cannonPosition = 'inside';
-            trialflowobj.shieldType = 'contant';
-            trialflowobj.shield = 'fixed';
-            trialflowobj.input = 'mouse';
-            trialflowobj.distMean = 'fixed';
-            trialflowobj.variability = 'stable';
-            trialflowobj.currentTickmarks = 'standard';
+            self.condition = 'main';
+            self.exp = 'exp';
+            self.shot = 'animate cannonball';
+            self.confetti = 'show confetti cloud';
+            self.cannonball_start = 'cannon';
+            self.cannon = 'show cannon';
+            self.cannonType = 'standard';
+            self.reward = 'standard';
+            self.savedTickmark = 'no previous tickmark';
+            self.currentTickmarks = 'show';
+            self.background = 'picture';
+            self.shotAndShield = 'simultaneously';
+            self.push = 'noPush';
+            self.cannonPosition = 'inside';
+            self.shieldType = 'contant';
+            self.shield = 'fixed';
+            self.shieldAppearance = 'full';
+            self.input = 'mouse';
+            self.distMean = 'fixed';
+            self.variability = 'stable';
+            self.currentTickmarks = 'standard';
+            self.colors = 'colorful';
         end
     end
     

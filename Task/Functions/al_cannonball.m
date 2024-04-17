@@ -13,7 +13,7 @@ function al_cannonball(taskParam, taskData, lineAndBack, trial, timestamp)
 
 
 % Number of times that cannonball is printed while flying from cannon to aim
-nFrames = 30;
+nFrames = taskParam.cannon.nFrames;
 
 % Outcome coordinates
 xOut = ((taskParam.circle.rotationRad-5) * sind(taskData.outcome(trial)));
@@ -86,7 +86,7 @@ for i = 1:nFrames
     end
 
     if isequal(taskParam.trialflow.shot, 'animate cannonball') && isequal(taskParam.trialflow.shotAndShield, 'simultaneously')
-        al_shield(taskParam, taskData.allASS(trial), taskData.pred(trial), taskData.shieldType(trial))
+        al_shield(taskParam, taskData.allShieldSize(trial), taskData.pred(trial), taskData.shieldType(trial))
     else
         al_predictionSpot(taskParam)
     end
