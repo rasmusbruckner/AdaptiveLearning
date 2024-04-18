@@ -1,11 +1,10 @@
-function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal, day)
+function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal)
 %RUNCOMMONCONFETTIVERSION This function runs the common confetti version
 %  of the cannon task
 %
 %   Input
 %       unitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
-%       day: Current tes day (only allowed when running unit test)
 %
 %   Output
 %       dataLowNoise: Task-data object low-noise condition
@@ -25,6 +24,8 @@ end
 
 KbName('UnifyKeyNames')
 
+%% todo: default argument if function is used directly
+
 % Check optional input related to unit test
 % -----------------------------------------
 
@@ -36,13 +37,6 @@ elseif exist('cBal', 'var') && unitTest
     end
 end
 
-if exist('day', 'var') && ~unitTest
-    error('No unit test: day cannot be used');
-elseif exist('cBal', 'var') && unitTest
-    if ~ischar(day)
-        error('day must be char');
-    end
-end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
@@ -323,7 +317,6 @@ group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
 if ~unitTest
     cBal = '1'; % 1/2/3/4
-    day = '1'; % 1/2
 end
 
 % If no user input requested
@@ -335,19 +328,18 @@ if gParam.askSubjInfo == false || unitTest
     subject.gender = gender;
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
-    subject.testDay = str2double(day);
     subject.date = date;
 
     % If user input requested
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, gender, group, cBal, day};
+    defaultanswer = {ID, age, gender, group, cBal};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -360,16 +352,14 @@ else
     subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
-    subject.testDay = str2double(subjInfo{6});
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*d%s*%s*', num2str(subject.testDay), num2str(subject.ID)));
+    checkString = dir(sprintf('*%s*', num2str(subject.ID)));
     subject.checkID(checkString, 5);
     subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(),
-    subject.checkTestDay();
 end
 
 % ------------------

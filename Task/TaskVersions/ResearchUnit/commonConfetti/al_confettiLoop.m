@@ -387,10 +387,10 @@ if ~taskParam.unitTest
         savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
     elseif isequal(taskParam.gParam.saveName, 'asymmetric')
         concentration = unique(taskData.concentration);
-        savename = sprintf('confetti_asymrew_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+        savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
     else
         concentration = unique(taskData.concentration);
-        savename = sprintf('commonConfetti_%s_g%d_d%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, taskParam.subject.testDay, concentration, taskParam.subject.ID);
+        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
     end
 
     % Ensure that files cannot be overwritten
