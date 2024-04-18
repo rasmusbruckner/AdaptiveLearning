@@ -1,8 +1,9 @@
-function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal)
+function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTest, cBal)
 %RUNCOMMONCONFETTIVERSION This function runs the common confetti version
 %  of the cannon task
 %
 %   Input
+%       config: Structure with local configuration parameters
 %       unitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
 %
@@ -17,14 +18,37 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(unitTest, cBal
 %   Last updated
 %       04/24
 
+
+KbName('UnifyKeyNames')
+
+% Check if config structure is provided
+if ~exist('config', 'var') || isempty(config)
+    config = struct();
+
+    config.trialsExp = 2;
+    config.practTrials = 2;
+    config.runIntro = true;
+    config.sentenceLength = 75;
+    config.textSize = 35;
+    config.headerSize = 50;
+    config.screenSize = get(0,'MonitorPositions')*1.0;
+    config.s = 40;
+    config.enter = 37;
+    config.debug = false;
+    conig.showConfettiThreshold = false;
+    config.printTiming = true;
+    config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
+    config.scanner = false;
+    config.eyeTracker = false;
+    config.sendTrigger = false;
+end
+
+
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
     unitTest = false;
 end
 
-KbName('UnifyKeyNames')
-
-%% todo: default argument if function is used directly
 
 % Check optional input related to unit test
 % -----------------------------------------
@@ -51,10 +75,10 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 2;  % 200;  Hier bitte anpassen
+trialsExp = config.trialsExp;
 
 % Number of practice trials
-practTrials = 2; % 20;  Hier bitte anpassen
+practTrials = config.practTrials;
 
 % Risk parameter: Precision of confetti average
 concentration = [16, 8];
@@ -63,7 +87,7 @@ concentration = [16, 8];
 haz = .125;
 
 % Number of confetti particles 
-nParticles = 40; 100;%40;
+nParticles = 40;
 
 % Confetti standard deviations
 confettiStd = 6;
@@ -72,7 +96,7 @@ confettiStd = 6;
 confettiAnimationStd = 2; 
 
 % Choose if task instructions should be shown
-runIntro = true;
+runIntro = config.runIntro;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -87,49 +111,41 @@ useCatchTrials = true;
 catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 150; %75; % 100
+sentenceLength = config.sentenceLength;
 
 % Set text and header size
-textSize = 35;
-headerSize = 50;
+textSize = config.textSize;
+headerSize = config.headerSize;
 
 % Screen size
-screensize = [1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
-%screensize = [1    1    1400    1050]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
-%screensize = [1 1 1920 1080];
-screensize = get(0,'MonitorPositions')*1.0; % *1.5; %*1.25;
+% screensize = [1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions');
+screensize = config.screenSize; 
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
-rotationRad = 170; %140;%; 200;
+rotationRad = 170;
 
 % Radius of prediction spot
 predSpotRad = 10;
-
-
-outcSpotRad = 10;
 
 % Tickmark width
 tickWidth = 2;
 
 % Key codes
-s = 40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; % Hamburg: Hier bitte anpassen
-
-% Keyboard device number
-% kbDev = 19;
+s = config.s;
+enter = config.enter; 
 
 % Run task in debug mode with smaller window
-debug = false;
+debug = config.debug;
 
 % Show random confetti threshold for validation (don't use in experiment)
-showConfettiThreshold = false;
+showConfettiThreshold = conig.showConfettiThreshold;
 
 % Print timing for checking
-printTiming = true;
+printTiming = config.printTiming;
 
 % Hide cursor
 hidePtbCursor = true;
@@ -138,11 +154,11 @@ hidePtbCursor = true;
 rewMag = 0.1;
 
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+dataDirectory = config.dataDirectory; %'~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 %dataDirectory = '/home/userb/Documents/MATLAB/Ayelet/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
 
 % turn scanner on/off
-scanner = false; %false;
+scanner = config.scanner; %false; %false;
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
@@ -160,18 +176,18 @@ meg = false;
 uke = false;
 
 % Doing eye-tracking?
-eyeTracker = false;
+eyeTracker = config.eyeTracker; % false;
 
 % EEG
-sendTrigger = false;
+sendTrigger = config.sendTrigger; %false;
 
 % ID for UKE joystick
-ID = 1;
+%ID = 1;
 %joy = vrjoystick(ID);
 joy = nan;
 
-
-automaticBackgroundRGB = true;
+%% to do add option to make sure default is used finally
+% automaticBackgroundRGB = true;
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -402,7 +418,7 @@ ListenChar(2);
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
-circle.outcSize = outcSpotRad;
+% circle.outcSize = outcSpotRad;
 circle.tickWidth = tickWidth;
 circle.circleWidth = circleWidth;
 circle = circle.compute_circle_props();
