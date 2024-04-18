@@ -35,6 +35,7 @@ if ~exist('config', 'var') || isempty(config)
     config.textSize = 35;
     config.headerSize = 50;
     config.screenSize = get(0,'MonitorPositions')*1.0;
+    config.screenNumber = 1;
     config.s = 40;
     config.enter = 37;
     config.debug = false;
@@ -83,9 +84,11 @@ trialsExp = config.trialsExp; % number of experimental trials
 practTrials = config.practTrials; % number of practice trials
 runIntro = config.runIntro; % task instructions
 sentenceLength = config.sentenceLength; % sentence length instructions
-textSize = config.textSize; % texthsize
+textSize = config.textSize; % textsize
+vSpacing = config.vSpacing; % space between text lines
 headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
+screenNumber = config.screenNumber; % screen number 
 s = config.s; % s key
 enter = config.enter; % enter key
 debug = config.debug; % debug mode
@@ -203,10 +206,7 @@ gParam.sendTrigger = sendTrigger;
 gParam.scanner = scanner;
 gParam.uke = uke;
 gParam.joy = joy;
-gParam.screenNumber = 1;  
-%gParam.shieldMu = 1;
-%gParam.shieldMin = 1;
-%gParam.shieldMax = 100;
+gParam.screenNumber = screenNumber;  
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -297,6 +297,7 @@ strings.txtPressEnter = 'Weiter mit Enter';
 strings.sentenceLength = sentenceLength;
 strings.textSize = textSize;
 strings.headerSize = headerSize;
+strings.vSpacing = vSpacing;
 
 % ----------
 % User Input

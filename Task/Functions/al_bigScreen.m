@@ -39,11 +39,11 @@ while 1
     % Print main text
     if feedback == true
         % When feedback is presented, print in screen center...
-        DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', [255 255 255], sentenceLength, [], [], 1);
+        DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', [255 255 255], sentenceLength, [], [], taskParam.strings.vSpacing);
     else
         % ...otherwise at defined location
         DrawFormattedText(taskParam.display.window.onScreen, txt, taskParam.display.screensize(4)*0.2, taskParam.display.screensize(4)*0.2,...
-            [255 255 255], sentenceLength, [], [], 1);
+            [255 255 255], sentenceLength, [], [], taskParam.strings.vSpacing);
     end
     
     % Print "Press Enter" to indicate how to continue with instructions

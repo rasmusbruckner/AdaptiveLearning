@@ -60,7 +60,7 @@ while 1
     end
 
     % Show text
-    DrawFormattedText(taskParam.display.window.onScreen, txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);
+    DrawFormattedText(taskParam.display.window.onScreen, txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength, [], [], taskParam.strings.vSpacing);
     DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter,'center', taskParam.display.screensize(4)*0.9, [255 255 255]);
 
     % Tell PTB that everything has been drawn and flip screen

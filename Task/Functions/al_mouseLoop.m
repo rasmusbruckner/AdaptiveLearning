@@ -34,7 +34,7 @@ while 1
         % Otherwise present text and background together
     else
         al_lineAndBack(taskParam)
-        DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength);
+        DrawFormattedText(taskParam.display.window.onScreen,txt, taskParam.display.screensize(3)*0.1, taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength, [], [], taskParam.strings.vSpacing);
     end
 
     % If break key equals enter button, ask subject to press enter to continue

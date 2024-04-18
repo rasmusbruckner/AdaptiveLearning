@@ -15,6 +15,7 @@ classdef al_strings
         textSize
         headerSize
         sentenceLength
+        vSpacing
         
     end
     
@@ -22,17 +23,18 @@ classdef al_strings
     % -----------------------------
     methods
         
-        function stringsobj = al_strings()
+        function self = al_strings()
             % AL_STRINGS This function creates a strings object
             % of classs al_strings
             %
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.
             
-            stringsobj.txtPressEnter = 'Press Enter to continue';
-            stringsobj.textSize = 30;
-            stringsobj.headerSize = 30;
-            stringsobj.sentenceLength = 85;
+            self.txtPressEnter = 'Press Enter to continue';
+            self.textSize = 30;
+            self.headerSize = 30;
+            self.sentenceLength = 85;
+            self.vSpacing = 1;
         end
     end
 end
