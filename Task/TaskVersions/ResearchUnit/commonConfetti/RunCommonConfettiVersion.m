@@ -23,8 +23,11 @@ KbName('UnifyKeyNames')
 
 % Check if config structure is provided
 if ~exist('config', 'var') || isempty(config)
+    
+    % Create structure
     config = struct();
 
+    % Default parameters
     config.trialsExp = 2;
     config.practTrials = 2;
     config.runIntro = true;
@@ -35,7 +38,7 @@ if ~exist('config', 'var') || isempty(config)
     config.s = 40;
     config.enter = 37;
     config.debug = false;
-    conig.showConfettiThreshold = false;
+    config.showConfettiThreshold = false;
     config.printTiming = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
     config.scanner = false;
@@ -74,11 +77,27 @@ end
 % Set relevant task parameters
 % ----------------------------
 
-% Set number of trials for experiment
-trialsExp = config.trialsExp;
+% Config parameters
+% -----------------
+trialsExp = config.trialsExp; % number of experimental trials
+practTrials = config.practTrials; % number of practice trials
+runIntro = config.runIntro; % task instructions
+sentenceLength = config.sentenceLength; % sentence length instructions
+textSize = config.textSize; % texthsize
+headerSize = config.headerSize; % header size
+screensize = config.screenSize; % screen size
+s = config.s; % s key
+enter = config.enter; % enter key
+debug = config.debug; % debug mode
+showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
+printTiming = config.printTiming; % print timing for checking
+dataDirectory = config.dataDirectory;
+eyeTracker = config.eyeTracker; % doing eye-tracking?
+sendTrigger = config.sendTrigger; % EEG
+scanner = config.scanner; % turn scanner on/off
 
-% Number of practice trials
-practTrials = config.practTrials;
+% More general paramters
+% ----------------------
 
 % Risk parameter: Precision of confetti average
 concentration = [16, 8];
@@ -95,9 +114,6 @@ confettiStd = 6;
 % Standard deviation during animation
 confettiAnimationStd = 2; 
 
-% Choose if task instructions should be shown
-runIntro = config.runIntro;
-
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
@@ -109,17 +125,6 @@ useCatchTrials = true;
 
 % Catch-trial probability
 catchTrialProb = 0.1;
-
-% Set sentence length
-sentenceLength = config.sentenceLength;
-
-% Set text and header size
-textSize = config.textSize;
-headerSize = config.headerSize;
-
-% Screen size
-% screensize = [1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions');
-screensize = config.screenSize; 
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -134,31 +139,11 @@ predSpotRad = 10;
 % Tickmark width
 tickWidth = 2;
 
-% Key codes
-s = config.s;
-enter = config.enter; 
-
-% Run task in debug mode with smaller window
-debug = config.debug;
-
-% Show random confetti threshold for validation (don't use in experiment)
-showConfettiThreshold = conig.showConfettiThreshold;
-
-% Print timing for checking
-printTiming = config.printTiming;
-
 % Hide cursor
 hidePtbCursor = true;
 
 % Reward magnitude
 rewMag = 0.1;
-
-% Specify data directory
-dataDirectory = config.dataDirectory; %'~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
-%dataDirectory = '/home/userb/Documents/MATLAB/Ayelet/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
-
-% turn scanner on/off
-scanner = config.scanner; %false; %false;
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
@@ -174,12 +159,6 @@ meg = false;
 
 % Running task at UKE (will be harmonized with scanner)
 uke = false;
-
-% Doing eye-tracking?
-eyeTracker = config.eyeTracker; % false;
-
-% EEG
-sendTrigger = config.sendTrigger; %false;
 
 % ID for UKE joystick
 %ID = 1;
