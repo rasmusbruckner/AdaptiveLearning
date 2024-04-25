@@ -152,6 +152,16 @@ socialFeedbackRect = [0 0 562 762]/4;
 confettiEndMean = 0; %50; % 150% this is added to the circle radius
 confettiEndStd = 10;%10; % 20 % this is the spread around the average end point
 
+
+if sendTrigger
+    [session, status] = IOPort( 'OpenSerialPort', 'COM3' );
+    IOPort( 'Write', session, uint8(0), 0);
+    
+    IOPort( 'Write', session, uint8(1), 0);
+    WaitSecs(0.001)
+    IOPort( 'Write', session, uint8(0), 0);
+end
+
 % ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
