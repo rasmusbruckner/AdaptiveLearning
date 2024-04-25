@@ -120,7 +120,7 @@ taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
 
 % Generate outcomes using confettiData function
-taskDataMonetaryPunishmen = taskData.al_confettiData(taskParam);
+taskDataMonetaryPunishment = taskData.al_confettiData(taskParam);
 
 % 3) Social reward
 
@@ -162,7 +162,7 @@ if cBal == 1
 
     % Run task
     al_indicateSocial(taskParam)
-    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskDataMonetaryPunishmen, trial);
+    dataMonetaryPunishment = al_confettiEEGLoop(taskParam, 'main', taskDataMonetaryPunishment, trial);
 
     % 3) Social reward
     % ----------------

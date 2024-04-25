@@ -69,7 +69,7 @@ practTrials = 2; % 20;  Hier bitte anpassen
 concentration = 12;
 
 % Hazard rate determining a priori changepoint probability
-haz = .125;
+haz = 0.2; %.125;
 
 % Number of confetti particles 
 nParticles = 40;
@@ -96,7 +96,7 @@ useCatchTrials = true;
 catchTrialProb = 0.1;
 
 % Set sentence length
-sentenceLength = 80; %100;
+sentenceLength = 75; %100;
 
 % Set text and header size
 textSize = 35;
@@ -119,8 +119,8 @@ predSpotRad = 10;
 tickWidth = 2;
 
 % Key codes
-s = 40; %83; %40; %%83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; %13; %37; % Hamburg: 13
+s = 83; %40; %83; %40; %%83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 13; %37; %13; %37; % Hamburg: 13
 
 % Run task in debug mode with smaller window
 debug = false;
@@ -138,11 +138,13 @@ hidePtbCursor = true;
 rewMag = 0.2;
 
 % Send EEG trigge in this case
-sendTrigger = false;  % In Hamburg bitte auf true setzten  
+sendTrigger = true;  % In Hamburg bitte auf true setzten  
+
+sampleRate = 500; 
 
 % Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
-%dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG_March\AdaptiveLearning\DataDirectory';  % Hier bitte anpassen
+%dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG_March\AdaptiveLearning\DataDirectory';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
@@ -155,11 +157,6 @@ confettiEndStd = 10;%10; % 20 % this is the spread around the average end point
 
 if sendTrigger
     [session, status] = IOPort( 'OpenSerialPort', 'COM3' );
-    IOPort( 'Write', session, uint8(0), 0);
-    
-    IOPort( 'Write', session, uint8(1), 0);
-    WaitSecs(0.001)
-    IOPort( 'Write', session, uint8(0), 0);
 end
 
 % ---------------------------------------------------
