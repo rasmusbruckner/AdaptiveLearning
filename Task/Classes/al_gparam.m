@@ -203,8 +203,8 @@ classdef al_gparam
             self.showTickmark = nan; 
             self.useCatchTrials = nan; 
             self.catchTrialProb = nan; 
-            self.screenNumber = 1; %1 2
-            self.language = 2; 
+            self.screenNumber = 1;
+            self.language = 'German'; 
             self.debug = nan;
             self.showConfettiThreshold = false;
             self.printTiming = false;

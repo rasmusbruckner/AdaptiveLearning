@@ -282,9 +282,8 @@ taskData = taskData.al_confettiData(taskParam);
 taskParam.trialflow.confetti = 'show confetti cloud';
 taskParam.trialflow.shot = 'static';
 taskParam.trialflow.shieldAppearance = 'reduced';
+taskParam.trialflow.exp = 'shieldPractice1';
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
-
-%al_indicateNoise(taskParam, 'lowNoise')
 al_confettiLoop(taskParam, condition, taskData, 2);
 
 % 11. Reduce shield -- no. 2
@@ -317,6 +316,7 @@ taskData = taskData.al_confettiData(taskParam);
 taskParam.trialflow.confetti = 'show confetti cloud';
 taskParam.trialflow.shot = 'static';
 taskParam.trialflow.shieldAppearance = 'lines';
+taskParam.trialflow.exp = 'shieldPractice2';
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
 al_confettiLoop(taskParam, condition, taskData, 2);
 
@@ -359,7 +359,7 @@ if cBal == 1
     % Run task
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
     taskParam.trialflow.confetti = 'show confetti cloud';
-    al_indicateNoise(taskParam, 'lowNoise')
+    al_indicateNoise(taskParam, 'lowNoise', true)
     al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
 
     % ... high noise second
@@ -370,7 +370,7 @@ if cBal == 1
     taskData = taskData.taskData;
 
     % Run task
-    al_indicateNoise(taskParam, 'highNoise')
+    al_indicateNoise(taskParam, 'highNoise', true)
     al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
 
 elseif cBal == 2
@@ -385,7 +385,7 @@ elseif cBal == 2
     % Run task
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
     taskParam.trialflow.confetti = 'show confetti cloud';
-    al_indicateNoise(taskParam, 'highNoise')
+    al_indicateNoise(taskParam, 'highNoise', true)
     al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
 
     % ... low noise second
@@ -396,7 +396,7 @@ elseif cBal == 2
     taskData = taskData.taskData;
 
     % Run task
-    al_indicateNoise(taskParam, 'lowNoise')
+    al_indicateNoise(taskParam, 'lowNoise', true)
     al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
 
 end

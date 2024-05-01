@@ -31,7 +31,8 @@ if ~exist('config', 'var') || isempty(config)
     config.trialsExp = 2;
     config.practTrials = 2;
     config.runIntro = true; %false;
-    config.sentenceLength = 75;
+    config.language = 'German';
+    config.sentenceLength = 120;
     config.vSpacing = 1;
     config.textSize = 35;
     config.headerSize = 50;
@@ -88,6 +89,7 @@ end
 trialsExp = config.trialsExp; % number of experimental trials
 practTrials = config.practTrials; % number of practice trials
 runIntro = config.runIntro; % task instructions
+language = config.language; % language
 sentenceLength = config.sentenceLength; % sentence length instructions
 textSize = config.textSize; % textsize
 vSpacing = config.vSpacing; % space between text lines
@@ -222,6 +224,7 @@ gParam.uke = uke;
 gParam.joy = joy;
 gParam.screenNumber = screenNumber;  
 gParam.customInstructions = customInstructions;
+gParam.language = language;
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -247,7 +250,6 @@ trialflow.input = 'mouse';
 %trialflow.colors = 'dark';
 %trialflow.colors = 'blackWhite';
 trialflow.colors = 'colorful';
-
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
@@ -308,7 +310,11 @@ timingParam.ref = GetSecs();
 % ----------------------------------------------
 
 strings = al_strings();
-strings.txtPressEnter = 'Weiter mit Enter';
+if isequal(language, 'German')
+    strings.txtPressEnter = 'Weiter mit Enter';
+else
+    strings.txtPressEnter = 'Press Enter to continue';
+end
 strings.sentenceLength = sentenceLength;
 strings.textSize = textSize;
 strings.headerSize = headerSize;
@@ -418,7 +424,6 @@ circle.tickWidth = tickWidth;
 circle.circleWidth = circleWidth;
 circle = circle.compute_circle_props();
 
-
 % ----------------------------------------------
 % Create object instance with trigger parameters
 % ----------------------------------------------
@@ -468,8 +473,15 @@ totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 % End of task
 % -----------
 
-header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
+if isequal(language, 'German')
+    header = 'Ende des Versuchs!';
+    txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
+elseif isequal(language, 'English')
+    header = 'End of the Experiment!';
+    txt = sprintf('Thank you for taking part!\n\n\nYou have won a total of %i points!', totWin);
+else
+    error('language parameter unknown')
+end
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
 

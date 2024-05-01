@@ -372,12 +372,25 @@ if ~taskParam.unitTest
         % labs have more recent Matlab versions, potentially change to:
         % currPoints = sum(taskData.hit, 'omitnan');
 
-        txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
+        if isequal(taskParam.gParam.language, 'German')
+            txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
+        elseif isequal(taskParam.gParam.language, 'English')
+            txt = sprintf('You have earned %.0f points in this block.', currPoints);
+        else
+            error('language parameter unknown')
+        end
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
     end
 
-    header = 'Zwischenstand';
+    if isequal(taskParam.gParam.language, 'German')
+        header = 'Zwischenstand';
+    elseif isequal(taskParam.gParam.language, 'English')
+        header = 'Your Score';
+    else
+        error('language parameter unknown')
+    end
+    
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 

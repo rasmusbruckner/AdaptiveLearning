@@ -13,7 +13,8 @@ config = struct();
 config.trialsExp = 2;
 config.practTrials = 2;
 config.runIntro = true;
-config.sentenceLength = 75;
+config.language = 'German'; %'English'; %
+config.sentenceLength = 120;
 config.textSize = 35;
 config.vSpacing = 1;
 config.headerSize = 50;
@@ -29,7 +30,7 @@ config.scanner = false;
 config.eyeTracker = false;
 config.sendTrigger = false;
 config.customInstructions = true;
-config.instructionText = al_commonConfettiInstructionsDefaultText();
+config.instructionText = al_commonConfettiInstructionsDefaultText(config.language);
 
 % Run task with config input
 RunCommonConfettiVersion(config);

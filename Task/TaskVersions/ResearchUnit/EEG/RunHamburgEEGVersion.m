@@ -119,8 +119,8 @@ predSpotRad = 10;
 tickWidth = 2;
 
 % Key codes
-s = 83; %40; %83; %40; %%83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 13; %37; %13; %37; % Hamburg: 13
+s = 40; %83; %40; %%83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
+enter = 37; %13; %37; % Hamburg: 13
 
 % Run task in debug mode with smaller window
 debug = false;
@@ -138,13 +138,13 @@ hidePtbCursor = true;
 rewMag = 0.2;
 
 % Send EEG trigge in this case
-sendTrigger = true;  % In Hamburg bitte auf true setzten  
+sendTrigger = false; %true;  % In Hamburg bitte auf true setzten  
 
 sampleRate = 500; 
 
 % Specify data directory
-%dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
-dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG_March\AdaptiveLearning\DataDirectory';  % Hier bitte anpassen
+dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
+%dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG_March\AdaptiveLearning\DataDirectory';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
