@@ -161,7 +161,6 @@ al_bigScreen(taskParam, header, txt, feedback);
 condition = 'practice';
 taskData = load('visCannonPracticeHamburg.mat');
 taskData = taskData.taskData;
-%taskParam.condition = condition;
 taskParam.trialflow.exp = 'practVis';
 taskParam.trialflow.shieldAppearance = 'full';
 
@@ -189,11 +188,71 @@ while 1
 
 end
 
-% 10. Introduce hidden confetti cannon
-% ------------------------------------
+
+% 10. Reduce shield -- no. 1
+% --------------------------
 
 % Display instructions
 header = 'Zweiter Übungsdurchgang';
+txt = ['Ab jetzt sehen Sie das Spiel ohne Animationen und mit weniger bunten Farben. In dieser Übung wird Ihr Eimer in der Mitte durchsichtig sein. ' ...
+    'Wie in der vorherigen Übung zählt es als Treffer, wenn mindestens die Hälfte der Konfetti-Wolke im Eimer gefangen wurde.\n\n'...
+    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
+    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie während eines Versuchs Augenbewegungen und blinzeln '...
+    'so gut es geht zu vermeiden.\n\nAm Ende eines Versuchs dürfen Sie blinzeln. Während dieser Phase ist der Punkt in der Mitte hellgrau.'];
+feedback = false;
+al_bigScreen(taskParam, header, txt, feedback);
+
+% Task-data-objects instance
+taskParam.trialflow.colors = 'dark';
+taskData = al_taskDataMain(5, taskParam.gParam.taskType);
+
+% Generate outcomes using cannon-data function
+taskData = taskData.al_cannonData(taskParam, 0.0, 12, taskParam.gParam.safe);
+
+% Generate outcomes using confetti-data function
+taskData = taskData.al_confettiData(taskParam);
+
+% Run task
+taskParam.trialflow.confetti = 'show confetti cloud';
+taskParam.trialflow.shot = 'static';
+taskParam.trialflow.shieldAppearance = 'reduced';
+taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
+
+%al_indicateNoise(taskParam, 'lowNoise')
+al_confettiLoop(taskParam, condition, taskData, 2);
+
+% 11. Reduce shield -- no. 2
+% --------------------------
+
+% Display instructions
+header = 'Dritter Übungsdurchgang';
+txt = ['Im nächsten Übungsdurchgang wird Ihr Eimer nur noch durch zwei Striche dargestellt. Achten Sie bitte weiterhin besonders darauf, '...
+    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und blinzeln '...
+    'so gut es geht zu vermeiden. Am Ende eines Versuchs dürfen Sie blinzeln (angezeigt durch den hellgrauen Punkt in der Mitte).'];
+feedback = false;
+al_bigScreen(taskParam, header, txt, feedback);
+
+% TaskData-object instance
+taskData = al_taskDataMain(5, taskParam.gParam.taskType);
+
+% Generate outcomes using cannon-data function
+taskData = taskData.al_cannonData(taskParam, 0.0, 12, taskParam.gParam.safe);
+
+% Generate outcomes using confetti-data function
+taskData = taskData.al_confettiData(taskParam);
+
+% Run task
+taskParam.trialflow.confetti = 'show confetti cloud';
+taskParam.trialflow.shot = 'static';
+taskParam.trialflow.shieldAppearance = 'lines';
+taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
+al_confettiLoop(taskParam, condition, taskData, 2);
+
+% 11. Introduce hidden confetti cannon
+% ------------------------------------
+
+% Display instructions
+header = 'Vierter Übungsdurchgang';
 txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
     'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
     'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
@@ -201,17 +260,6 @@ txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. 
     'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
     'als auch einer eher ungenauen Konfetti-Kanone zu tun haben. Beachten Sie, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können.'];
-feedback = false;
-al_bigScreen(taskParam, header, txt, feedback);
-
-
-% Display instructions
-header = 'Zweiter Übungsdurchgang';
-txt = ['Außerdem sehen Sie das Spiel ab jetzt ohne Animationen und mit weniger bunten Farben. Ihr Eimer wird jetzt durch zwei Striche ' ...
-    'dargestellt. Wie in der vorherigen Übung zählt es als Treffer, wenn mindestens die Hälfte der Konfetti-Wolke im Eimer gefangen wurde.\n\n'...
-    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
-    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und Blinzeln '...
-    'so gut es geht zu vermeiden.'];
 feedback = false;
 al_bigScreen(taskParam, header, txt, feedback);
 
@@ -275,9 +323,7 @@ elseif cBal == 2
 
 end
 
-
-
-% 11. Instructions experimental blocks
+% 12. Instructions experimental blocks
 % ------------------------------------
 
 header = 'Jetzt kommen wir zum Experiment';
@@ -286,7 +332,7 @@ txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst 
     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. Beachten Sie, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen und können Ihre Leistung '...
     'verbessern, indem Sie den Eimer genau auf das Ziel steuern.\n\n'...
-    'Sie werden wie in der Übung zwei Blöcke spielen. In jedem Block gibt es 3 kurze Pausen.\n\nViel Erfolg!'];
+    'Achten Sie bitte auf Ihre Augenbewegungen und vermeiden Sie es während eines Versuchs zu blinzeln. Wenn der Punkt in der Mitte am Ende eines Versuchs weiß ist, dürfen Sie blinzeln.\n\nViel Erfolg!'];
 
 feedback = false;
 al_bigScreen(taskParam, header, txtStartTask, feedback);

@@ -30,8 +30,9 @@ if ~exist('config', 'var') || isempty(config)
     % Default parameters
     config.trialsExp = 2;
     config.practTrials = 2;
-    config.runIntro = true;
+    config.runIntro = true; %false;
     config.sentenceLength = 75;
+    config.vSpacing = 1;
     config.textSize = 35;
     config.headerSize = 50;
     config.screenSize = get(0,'MonitorPositions')*1.0;

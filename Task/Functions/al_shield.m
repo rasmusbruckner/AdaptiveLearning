@@ -18,15 +18,19 @@ elseif color == 0
     shieldColor = taskParam.colors.neutralColor;
 end
 
-% Radius and size
-rotRad = taskParam.circle.rotationRad + taskParam.circle.shieldOffset;
+% Size
 OutcSpot = pred - (allASS/2);
 zero = taskParam.display.zero;
 
 % Generate shield
 if isequal(taskParam.trialflow.shieldAppearance, 'full')
+    rotRad = taskParam.circle.rotationRad + taskParam.circle.shieldOffset;
     Screen('FrameArc', taskParam.display.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, taskParam.circle.shieldWidth, [], [])
 elseif isequal(taskParam.trialflow.shieldAppearance, 'reduced')
+    rotRad = taskParam.circle.rotationRad - 25;
+    Screen('FrameArc', taskParam.display.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, 4, [], [])
+    rotRad = taskParam.circle.rotationRad + 22;
+    Screen('FrameArc', taskParam.display.window.onScreen, shieldColor, [zero(1) - rotRad, zero(2) - rotRad, zero(1) + rotRad, zero(2) + rotRad], OutcSpot, allASS, 4, [], [])
     al_tickMark(taskParam, pred-allASS/2, 'shield');
     al_tickMark(taskParam, pred+allASS/2, 'shield');
 elseif isequal(taskParam.trialflow.shieldAppearance, 'lines')

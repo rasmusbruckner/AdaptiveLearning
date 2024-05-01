@@ -6,7 +6,7 @@ function al_indicateCondition(taskParam, txt)
 %       txt: Presented text
 %
 %   Output
-%       ~
+%       None
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, 50);

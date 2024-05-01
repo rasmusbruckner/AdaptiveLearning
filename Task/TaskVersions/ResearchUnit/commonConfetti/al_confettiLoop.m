@@ -311,7 +311,7 @@ for i = 1:trial
     if isequal(taskParam.trialflow.shot, 'static')
 
         % Tell PTB that everything has been drawn and flip screen
-        fixationPhase(taskParam)
+        fixationPhase(taskParam, [222,222,222])
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
         timestamp = timestamp + taskParam.timingParam.shieldLength;
