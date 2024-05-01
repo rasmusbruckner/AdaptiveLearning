@@ -35,6 +35,7 @@ if ~exist('config', 'var') || isempty(config)
     config.vSpacing = 1;
     config.textSize = 35;
     config.headerSize = 50;
+    config.vSpacing = 1;
     config.screenSize = get(0,'MonitorPositions')*1.0;
     config.screenNumber = 1;
     config.s = 40;
@@ -46,6 +47,7 @@ if ~exist('config', 'var') || isempty(config)
     config.scanner = false;
     config.eyeTracker = false;
     config.sendTrigger = false;
+    config.screenNumber = 1;
 end
 
 
@@ -171,6 +173,13 @@ joy = nan;
 
 %% to do add option to make sure default is used finally
 % automaticBackgroundRGB = true;
+
+sampleRate = 500; 
+
+
+if sendTrigger
+    [session, status] = IOPort( 'OpenSerialPort', 'COM3' );
+end
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -405,6 +414,16 @@ circle.circleWidth = circleWidth;
 circle = circle.compute_circle_props();
 
 
+% ----------------------------------------------
+% Create object instance with trigger parameters
+% ----------------------------------------------
+
+triggers = al_triggers();
+if sendTrigger
+    triggers.sampleRate = sampleRate;
+    triggers.session = session;
+end
+
 % ---------------------------------------
 % Put all object instances in task object
 % ---------------------------------------
@@ -424,6 +443,7 @@ taskParam.timingParam = timingParam;
 taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
+taskParam.triggers = triggers;
 
 colors = colors.computeBackgroundColor(taskParam);
 taskParam.colors = colors;

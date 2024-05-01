@@ -9,7 +9,7 @@ function al_indicateCondition(taskParam, txt)
 %       None
 
 % Set text size and font
-Screen('TextSize', taskParam.display.window.onScreen, 50);
+Screen('TextSize', taskParam.display.window.onScreen, 30);
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 
 while 1
