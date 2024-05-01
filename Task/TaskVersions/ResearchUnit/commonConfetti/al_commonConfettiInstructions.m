@@ -6,7 +6,7 @@ function al_commonConfettiInstructions(taskParam)
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       ~
+%       None
 
 % Extract cBal variable
 cBal = taskParam.subject.cBal;
@@ -25,7 +25,12 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 % 1. Present welcome message
 % --------------------------
 
-al_indicateCondition(taskParam, 'Herzlich Willkommen Zur Konfetti-Kanonen-Aufgabe!')
+if taskParam.gParam.customInstructions
+    txt = taskParam.instructionText.welcomeText;
+else
+    txt = 'Herzlich Willkommen Zur Konfetti-Kanonen-Aufgabe!';
+end
+al_indicateCondition(taskParam, txt)
 
 % Reset background to gray
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
@@ -55,17 +60,25 @@ for t = 1:nTrials
 end
 
 % Introduce cannon
+if taskParam.gParam.customInstructions
+    txt = taskParam.instructionText.introduceCannon;
+else
+    txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem rosafarbenen '...
+        'Punkt können Sie angeben, wo auf dem Kreis Sie Ihren Eimer platzieren möchten, um das Konfetti zu fangen. Sie können den Punkt mit der '...
+        'Maus steuern.'];
+end
 currTrial = 1;
-txt = ['Sie blicken von oben auf eine Konfetti-Kanone, die in der Mitte eines Kreises positioniert ist. Ihre Aufgabe ist es, das Konfetti mit einem Eimer zu fangen. Mit dem rosafarbenen '...
-    'Punkt können Sie angeben, wo auf dem Kreis Sie Ihren Eimer platzieren möchten, um das Konfetti zu fangen. Sie können den Punkt mit der '...
-    'Maus steuern.'];
 taskParam = al_introduceCannon(taskParam, taskData, currTrial, txt);
 
 % 3. Introduce confetti
 % ---------------------
 
+if taskParam.gParam.customInstructions
+    txt = taskParam.instructionText.introduceConfetti;
+else
+    txt = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Drücken Sie die linke Maustaste, damit die Konfetti-Kanone schießt.';
+end
 currTrial = 2; % update trial number
-txt = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Drücken Sie die linke Maustaste, damit die Konfetti-Kanone schießt.';
 [taskData, taskParam] = al_introduceConfetti(taskParam, taskData, currTrial, txt);
 
 % 4. Introduce prediction spot and ask participant to catch confetti
@@ -78,15 +91,26 @@ currTrial = 3; % update trial number
 % Repeat as long as subject misses confetti
 while 1
 
-    txt=['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Konfettiwolke. Der rosafarbene Strich zeigt Ihnen die '...
-        'Position Ihres letzten Eimers. Steuern Sie den rosa Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücken Sie die linke Maustaste.'];
-    %[taskData, taskParam, xyExp, dotCol, dotSize] = al_introduceSpot(taskParam, taskData, currTrial, txt);
+    if taskParam.gParam.customInstructions
+        txt = taskParam.instructionText.introduceSpot;
+    else
+        txt = ['Der schwarze Strich zeigt Ihnen die mittlere Position der letzten Konfettiwolke. Der rosafarbene Strich zeigt Ihnen die '...
+            'Position Ihres letzten Eimers. Steuern Sie den rosa Punkt jetzt bitte auf das Ziel der Konfetti-Kanone und drücken Sie die linke Maustaste.'];
+    end
+
     [taskData, taskParam, xyExp, dotSize] = al_introduceSpot(taskParam, taskData, currTrial, txt);
 
     % If it is a miss, repeat instruction
     if abs(taskData.predErr(currTrial)) >= taskParam.gParam.practiceTrialCriterionEstErr
-        header = 'Leider nicht gefangen!';
-        txt = 'Sie haben leider zu wenig Konfetti gefangen. Versuchen Sie es noch mal!';
+        
+        if taskParam.gParam.customInstructions
+            header = taskParam.instructionText.noCatchHeader;
+            txt = taskParam.instructionText.noCatch;
+        else
+            header = 'Leider nicht gefangen!';
+            txt = 'Sie haben leider zu wenig Konfetti gefangen. Versuchen Sie es noch mal!';
+        end
+        
         feedback = false; % indicate that this is the instruction mode
         al_bigScreen(taskParam, header, txt, feedback);
     else
@@ -97,8 +121,13 @@ end
 % 5. Introduce shield
 % -------------------
 
+if taskParam.gParam.customInstructions
+    txt = taskParam.instructionText.introduceShield;
+else
+    txt = 'Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.';
+end
+
 win = true; % color of shield when catch is rewarded
-txt = 'Wenn Sie mindestens die Hälfte des Konfettis im Eimer fangen, zählt es als Treffer und Sie erhalten einen Punkt.';
 taskData = al_introduceShield(taskParam, taskData, win, currTrial, txt, xyExp, taskData.dotCol(currTrial).rgb, dotSize);
 
 % 6. Ask participant to miss confetti
@@ -111,15 +140,26 @@ currTrial = 4;
 while 1
 
     % Introduce miss with bucket
-    txt = 'Versuchen Sie nun Ihren Eimer so zu positionieren, dass Sie das Konfetti verfehlen. Drücken Sie dann die linke Maustaste.';
+    if taskParam.gParam.customInstructions
+        txt = taskParam.instructionText.introduceMiss;
+    else
+        txt = 'Versuchen Sie nun Ihren Eimer so zu positionieren, dass Sie das Konfetti verfehlen. Drücken Sie dann die linke Maustaste.';
+    end
+
     [taskData, taskParam, xyExp, dotSize] = al_introduceShieldMiss(taskParam, taskData, currTrial, txt);
 
     % If it is a hit, repeat instruction
     if abs(taskData.predErr(currTrial)) <= taskParam.gParam.practiceTrialCriterionEstErr*2 % make sure that miss is really obvious
 
         WaitSecs(0.5)
-        header = 'Leider gefangen!';
-        txt = 'Sie haben zu viel Konfetti gefangen. Versuchen Sie bitte, das Konfetti zu verfehlen!';
+        if taskParam.gParam.customInstructions
+            header = taskParam.instructionText.accidentalCatchHeader;
+            txt = taskParam.instructionText.accidentalCatch;
+        else
+            header = 'Leider gefangen!';
+            txt = 'Sie haben zu viel Konfetti gefangen. Versuchen Sie bitte, das Konfetti zu verfehlen!';
+        end
+        
         feedback = false; % indicate that this is the instruction mode
         al_bigScreen(taskParam, header, txt, feedback);  % todo: code needs to be re-organized
     else
@@ -129,17 +169,27 @@ while 1
 end
 
 % 7. Confirm that confetti was missed
-% -------------------------------------
+% -----------------------------------
+% Introduce miss with bucket
+if taskParam.gParam.customInstructions
+    txt = taskParam.instructionText.introduceMissBucket;
+else
+    txt = 'In diesem Fall haben Sie das Konfetti verfehlt.';
+end
+
 win = true;
-txt = 'In diesem Fall haben Sie das Konfetti verfehlt.';
 al_confirmMiss(taskParam, taskData, win, currTrial, txt, xyExp, taskData.dotCol(currTrial).rgb, dotSize);
 
 % 8. Introduce practice blocks
 % ----------------------------
 
 % Display instructions
+if taskParam.gParam.customInstructions
+    txt = taskParam.instructionText.introducePracticeSession;
+else
+    txt = 'Im Folgenden durchlaufen Sie ein paar Übungsdurchgänge\nund im Anschluss zwei Durchgänge des Experiments.';
+end
 header = '';
-txt = 'Im Folgenden durchlaufen Sie zwei Übungsdurchgänge\nund im Anschluss zwei Durchgänge des Experiments.';
 feedback = true; % present text centrally
 al_bigScreen(taskParam, header, txt, feedback);
 
@@ -147,13 +197,19 @@ al_bigScreen(taskParam, header, txt, feedback);
 % -----------------------------------------------
 
 % Display instructions
-header = 'Erster Übungsdurchgang';
-txt=['Weil die Konfetti-Kanone schon sehr alt ist, sind die Schüsse ziemlich ungenau. Das heißt, auch wenn '...
-    'Sie genau auf das Ziel gehen, können Sie das Konfetti verfehlen. Die Ungenauigkeit ist zufällig, '...
-    'dennoch fangen Sie am meisten Konfetti, wenn Sie den rosanen Punkt genau auf die Stelle '...
-    'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
-    'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den rosanen Punkt bitte immer auf die anvisierte '...
-    'Stelle.'];
+if taskParam.gParam.customInstructions
+    header = taskParam.instructionText.firstPracticeHeader;
+    txt = taskParam.instructionText.firstPractice;
+else
+    header = 'Erster Übungsdurchgang';
+    txt=['Weil die Konfetti-Kanone schon sehr alt ist, sind die Schüsse ziemlich ungenau. Das heißt, auch wenn '...
+        'Sie genau auf das Ziel gehen, können Sie das Konfetti verfehlen. Die Ungenauigkeit ist zufällig, '...
+        'dennoch fangen Sie am meisten Konfetti, wenn Sie den rosanen Punkt genau auf die Stelle '...
+        'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
+        'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den rosanen Punkt bitte immer auf die anvisierte '...
+        'Stelle.'];
+end
+
 feedback = false; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback);
 
@@ -178,27 +234,37 @@ while 1
     repeatBlock = sum(abs(taskData.estErr) >= taskParam.gParam.practiceTrialCriterionEstErr);
     if sum(repeatBlock) > taskParam.gParam.practiceTrialCriterionNTrials
         WaitSecs(0.5)
-        header = 'Bitte noch mal probieren!';
-        txt = ['Sie haben Ihren Eimer oft neben dem Ziel der Kanone platziert. Versuchen Sie im nächsten '...
-            'Durchgang bitte, den Eimer direkt auf das Ziel zu steuern. Das Ziel wird mit der Nadel gezeigt.'];
+        if taskParam.gParam.customInstructions
+            header = taskParam.instructionText.practiceBlockFailHeader;
+            txt = taskParam.instructionText.practiceBlockFail;
+        else
+            header = 'Bitte noch mal probieren!';
+            txt = ['Sie haben Ihren Eimer oft neben dem Ziel der Kanone platziert. Versuchen Sie im nächsten '...
+            'Durchgang bitte, den Eimer direkt auf das Ziel zu steuern. Das Ziel wird mit der Nadel gezeigt.']; 
+        end
+        
         al_bigScreen(taskParam, header, txt, feedback);
     else
         break
     end
-
 end
-
 
 % 10. Reduce shield -- no. 1
 % --------------------------
 
 % Display instructions
-header = 'Zweiter Übungsdurchgang';
-txt = ['Ab jetzt sehen Sie das Spiel ohne Animationen und mit weniger bunten Farben. In dieser Übung wird Ihr Eimer in der Mitte durchsichtig sein. ' ...
-    'Wie in der vorherigen Übung zählt es als Treffer, wenn mindestens die Hälfte der Konfetti-Wolke im Eimer gefangen wurde.\n\n'...
-    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
-    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie während eines Versuchs Augenbewegungen und blinzeln '...
-    'so gut es geht zu vermeiden.\n\nAm Ende eines Versuchs dürfen Sie blinzeln. Während dieser Phase ist der Punkt in der Mitte hellgrau.'];
+if taskParam.gParam.customInstructions
+    header = taskParam.instructionText.secondPracticeHeader;
+    txt = taskParam.instructionText.secondPractice;
+else
+    header = 'Zweiter Übungsdurchgang';
+    txt = ['Ab jetzt sehen Sie das Spiel ohne Animationen und mit weniger bunten Farben. In dieser Übung wird Ihr Eimer in der Mitte durchsichtig sein. ' ...
+        'Wie in der vorherigen Übung zählt es als Treffer, wenn mindestens die Hälfte der Konfetti-Wolke im Eimer gefangen wurde.\n\n'...
+        'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
+        'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie während eines Versuchs Augenbewegungen und blinzeln '...
+        'so gut es geht zu vermeiden.\n\nAm Ende eines Versuchs dürfen Sie blinzeln. Während dieser Phase ist der Punkt in der Mitte hellgrau.'];
+end
+
 feedback = false;
 al_bigScreen(taskParam, header, txt, feedback);
 
@@ -225,10 +291,16 @@ al_confettiLoop(taskParam, condition, taskData, 2);
 % --------------------------
 
 % Display instructions
-header = 'Dritter Übungsdurchgang';
-txt = ['Im nächsten Übungsdurchgang wird Ihr Eimer nur noch durch zwei Striche dargestellt. Achten Sie bitte weiterhin besonders darauf, '...
-    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und blinzeln '...
-    'so gut es geht zu vermeiden. Am Ende eines Versuchs dürfen Sie blinzeln (angezeigt durch den hellgrauen Punkt in der Mitte).'];
+if taskParam.gParam.customInstructions
+    header = taskParam.instructionText.thirdPracticeHeader;
+    txt = taskParam.instructionText.thirdPractice;
+else
+    header = 'Dritter Übungsdurchgang';
+    txt = ['Im nächsten Übungsdurchgang wird Ihr Eimer nur noch durch zwei Striche dargestellt. Achten Sie bitte weiterhin besonders darauf, '...
+        'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und blinzeln '...
+        'so gut es geht zu vermeiden. Am Ende eines Versuchs dürfen Sie blinzeln (angezeigt durch den hellgrauen Punkt in der Mitte).'];
+end
+
 feedback = false;
 al_bigScreen(taskParam, header, txt, feedback);
 
@@ -252,14 +324,20 @@ al_confettiLoop(taskParam, condition, taskData, 2);
 % ------------------------------------
 
 % Display instructions
-header = 'Vierter Übungsdurchgang';
-txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
+if taskParam.gParam.customInstructions
+    header = taskParam.instructionText.fourthPracticeHeader;
+    txt = taskParam.instructionText.fourthPractice;
+else
+    header = 'Vierter Übungsdurchgang';
+    txt = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
     'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
     'der Flugposition einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
     'steuern. Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
     'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
     'als auch einer eher ungenauen Konfetti-Kanone zu tun haben. Beachten Sie, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können.'];
+end
+
 feedback = false;
 al_bigScreen(taskParam, header, txt, feedback);
 
@@ -326,15 +404,21 @@ end
 % 12. Instructions experimental blocks
 % ------------------------------------
 
-header = 'Jetzt kommen wir zum Experiment';
-txtStartTask = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst fangen Sie also das meiste Konfetti, '...
+% Display instructions
+if taskParam.gParam.customInstructions
+    header = taskParam.instructionText.startTaskHeader;
+    txt = taskParam.instructionText.startTask;
+else
+    header = 'Jetzt kommen wir zum Experiment';
+    txt = ['Sie haben die Übungsphase abgeschlossen. Kurz zusammengefasst fangen Sie also das meiste Konfetti, '...
     'wenn Sie den Eimer (rosafarbener Punkt) auf die Stelle bewegen, auf die die Konfetti-Kanone zielt. Weil Sie die Konfetti-Kanone meistens nicht mehr '...
     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. Beachten Sie, dass Sie das Konfetti trotz '...
     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen und können Ihre Leistung '...
     'verbessern, indem Sie den Eimer genau auf das Ziel steuern.\n\n'...
     'Achten Sie bitte auf Ihre Augenbewegungen und vermeiden Sie es während eines Versuchs zu blinzeln. Wenn der Punkt in der Mitte am Ende eines Versuchs weiß ist, dürfen Sie blinzeln.\n\nViel Erfolg!'];
+end
 
 feedback = false;
-al_bigScreen(taskParam, header, txtStartTask, feedback);
+al_bigScreen(taskParam, header, txt, feedback);
 
 end

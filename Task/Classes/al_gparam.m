@@ -157,6 +157,9 @@ classdef al_gparam
 
         % Set background to average of stimuli?
         automaticBackgroundRGB
+        
+        % Local instructions based on instruction-text class
+        customInstructions
                
     end
     
@@ -218,6 +221,7 @@ classdef al_gparam
             self.useResponseThreshold = false;
             self.responseThreshold = 6;
             self.automaticBackgroundRGB = false;
+            self.customInstructions = nan;
         end
     end
 end

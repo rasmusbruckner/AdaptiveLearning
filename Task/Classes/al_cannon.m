@@ -1,5 +1,5 @@
 classdef al_cannon
-    %AL_CANNON This class definition file specifies the
+    %AL_CANNON This class-definition file specifies the
     % properties and methods of a cannon object
     %
     %   A cannon object contains parameters such as the number of

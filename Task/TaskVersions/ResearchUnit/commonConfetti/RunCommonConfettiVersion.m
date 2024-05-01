@@ -48,6 +48,8 @@ if ~exist('config', 'var') || isempty(config)
     config.eyeTracker = false;
     config.sendTrigger = false;
     config.screenNumber = 1;
+    config.customIntstuctions = true;
+    config.instructionText = al_commonConfettiInstructionsDefaultText();
 end
 
 
@@ -101,6 +103,8 @@ dataDirectory = config.dataDirectory;
 eyeTracker = config.eyeTracker; % doing eye-tracking?
 sendTrigger = config.sendTrigger; % EEG
 scanner = config.scanner; % turn scanner on/off
+customInstructions = config.customInstructions;
+instructionText = config.instructionText;
 
 % More general paramters
 % ----------------------
@@ -217,6 +221,7 @@ gParam.scanner = scanner;
 gParam.uke = uke;
 gParam.joy = joy;
 gParam.screenNumber = screenNumber;  
+gParam.customInstructions = customInstructions;
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -444,6 +449,7 @@ taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 taskParam.triggers = triggers;
+taskParam.instructionText = instructionText;
 
 colors = colors.computeBackgroundColor(taskParam);
 taskParam.colors = colors;

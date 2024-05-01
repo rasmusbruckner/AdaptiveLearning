@@ -3,8 +3,8 @@ classdef al_objectClass
      % properties of an object that combines multiple objects
      % in one object
 
-    % Properties of the object object
-    % -------------------------------
+    % Properties of the object class
+    % ------------------------------
 
     properties
        gParam
@@ -23,6 +23,7 @@ classdef al_objectClass
        symbol  % When independent versions work, check if still necessary
        trialflow
        display
+       instructionText 
     end
 end
 

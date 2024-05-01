@@ -15,8 +15,10 @@ config.practTrials = 2;
 config.runIntro = true;
 config.sentenceLength = 75;
 config.textSize = 35;
+config.vSpacing = 1;
 config.headerSize = 50;
 config.screenSize = get(0,'MonitorPositions')*1.0;
+config.screenNumber = 1;
 config.s = 40;
 config.enter = 37;
 config.debug = false;
@@ -26,6 +28,8 @@ config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.scanner = false;
 config.eyeTracker = false;
 config.sendTrigger = false;
+config.customInstructions = true;
+config.instructionText = al_commonConfettiInstructionsDefaultText();
 
 % Run task with config input
 RunCommonConfettiVersion(config);
