@@ -58,7 +58,7 @@ if strcmp(taskParam.trialflow.input, 'keyboard')
     varargout{1} = taskData;
     varargout{2} = taskParam;
 
-elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.cannonType, "confetti")
+elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.cannonType, 'confetti')
 
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
@@ -84,7 +84,7 @@ elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.
     varargout{3} = xyExp;
     varargout{4} = dotSize;
 
-elseif strcmp(taskParam.gParam.taskType, 'Leipzig') && strcmp(taskParam.trialflow.cannonType, "helicopter")
+elseif strcmp(taskParam.gParam.taskType, 'Leipzig') && strcmp(taskParam.trialflow.cannonType, 'helicopter')
 
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,

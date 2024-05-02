@@ -49,7 +49,7 @@ if ~exist('config', 'var') || isempty(config)
     config.eyeTracker = false;
     config.sendTrigger = false;
     config.screenNumber = 1;
-    config.customIntstuctions = true;
+    config.customIntstuctRunCommonConfettiVersion(config);ions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
 end
 

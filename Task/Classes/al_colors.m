@@ -100,7 +100,8 @@ classdef al_colors
             % 4. Size of circle
             circleOuterPixels = self.surfaceArea(taskParam.circle.rotationRad);
             circleInnerPixels = self.surfaceArea(taskParam.circle.rotationRad-taskParam.circle.circleWidth);
-            circlePixels = round(circleOuterPixels - circleInnerPixels, 1);
+            %circlePixels = round(circleOuterPixels - circleInnerPixels, 1);
+            circlePixels = round(circleOuterPixels - circleInnerPixels);
             totalPixels = totalPixels + circlePixels;
 
             % Confetti color
