@@ -10,26 +10,13 @@ classdef al_cannon
 
     properties
 
-        % Number of confetti particles
-        nParticles
-
-        % Standard deviation of confetti
-        confettiStd
-
-        % Standard deviation when confetti is animated
-        confettiAnimationStd
-
-        % Number of frames for shot animation
-        nFrames
-
-        % Average end point of confetti
-        confettiEndMean
-
-        % Standard deviation around aveage end point
-        confettiEndStd
-
-        % Size of the confetti particles
-        particleSize
+        nParticles % number of confetti particles
+        confettiStd  % standard deviation of confetti
+        confettiAnimationStd % standard deviation when confetti is animated
+        nFrames % number of frames for shot animation
+        confettiEndMean % average end point of confetti
+        confettiEndStd % standard deviation around aveage end point
+        particleSize % size of the confetti particles
         
         % Static confetti cloud
         xCloud
@@ -65,6 +52,9 @@ classdef al_cannon
             %
             % Input
             %   colors: Color type of confetti cloud
+            %
+            % Output
+            %   self: Cannon object instance
 
             % Check if unit test is requested
             if ~exist('colors', 'var') || isempty(colors)
