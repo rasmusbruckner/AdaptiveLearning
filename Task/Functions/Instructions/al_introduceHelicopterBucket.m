@@ -7,11 +7,12 @@ function taskData = al_introduceHelicopterBucket(taskParam, taskData, trial, txt
 %       win: Determines color of shield
 %       trial: Current trial number
 %       txt: Presented text
+%       xyExp: Position of drug icons
 %
 %   Output
 %       taskData: Task-data-object instance
 
-
+% Initialize timing variable
 tUpdated = GetSecs;
 
 % Repeat until participant presses Enter

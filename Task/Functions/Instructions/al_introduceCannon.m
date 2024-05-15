@@ -4,6 +4,7 @@ function taskParam = al_introduceCannon(taskParam, taskData, trial, txt)
 %   Input
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
+%       trial:  Current trial number
 %       txt: Presented text
 %
 %   Output

@@ -7,6 +7,9 @@ function taskData = al_confirmMiss(taskParam, taskData, win, trial, txt, xyExp, 
 %       win: Determines color of shield
 %       trial: Current trial number
 %       txt: Presented text
+%       xyExp: Coordinates of confetti particles
+%       dotCol: Confetti colors
+%       dotSize: Confetti size
 %
 %   Output
 %       taskData: Task-data-object instance
@@ -18,25 +21,8 @@ if ~isequal(taskParam.trialflow.shotAndShield, 'sequential') && isequal(taskPara
     al_cannonMiss(taskParam, taskData, trial, background, tUpdated)
 end
 
-
+% Initialize timing variable
 tUpdated = GetSecs;
-
-% outcome = taskData.distMean(trial);
-
-% todo: check if necessary for other conditions. not relevant for sleep
-% version
-% al_lineAndBack(taskParam)
-% if isequal(taskParam.gParam.taskType, 'chinese')
-%     currentContext = 1;
-%     al_drawContext(taskParam, currentContext)
-%     al_drawCross(taskParam);
-% end
-% al_drawCross(taskParam)
-% al_drawCircle(taskParam)
-% 
-% % Tell PTB that everything has been drawn and flip screen
-% Screen('DrawingFinished', taskParam.display.window.onScreen, 1);
-% Screen('Flip', taskParam.display.window.onScreen, t + 0.6, 1);
 
 % Repeat until participant presses Enter
 while 1

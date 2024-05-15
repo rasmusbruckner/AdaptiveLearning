@@ -15,7 +15,6 @@ function [taskData, taskParam] = al_introduceShot(taskParam, taskData, trial, tx
 % Show cannon and instructions
 initRT_Timestamp = 0;
 
-% Todo update using trialflow mouse vs. keyboard
 if strcmp(taskParam.trialflow.input, 'keyboard')
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
@@ -33,7 +32,6 @@ end
 background = true; % show background image TODO: use trialflow
 absTrialStartTime = GetSecs; % timestamp start of trial for timing
 al_cannonball(taskParam, taskData, background, trial, absTrialStartTime)
-
 
 % If cannonball and shield are presented together AND misses are animated
 % show "explosion"
