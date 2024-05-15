@@ -28,39 +28,39 @@ classdef al_subject
     % --------------------------------
     methods
         
-        function subobj = al_subject()
+        function self = al_subject()
             %AL_GPARAM This function creates a subject object of
             % class al_subject
             
-            subobj.ID = nan; 
-            subobj.age = nan;
-            subobj.gender = nan;
-            subobj.group = nan; 
-            subobj.cBal = nan; 
-            subobj.rew = nan; 
-            subobj.startingBudget = nan;
-            subobj.testDay = nan;
-            subobj.date = nan;
-            subobj.session = 1;
+            self.ID = nan; 
+            self.age = nan;
+            self.gender = nan;
+            self.group = nan; 
+            self.cBal = nan; 
+            self.rew = nan; 
+            self.startingBudget = nan;
+            self.testDay = nan;
+            self.date = nan;
+            self.session = 1;
             
         end
     end
     
     methods
-        function checkID(subobj, checkString, ID_len)
+        function checkID(self, checkString, ID_len)
             %CHECKID This function tests input related to the subject ID
             %
             %   If ID is incorrectly specified, the function returns
             %   an error. 
             %
             %   Input
-            %       subobj: Subject object
+            %       self: Subject object
             %       checkString: XX Comment
             %
             %   Output
             %       ~
             
-            if ~(numel(subobj.ID) == ID_len) 
+            if ~(numel(self.ID) == ID_len) 
                 error('ID: Please use %i digits!', ID_len)
             end
 
@@ -72,27 +72,27 @@ classdef al_subject
         end
         
         
-        function checkGroup(subobj)
+        function checkGroup(self)
             %CHECKGROUP This function tests input related to the group
             %
             %   If group is incorrectly specified, the function returns
             %   an error. 
             %
             %   Input
-            %       subobj: Subject object
+            %       self: Subject object
             %
             %   Output
             %       ~
 
 
-            if subobj.group ~= 1 && subobj.group ~= 2
+            if self.group ~= 1 && self.group ~= 2
                 error('Group: "1" or "2"?');
             end
 
         end
         
         
-        function checkGender(subobj)
+        function checkGender(self)
             %CHECKGENDER This function tests input related to the subject's
             % gender
             %
@@ -100,18 +100,18 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: Subject object
+            %       self: Subject object
             %
             %   Output
             %       ~
 
-            if subobj.gender ~= 'm' && subobj.gender ~= 'f' && subobj.gender ~= 'd'
+            if self.gender ~= 'm' && self.gender ~= 'f' && self.gender ~= 'd'
                 error('Gender: "m", "f", or "d"?');
             end
             
         end
         
-        function checkCBal(subobj)
+        function checkCBal(self)
             %CHECKCBAL This function tests input related to
             % counterbalancing
             %
@@ -119,7 +119,7 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: Subject object
+            %       self: Subject object
             %
             %   Output
             %       ~
@@ -127,31 +127,31 @@ classdef al_subject
             % Todo: Since different versions have different cBals, 
             % this needs to be more general, maybe based on additional
             % input specifying how many conditions we have
-            if subobj.cBal ~= 1 && subobj.cBal ~= 2 && subobj.cBal ~= 3 && subobj.cBal ~= 4
+            if self.cBal ~= 1 && self.cBal ~= 2 && self.cBal ~= 3 && self.cBal ~= 4
                 error('cBal: 1, 2, 3, or 4?');
             end
             
         end
         
-        function checkTestDay(subobj)
+        function checkTestDay(self)
             %CHECKTESTDAY This function tests input related to the test day
             %
             %   If test day is incorrectly specified, the function returns
             %   an error. 
             %
             %   Input
-            %       subobj: Subject object
+            %       self: Subject object
             %
             %   Output
             %       ~
 
-            if subobj.testDay ~= 1 && subobj.testDay ~= 2
+            if self.testDay ~= 1 && self.testDay ~= 2
                 error('Day: 1 or 2?')
             end
 
         end
 
-        function checkRew(subobj)
+        function checkRew(self)
             %CHECKREW This function tests input related to the reward
             %variable
             %
@@ -159,12 +159,12 @@ classdef al_subject
             %   an error. 
             %
             %   Input
-            %       subobj: Subject object
+            %       self: Subject object
             %
             %   Output
             %       ~
 
-            if subobj.rew ~= 1 && subobj.rew ~= 2
+            if self.rew ~= 1 && self.rew ~= 2
                 error('Rew: 1 or 2?')
             end
 
