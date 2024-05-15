@@ -10,41 +10,18 @@ classdef al_timing
     
     properties
         
-        % Fixation cross before outcome timing
-        fixCrossOutcome
-        
-        % Fixation cross before shield timing
-        fixCrossShield
-
-        % Duration of cannonball animation
-        cannonBallAnimation
-
-        % Duration of miss animation
-        cannonMissAnimation
-
-        % Presentation of outcome 
-        outcomeLength
-
-        % Presentation of shield
-        shieldLength        
-
-        % Presentation of reward feedback
-        rewardLength
-        
-        % Length of jitter before outcome
-        jitterOutcome
-        
-        % Length of jitter before shield
-        jitterShield
-
-        % Length of jitter for ITI
-        jitterITI
-
-        % Fixed inter-trial interval
-        fixedITI
-
-        % Reference for timing; timestamp recorded at beginning of study
-        ref
+        fixCrossOutcome % fixation cross before outcome timing        
+        fixCrossShield % fixation cross before shield timing
+        cannonBallAnimation % duration of cannonball animation
+        cannonMissAnimation % duration of miss animation
+        outcomeLength % presentation of outcome 
+        shieldLength % presentation of shield
+        rewardLength % presentation of reward feedback        
+        jitterOutcome % length of jitter before outcome        
+        jitterShield % length of jitter before shield
+        jitterITI % length of jitter for ITI
+        fixedITI % fixed inter-trial interval
+        ref % reference for timing; timestamp recorded at beginning of study
         
     end
     
