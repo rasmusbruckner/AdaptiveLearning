@@ -9,9 +9,9 @@ classdef al_triggers
     
     properties
         
-        sampleRate
-        port
-        session
+        sampleRate % sampling rate
+        port % port code
+        session % session number
         
     end
     
@@ -29,8 +29,3 @@ classdef al_triggers
         end
     end
 end
-
-
-
-
-
