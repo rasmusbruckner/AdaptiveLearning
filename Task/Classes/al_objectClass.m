@@ -7,23 +7,19 @@ classdef al_objectClass
     % ------------------------------
 
     properties
-       gParam
-       cannon
-       circle
-       keys
-       fieldNames
-       triggers
-       timingParam
-       colors
-       strings 
-       textures
-       unitTest
-       subject
-       condition % When independent versions work, check if still necessary
-       symbol  % When independent versions work, check if still necessary
-       trialflow
-       display
-       instructionText 
+       gParam % general parameters
+       cannon % cannon-object instance
+       circle % circle-object instance
+       keys % keys-object instance
+       triggers % triggers-object instance
+       timingParam % timing-object instance
+       colors % colors-object instance
+       strings % strings-object instance
+       subject % subject-object instance
+       trialflow % trialflow-object instance
+       display % display-object instance
+       instructionText % instruction-text-object-instance
+       unitTest % unit-test case
     end
 end
 
