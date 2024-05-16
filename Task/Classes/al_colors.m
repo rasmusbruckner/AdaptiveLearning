@@ -7,8 +7,6 @@ classdef al_colors
     % Properties of the colors object
     % -------------------------------
 
-    % Todo: Make sure that really all colors are part of this class.
-
     properties
 
         gold
@@ -45,7 +43,6 @@ classdef al_colors
             self.gold = [255, 215, 0];
             self.blue = [216 191 216];
             self.purple = [122, 96, 215];
-            % self.red = [220, 20, 60];
             self.darkBlue = [0 25 51];
             self.silver = [160, 160, 160];
             self.green = [0, 128, 0]; %[50, 205, 50];

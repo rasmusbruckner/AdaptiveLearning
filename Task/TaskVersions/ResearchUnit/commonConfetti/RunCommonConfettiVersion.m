@@ -386,8 +386,6 @@ end
 % Display-object instance
 display = al_display();
 
-
-
 % Deal with psychtoolbox warnings
 %% Todo: Make sure that all tests are passed on task PC
 % display.screen_warnings();
