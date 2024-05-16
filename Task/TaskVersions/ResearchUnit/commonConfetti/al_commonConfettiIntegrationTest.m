@@ -39,7 +39,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.sendTrigger = false;
             config.screenNumber = 1;
             config.customInstructions = true;
-            config.instructionText = al_commonConfettiInstructionsDefaultText();
+            config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 
             [dataMain, ~] = RunCommonConfettiVersion(config, true, cBal);
 

@@ -173,9 +173,10 @@ end
 
 % Save Eyelink data
 
-et_path=pwd;
-et_file_name=[et_file_name, '.edf'];
 if taskParam.gParam.eyeTracker
+    et_path=pwd;
+    et_file_name=[et_file_name, '.edf'];
+
     fprintf('Saving EyeLink data to %s\n', et_path)
     eyefilename = fullfile(et_path,et_file_name);
     Eyelink('CloseFile');
