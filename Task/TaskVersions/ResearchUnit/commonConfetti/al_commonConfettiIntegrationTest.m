@@ -1,6 +1,6 @@
 classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
     % This function runs an integration test for the Hamburg version
-    % To run the test, put run(al_HamburgIntegrationTest) in command window
+    % To run the test, put run(al_commonConfettiIntegrationTest) in command window
 
     % Test methods
     methods (Test)

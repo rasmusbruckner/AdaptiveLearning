@@ -19,15 +19,15 @@ Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
 
-% Start Eyelink recording - calibration and validation of eye-tracker before each block
-if taskParam.gParam.eyeTracker
-    Eyelink('StartRecording');
-    WaitSecs(0.1);
-    Eyelink('message', 'Start recording Eyelink');
-
-    % Reference time stamp
-    taskParam.timingParam.ref = GetSecs();
-end
+% % % % Start Eyelink recording - calibration and validation of eye-tracker before each block
+% % % if taskParam.gParam.eyeTracker
+% % %     Eyelink('StartRecording');
+% % %     WaitSecs(0.1);
+% % %     Eyelink('message', 'Start recording Eyelink');
+% % % 
+% % %     % Reference time stamp
+% % %     taskParam.timingParam.ref = GetSecs();
+% % % end
 
 % Wait until keys released
 KbReleaseWait();
@@ -346,20 +346,20 @@ for i = 1:trial
 
 end
 
-% Save Eyelink data
-if taskParam.gParam.eyeTracker
-    fprintf('Saving EyeLink data to %s\n', et_path)
-    eyefilename = fullfile(et_path,et_file_name);
-    Eyelink('CloseFile');
-    Eyelink('WaitForModeReady', 500);
-    try
-        status = Eyelink('ReceiveFile', et_file_name, eyefilename);
-        disp(['File ' eyefilename ' saved to disk']);
-    catch
-        warning(['File ' eyefilename ' not saved to disk']);
-    end
-    Eyelink('StopRecording');
-end
+% % % % Save Eyelink data
+% % % if taskParam.gParam.eyeTracker
+% % %     fprintf('Saving EyeLink data to %s\n', et_path)
+% % %     eyefilename = fullfile(et_path,et_file_name);
+% % %     Eyelink('CloseFile');
+% % %     Eyelink('WaitForModeReady', 500);
+% % %     try
+% % %         status = Eyelink('ReceiveFile', et_file_name, eyefilename);
+% % %         disp(['File ' eyefilename ' saved to disk']);
+% % %     catch
+% % %         warning(['File ' eyefilename ' not saved to disk']);
+% % %     end
+% % %     Eyelink('StopRecording');
+% % % end
 
 % Give feedback and save data
 % ----------------------------

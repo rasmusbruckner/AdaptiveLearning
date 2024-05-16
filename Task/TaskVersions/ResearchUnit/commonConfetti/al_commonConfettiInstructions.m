@@ -30,7 +30,7 @@ if taskParam.gParam.customInstructions
 else
     txt = 'Herzlich Willkommen Zur Konfetti-Kanonen-Aufgabe!';
 end
-al_indicateCondition(taskParam, txt)
+al_indicateCondition(taskParam, txt);
 
 % Reset background to gray
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
