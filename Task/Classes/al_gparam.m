@@ -13,153 +13,61 @@ classdef al_gparam
     % --------------------------------
     
     properties
+
+        taskType % task version (e.g., Hamburg)
         
-        % Task version (ARC, chinese, dresden, drugstudy, eLife, hamburg, reversal, sleep)
-        taskType 
-         
-        % Trials on which participants can take a break
-        blockIndices
-
-        % Variability of the drift in the "oddball" versions (drugstudy, eLife)
-        driftConc
-
-        % Probability of an oddball in the "oddball" versions (drugstudy, eLife)
-        oddballProb
-
-        % Probability of a reversal in the "reversal" version
-        reversalProb
-
-        % Outcome variability expressed in concentration of van-Mises distribution
-        concentration
-
-        % Push variability in push condition
-        pushConcentration
-                 
-        % Hazard rate determining probability of a changepoint
-        haz
+        concentration % outcome variability expressed in concentration of van-Mises distribution
+        driftConc % variability of the drift (if included)
+        pushConcentration % push variability in push condition     
         
-        % Variability hazard rate
-        hazVar
+        haz % hazard rate determining probability of a changepoint
+        hazVar % variability hazard rate
+        safe % number of trials after changepoint during which no change point occurs
+        safeVar % safe trials variability changepoint
 
-        % Mean shield size
-        shieldMu                     
+        shieldMu % mean shield size        
+        shieldMin % minimum angular shield size        
+        shieldMax % maximium angular shield size         
+                
+        trials % number of trials
+        practTrials % number of practice trials
+        shieldTrials % Number of shield-practice trials 
+        controlTrials  % number of trials of the control versions (Dresden)
+
+        nBlocks % number of blocks
+        blockIndices % trials AFTER which participants can take a break
+
+        screensize % screensize 
+        screenNumber % if using multiple screens
+
+        practiceTrialCriterionNTrials % number of trials above estimation-error threshold determining when practice is repeated
+        practiceTrialCriterionEstErr % estimation-error threshold in practice determining when practice is repeated
+
+        rewMag % reward magnitude when "hit"
+        useCatchTrials % indicates if catch trials are used
+        catchTrialProb % Catch-trial proability
         
-        % Minimum angular shield size
-        shieldMin
+        askSubjInfo % determines if subject information dialogue box is presented
+        language % English or German instructions?
+        debug % turns debug mode on or off
+        showConfettiThreshold % plotting of random confetti threshold for validation
+        printTiming % Whether or not trial timing is displayed for validation
+        sendTrigger % indicates if EEG triggers are going to be sent      
+        printTrigger % should triggers be printed out?
+        runIntro % determines if practice phase will be completed before main task
+        showTickmark % turns tick mark in reversal version on and off
+        dataDirectory % data directory to save data
+        saveName % Name of output file
         
-        % Maximium angular shield size 
-        shieldMax
-        
-        % Indicates if EEG triggers are going to be sent
-        sendTrigger
-      
-        % Number of trials
-        trials
-        
-        % Trials session 1 in drug version
-        trialsS1
-        
-        % Trials session 2 & 3 in drug version
-        trialsS2S3
-
-        % Number of blocks
-        nBlocks
-        
-        % Number of shield-practice trials 
-        shieldTrials
-        
-        % Number of practice trials
-        practTrials
-
-        % Number of trials of the control versions (Dresden)
-        controlTrials
-
-        % Number of trials after changepoint during which no change point
-        % occurs
-        safe
-
-        % Safe trials variability changepoint
-        safeVar
-
-        % Reward magnitude when "hit"
-        rewMag
-
-        % Screensize 
-        screensize
-
-        % Number of trials above estimation-error threshold determining
-        % when practice is repeated
-        practiceTrialCriterionNTrials
-
-        % Estimation-error threshold in practice determining when practice
-        % is repeated
-        practiceTrialCriterionEstErr
-
-        % Determines if subject information dialogue box is presented
-        askSubjInfo
-        
-        % Turns tick mark in reversal version on and off
-        showTickmark
-
-        % Indicates if catch trials are used
-        useCatchTrials
-
-        % Catch-trial proability
-        catchTrialProb
-
-        % If using multiple screens (on Ubunty currently not used)
-        screenNumber
-
-        % Englisch or German instructions?
-        language
-
-        % Turns debug mode on or off
-        debug
-
-        % Plotting of random confetti threshold for validation
-        showConfettiThreshold
-
-        % Whether or not trial timing is displayed for debugging
-        printTiming
-
-        % Should triggers be printed out?
-        printTrigger
-
-        % Determines if practice phase will be completed before main task
-        runIntro
-
-        % Data directory to save data
-        dataDirectory
-
-        % Indicates if experiment takes place in Magdeburg scanner
-        scanner
-        
-        % Name of output file
-        saveName 
-
-        % Indicates if experiment takes place with MEG
-        meg
-
-        % Indicates if experiment takes place with eyeTracker
-        eyeTracker
-
-        % Indicates uke fMRI scanner
-        uke
-
-        % Potentially temporary joystick variable
-        joy
-
-        % Determine if we use threshold for max response time
-        useResponseThreshold
-
-        % Response threshold value
-        responseThreshold
-
-        % Set background to average of stimuli?
-        automaticBackgroundRGB
-        
-        % Local instructions based on instruction-text class
-        customInstructions
+        scanner % indicates if experiment takes place in scanner        
+        meg % indicates if experiment takes place with MEG
+        eyeTracker % indicates if experiment takes place with eyeTracker
+        uke % indicates uke fMRI scanner
+        joy % potentially temporary joystick variable
+        useResponseThreshold % determine if we use threshold for max response time
+        responseThreshold % response threshold value
+        automaticBackgroundRGB % set background to average of stimuli?
+        customInstructions % local instructions based on instruction-text class
                
     end
     
@@ -175,43 +83,39 @@ classdef al_gparam
             %   are often used across tasks.
             
             self.taskType = nan; 
-            self.blockIndices = nan; 
-            self.driftConc = 30;
-            self.oddballProb = [.25 0];
-            self.reversalProb = [.5 1]; 
             self.concentration = nan;
+            self.driftConc = 30;
             self.pushConcentration = nan;
             self.haz = 0.125; 
+            self.hazVar = nan;
+            self.safe = 3;
+            self.safeVar = 10;
             self.shieldMu = 15;                   
             self.shieldMin = 10;
             self.shieldMax = 150;
-            self.sendTrigger = false; 
             self.trials = nan; 
-            self.trialsS1 = nan; 
-            self.trialsS2S3 = nan;
-            self.shieldTrials = nan; 
             self.practTrials = nan; 
+            self.shieldTrials = nan; 
             self.controlTrials = nan;
             self.nBlocks = nan;
-            self.safe = 3;
-            self.safeVar = 10;
-            self.rewMag = 0.1; 
+            self.blockIndices = nan; 
             self.screensize = nan; 
+            self.screenNumber = 1;
             self.practiceTrialCriterionNTrials = nan; 
             self.practiceTrialCriterionEstErr = nan; 
-            self.askSubjInfo = nan;
-            self.showTickmark = nan; 
+            self.rewMag = 0.1; 
             self.useCatchTrials = nan; 
             self.catchTrialProb = nan; 
-            self.screenNumber = 1;
+            self.askSubjInfo = nan;
             self.language = 'German'; 
             self.debug = nan;
             self.showConfettiThreshold = false;
             self.printTiming = false;
+            self.sendTrigger = false; 
             self.printTrigger = false;
             self.runIntro = nan;
+            self.showTickmark = nan; 
             self.dataDirectory = nan;  
-            self.scanner = false;
             self.saveName = 'standard';
             self.scanner = false;
             self.meg = false;
