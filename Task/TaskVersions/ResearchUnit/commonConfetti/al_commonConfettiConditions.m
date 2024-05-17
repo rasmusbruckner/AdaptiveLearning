@@ -30,7 +30,7 @@ cBal = taskParam.subject.cBal;
 % 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro %&& ~unitTest
     al_commonConfettiInstructions(taskParam)
 end
 
@@ -96,7 +96,11 @@ if ~unitTest
     taskDataLowNoise = taskData.al_confettiData(taskParam);
 
 else
-    load('integrationTest_HamburgLowNoise.mat','taskDataLowNoise')
+    %load('integrationTest_HamburgLowNoise.mat','taskDataLowNoise')
+      load('integrationTest_Hamburg.mat','taskData')
+      taskDataLowNoise = taskData;
+
+
 end
 
 % 2) High noise
@@ -114,7 +118,10 @@ if ~unitTest
     taskDataHighNoise = taskData.al_confettiData(taskParam);
 
 else
-    load('integrationTest_HamburgHighNoise.mat','taskDataHighNoise')
+    %load('integrationTest_HamburgHighNoise.mat','taskDataHighNoise')
+           load('integrationTest_Hamburg.mat','taskData')
+           taskDataHighNoise = taskData;
+
 end
 
 if cBal == 1

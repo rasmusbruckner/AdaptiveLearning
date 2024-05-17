@@ -78,6 +78,9 @@ while 1
             Screen('CloseAll');
             error('User pressed Escape to finish task')
         end
+     elseif taskParam.unitTest
+        WaitSecs(1);
+        break
     end
 end
 

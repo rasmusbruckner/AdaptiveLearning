@@ -20,9 +20,9 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config = struct();
 
             % Default parameters
-            config.trialsExp = 2;
-            config.practTrials = 2;
-            config.runIntro = true; %false;
+            config.trialsExp = 20;
+            config.practTrials = 5;
+            config.runIntro = true;
             config.language = 'German';
             config.sentenceLength = 120;
             config.vSpacing = 1;
@@ -45,8 +45,6 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 
             [dataMain, ~] = RunCommonConfettiVersion(config, true, cBal);
-
-            % Todo: Test both noise conditions
 
             % Test output
             % -----------

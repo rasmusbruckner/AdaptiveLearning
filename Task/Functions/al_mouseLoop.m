@@ -213,6 +213,9 @@ while 1
         [keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
         if keyIsDown && keyCode(breakKey)
             break
+        elseif taskParam.unitTest
+            WaitSecs(1);
+            break
         end
     elseif buttons(1) == 1 && hyp >= taskParam.circle.rotationRad-2 % ensure that prediction is only possible when spot on circle
         
