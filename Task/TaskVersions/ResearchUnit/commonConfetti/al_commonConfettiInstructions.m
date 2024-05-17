@@ -347,57 +347,46 @@ taskParam.trialflow.exp = 'practHid';
 taskParam.trialflow.shieldAppearance = 'lines';
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
 
+% 1) Low noise
+taskData = load('hidCannonPracticeHamburg_c16.mat');
+taskDataLowNoise = taskData.taskData;
+
+% 2) % Get data
+taskData = load('hidCannonPracticeHamburg_c8.mat');
+taskDataHighNoise = taskData.taskData; 
+    
 if cBal == 1
 
     % Low noise first...
     % ------------------
 
-    % Get data
-    taskData = load('hidCannonPracticeHamburg_c16.mat');
-    taskData = taskData.taskData;
-
-    % Run task
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
     taskParam.trialflow.confetti = 'show confetti cloud';
     al_indicateNoise(taskParam, 'lowNoise', true)
-    al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    al_confettiLoop(taskParam, condition, taskDataLowNoise, taskParam.gParam.practTrials);
 
     % ... high noise second
     % ---------------------
 
-    % Get data
-    taskData = load('hidCannonPracticeHamburg_c8.mat');
-    taskData = taskData.taskData;
-
-    % Run task
     al_indicateNoise(taskParam, 'highNoise', true)
-    al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    al_confettiLoop(taskParam, condition, taskDataHighNoise, taskParam.gParam.practTrials);
 
 elseif cBal == 2
 
     % High noise first...
     % ------------------
 
-    % Get data
-    taskData = load('hidCannonPracticeHamburg_c8.mat');
-    taskData = taskData.taskData;
-
-    % Run task
     taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
     taskParam.trialflow.confetti = 'show confetti cloud';
     al_indicateNoise(taskParam, 'highNoise', true)
-    al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    al_confettiLoop(taskParam, condition, taskDataHighNoise, taskParam.gParam.practTrials);
 
     % ... low noise second
     % ---------------------
 
-    % Get data
-    taskData = load('hidCannonPracticeHamburg_c16.mat');
-    taskData = taskData.taskData;
-
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true)
-    al_confettiLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
+    al_confettiLoop(taskParam, condition, taskDataLowNoise, taskParam.gParam.practTrials);
 
 end
 

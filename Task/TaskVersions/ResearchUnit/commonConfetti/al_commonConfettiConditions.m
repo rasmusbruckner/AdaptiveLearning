@@ -35,12 +35,9 @@ if runIntro && ~unitTest
 end
 
 taskParam.trialflow.exp = 'exp';
-% Turn off animations
 taskParam.trialflow.shot = 'static';
-%taskParam.trialflow.shot = 'animate cannonball';
-taskParam.trialflow.colors = 'dark'; %'blackWhite';
+taskParam.trialflow.colors = 'dark';
 taskParam.trialflow.shieldAppearance = 'lines';
-
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
 
 % Initialize eye-tracker file
@@ -75,7 +72,6 @@ if taskParam.gParam.eyeTracker
     taskParam.timingParam.ref = GetSecs();
 end
 
-
 % ------------
 % 3. Main task
 % ------------
@@ -83,95 +79,80 @@ end
 % Extract number of trials
 trial = taskParam.gParam.trials;
 
-%% Todo: ensure that outcome generation is done only once for each
-% condition.. just order is adjusted. this will be especially 
-% relevant to longer cBal cases such as Dresden or M/EEG
-%% In this context, cBal will be udpated
+% Generate data for each condition
+% --------------------------------
+
+% 1) Low noise
+
+if ~unitTest
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
+
+    % Generate outcomes using cannon-data function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
+
+    % Generate outcomes using confetti-data function
+    taskDataLowNoise = taskData.al_confettiData(taskParam);
+
+else
+    load('integrationTest_HamburgLowNoise.mat','taskDataLowNoise')
+end
+
+% 2) High noise
+
+% Get data
+if ~unitTest
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
+
+    % Generate outcomes using cannonData function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration(2), taskParam.gParam.safe);
+
+    % Generate outcomes using confettiData function
+    taskDataHighNoise = taskData.al_confettiData(taskParam);
+
+else
+    load('integrationTest_HamburgHighNoise.mat','taskDataHighNoise')
+end
 
 if cBal == 1
 
     % Low noise first...
     % ------------------
 
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
-
-        % Generate outcomes using cannon-data function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
-
-        % Generate outcomes using confetti-data function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
 
     % ... high noise second
     % ---------------------
 
-    % Get data
-    if ~unitTest
-
-        % TaskData-object instance
-        taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
-
-        % Generate outcomes using cannonData function
-        taskData = taskData.al_cannonData(taskParam, haz, concentration(2), taskParam.gParam.safe);
-
-        % Generate outcomes using confettiData function
-        taskData = taskData.al_confettiData(taskParam);
-
-    else
-        load('integrationTest_Hamburg.mat','taskData')
-    end
-
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
 
 else
 
-    error('cBal 2 not yet updated')
-% 
-%     % High noise first...
-%     % -------------------
-% 
-%     % Get data
-%     if ~unitTest
-%         taskData = al_generateOutcomesMain(taskParam, haz, concentration(2), 'main');
-%     else
-%         load('integrationTest_Hamburg.mat','taskData')
-%     end
-% 
-%     % Run task
-%     al_indicateNoise(taskParam, 'highNoise')
-%     dataLowNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
-% 
-%     % ... low noise second
-%     % --------------------
-% 
-%     % Get data
-%     if ~unitTest
-%         taskData = al_generateOutcomesMain(taskParam, haz, concentration(1), 'main');
-%     else
-%         load('integrationTest_Hamburg.mat','taskData')
-%     end
-% 
-%     % Run task
-%     al_indicateNoise(taskParam, 'lowNoise')
-%     dataHighNoise = al_confettiLoop(taskParam, 'main', taskData, trial);
-% 
-% end
+    % High noise first...
+    % -------------------
+
+    % Run task
+    al_indicateNoise(taskParam, 'highNoise')
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
+
+    % ... low noise second
+    % --------------------
+
+    % Run task
+    al_indicateNoise(taskParam, 'lowNoise')
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
+
 end
 
 % Save Eyelink data
+% -----------------
 
 if taskParam.gParam.eyeTracker
     et_path=pwd;

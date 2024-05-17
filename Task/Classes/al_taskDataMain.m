@@ -136,6 +136,7 @@ classdef al_taskDataMain
             self.confettiStd = nan(trials, 1);
             self.pushConcentration = nan(trials, 1);
             self.startingBudget = nan(trials, 1);
+            self.driftConc = nan(trials, 1);
 
             % Task-generated data
             self.currTrial = nan(trials, 1);
@@ -263,10 +264,16 @@ classdef al_taskDataMain
             end
 
             % Add hazard rate and safe variable to data
-            self.haz = repmat(haz, length(self.trials), 1);
-            self.hazVar = repmat(self.hazVar, length(self.trials), 1);
-            self.safe = repmat(safe, length(self.trials), 1);
-            self.safeVar = repmat(self.safeVar, length(self.trials), 1);
+            % self.haz = repmat(haz, length(self.trials), 1);
+            % self.hazVar = repmat(self.hazVar, length(self.trials), 1);
+            % self.safe = repmat(safe, length(self.trials), 1);
+            % self.safeVar = repmat(self.safeVar, length(self.trials), 1);
+            
+            % Todo: ensure that this is updated in main branch as well
+            self.haz = repmat(haz, self.trials, 1);
+            self.hazVar = repmat(taskParam.gParam.hazVar, self.trials, 1);
+            self.safe = repmat(safe, self.trials, 1);
+            self.safeVar = repmat(taskParam.gParam.safeVar, self.trials, 1);
 
             %% Todo test this properly
             % Generate shield types

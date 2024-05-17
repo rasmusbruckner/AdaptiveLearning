@@ -7,6 +7,9 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
 
         function testTaskOutput(testCase)
 
+            %% New unit test: make sure all combinations for triggers are tested!! start from triggers basically.
+            % - and do both noise conditions
+            % - and both cbals 
 
             % Run task in unit-test mode
             % --------------------------

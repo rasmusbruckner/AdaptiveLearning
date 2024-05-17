@@ -125,6 +125,7 @@ classdef al_trialflow
         colors
             % colorful: standard
             % isoluminant: pupillometry
+            % blackwhite: alternative version for pupillometry
         
     end
     
