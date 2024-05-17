@@ -38,7 +38,7 @@ classdef al_commonConfettiInstructionsDefaultText_updated
 
     methods
 
-        function self = al_commonConfettiInstructionsDefaultText(language)
+        function self = al_commonConfettiInstructionsDefaultText_updated(language)
             % This function creates an object of
             % class al_commonConfettiInstructionsDefaultText
             %

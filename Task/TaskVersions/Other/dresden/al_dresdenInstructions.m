@@ -595,7 +595,7 @@ else
     taskParam.trialflow.cannon = 'hide cannon'; % show cannon
 end
 
-taskParam.trialflow.shot = 'no animation';
+taskParam.trialflow.shot = 'static';
 
 % Task loop
 al_dresdenLoop(taskParam, taskData, taskParam.gParam.practTrials, '_2');

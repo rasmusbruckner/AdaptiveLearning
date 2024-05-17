@@ -49,8 +49,8 @@ if ~exist('config', 'var') || isempty(config)
     config.eyeTracker = false;
     config.sendTrigger = false;
     config.screenNumber = 1;
-    config.customIntstuctRunCommonConfettiVersion(config);ions = true;
-    config.instructionText = al_commonConfettiInstructionsDefaultText();
+    config.customInstructions = true;
+    config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end
 
 
@@ -235,7 +235,6 @@ cd(gParam.dataDirectory);
 
 %% Todo: What is the best way to document this?
 trialflow = al_trialflow();
-trialflow.shot = ' ';
 trialflow.confetti = 'show confetti cloud';
 trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';

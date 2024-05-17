@@ -214,7 +214,7 @@ taskData = taskData.taskData;
 
 % Run task
 taskParam.trialflow.cannon = 'hide cannon'; % don't show cannon anymore
-taskParam.trialflow.confetti = 'no confetti cloud';
+taskParam.trialflow.confetti = 'none';
 al_indicateHelicopterNoise(taskParam, 'lowNoise')
 al_LeipzigLoop(taskParam, condition, taskData, taskParam.gParam.practTrials);
 

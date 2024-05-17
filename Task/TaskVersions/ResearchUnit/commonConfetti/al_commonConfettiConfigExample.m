@@ -30,7 +30,7 @@ config.scanner = false;
 config.eyeTracker = false;
 config.sendTrigger = false;
 config.customInstructions = true;
-config.instructionText = al_commonConfettiInstructionsDefaultText(config.language);
+config.instructionText = al_commonConfettiInstructionsDefaultText_updated(config.language);
 
 % Run task with config input
 RunCommonConfettiVersion(config);

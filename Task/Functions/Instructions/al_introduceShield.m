@@ -16,7 +16,7 @@ function taskData = al_introduceShield(taskParam, taskData, win, trial, txt, xyE
 
 
 % If shield and shot presented separately, show fixation cross first
-if isequal(taskParam.trialflow.shotAndShield, 'separately')
+if isequal(taskParam.trialflow.shotAndShield, 'sequential')
     al_lineAndBack(taskParam)
     al_drawCircle(taskParam)
     al_drawCross(taskParam)

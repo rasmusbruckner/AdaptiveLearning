@@ -166,7 +166,6 @@ if testDay == 1
     condition = 'practice';
     taskData = load('visCannonPracticeVWM.mat');
     taskData = taskData.taskData;
-    taskParam.condition = condition;
     taskData.initialTendency = nan(length(taskData.ID), 1);
 
     % Reset roation angle to starting location

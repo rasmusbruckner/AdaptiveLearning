@@ -111,7 +111,7 @@ if cBal == 1
     end
 
     taskParam.trialflow.cannon = 'show cannon';
-    taskParam.trialflow.shot = 'no animation';
+    taskParam.trialflow.shot = 'static';
 
     dataFollowCannon = al_dresdenLoop(taskParam, taskDataFollowCannon, trial);
 
@@ -247,7 +247,7 @@ elseif cBal == 4
 
     % Follow-cannon condition
     taskParam.trialflow.cannon = 'show cannon';
-    taskParam.trialflow.shot = 'no animation';
+    taskParam.trialflow.shot = 'static';
 
     % Follow-cannon condition
     dataFollowCannon = al_dresdenLoop(taskParam, taskDataMain, trial);

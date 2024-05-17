@@ -4,72 +4,127 @@ classdef al_trialflow
     %
     %   A trialflow object determines the components of a trial
     %   such as whether the cannon is shown or hidden, and whether we
-    %   present confetti or cannonballs.
+    %   present confetti or cannon balls.
     
     properties
         
         % Task condition
         condition
+            % main: change-point task
+            % followOutcome: control task Dresden
+            % followCannon: control task Dresden
+            % shield: shield practice
 
-        % Experiment vs. practice session
-        exp
+        % Experiment vs. practice session: used for save string
+        exp 
+            % exp: experimental session
+            % pract: practice session
+            % practVis: practice visual cannon
+            % practHid: practice hidden cannon
+            % practHidPush: practice hidden cannon push condition
+            % practHidcolor: practice hidden cannon color block
+            % practHidAsym: practice hidden cannon asymmetric reward
 
         % Cannonball animation
         shot
+            % animate cannonball: with animations 
+            % static: no animations
 
+        % Whether or not shot and shield are presented simultaneously
+        shotAndShield
+            % simultaneously: togehter
+            % sequential: separately  
+            %% todo: check if getting rid of static is issue
+        
         % Confetti instead of ball
         confetti
+            % show confetti cloud: with confetti stimuli
+            % none: no confetti
         
         % Starting location of cannonball
         cannonball_start
-       
+            % center: right in the middle 
+            % cannon: in front of cannon
+
         % Whether or not cannon is shown
         cannon
+            % show cannon
+            % hide cannon
         
         % Which cannon type will be shown
         cannonType 
+            % standard: eLife style cannon
+            % confetti: confetti-cannon style
+            % helicopter: for Leipzig version
 
         % How rewards are delivered (e.g., standard, asymmetric)
         reward
-
-        % Whether or not saved tickmarks are used
-        savedTickmark
+            % standad: points for catching
+            % asymmetric: Jan Gläscher's asymmetric-reward version
+            % monetaryReward
+            % monetaryPunishment
+            % socialReward
+            % socialPunishment
         
         % Whether or not tickmarks for current trial are used
         currentTickmarks
+            % show: standard tick makrs
+            % workingMemory: 5 last outcomes
+            % hide: no tick marks
         
         % If more entertaining background is displayed
         background
-        
-        % Whether or not shot and shield are presented simultaneously
-        shotAndShield
+            % picture: for sleep version with arena
+            % no picture: for other versions with gray background
 
         % Whether or not initial shield location varies randomly
         push
+            % push: push condition sleep
+            % noPush: no-push condition
+            % practiceNoPush: special case for practice
 
         % Cannon position 
         cannonPosition
+            % inside: currently used on all conditions
+            % outside: previously used for chinese version
 
         % Shield type (contant vs. reward)
         shieldType
+            % constant: always same reward type
+            % reward: rewarding and neutral shields
 
         % Shield variable vs. fixed
         shield
+            % variable: variable shield size
+            % constant: constant shield size
+            % variableWithSD: variable with different standard deviations
+            %   of outcome generating distribution
 
         % Style (full, reduced, lines)
         shieldAppearance
+            % full: standard shield
+            % reduced: only frame
+            % lines: for pupillometry
 
         % Input device
         input
+            % mouse
+            % keyboard
 
         % Mean of distribution
         distMean 
+            % fixed: standard change-point task
+            % drift: drifting mean
 
-         % Noise conditions (stable vs. changepoints)
+         % Noise conditions
         variability
+            % stable: constant variability
+            % changepoint: changing variability levels
 
         % Color type (colorful vs. isoluminant)
         colors
+            % colorful: standard
+            % isoluminant: pupillometry
         
     end
     
@@ -85,15 +140,14 @@ classdef al_trialflow
             self.condition = 'main';
             self.exp = 'exp';
             self.shot = 'animate cannonball';
+            self.shotAndShield = 'simultaneously';
             self.confetti = 'show confetti cloud';
             self.cannonball_start = 'cannon';
             self.cannon = 'show cannon';
             self.cannonType = 'standard';
             self.reward = 'standard';
-            self.savedTickmark = 'no previous tickmark';
             self.currentTickmarks = 'show';
             self.background = 'picture';
-            self.shotAndShield = 'simultaneously';
             self.push = 'noPush';
             self.cannonPosition = 'inside';
             self.shieldType = 'contant';

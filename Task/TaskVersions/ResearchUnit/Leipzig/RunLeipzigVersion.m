@@ -186,10 +186,8 @@ cd(gParam.dataDirectory);
 % Create object instance for trial flow
 % -------------------------------------
 
-% Todo: What is the best way to document this?
 trialflow = al_trialflow();
-trialflow.shot = ' ';
-trialflow.confetti = 'no confettig cloud';
+trialflow.confetti = 'none';
 trialflow.cannonball_start = 'center';
 trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
