@@ -175,7 +175,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % Generate outcomes using confettiData function
             taskData = taskData.al_confettiData(taskParam, haz, concentration, safe);
 
-            % save('DataScripts/unitTest_TaskDataAsymmetric','taskData')
+            % save('Methods/unitTest_TaskDataAsymmetric','taskData')
 
             % Load expected outcomes from previous functions
             testData = load('unitTest_TaskDataAsymmetric.mat');
@@ -195,6 +195,180 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
 
         end
 
+        function testGenerateCP(testCase)
+            % TESTGENERATECP This function tests the function that
+            % generates the change points
+            %
+            %   We're mocking out the sampleRand function to control
+            %   the random number generation. More information on
+            %   mocking in Matlab here:
+            %   https://de.mathworks.com/help/matlab/ref/matlab.mock.testcase.createmock.html
+
+
+            % Create a mock function for sampleRand
+            [mock, behavior] = testCase.createMock(?al_taskDataMain, "MockedMethods", "sampleRand", "constructorInputs", {123, 'Hamburg'});
+
+            % Test if mock works: Output should be 10 when sampleRand is
+            % called
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 10)
+            testCase.verifyEqual(mock.sampleRand, 10);
+
+            % ------------------
+            % Run relevant tests
+            % ------------------
+
+            % Change point first trial
+            % ------------------------
+
+            taskParam.gParam.blockIndices = 1;
+            haz = 0.1;
+            s = 0;
+            safe = 3;
+            currTrial = 1;
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 0.0)
+
+            % First trial
+            [self, s] = mock.generateCP(taskParam, haz, s, safe, currTrial);
+
+            % Test outcome
+            testCase.verifyEqual(self.cp(1), 1);
+            testCase.verifyEqual(s, 3);
+            testCase.verifyEqual(self.TAC(1), 0);
+            testCase.verifyEqual(self.distMean(1), 0)
+
+            % Change point regular trial
+            % --------------------------
+
+            taskParam.gParam.blockIndices = 2;
+            s = 0;
+            safe = 3;
+            currTrial = 1;
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 0.0)
+
+            % First trial
+            [self, s] = mock.generateCP(taskParam, haz, s, safe, currTrial);
+
+            % Test outcome
+            testCase.verifyEqual(self.cp(1), 1);
+            testCase.verifyEqual(s, 3);
+            testCase.verifyEqual(self.TAC(1), 0);
+            testCase.verifyEqual(self.distMean(1), 0)
+
+            % No change point because random number too high
+            % ----------------------------------------------
+
+            taskParam.gParam.blockIndices = 1;
+            taskParam.trialflow.distMean = 'fixed';
+            s = 3;
+            safe = 3;
+            currTrial = 2;
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 0.5)
+            mock.TAC(1) = 3;
+            mock.distMean(1) = 10;
+
+            [self, s] = mock.generateCP(taskParam, haz, s, safe, currTrial);
+
+            % Test outcome
+            testCase.verifyEqual(self.cp(2), 0);
+            testCase.verifyEqual(s, 2);
+            testCase.verifyEqual(self.TAC(2), 4);
+            testCase.verifyEqual(self.distMean(2), 10)
+
+            % No change point because s != 0
+            % ------------------------------
+
+            taskParam.gParam.blockIndices = 1;
+            taskParam.trialflow.distMean = 'fixed';
+            s = 3;
+            safe = 3;
+            currTrial = 2;
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 0.01)
+            mock.TAC(1) = 3;
+            mock.distMean(1) = 10;
+
+            [self, s] = mock.generateCP(taskParam, haz, s, safe, currTrial);
+
+            % Test outcome
+            testCase.verifyEqual(self.cp(2), 0);
+            testCase.verifyEqual(s, 2);
+            testCase.verifyEqual(self.TAC(2), 4);
+            testCase.verifyEqual(self.distMean(2), 10)
+
+        end
+
+        function testAngShieldSize(testCase)
+            % TESTANGSHIELDSIZE This function tests the function that
+            % generates the random shield size
+            %
+            %   We're mocking out the exprnd function to control
+            %   the random number generation. More information on
+            %   mocking in Matlab here:
+            %   https://de.mathworks.com/help/matlab/ref/matlab.mock.testcase.createmock.html
+
+
+            % Create a mock function for sampleRand
+            [mock, behavior] = testCase.createMock(?al_taskDataMain, "MockedMethods", "sampleRand", "constructorInputs", {123, 'Hamburg'});
+
+            % Test if mock works: Output should be 10 when sampleRand is
+            % called
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 10)
+            testCase.verifyEqual(mock.sampleRand, 10);
+
+            % ------------------
+            % Run relevant tests
+            % ------------------
+            
+            % Number in correct range
+            % -----------------------
+
+            minAngShieldSize = 10;
+            maxAngShieldSize = 150;
+            shieldMu = 10; 
+            testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 140)
+            angShieldSize = mock.getShieldSize(minAngShieldSize, maxAngShieldSize, shieldMu);
+            testCase.verifyEqual(angShieldSize, 140);
+
+            % Test case where too large number is initially sampled (170),
+            % and the good number (150)
+            % -----------------------------------------------------------
+            minAngShieldSize = 10;
+            maxAngShieldSize = 150;
+            shieldMu = 10; 
+           
+            % Import the mocking framework invoke
+            import matlab.mock.actions.Invoke 
+          
+            % Define the specific outputs
+            specificOutputs = [170, 150];
+
+            % Create a function handle that manages call count and outputs
+            getNextOutput = al_createOutputFunction(specificOutputs);
+
+            % Use Invoke with the function handle to get the next output
+            when(withAnyInputs(behavior.sampleRand), Invoke(@(varargin) getNextOutput()));           
+                        
+            angShieldSize = mock.getShieldSize(minAngShieldSize, maxAngShieldSize, shieldMu);
+            testCase.verifyEqual(angShieldSize, 150);
+            
+            % Test case where too large number is initially sampled (170),
+            % and the good number (150)
+            % ------------------------------------------------------------
+
+            % Define the specific outputs
+            specificOutputs = [0, 30];
+
+            % Create a function handle that manages call count and outputs
+            getNextOutput = al_createOutputFunction(specificOutputs);
+
+            % Use Invoke with the function handle to get the next output
+            when(withAnyInputs(behavior.sampleRand), Invoke(@(varargin) getNextOutput()));
+
+            angShieldSize = mock.getShieldSize(minAngShieldSize, maxAngShieldSize, shieldMu);
+            testCase.verifyEqual(angShieldSize, 30);
+            
+        end
+
+
         function testGenerateCatchTrial(testCase)
             % TESTGENERATECATCHTRIAL This function tests the function that
             % generates the catch trials
@@ -213,8 +387,8 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             testCase.assignOutputsWhen(withAnyInputs(behavior.sampleRand), 10)
             testCase.verifyEqual(mock.sampleRand, 10);
 
-            % Compare run relevant tests
-            % --------------------------
+            % Run relevant tests
+            % ------------------
 
             catchTrialProb = 0.1;
             cp = 0;
@@ -244,7 +418,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
         end
 
         function testSampleOutcome(testCase)
-            % TESTGENERATECATCHTRIAL This function tests the function that
+            % TESTSAMPLEOUTCOME This function tests the function that
             % samples the outcomes
             %
             %   We're also mocking out the sampleRand function to control
@@ -462,32 +636,32 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
 
         end
 
-            function testGetParticlesCaughPartial(testCase)
+        function testGetParticlesCaughPartial(testCase)
             %TEST_GETPARTICLESCAUGHTPARTIAL This function tests the function
             % which computes which particles are caught in the shield
             %
             %   Here we test the case where some particles are caught
-            
+
             % TaskData-object instance
             taskData = al_taskDataMain(123, 'Hamburg');
 
             % Control random number generator
             rng(1)
-                        
+
             % Confetti parameters
             nParticles = 10;
-            confettiStd = 10; 
+            confettiStd = 10;
             outcome = 45;
             pred = 45;
             shieldSize = 10;
 
             % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
-            spread_wide = normrnd(outcome, confettiStd, nParticles, 1); 
+            spread_wide = normrnd(outcome, confettiStd, nParticles, 1);
 
             % Compute distance between confetti and prediction to determine when it is a catch
-            dotPredDist = al_diff(spread_wide, pred)'; 
+            dotPredDist = al_diff(spread_wide, pred)';
 
-            % Apply function and test output    
+            % Apply function and test output
             [whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, shieldSize);
             expectedwhichParticlesCaught = [false,false,false,false,false,false,false,true,true,false];
             testCase.verifyEqual(whichParticlesCaught, expectedwhichParticlesCaught)
@@ -499,27 +673,27 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             % which computes which particles are caught in the shield
             %
             %   Here we test the case where none of the particles is caught
-            
+
             % TaskData-object instance
             taskData = al_taskDataMain(123, 'Hamburg');
-            
+
             % Control random number generator
             rng(1)
-                        
+
             % Confetti parameters
             nParticles = 10;
-            confettiStd = 10; 
+            confettiStd = 10;
             outcome = 45;
             pred = 100;
             shieldSize = 10;
 
             % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
-            spread_wide = normrnd(outcome, confettiStd, nParticles, 1); 
+            spread_wide = normrnd(outcome, confettiStd, nParticles, 1);
 
             % Compute distance between confetti and prediction to determine when it is a catch
-            dotPredDist = al_diff(spread_wide, pred)'; 
+            dotPredDist = al_diff(spread_wide, pred)';
 
-            % Apply function and test output    
+            % Apply function and test output
             [whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, shieldSize);
             expectedwhichParticlesCaught = false(1, nParticles);
             testCase.verifyEqual(whichParticlesCaught, expectedwhichParticlesCaught)
@@ -537,21 +711,21 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
 
             % Control random number generator
             rng(1)
-                        
+
             % Confetti parameters
             nParticles = 10;
-            confettiStd = 1; 
+            confettiStd = 1;
             outcome = 45;
             pred = 45;
             shieldSize = 10;
 
             % Random angle for each particle (degrees) conditional on outcome and confetti standard deviation
-            spread_wide = normrnd(outcome, confettiStd, nParticles, 1); 
+            spread_wide = normrnd(outcome, confettiStd, nParticles, 1);
 
             % Compute distance between confetti and prediction to determine when it is a catch
-            dotPredDist = al_diff(spread_wide, pred)'; 
+            dotPredDist = al_diff(spread_wide, pred)';
 
-            % Apply function and test output    
+            % Apply function and test output
             [whichParticlesCaught, nParticlesCaught] = taskData.getParticlesCaught(dotPredDist, shieldSize);
             expectedwhichParticlesCaught = true(1, nParticles);
             testCase.verifyEqual(whichParticlesCaught, expectedwhichParticlesCaught)
@@ -559,3 +733,4 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
         end
     end
 end
+

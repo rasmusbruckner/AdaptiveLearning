@@ -492,6 +492,11 @@ classdef al_taskDataMain
                 % Concentration expressed as variance (approximation)
                 GaussStd = rad2deg((1/currConcentration)^.5);
                 sample = normcdf(currMean,0,GaussStd);
+                
+                % Exponential
+            elseif isequal(type, 'exprnd')
+                
+                sample = exprnd(currMean);
 
             end
         end
@@ -648,6 +653,28 @@ classdef al_taskDataMain
             end
         end
 
+        function angShieldSize = getShieldSize(self, minAngShieldSize, maxAngShieldSize, shieldMu)
+            %GETSHIELDSIZE This function samples the current size of the shield
+            % from an exponential distribution given mean and minimum and maximum
+            % shield size
+            %
+            %   Input
+            %       minAngShieldSize: Minimum angular shield size
+            %       maxAngShieldSize: Maximum angular shield size
+            %       shieldMu: Mean of shield size
+            %
+            %   Output
+            %       angShieldSize: Sampled angular shield size
+
+            % Initialize angular shield size
+            angShieldSize = nan;
+
+            % Sample shield size from exponential distribution
+            while ~isfinite(angShieldSize) || angShieldSize < minAngShieldSize || angShieldSize > maxAngShieldSize
+                angShieldSize = self.sampleRand('exprnd', shieldMu); %exprnd(shieldMu);
+            end
+        end
+
         function s = saveobj(self)
             % SAVEOBJ This function tranlates data that we want to save
             % into a structure
@@ -782,7 +809,7 @@ classdef al_taskDataMain
                 s.confettiStd = self.confettiStd;
                 s.cpRew = self.cpRew;
                 s.asymRewardSign = self.asymRewardSign;
-                s.nGreenPartciles = self.nGreenParticles;
+                s.nGreenParticles = self.nGreenParticles;
                 s.dotCol = self.dotCol;
                 s.initialTendency = self.initialTendency;
                 s.nParticlesCaught = self.nParticlesCaught;
@@ -817,7 +844,7 @@ classdef al_taskDataMain
                 s.TACVar = self.TACVar;
                 s.cpRew = self.cpRew;
                 s.asymRewardSign = self.asymRewardSign;
-                s.nGreenPartciles = self.nGreenParticles;
+                s.nGreenParticles = self.nGreenParticles;
                 s.dotCol = self.dotCol;
                 s.initialTendency = self.initialTendency;
                 s.nParticlesCaught = self.nParticlesCaught;
@@ -842,29 +869,6 @@ classdef al_taskDataMain
     % -------------------------------------------
 
     methods(Static)
-
-        function angShieldSize = getShieldSize(minAngShieldSize, maxAngShieldSize, shieldMu)
-            %GETSHIELDSIZE This function samples the current size of the shield
-            % from an exponential distribution given mean and minimum and maximum
-            % shield size
-            %
-            %   Input
-            %       minAngShieldSize: Minimum angular shield size
-            %       maxAngShieldSize: Maximum angular shield size
-            %       shieldMu: Mean of shield size
-            %
-            %   Output
-            %       angShieldSize: Sampled angular shield size
-
-            % Initialize angular shield size
-            angShieldSize = nan;
-
-            % Sample shield size from exponential distribution
-            while ~isfinite(angShieldSize) || angShieldSize < minAngShieldSize || angShieldSize > maxAngShieldSize
-                angShieldSize = exprnd(shieldMu);
-            end
-        end
-
 
         function [whichParticlesCaught, nParticlesCaught] = getParticlesCaught(dotPredDist, shieldSize)
             % GETPARTICLESCAUGHT This function computes which and how many confetti

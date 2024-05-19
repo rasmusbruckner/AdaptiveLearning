@@ -58,6 +58,7 @@ taskData.redCaught(1:nTrials) = nan;
 for t = 1:nTrials
     taskData.dotCol(t).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
 end
+taskParam.unitTest.pred = [300, 0, 300, 0];
 
 % Introduce cannon
 if taskParam.gParam.customInstructions
@@ -222,6 +223,9 @@ taskParam.trialflow.shieldAppearance = 'full';
 
 % Reset roation angle to starting location
 taskParam.circle.rotAngle = 0;
+
+% Update unit test predictions
+taskParam.unitTest.pred = zeros(20,1);
 
 % Run task
 while 1

@@ -16,7 +16,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Default parameters
             config.trialsExp = 20;
             config.practTrials = 5;
-            config.runIntro = false; %true;
+            config.runIntro = true;
             config.language = 'German';
             config.sentenceLength = 120;
             config.vSpacing = 1;

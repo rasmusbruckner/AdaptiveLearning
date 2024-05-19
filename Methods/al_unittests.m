@@ -1,40 +1,7 @@
 classdef al_unittests < matlab.unittest.TestCase
     %AL_UNITTESTS This class definition file specifies the unit tests
-    
-    % To run the tests: runtests('al_unittests')
     %
-    % Tests inlcude:
-    %     testDiff_neg: XX
-    %     testDiff_post: XX
-    %     testDiff_neg_180: XX
-    %     testDiff_post_180: XX
-    %     testOutcome_normal: XX
-    %     testOutcome_right_side: XX
-    %     testOutcome_left_side: XX
-
-    
-% Other tests that should be added in the future: 
-
-% Classes:
-%   al_subject add unit tests for classes
-
-% Functions:
-%   al_confettiLoop: requires a couple of mock functions
-%   al_controlPredSpotKeyboard
-%   al_generateCatchTrial
-%   all alGenereateOutcomes 
-% 
-% Other relevant function not yet tested
-%   al_getShieldSize
-%   al_indicateBlock
-%   al_instrLoopTxt 
-%   al_keyboardLoop
-%   al_mainLoop
-%   al_mouseLoop
-%   al_sampleOutcome (to some degree done here already)
-%   al_sendTrigger
-%   al_sleepLoop
-%   all task condition functions
+    % To run the tests: runtests('al_unittests')
 
     methods (Test)
         
@@ -109,7 +76,7 @@ classdef al_unittests < matlab.unittest.TestCase
             %TEST_OUTCOME_LEFT_SIDE  This function tests the outcome function
             % when the mean is zero and outcome appears on the left
             
-             % TaskData-object instance
+            % TaskData-object instance
             taskData = al_taskDataMain(200, 'Hamburg');
 
             % Control random number generator
@@ -119,5 +86,59 @@ classdef al_unittests < matlab.unittest.TestCase
             outcome = taskData.sampleOutcome(0, 8);
             testCase.verifyEqual(outcome, 345)
         end
+
+        function testSendTriggerHamburg(testCase)
+            %TESTSENDTRIGGERHAMBURG This function tests the common version
+            % triggers
+            
+            % Task condition
+            condition = 'Hamburg';
+            
+            % Object that harbors all relevant object instances
+            taskParam = al_objectClass();
+            taskParam.gParam.taskType = 'Hamburg';
+            taskParam.gParam.eyeTracker = false;
+            taskParam.gParam.sendTrigger = false;
+            taskParam.gParam.printTrigger = false;
+            
+            % TaskData-object instance
+            taskData = al_taskDataMain(200, condition);
+            
+            % Send static triggers
+            triggerTrialOnset = al_sendTrigger(taskParam, taskData, condition, 1, 'trialOnset');
+            triggerResponseOnset = al_sendTrigger(taskParam, taskData, condition, 1, 'responseOnset');
+            triggerResponseLogged = al_sendTrigger(taskParam, taskData, condition, 1, 'responseLogged');
+            triggerFix = al_sendTrigger(taskParam, taskData, condition, 1, 'fix');
+
+            % Test static triggers
+            testCase.verifyEqual(triggerTrialOnset, 1)
+            testCase.verifyEqual(triggerResponseOnset, 2)
+            testCase.verifyEqual(triggerResponseLogged, 3)
+            testCase.verifyEqual(triggerFix, 4)
+
+            % Test dynamic triggers
+            % ---------------------
+
+            taskData.cp(1) = 0;
+            triggerOutcomeNoCP = al_sendTrigger(taskParam, taskData, condition, 1, 'outcome');
+            testCase.verifyEqual(triggerOutcomeNoCP, 50)
+
+            taskData.cp(1) = 1;
+            triggerOutcomeCP = al_sendTrigger(taskParam, taskData, condition, 1, 'outcome');
+            testCase.verifyEqual(triggerOutcomeCP, 51)
+
+            taskData.hit(1) = 0;
+            triggerOutcomeNoHit = al_sendTrigger(taskParam, taskData, condition, 1, 'shield');
+            testCase.verifyEqual(triggerOutcomeNoHit, 90)
+
+            taskData.hit(1) = 1;
+            triggerOutcomeHit = al_sendTrigger(taskParam, taskData, condition, 1, 'shield');
+            testCase.verifyEqual(triggerOutcomeHit, 91)
+
+        end
+
+%         function testSendTriggerHamburgEEG(testCase)
+% 
+%         end
     end
 end
