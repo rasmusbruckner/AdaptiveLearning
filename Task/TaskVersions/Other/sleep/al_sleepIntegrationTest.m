@@ -165,15 +165,15 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataPush_cBal2_day2.rew, expectedRew);
 
             % Actual jitter with tolerance of 100 ms 
-            expectedActJitter = repmat(0.1, 20, 1);
-            testCase.verifyEqual(dataNoPush_cBal1_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataPush_cBal1_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataPush_cBal2_day1.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataPush_cBal1_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
-            testCase.verifyEqual(dataPush_cBal2_day2.actJitter, expectedActJitter, "AbsTol", 0.1);
+            expectedActJitterOnset = repmat(0.1, 20, 1);
+            testCase.verifyEqual(dataNoPush_cBal1_day1.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal1_day1.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day1.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal2_day1.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal1_day2.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal1_day2.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataNoPush_cBal2_day2.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
+            testCase.verifyEqual(dataPush_cBal2_day2.actJitterOnset, expectedActJitterOnset, "AbsTol", 0.1);
 
             % Block number
             expectedBlock = ones(20,1);
@@ -400,17 +400,6 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataPush_cBal1_day2.initialTendency, expectedInitialTendency);
             testCase.verifyEqual(dataNoPush_cBal2_day2.initialTendency, expectedInitialTendency);
             testCase.verifyEqual(dataPush_cBal2_day2.initialTendency, expectedInitialTendency);
-
-            % Cannon deviation
-            expectedCannonDev = [-24; 13; -67; -16; 83; -30; -87; -88; -17; 150; 150; 150; 150; 162; -121; -121; -121; 16; 5; 5];
-            testCase.verifyEqual(dataNoPush_cBal1_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush_cBal1_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataNoPush_cBal2_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush_cBal2_day1.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataNoPush_cBal1_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush_cBal1_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataNoPush_cBal2_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
-            testCase.verifyEqual(dataPush_cBal2_day2.cannonDev, expectedCannonDev, 'AbsTol', 1.e-10);
 
             % Initial starting point of prediction
             expectedY_Push = repmat([-10, 10], 1,10)';

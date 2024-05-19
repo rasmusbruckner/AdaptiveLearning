@@ -29,7 +29,7 @@ end
 breakLoop = false;
 
 % For unit test: simulate keyIsDown, keyCode, and record RT
-if ~taskParam.unitTest
+if ~taskParam.unitTest.run
 
     if taskParam.gParam.scanner
         
@@ -75,7 +75,7 @@ if keyIsDown && isnan(taskData.initiationRTs(trial))
     % keyboard loop should be terminated
     if keyCode(taskParam.keys.space)
 
-        if taskParam.unitTest
+        if taskParam.unitTest.run
             taskParam.circle.rotAngle = deg2rad(taskData.pred(trial));
         end
 

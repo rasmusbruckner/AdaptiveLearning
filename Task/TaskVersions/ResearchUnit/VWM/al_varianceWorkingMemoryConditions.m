@@ -19,7 +19,6 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 cBal = taskParam.subject.cBal;
@@ -28,7 +27,7 @@ cBal = taskParam.subject.cBal;
 % 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro && ~taskParam.unitTest.run
     al_VWMInstructions(taskParam)
 end
 
@@ -52,7 +51,7 @@ if cBal == 1
     % -----------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -77,7 +76,7 @@ if cBal == 1
     % ------------------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -103,7 +102,7 @@ else
     % ------------------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -127,7 +126,7 @@ else
     % -----------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -160,7 +159,7 @@ taskParam.trialflow.currentTickmarks = "show";
 taskParam.trialflow.distMean = "fixed";
 
 % Get data
-if ~unitTest
+if ~taskParam.unitTest.run
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -193,7 +192,7 @@ if cBal == 1
     taskParam.trialflow.currentTickmarks = "show";
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -220,7 +219,7 @@ if cBal == 1
     taskParam.trialflow.currentTickmarks = "workingMemory";
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -249,7 +248,7 @@ else
     taskParam.trialflow.currentTickmarks = "workingMemory";
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -276,7 +275,7 @@ else
     taskParam.trialflow.currentTickmarks = "show";
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);

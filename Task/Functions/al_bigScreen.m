@@ -62,11 +62,11 @@ while 1
     
     % Check for response of participant to continue to next screen
     [ ~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
-    if keyCode(taskParam.keys.enter) && ~taskParam.unitTest && ~endOfTask
+    if keyCode(taskParam.keys.enter) && ~taskParam.unitTest.run && ~endOfTask
         break
-    elseif keyCode(taskParam.keys.s) && ~taskParam.unitTest && endOfTask
+    elseif keyCode(taskParam.keys.s) && ~taskParam.unitTest.run && endOfTask
         break
-    elseif taskParam.unitTest
+    elseif taskParam.unitTest.run
         WaitSecs(1);
         break
     elseif keyCode(taskParam.keys.esc)

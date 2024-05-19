@@ -19,7 +19,7 @@ classdef al_objectClass
        trialflow % trialflow-object instance
        display % display-object instance
        instructionText % instruction-text-object-instance
-       unitTest % unit-test case
+       unitTest % unit-test-object instance
     end
 end
 

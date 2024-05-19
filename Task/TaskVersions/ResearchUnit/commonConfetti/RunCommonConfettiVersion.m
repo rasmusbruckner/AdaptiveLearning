@@ -4,7 +4,7 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %
 %   Input
 %       config: Structure with local configuration parameters
-%       unitTest: Indicates if unit test is being done or not
+%       unitTest: Unit-test-object instance
 %       cBal: Current cBal (only allowed when running unit test)
 %
 %   Output
@@ -28,9 +28,9 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 2;
+    config.trialsExp = 20;
     config.practTrials = 2;
-    config.runIntro = true; %false;
+    config.runIntro = false;
     config.language = 'German';
     config.sentenceLength = 120;
     config.vSpacing = 1;
@@ -56,16 +56,15 @@ end
 
 % Check if unit test is requested
 if ~exist('unitTest', 'var') || isempty(unitTest)
-    unitTest = false;
+    unitTest = al_unitTest();
 end
-
 
 % Check optional input related to unit test
 % -----------------------------------------
 
-if exist('cBal', 'var') && ~unitTest
+if exist('cBal', 'var') && ~unitTest.run
     error('No unit test: cBal cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && unitTest.run
     if ~ischar(cBal)
         error('cBal must be char');
     end
@@ -74,7 +73,7 @@ end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
-if ~unitTest
+if ~unitTest.run
     rng('shuffle')
 else
     rng(1)
@@ -191,7 +190,7 @@ end
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-if unitTest
+if unitTest.run
     trials = 20;
 else
     trials = trialsExp;
@@ -330,13 +329,12 @@ ID = '99999'; % 5 digits
 age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
-cBal = '1'; % 1/2/3/4
-if ~unitTest
-    cBal = '1'; % 1/2/3/4
+if ~unitTest.run
+    cBal = '1'; % 1 or 2 
 end
 
 % If no user input requested
-if gParam.askSubjInfo == false || unitTest
+if gParam.askSubjInfo == false || unitTest.run
 
     % Just add defaults
     subject.ID = ID;
@@ -430,6 +428,14 @@ if sendTrigger
     triggers.sampleRate = sampleRate;
     triggers.session = session;
 end
+
+% ------------------------------------------------
+% Create object instance with unit-test parameters
+% ------------------------------------------------
+
+% unitTest = al_unitTest();
+% unitTest.run = runUnitTest;
+% unitTest.pred = [0, 0, 0, 0, 0, 90, 90, 90, 90, 90, 180, 180, 180, 180, 180, 270, 270, 270, 270, 270];
 
 % ---------------------------------------
 % Put all object instances in task object

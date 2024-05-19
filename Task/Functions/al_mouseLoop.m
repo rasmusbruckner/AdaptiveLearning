@@ -43,7 +43,7 @@ while 1
     end
 
     % Record mouse movements
-    if ~taskParam.unitTest
+    if ~taskParam.unitTest.run
 
         % Get current mouse coordinates
         [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
@@ -102,7 +102,7 @@ while 1
     else
         buttons(1) = 1;
         buttons(2) = 0;
-        degree = taskData.pred(trial);
+        degree = taskParam.unitTest.pred(trial); % taskData.pred(trial);
     end
 
     % Translate degrees to rotation angle
@@ -134,7 +134,7 @@ while 1
     end
 
     % Show prediction spot
-    if ~taskParam.unitTest
+    if ~taskParam.unitTest.run
 
         % Check if prediction spot exceeds circle
         hyp = sqrt(x^2 + y^2);
@@ -156,10 +156,10 @@ while 1
     % Store initial tendency and initiation RT:
     % Only entering the condition when no initial tendency has been
     % recorded (first movement) or unit testing
-    if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest
+    if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest.run
 
         % Initial degrees and initiation RT
-        taskData.initialTendency(trial) = deg2rad(degree);
+        taskData.initialTendency(trial) = degree; %deg2rad(degree);
         taskData.initiationRTs(trial,:) = GetSecs() - startTimestamp;
 
         % Movement-onset trigger
@@ -203,7 +203,7 @@ while 1
     Screen('Flip', taskParam.display.window.onScreen, t + 0.001);
 
     % For unit test, we simulate RT = 0.5 in total (other half above)
-    if taskParam.unitTest
+    if taskParam.unitTest.run
         WaitSecs(0.25);
         hyp = taskParam.circle.rotationRad;
     end
@@ -213,7 +213,7 @@ while 1
         [keyIsDown, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
         if keyIsDown && keyCode(breakKey)
             break
-        elseif taskParam.unitTest
+        elseif taskParam.unitTest.run
             WaitSecs(1);
             break
         end
@@ -224,7 +224,7 @@ while 1
 
         % If initiation RT has not been stored (if button press occurs between check above and here [unlikely, but possible])
         if isnan(taskData.initiationRTs(trial))
-            taskData.initialTendency(trial) = deg2rad(degree); %degree * taskParam.circle.unit;
+            taskData.initialTendency(trial) = degree; %deg2rad(degree); %degree * taskParam.circle.unit;
             taskData.initiationRTs(trial) = taskData.RT(trial);
         end
 

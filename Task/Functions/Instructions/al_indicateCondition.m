@@ -25,7 +25,7 @@ while 1
     [~, ~, keyCode] = KbCheck(taskParam.keys.kbDev);
     if find(keyCode) == taskParam.keys.enter
         break
-    elseif taskParam.unitTest
+    elseif taskParam.unitTest.run
         WaitSecs(1);
         break
     elseif keyCode(taskParam.keys.esc)

@@ -16,7 +16,6 @@ function [dataNoPush, dataPush] = al_sleepConditions(taskParam)
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 testDay = taskParam.subject.testDay;
@@ -26,7 +25,7 @@ cBal = taskParam.subject.cBal;
 % 1. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro && ~taskParam.unitTest.run
     al_sleepInstructions(taskParam)
 end
 
@@ -57,7 +56,7 @@ if (cBal == 1 && testDay == 1) ||...
     % ----------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -78,7 +77,7 @@ if (cBal == 1 && testDay == 1) ||...
     % ---------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -104,7 +103,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     % -------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
        
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -125,7 +124,7 @@ elseif (cBal == 2 && testDay == 2) ||...
     % ------------------
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);

@@ -13,13 +13,12 @@ function totWin = al_MagdeburgFMRIConditions(taskParam)
 % Extract some variables from task-parameters object
 runIntro = taskParam.gParam.runIntro;
 cBal = taskParam.subject.cBal;
-unitTest = taskParam.unitTest;
 
 % --------------------------------
 % 1. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro && ~taskParam.unitTest.run
 
     al_MagdeburgFMRIInstructions(taskParam)
 
@@ -100,7 +99,6 @@ function totWin = blockLoop(taskParam, totWin, noiseCondition, half)
 
 % Extract some variables from task-parameters object
 trial = taskParam.gParam.trials;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 
@@ -108,7 +106,7 @@ haz = taskParam.gParam.haz;
 for b = 1:taskParam.gParam.nBlocks
 
     % Task data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);

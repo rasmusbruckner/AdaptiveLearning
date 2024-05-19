@@ -1,8 +1,8 @@
-function [dataMain, dataFollowOutcome, dataFollowCannon] = RunDresdenVersion(unitTest, cBal)
+function [dataMain, dataFollowOutcome, dataFollowCannon] = RunDresdenVersion(runUnitTest, cBal)
 %RUNDRESDENVERSION This function runs the Dresden version of the cannon task.
 %
 %   Input
-%       unitTest: Indicates if unit test is being done or not
+%       runUnitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
 %
 %   Output 
@@ -20,8 +20,8 @@ function [dataMain, dataFollowOutcome, dataFollowCannon] = RunDresdenVersion(uni
 %% Todo: Get back to triggers when updating Hamburg EEG
 
 % Check if unit test is requested
-if ~exist('unitTest', 'var') || isempty(unitTest)
-    unitTest = false;
+if ~exist('runUnitTest', 'var') || isempty(runUnitTest)
+    runUnitTest = false;
 end
 
 KbName('UnifyKeyNames')
@@ -29,9 +29,9 @@ KbName('UnifyKeyNames')
 % Check optional input related to unit test
 % -----------------------------------------
 
-if exist('cBal', 'var') && ~unitTest
+if exist('cBal', 'var') && ~runUnitTest
     error('No unit test: cBal cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(cBal)
         error('cBal must be char');
     end
@@ -39,7 +39,7 @@ end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
-if ~unitTest
+if ~runUnitTest
     rng('shuffle')
 else
     rng(1)
@@ -131,7 +131,7 @@ nFrames = 30;
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-if unitTest
+if runUnitTest
     trials = trialsTesting;
 else
     trials = trialsExp;
@@ -247,12 +247,12 @@ gender = 'f';  % m/f/d
 group = '1'; % young and old
 cBal = '1'; % 1/2/3/4/5/6
 rew = '1';
-if ~unitTest
+if ~runUnitTest
     cBal = '1'; % 1/2/3/4/5/6
 end
 
 % If no user input requested
-if gParam.askSubjInfo == false || unitTest
+if gParam.askSubjInfo == false || runUnitTest
 
     % Just add defaults
     subject.ID = ID;
@@ -369,6 +369,13 @@ if sendTrigger == true
 end
 
 triggers = al_triggers();
+
+% ------------------------------------------------
+% Create object instance with unit-test parameters
+% ------------------------------------------------
+
+unitTest = al_unitTest();
+unitTest.run = runUnitTest;
 
 % ---------------------------------------
 % Put all object instances in task object

@@ -1,8 +1,8 @@
-function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = RunHamburgEEGVersion(unitTest, cBal, day)
+function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = RunHamburgEEGVersion(runUnitTest, cBal, day)
 %RUNHAMBURGEEGVERSION This function runs the EEG version of the confetti-cannon task
 %
 %   Input
-%       unitTest: Indicates if unit test is being done or not
+%       runUnitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
 %       day: Current test day (only allowed when running unit test)
 %
@@ -24,24 +24,24 @@ function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSoci
 %
 
 % Check if unit test is requested
-if ~exist('unitTest', 'var') || isempty(unitTest)
-    unitTest = false;
+if ~exist('runUnitTest', 'var') || isempty(runUnitTest)
+    runUnitTest = false;
 end
 
 % Check optional input related to unit test
 % -----------------------------------------
 
-if exist('cBal', 'var') && ~unitTest
+if exist('cBal', 'var') && ~runUnitTest
     error('No unit test: cBal cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(cBal)
         error('cBal must be char');
     end
 end
 
-if exist('day', 'var') && ~unitTest
+if exist('day', 'var') && ~runUnitTest
     error('No unit test: day cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(day)
         error('day must be char');
     end
@@ -49,7 +49,7 @@ end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
-if ~unitTest
+if ~runUnitTest
     rng('shuffle')
 else
     rng(1)
@@ -163,7 +163,7 @@ end
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-if unitTest
+if runUnitTest
     trials = 20;
 else
     trials = trialsExp;
@@ -281,13 +281,13 @@ age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
-if ~unitTest
+if ~runUnitTest
     cBal = '1'; % 1/2/3/4
     day = '1'; % 1/2
 end
 
 % If no user input requested
-if gParam.askSubjInfo == false || unitTest
+if gParam.askSubjInfo == false || runUnitTest
 
     % Just add defaults
     subject.ID = ID;
@@ -387,6 +387,13 @@ if sendTrigger
     triggers.sampleRate = sampleRate;
     triggers.session = session;
 end
+
+% ------------------------------------------------
+% Create object instance with unit-test parameters
+% ------------------------------------------------
+
+unitTest = al_unitTest();
+unitTest.run = runUnitTest;
 
 % ---------------------------------------
 % Put all object instances in task object

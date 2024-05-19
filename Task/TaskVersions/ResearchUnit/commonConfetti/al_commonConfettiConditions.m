@@ -19,7 +19,6 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 
@@ -30,7 +29,7 @@ cBal = taskParam.subject.cBal;
 % 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro %&& ~unitTest
+if runIntro
     al_commonConfettiInstructions(taskParam)
 end
 
@@ -84,7 +83,7 @@ trial = taskParam.gParam.trials;
 
 % 1) Low noise
 
-if ~unitTest
+if ~taskParam.unitTest.run
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -96,17 +95,14 @@ if ~unitTest
     taskDataLowNoise = taskData.al_confettiData(taskParam);
 
 else
-    %load('integrationTest_HamburgLowNoise.mat','taskDataLowNoise')
-      load('integrationTest_Hamburg.mat','taskData')
-      taskDataLowNoise = taskData;
-
+    
+    taskDataLowNoise = taskParam.unitTest.taskDataIntegrationTest_HamburgLowNoise;
 
 end
 
 % 2) High noise
 
-% Get data
-if ~unitTest
+if ~taskParam.unitTest.run
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -118,9 +114,8 @@ if ~unitTest
     taskDataHighNoise = taskData.al_confettiData(taskParam);
 
 else
-    %load('integrationTest_HamburgHighNoise.mat','taskDataHighNoise')
-           load('integrationTest_Hamburg.mat','taskData')
-           taskDataHighNoise = taskData;
+    
+    taskDataHighNoise = taskParam.unitTest.taskDataIntegrationTest_HamburgHighNoise;
 
 end
 
@@ -147,14 +142,14 @@ else
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise')
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
 
     % ... low noise second
     % --------------------
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise')
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
 
 end
 

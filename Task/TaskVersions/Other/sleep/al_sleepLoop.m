@@ -85,8 +85,8 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps for initiation RT
-    taskData.actJitter(i) = rand * taskParam.timingParam.jitterITI;
-    WaitSecs(taskData.actJitter(i));
+    taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
+    WaitSecs(taskData.actJitterOnset(i));
     initRT_Timestamp = GetSecs();
 
     % Print out jitter duration, if desired
@@ -116,8 +116,8 @@ for i = 1:trial
 
     % Deviation from cannon (estimation error) to compute performance
     % criterion in practice
-    % Careful: same as est err. -- update in full version
-    taskData.cannonDev(i) = al_diff(taskData.distMean(i), taskData.pred(i));
+    % Careful: same as est err. -- update in full version  
+    % taskData.cannonDev(i) = al_diff(taskData.distMean(i), taskData.pred(i));
 
     % Prediction error & estimation error
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
@@ -246,7 +246,7 @@ end
 % Give feedback and save data
 % ----------------------------
 
-if ~taskParam.unitTest && ~buttonPractice
+if ~taskParam.unitTest.run && ~buttonPractice
 
         currPoints = sum(taskData.hit, 'omitnan');
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);

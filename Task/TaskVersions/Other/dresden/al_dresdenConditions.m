@@ -16,7 +16,6 @@ function [dataMain, dataFollowCannon, dataFollowOutcome] = al_dresdenConditions(
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 cBal = taskParam.subject.cBal;
@@ -68,7 +67,7 @@ if cBal == 1
     taskParam.trialflow.condition = 'main';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'main';
         al_dresdenInstructions(taskParam, whichPractice)
     end
@@ -82,7 +81,7 @@ if cBal == 1
     taskParam.trialflow.condition = 'followOutcome';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followOutcome';
         al_dresdenInstructions(taskParam, whichPractice)
     else
@@ -101,7 +100,7 @@ if cBal == 1
     taskParam.trialflow.condition = 'followCannon';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         followCannonShortInstructions(taskParam)
     else
         header = 'Anfang der Studie';
@@ -124,7 +123,7 @@ elseif cBal == 2
     taskParam.trialflow.condition = 'main';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'main';
         al_dresdenInstructions(taskParam, whichPractice)
     end
@@ -138,7 +137,7 @@ elseif cBal == 2
     taskParam.trialflow.condition = 'followCannon';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         followCannonShortInstructions(taskParam)
     else
         header = 'Anfang der Studie';
@@ -157,7 +156,7 @@ elseif cBal == 2
     taskParam.trialflow.condition = 'followOutcome';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followOutcome';
         al_dresdenInstructions(taskParam, whichPractice)
     else
@@ -178,7 +177,7 @@ elseif cBal == 3
     taskParam.trialflow.condition = 'followOutcome';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followOutcome';
         al_dresdenInstructions(taskParam, whichPractice)
     else
@@ -197,7 +196,7 @@ elseif cBal == 3
     taskParam.trialflow.condition = 'main';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'main';
         al_dresdenInstructions(taskParam, whichPractice)
     else
@@ -217,7 +216,7 @@ elseif cBal == 3
     taskParam.trialflow.condition = 'followCannon';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         followCannonShortInstructions(taskParam)
     else
         header = 'Anfang der Studie';
@@ -235,7 +234,7 @@ elseif cBal == 4
     % -----------------------
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followCannon';
         al_dresdenInstructions(taskParam, whichPractice)
     else
@@ -259,7 +258,7 @@ elseif cBal == 4
     taskParam.trialflow.condition = 'main';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         mainShortInstructions(taskParam)
     else
         header = 'Anfang der Studie';
@@ -278,7 +277,7 @@ elseif cBal == 4
     taskParam.trialflow.condition = 'followOutcome';
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followOutcome';
         al_dresdenInstructions(taskParam, whichPractice)
     else
@@ -296,7 +295,7 @@ elseif cBal == 5
     % ------------------------
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followOutcome';
         al_dresdenInstructions(taskParam, whichPractice)
     end
@@ -324,7 +323,7 @@ elseif cBal == 6
     % ------------------------
 
     % Show instructions
-    if runIntro && ~unitTest
+    if runIntro && ~taskParam.unitTest.run
         whichPractice = 'followOutcome';
         al_dresdenInstructions(taskParam, whichPractice)
     end

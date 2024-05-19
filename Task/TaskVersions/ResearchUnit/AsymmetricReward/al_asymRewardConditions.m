@@ -16,7 +16,6 @@ function [dataStandard, dataAsymmetricReward] = al_asymRewardConditions(taskPara
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 
@@ -28,7 +27,7 @@ testDay = taskParam.subject.testDay;
 % 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro && ~taskParam.unitTest.run
     al_asymRewardInstructions(taskParam)
 end
 
@@ -52,7 +51,7 @@ if cBal == 1
     taskParam.gParam.saveName = 'standard';
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -79,7 +78,7 @@ if cBal == 1
 
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -107,7 +106,7 @@ else
     taskParam.gParam.saveName = 'asymmetric';
 
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -134,7 +133,7 @@ else
 
     
     % Get data
-    if ~unitTest
+    if ~taskParam.unitTest.run
 
         % TaskData-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);

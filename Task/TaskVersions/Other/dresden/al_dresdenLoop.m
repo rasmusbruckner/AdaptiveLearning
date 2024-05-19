@@ -56,8 +56,8 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps
-    taskData.actJitter(i) = rand*taskParam.timingParam.jitterITI;
-    WaitSecs(taskData.actJitter(i));
+    taskData.actJitterOnset(i) = rand*taskParam.timingParam.jitterITI;
+    WaitSecs(taskData.actJitterOnset(i));
     initRT_Timestamp = GetSecs();
 
     % Print out jitter duration, if desired
@@ -254,7 +254,7 @@ end
 % Give feedback and save data
 % ---------------------------
 
-if ~taskParam.unitTest && (isequal(taskParam.trialflow.condition, 'main') || isequal(taskParam.trialflow.condition, 'followCannon') || isequal(taskParam.trialflow.condition, 'followOutcome'))
+if ~taskParam.unitTest.run && (isequal(taskParam.trialflow.condition, 'main') || isequal(taskParam.trialflow.condition, 'followCannon') || isequal(taskParam.trialflow.condition, 'followOutcome'))
     % Give feedback
     % -------------
 

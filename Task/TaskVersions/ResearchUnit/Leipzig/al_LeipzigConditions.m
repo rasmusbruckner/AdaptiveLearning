@@ -16,7 +16,6 @@ function [dataLowNoise, dataHighNoise] = al_LeipzigConditions(taskParam)
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 
@@ -24,7 +23,7 @@ haz = taskParam.gParam.haz;
 % 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro && ~taskParam.unitTest.run
     al_LeipzigInstructions(taskParam)
 end
 
@@ -42,7 +41,7 @@ trial = taskParam.gParam.trials;
 % ------------------
 
 % Get data
-if ~unitTest
+if ~taskParam.unitTest.run
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -65,7 +64,7 @@ dataLowNoise = al_LeipzigLoop(taskParam, 'main', taskData, trial);
 % ---------------------
 
 % Get data
-if ~unitTest
+if ~taskParam.unitTest.run
 
     % TaskData-object instance
     taskData = al_taskDataMain(trial, taskParam.gParam.taskType);

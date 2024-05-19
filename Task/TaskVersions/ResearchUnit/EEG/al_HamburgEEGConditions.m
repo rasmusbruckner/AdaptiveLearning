@@ -24,7 +24,6 @@ taskParam.trialflow.shieldAppearance = 'lines';
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
-unitTest = taskParam.unitTest;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 
@@ -35,7 +34,7 @@ cBal = taskParam.subject.cBal;
 % 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~unitTest
+if runIntro && ~taskParam.unitTest.run
     al_HamburgEEGInstructions(taskParam)
 end
 

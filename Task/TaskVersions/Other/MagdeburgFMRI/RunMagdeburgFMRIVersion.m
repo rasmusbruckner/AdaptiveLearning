@@ -1,9 +1,9 @@
-function RunMagdeburgFMRIVersion(unitTest, cBal)
+function RunMagdeburgFMRIVersion(runUnitTest, cBal)
 %RUNMAGDEBURGFMRIVERSION This function runs the fMRI version
 %  for the study in Magdeburg
 %
 %   Input
-%       unitTest: Indicates if unit test is being done or not
+%       runUnitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
 %
 %   Testing
@@ -20,16 +20,16 @@ function RunMagdeburgFMRIVersion(unitTest, cBal)
 % - so instead of starting at 1, start at higher value
 
 % Check if unit test is requested
-if ~exist('unitTest', 'var') || isempty(unitTest)
-    unitTest = false;
+if ~exist('runUnitTest', 'var') || isempty(runUnitTest)
+    runUnitTest = false;
 end
 
 % Check optional input related to unit test
 % -----------------------------------------
 
-if exist('cBal', 'var') && ~unitTest
+if exist('cBal', 'var') && ~runUnitTest
     error('No unit test: cBal cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(cBal)
         error('cBal must be char');
     end
@@ -37,7 +37,7 @@ end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
-if ~unitTest
+if ~runUnitTest
     rng('shuffle')
 else
     rng(1)
@@ -156,7 +156,7 @@ responseThreshold = 10;
 % Todo: For independent versions make sure that
 % all variables are still in use.
 
-if unitTest
+if runUnitTest
     trials = 20;
 else
     trials = trialsExp;
@@ -294,12 +294,12 @@ subject = al_subject();
 ID = '01'; % 2 digits
 age = '99';
 gender = 'f';  % m/f/d
-if ~unitTest
+if ~runUnitTest
     cBal = '1'; % 1/2/3/4
 end
 
 % If no user input requested
-if gParam.askSubjInfo == false || unitTest
+if gParam.askSubjInfo == false || runUnitTest
 
     % Just add defaults
     subject.ID = ID;
@@ -377,6 +377,13 @@ circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle = circle.compute_circle_props();
+
+% ------------------------------------------------
+% Create object instance with unit-test parameters
+% ------------------------------------------------
+
+unitTest = al_unitTest();
+unitTest.run = runUnitTest;
 
 % ---------------------------------------
 % Put all object instances in task object

@@ -1,9 +1,9 @@
-function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = RunVarianceWorkingMemoryVersion(unitTest, cBal, day)
+function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDriftingCannonVar, dataDriftingCannonVarWM] = RunVarianceWorkingMemoryVersion(runUnitTest, cBal, day)
 %RUNVARIANCEWORKINGMEMORY This function runs the first Gläscher version of
 %   VWM including variance change points and working memory manipulations
 %
 %   Input
-%       unitTest: Indicates if unit test is being done or not
+%       runUnitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
 %       day: Current tes day (only allowed when running unit test)
 %
@@ -25,8 +25,8 @@ function [dataStandardTickmarks, dataAddTickmarks, dataStandardCannonVar, dataDr
 % Todo: ensure that practice is saved too
 
 % Check if unit test is requested
-if ~exist('unitTest', 'var') || isempty(unitTest)
-    unitTest = false;
+if ~exist('runUnitTest', 'var') || isempty(runUnitTest)
+    runUnitTest = false;
 end
 
 KbName('UnifyKeyNames')
@@ -34,17 +34,17 @@ KbName('UnifyKeyNames')
 % Check optional input related to unit test
 % -----------------------------------------
 
-if exist('cBal', 'var') && ~unitTest
+if exist('cBal', 'var') && ~runUnitTest
     error('No unit test: cBal cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(cBal)
         error('cBal must be char');
     end
 end
 
-if exist('day', 'var') && ~unitTest
+if exist('day', 'var') && ~runUnitTest
     error('No unit test: day cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(day)
         error('day must be char');
     end
@@ -52,7 +52,7 @@ end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
-if ~unitTest
+if ~runUnitTest
     rng('shuffle')
 else
     rng(1)
@@ -167,7 +167,7 @@ imageRect = [0 00 60 200];
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-if unitTest
+if runUnitTest
     trials = trialsTesting;
 else
     trials = trialsExp;
@@ -286,13 +286,13 @@ age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
-if ~unitTest
+if ~runUnitTest
     cBal = '1'; % 1/2/3/4
     day = '1'; % 1/2
 end
 
 % If no user input requested
-if gParam.askSubjInfo == false || unitTest
+if gParam.askSubjInfo == false || runUnitTest
 
     % Just add defaults
     subject.ID = ID;
@@ -378,6 +378,13 @@ circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
 circle = circle.compute_circle_props();
+
+% ------------------------------------------------
+% Create object instance with unit-test parameters
+% ------------------------------------------------
+
+unitTest = al_unitTest();
+unitTest.run = runUnitTest;
 
 % ---------------------------------------
 % Put all object instances in task object

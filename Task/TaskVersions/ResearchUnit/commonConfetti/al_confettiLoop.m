@@ -74,7 +74,7 @@ for i = 1:trial
     taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
-    taskData.testDay(i) = taskParam.subject.testDay;
+    % taskData.testDay(i) = taskParam.subject.testDay;
     taskData.group(i) = taskParam.subject.group;
     taskData.confettiStd(i) = taskParam.cannon.confettiStd;
     taskData.cond{i} = condition;
@@ -83,8 +83,11 @@ for i = 1:trial
     jitTest = GetSecs();
 
     % Take jitter into account and get timestamps for initiation RT
-    taskData.actJitter(i) = rand * taskParam.timingParam.jitterITI;
-    WaitSecs(taskData.actJitter(i));
+    taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
+    taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+    taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
+
+    WaitSecs(taskData.actJitterOnset(i));
     initRT_Timestamp = GetSecs();
 
     % Print out jitter duration, if desired
@@ -115,11 +118,6 @@ for i = 1:trial
     % Extract current time and determine when screen should be flipped
     % for accurate timing
     timestamp = GetSecs;
-
-    % Deviation from cannon (estimation error) to compute performance
-    % criterion in practice
-    % Careful: same as est err. -- update in full version
-    taskData.cannonDev(i) = al_diff(taskData.distMean(i), taskData.pred(i));
 
     % Prediction error & estimation error
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
@@ -248,7 +246,7 @@ for i = 1:trial
 
         % Tell PTB that everything has been drawn and flip screen
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + rand * taskParam.timingParam.jitterOutcome;
+        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterOutcome(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
         
         % Send outcome trigger
@@ -294,7 +292,7 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.fixCrossShield + rand * taskParam.timingParam.jitterShield;
+    timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterShield(i);
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
     
     % Send shield trigger
@@ -313,7 +311,7 @@ for i = 1:trial
         % Tell PTB that everything has been drawn and flip screen
         fixationPhase(taskParam, [222,222,222])
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+        %taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
         timestamp = timestamp + taskParam.timingParam.shieldLength;
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
@@ -364,7 +362,7 @@ end
 % Give feedback and save data
 % ----------------------------
 
-if ~taskParam.unitTest
+if ~taskParam.unitTest.run
 
     if ~isequal(taskParam.trialflow.reward, 'asymmetric')
         currPoints = nansum(taskData.hit);

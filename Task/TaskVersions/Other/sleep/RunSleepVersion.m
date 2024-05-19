@@ -1,9 +1,9 @@
-function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
+function [dataNoPush, dataPush] = RunSleepVersion(runUnitTest, cBal, day)
 %RUNSLEEPVERSION This function runs the sleep-study version
 %  of the cannon task.
 %
 %   Input
-%       unitTest: Indicates if unit test is being done or not
+%       runUnitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
 %       day: Current test day (only allowed when running unit test)
 %
@@ -25,24 +25,24 @@ function [dataNoPush, dataPush] = RunSleepVersion(unitTest, cBal, day)
 %       03/24
 
 % Check if unit test is requested
-if ~exist('unitTest', 'var') || isempty(unitTest)
-    unitTest = false;
+if ~exist('runUnitTest', 'var') || isempty(runUnitTest)
+    runUnitTest = false;
 end
 
 % Check optional input related to unit test
 % -----------------------------------------
 
-if exist('cBal', 'var') && ~unitTest
+if exist('cBal', 'var') && ~runUnitTest
     error('No unit test: cBal cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(cBal)
         error('cBal must be char');
     end
 end
 
-if exist('day', 'var') && ~unitTest
+if exist('day', 'var') && ~runUnitTest
     error('No unit test: day cannot be used');
-elseif exist('cBal', 'var') && unitTest
+elseif exist('cBal', 'var') && runUnitTest
     if ~ischar(day)
         error('day must be char');
     end
@@ -50,7 +50,7 @@ end
 
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
-if ~unitTest
+if ~runUnitTest
     rng('shuffle')
 else
     rng(1)
@@ -149,7 +149,7 @@ dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpass
 % Todo: For independent versions make sure that
 % all variables are still in use.
 
-if unitTest
+if runUnitTest
     trials = trialsTesting;
 else
     trials = trialsExp;
@@ -250,13 +250,13 @@ ID = '01'; % 5 digits
 age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=sleep/2=control
-if ~unitTest
+if ~runUnitTest
     cBal = '1'; % 1/2/3/4
     day = '1'; % 1/2
 end
 
 % If no user input requested
-if gParam.askSubjInfo == false || unitTest
+if gParam.askSubjInfo == false || runUnitTest
 
     % Just add defaults
     subject.ID = ID;
@@ -339,6 +339,13 @@ circle.rotationRad = rotationRad;
 circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle = circle.compute_circle_props();
+
+% ------------------------------------------------
+% Create object instance with unit-test parameters
+% ------------------------------------------------
+
+unitTest = al_unitTest();
+unitTest.run = runUnitTest;
 
 % ---------------------------------------
 % Put all object instances in task object

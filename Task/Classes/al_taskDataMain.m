@@ -42,7 +42,9 @@ classdef al_taskDataMain
         currTrial % trial number
         block % block number
         allShieldSize% all angular shield size
-        actJitter % actual jitter on each trial
+        actJitterOnset % actual onset jitter on each trial
+        actJitterOutcome % actual outcome jitter on each trial
+        actJitterShield % actual shield jitter on each trial
         cp % changepoint index
         cpVar % variance changepoint index
         cpRew % reward-distribution-changepoint index
@@ -64,7 +66,7 @@ classdef al_taskDataMain
         pred % predictoin
         predErr % prediction error
         estErr % estimation error
-        cannonDev % difference mean and outcome (for asymRew) (todo:delete)
+        % cannonDev % difference mean and outcome (for asymRew) (todo:delete)
         diffLastOutcPred % difference last outcome and prediction for Dresden version
         UP % update
         hit % hit vs. miss
@@ -142,7 +144,9 @@ classdef al_taskDataMain
             self.currTrial = nan(trials, 1);
             self.block = nan(trials, 1);
             self.allShieldSize = nan(trials, 1);
-            self.actJitter = nan(trials, 1);
+            self.actJitterOnset = nan(trials, 1);
+            self.actJitterOutcome = nan(trials, 1);
+            self.actJitterShield = nan(trials, 1);
             self.cp = nan(trials, 1);
             self.cpVar = nan(trials, 1);
             self.cpRew = nan(trials, 1);
@@ -163,7 +167,7 @@ classdef al_taskDataMain
             self.predErr = nan(trials, 1);
             self.estErr = nan(trials, 1);
             self.diffLastOutcPred = nan(trials, 1);
-            self.cannonDev = nan(trials, 1);
+            % self.cannonDev = nan(trials, 1);
             self.UP = nan(trials, 1);
             self.hit = nan(trials, 1);
             self.perf = nan(trials, 1);
@@ -661,10 +665,11 @@ classdef al_taskDataMain
             s.haz = self.haz;
             s.cBal = self.cBal;
             s.safe = self.safe;
+            s.rew = self.rew;
             s.currTrial = self.currTrial;
             s.block = self.block;
             s.allShieldSize = self.allShieldSize;
-            s.actJitter = self.actJitter;
+            s.actJitterOnset = self.actJitterOnset;
             s.cp = self.cp;
             s.outcome = self.outcome;
             s.distMean = self.distMean;
@@ -674,18 +679,18 @@ classdef al_taskDataMain
             s.pred = self.pred;
             s.predErr = self.predErr;
             s.estErr = self.estErr;
-            s.cannonDev = self.cannonDev;
+            %s.cannonDev = self.cannonDev;
             s.UP = self.UP;
             s.hit = self.hit;
             s.perf = self.perf;
             s.accPerf = self.accPerf;
             s.RT = self.RT;
-            s.initiationRTSs = self.initiationRTs;
+            s.initiationRTs = self.initiationRTs;
 
             % Task specific
             if isequal(self.taskType, 'dresden')
 
-                s.rew = self.rew;
+               % s.rew = self.rew;
                 s.group = self.group;
                 s.diffLastOutcPred = self.diffLastOutcPred;
                 s.actRew = self.actRew;
@@ -721,7 +726,10 @@ classdef al_taskDataMain
                 s.pushConcentration = self.pushConcentration;
                 s.z = self.z;
                 s.y = self.y;
-
+                s.actRew = self.actRew;
+                s.initialTendency = self.initialTendency;
+                
+                s.triggers = self.triggers;
                 s.timestampOnset = self.timestampOnset;
                 s.timestampPrediction = self.timestampPrediction;
                 s.timestampFixCross2 = self.timestampFixCross2;
@@ -737,17 +745,19 @@ classdef al_taskDataMain
                 s.confettiStd = self.confettiStd;
                 s.dotCol = self.dotCol;
                 s.initialTendency = self.initialTendency;
-                s.nParticlesCaught = self.nParticlesCaught;
-
                 s.timestampOnset = self.timestampOnset;
                 s.timestampPrediction = self.timestampPrediction;
-                s.timestampShield = self.timestampShield;
-                %s.timestampReward = self.timestampReward;
+                s.actJitterOutcome = self.actJitterOutcome;
+                s.actJitterShield = self.actJitterShield;
+
                 s.timestampFixCross1 = self.timestampFixCross1;
                 s.timestampFixCross2 = self.timestampFixCross2;
-                %s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampFixCross3 = self.timestampFixCross3;
+                s.timestampOutcome = self.timestampOutcome;
+                s.timestampShield = self.timestampShield;
                 s.timestampOffset = self.timestampOffset;
-
+                s.triggers = self.triggers;
+                
             elseif isequal(self.taskType, 'HamburgEEG')
 
                 s.group = self.group;
@@ -755,7 +765,7 @@ classdef al_taskDataMain
                 s.confettiStd = self.confettiStd;
                 s.dotCol = self.dotCol;
                 s.initialTendency = self.initialTendency;
-                s.nParticlesCaught = self.nParticlesCaught;
+                % s.nParticlesCaught = self.nParticlesCaught;
 
                 s.timestampOnset = self.timestampOnset;
                 s.timestampPrediction = self.timestampPrediction;
