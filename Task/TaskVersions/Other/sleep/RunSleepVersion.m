@@ -388,6 +388,10 @@ ShowCursor;
 Screen('CloseAll');
 
 % Inform user about timing
-fprintf('Total time: %.1f minutes\n', char((GetSecs - timingParam.ref)/60));
+%fprintf('Total time: %.1f minutes\n', char((GetSecs - timingParam.ref)/60));
+experimentLength = GetSecs() - timingParam.ref;
+t = seconds(experimentLength);
+t.Format = 'hh:mm:ss.SSS';
+fprintf('Total time: %s', evalc('disp(t)'))
 
 end

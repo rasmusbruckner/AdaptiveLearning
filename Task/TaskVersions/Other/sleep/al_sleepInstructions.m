@@ -47,6 +47,8 @@ if testDay == 1
     taskData.distMean = [300, 240, 300, 65]; % aim of the cannon
     taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
 
+    taskParam.unitTest.pred = [300, 0, 300, 0];
+
     % Introduce cannon
     currTrial = 1;
     txt = ['Eine Kanone zielt auf eine Stelle des Kreises. Ihre Aufgabe ist es, die Kanonenkugel mit einem Schild abzuwehren. Mit dem violetten '...
@@ -126,6 +128,9 @@ if testDay == 1
     win = true;
     txt = 'In diesem Fall haben Sie die Kanonenkugel verfehlt.';
     al_confirmMiss(taskParam, taskData, win, currTrial, txt);
+
+    % Update unit test predictions
+    taskParam.unitTest.pred = zeros(20,1);
 
     % 8. Introduce variability of the cannon
     % --------------------------------------
@@ -286,8 +291,8 @@ else
         taskParam.trialflow.push = 'push';
         al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
-        condition = 'practice';
-        al_sleepLoop(taskParam, condition, taskData, trial);
+        %condition = 'practice';
+        al_sleepLoop(taskParam, taskData, trial);
 
         % ... no-push second
         % ------------------
@@ -300,7 +305,7 @@ else
         taskParam.trialflow.push = 'noPush';
         al_indicatePush(taskParam)
         trial = taskParam.gParam.practTrials;
-        al_sleepLoop(taskParam, condition, taskData, trial);
+        al_sleepLoop(taskParam, taskData, trial);
 
     end
 end

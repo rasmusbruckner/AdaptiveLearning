@@ -12,7 +12,7 @@ function [dataNoPush, dataPush] = al_sleepConditions(taskParam)
 %  Todo: Write a unit test and include this in integration tests
 
 % -----------------------------------------------------
-% 0. Extract some variables from task-parameters object
+% 1. Extract some variables from task-parameters object
 % -----------------------------------------------------
 
 runIntro = taskParam.gParam.runIntro;
@@ -22,15 +22,15 @@ testDay = taskParam.subject.testDay;
 cBal = taskParam.subject.cBal;
 
 % --------------------------------
-% 1. Show instructions, if desired
+% 2. Show instructions, if desired
 % --------------------------------
 
-if runIntro && ~taskParam.unitTest.run
+if runIntro %&& ~taskParam.unitTest.run
     al_sleepInstructions(taskParam)
 end
 
 % ------------
-% 2. Main task
+% 3. Main task
 % ------------
 
 % Extract number of trials
