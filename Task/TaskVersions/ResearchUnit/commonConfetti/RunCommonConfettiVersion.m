@@ -16,7 +16,7 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       04/24
+%       05/24
 
 
 KbName('UnifyKeyNames')
@@ -33,7 +33,6 @@ if ~exist('config', 'var') || isempty(config)
     config.runIntro = false;
     config.language = 'German';
     config.sentenceLength = 120;
-    config.vSpacing = 1;
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
@@ -48,7 +47,6 @@ if ~exist('config', 'var') || isempty(config)
     config.scanner = false;
     config.eyeTracker = false;
     config.sendTrigger = false;
-    config.screenNumber = 1;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end

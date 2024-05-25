@@ -35,7 +35,7 @@ cBal = taskParam.subject.cBal;
 % --------------------------------
 
 if runIntro && ~taskParam.unitTest.run
-    al_HamburgEEGInstructions(taskParam)
+    al_confettiEEGInstructions(taskParam)
 end
 
 % ------------

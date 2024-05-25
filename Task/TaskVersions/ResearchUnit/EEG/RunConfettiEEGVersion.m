@@ -1,10 +1,10 @@
-function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = RunHamburgEEGVersion(runUnitTest, cBal, day)
+function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = RunConfettiEEGVersion(config, runUnitTest, cBal)
 %RUNHAMBURGEEGVERSION This function runs the EEG version of the confetti-cannon task
 %
 %   Input
+%       config: Structure with local configuration parameters
 %       runUnitTest: Indicates if unit test is being done or not
 %       cBal: Current cBal (only allowed when running unit test)
-%       day: Current test day (only allowed when running unit test)
 %
 %   Output
 %       dataMonetaryReward: Task-data object monetary-reward condition
@@ -17,11 +17,39 @@ function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSoci
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       04/24
+%       05/24
 
 % todo: tailored integration tests
 % todo: starting budet also in reward condition (and social?)
-%
+% reduce conditions to 2 (monetary vs. social)
+
+KbName('UnifyKeyNames')
+
+% Check if config structure is provided
+if ~exist('config', 'var') || isempty(config)
+    
+    % Create structure
+    config = struct();
+
+    % Default parameters
+    config.trialsExp = 20;
+    config.practTrials = 2;
+    config.runIntro = false;
+    config.sentenceLength = 100;
+    config.textSize = 35;
+    config.headerSize = 50;
+    config.vSpacing = 1;
+    config.screenSize = get(0,'MonitorPositions')*1.0;
+    config.s = 40;
+    config.enter = 37;
+    config.debug = false;
+    config.showConfettiThreshold = false;
+    config.printTiming = true;
+    config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
+    config.sendTrigger = false;
+    config.customInstructions = true;
+    config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
+end
 
 % Check if unit test is requested
 if ~exist('runUnitTest', 'var') || isempty(runUnitTest)
@@ -39,14 +67,6 @@ elseif exist('cBal', 'var') && runUnitTest
     end
 end
 
-if exist('day', 'var') && ~runUnitTest
-    error('No unit test: day cannot be used');
-elseif exist('cBal', 'var') && runUnitTest
-    if ~ischar(day)
-        error('day must be char');
-    end
-end
-
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
 if ~runUnitTest
@@ -59,11 +79,28 @@ end
 % Set relevant task parameters
 % ----------------------------
 
-% Set number of trials for experiment
-trialsExp = 2;  % 200;  Hier bitte anpassen
+% Config parameters
+% -----------------
+trialsExp = config.trialsExp; % number of experimental trials
+practTrials = config.practTrials; % number of practice trials
+runIntro = config.runIntro; % task instructions
+sentenceLength = config.sentenceLength; % sentence length instructions
+textSize = config.textSize; % textsize
+vSpacing = config.vSpacing; % space between text lines    
+headerSize = config.headerSize; % header size
+screensize = config.screenSize; % screen size
+s = config.s; % s key
+enter = config.enter; % enter key
+debug = config.debug; % debug mode
+showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
+printTiming = config.printTiming; % print timing for checking
+dataDirectory = config.dataDirectory;
+sendTrigger = config.sendTrigger; % EEG
+% customInstructions = config.customInstructions;
+% instructionText = config.instructionText;
 
-% Number of practice trials
-practTrials = 2; % 20;  Hier bitte anpassen
+% More general paramters
+% ----------------------
 
 % Risk parameter: Precision of confetti average
 concentration = 12;
@@ -80,9 +117,6 @@ confettiStd = 6;
 % Start-up budget in Euros
 startingBudget = 20;  % only for monetaryPunishment?
 
-% Choose if task instructions should be shown
-runIntro = true;
-
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
@@ -95,16 +129,6 @@ useCatchTrials = true;
 % Catch-trial probability
 catchTrialProb = 0.1;
 
-% Set sentence length
-sentenceLength = 75; %100;
-
-% Set text and header size
-textSize = 35;
-headerSize = 50;
-
-% Screen size
-screensize = get(0, 'MonitorPositions');% [1 1 1920 1080];% get(0,'MonitorPositions'); %[1    1    2560    1440]; %[1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
-
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
@@ -115,45 +139,25 @@ rotationRad = 140;
 % Tickmark width
 tickWidth = 2;
 
-% Key codes
-s = 40; %83; %40; %%83; %40; % Für Hamburg KbDemo in Konsole laufen lassen und s drücken um keyCode zu bekommen: Hier eventuell anpassen
-enter = 37; %13; %37; % Hamburg: 13
-
-% Run task in debug mode with smaller window
-debug = false;
-
-% Show random confetti threshold for validation (don't use in experiment)
-showConfettiThreshold = false;
-
-% Print timing for checking
-printTiming = true;
-
 % Hide cursor
 hidePtbCursor = true;
 
 % Reward magnitude
 rewMag = 0.2;
 
-% Send EEG trigge in this case
-sendTrigger = false; %true;  % In Hamburg bitte auf true setzten  
-
+% Sampling rate for EEG
 sampleRate = 500; 
-
-% Specify data directory
-dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory'; % '~/Projects/for/data/reward_pilot';  % Hier bitte anpassen
-%dataDirectory = 'C:\Users\EEG\Desktop\AdaptiveLearningEEG_March\AdaptiveLearning\DataDirectory';  % Hier bitte anpassen
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
 socialFeedbackRect = [0 0 562 762]/4;
 
 % Confetti end point
-confettiEndMean = 0; %50; % 150% this is added to the circle radius
-confettiEndStd = 10;%10; % 20 % this is the spread around the average end point
-
+confettiEndMean = 0; % 50; % 150% this is added to the circle radius
+confettiEndStd = 10; % 10; % 20 % this is the spread around the average end point
 
 if sendTrigger
-    [session, status] = IOPort( 'OpenSerialPort', 'COM3' );
+    [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
 end
 
 % ---------------------------------------------------
@@ -263,6 +267,7 @@ strings.txtPressEnter = 'Weiter mit Enter';
 strings.sentenceLength = sentenceLength;
 strings.textSize = textSize;
 strings.headerSize = headerSize;
+strings.vSpacing = vSpacing;
 
 % ----------
 % User Input
@@ -278,7 +283,6 @@ group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
 if ~runUnitTest
     cBal = '1'; % 1/2/3/4
-    day = '1'; % 1/2
 end
 
 % If no user input requested
@@ -290,19 +294,18 @@ if gParam.askSubjInfo == false || runUnitTest
     subject.gender = gender;
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
-    subject.testDay = str2double(day);
     subject.date = date;
 
     % If user input requested
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'Day:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, gender, group, cBal, day};
+    defaultanswer = {ID, age, gender, group, cBal};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -315,7 +318,6 @@ else
     subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
-    subject.testDay = str2double(subjInfo{6});
     subject.date = date;
 
     % Test user input
@@ -324,7 +326,6 @@ else
     subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(),
-    subject.checkTestDay();
 end
 
 % Add starting bugdet
@@ -418,7 +419,7 @@ Screen('Flip', taskParam.display.window.onScreen);
 % Run task
 % --------
 
-[dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_HamburgEEGConditions(taskParam);
+[dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_confettiEEGConditions(taskParam);
 
 % Compute bonus
 totWin = dataMonetaryReward.accPerf(end) + dataMonetaryPunishment.accPerf(end);
