@@ -12,9 +12,10 @@ config = struct();
 % Add desired parameters
 config.trialsExp = 2;
 config.practTrials = 2;
+config.blockIndices = [1 51 101 151];
 config.runIntro = true;
-config.language = 'German'; %'English'; %
-config.sentenceLength = 120;
+config.language = 'German'; %'English';
+config.sentenceLength = 100;
 config.textSize = 35;
 config.vSpacing = 1;
 config.headerSize = 50;
@@ -25,10 +26,12 @@ config.enter = 37;
 config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;
+config.hidePtbCursor = true;
 config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.scanner = false;
 config.eyeTracker = false;
 config.sendTrigger = false;
+config.rotationRad = 140; % 170
 config.customInstructions = true;
 config.instructionText = al_commonConfettiInstructionsDefaultText_updated(config.language);
 

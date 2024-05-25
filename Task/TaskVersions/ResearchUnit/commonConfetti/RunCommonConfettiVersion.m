@@ -28,11 +28,12 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 20;
+    config.trialsExp = 2;
     config.practTrials = 2;
+    config.blockIndices = [1 51 101 151];
     config.runIntro = false;
     config.language = 'German';
-    config.sentenceLength = 120;
+    config.sentenceLength = 100;
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
@@ -43,10 +44,12 @@ if ~exist('config', 'var') || isempty(config)
     config.debug = false;
     config.showConfettiThreshold = false;
     config.printTiming = true;
+    config.hidePtbCursor = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
     config.scanner = false;
     config.eyeTracker = false;
     config.sendTrigger = false;
+    config.rotationRad = 140;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end
@@ -85,6 +88,7 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials
 practTrials = config.practTrials; % number of practice trials
+blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
 language = config.language; % language
 sentenceLength = config.sentenceLength; % sentence length instructions
@@ -98,10 +102,12 @@ enter = config.enter; % enter key
 debug = config.debug; % debug mode
 showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
 printTiming = config.printTiming; % print timing for checking
+hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
 eyeTracker = config.eyeTracker; % doing eye-tracking?
 sendTrigger = config.sendTrigger; % EEG
 scanner = config.scanner; % turn scanner on/off
+rotationRad = config.rotationRad; % rotation radius
 customInstructions = config.customInstructions;
 instructionText = config.instructionText;
 
@@ -126,9 +132,6 @@ confettiAnimationStd = 2;
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
-% Determine blocks
-blockIndices = [1 51 101 151];
-
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
 
@@ -139,14 +142,8 @@ catchTrialProb = 0.1;
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
-% Rotation radius
-rotationRad = 170;
-
 % Tickmark width
 tickWidth = 2;
-
-% Hide cursor
-hidePtbCursor = true;
 
 % Reward magnitude
 rewMag = 0.1;
@@ -174,6 +171,7 @@ joy = nan;
 %% to do add option to make sure default is used finally
 % automaticBackgroundRGB = true;
 
+% Sampling rate for EEG
 sampleRate = 500; 
 
 

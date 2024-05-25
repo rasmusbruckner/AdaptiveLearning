@@ -16,6 +16,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Default parameters
             config.trialsExp = 20;
             config.practTrials = 5;
+            config.blockIndices = [1 51 101 151];
             config.runIntro = true;
             config.language = 'German';
             config.sentenceLength = 100;
@@ -30,10 +31,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.debug = false;
             config.showConfettiThreshold = false;
             config.printTiming = true;
+            config.hidePtbCursor = true;
             config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
             config.scanner = false;
             config.eyeTracker = false;
             config.sendTrigger = false;
+            config.rotationRad = 140; % 170
             config.screenNumber = 1;
             config.customInstructions = true;
             config.instructionText = al_commonConfettiInstructionsDefaultText_updated();

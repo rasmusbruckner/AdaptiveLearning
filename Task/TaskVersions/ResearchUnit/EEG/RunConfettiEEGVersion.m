@@ -32,8 +32,9 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 20;
+    config.trialsExp = 2;
     config.practTrials = 2;
+    config.blockIndices = [1 51 101 151];
     config.runIntro = false;
     config.sentenceLength = 100;
     config.textSize = 35;
@@ -45,10 +46,12 @@ if ~exist('config', 'var') || isempty(config)
     config.debug = false;
     config.showConfettiThreshold = false;
     config.printTiming = true;
+    config.hidePtbCursor = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
     config.sendTrigger = false;
-    config.customInstructions = true;
-    config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
+    config.rotationRad = 140;
+    % config.customInstructions = true;
+    % config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end
 
 % Check if unit test is requested
@@ -83,6 +86,7 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials
 practTrials = config.practTrials; % number of practice trials
+blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
 sentenceLength = config.sentenceLength; % sentence length instructions
 textSize = config.textSize; % textsize
@@ -94,8 +98,10 @@ enter = config.enter; % enter key
 debug = config.debug; % debug mode
 showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
 printTiming = config.printTiming; % print timing for checking
+hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
 sendTrigger = config.sendTrigger; % EEG
+rotationRad = config.rotationRad; % rotation radius
 % customInstructions = config.customInstructions;
 % instructionText = config.instructionText;
 
@@ -120,9 +126,6 @@ startingBudget = 20;  % only for monetaryPunishment?
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
-% Determine blocks
-blockIndices = [1 150 150 150];
-
 % Use catch trials where cannon is shown occasionally
 useCatchTrials = true;
 
@@ -133,14 +136,8 @@ catchTrialProb = 0.1;
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
-% Rotation radius
-rotationRad = 140;
-
 % Tickmark width
 tickWidth = 2;
-
-% Hide cursor
-hidePtbCursor = true;
 
 % Reward magnitude
 rewMag = 0.2;

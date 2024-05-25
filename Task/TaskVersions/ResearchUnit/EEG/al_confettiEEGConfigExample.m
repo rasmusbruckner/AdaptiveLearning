@@ -12,6 +12,7 @@ config = struct();
 % Add desired parameters
 config.trialsExp = 2;
 config.practTrials = 2;
+config.blockIndices = [1 51 101 151];
 config.runIntro = true;
 config.sentenceLength = 100;
 config.textSize = 35;
@@ -23,8 +24,10 @@ config.enter = 37;
 config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;
+config.hidePtbCursor = true;
 config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.sendTrigger = false;
+config.rotationRad = 140;
 % config.customInstructions = true;
 % config.instructionText = al_commonConfettiInstructionsDefaultText_updated(config.language);
 
