@@ -18,12 +18,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.practTrials = 5;
             config.runIntro = true;
             config.language = 'German';
-            config.sentenceLength = 120;
+            config.sentenceLength = 100;
             config.vSpacing = 1;
             config.textSize = 35;
             config.headerSize = 50;
             config.vSpacing = 1;
-            config.screenSize = get(0,'MonitorPositions')*1.0;
+            config.screenSize = get(0,'MonitorPositions')*1;
             config.screenNumber = 1;
             config.s = 40;
             config.enter = 37;

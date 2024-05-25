@@ -6,17 +6,13 @@ classdef al_display
     %   creating the psychtoolbox window and parameters, e.g.,
     %   screen coordinates
     
-    % TODO: This still needs to be commented properly and some variable
-    % names have to be updated
-    % We should also consider child classes for properties or methods
-    % that are unique to a project
 
     % Properties of the display object
     % --------------------------------
     
     properties
         
-        % Geneal
+        % General
         screensize % screen size
         screensizePart % witdh and height of screen
         window % psychtoolbox window
@@ -188,7 +184,6 @@ classdef al_display
         
             % Create pictures based on images   
             cannonPic(:,:,4) = alpha(:,:);
-            % backgroundPic(:,:,4) = backgroundPicAlpha(:,:);
             if strcmp(cannonType, 'helicopter')
                 doctorPic(:,:,4) = doctorAlpha(:,:);
                 heliPic(:,:,4) = heliAlpha(:,:);

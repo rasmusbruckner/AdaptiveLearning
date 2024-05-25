@@ -1,51 +1,44 @@
 classdef al_circle
-    %AL_CIRCLE This class definition file specifies the properties and methods of a circle object
-    %
-    % TODO: Add more comments
-    
+    %AL_CIRCLE This class definition file specifies the properties and methods of a circle object    
 
     % Properties of the circle object
     % -------------------------------
     
     properties
         
-        windowRect
-        shieldAngle
-        shieldOffset
-        shieldWidth
-        shieldFixedSizeFactor % only applied when shield depends in concentration
-        cannonEndCent
-        cannonEndRect
-        outcCentSpotRect
-        fixSpotCentSpotRect
-        predSpotRad
-        outcSize
-        fixSpotSize
-        meanPoint
-        rotationRad
-        chineseCannonRad
-        shieldImageRad
-        heliImageRad
-        tendencyThreshold
-        predSpotDiam
-        outcDiam
-        fixSpotDiam
-        spotDiamMean
-        predSpotRect
-        outcRect
-        fixSpotRect
-        spotRectMean
-        boatRect
-        centBoatRect
-        predCentSpotRect
-        outcCentRect
-        centSpotRectMean
-        unit
-        initialRotAngle
-        rotAngle
-        cannonEndDiam
-        tickWidth
-        circleWidth
+        % PTB window
+        windowRect % window rectangle PTB screen
+        
+        % Shield 
+        shieldOffset % shield offset from circle
+        shieldWidth % width of shield
+        shieldFixedSizeFactor % relation shield size: only applied when shield depends in concentration
+        shieldImageRad % currently doctor image in Leipzig version
+
+        % Outcome
+        outcDiam % outcome-spot diameter
+        outcRect % outcome rectangle
+        outcCentSpotRect % centered outcome rectangle
+
+        % Prediction
+        predSpotDiam % prediction-spot diameter
+        predSpotRect % prediction-spot rectangle
+        predCentSpotRect % centered prediction-spot rectangle
+
+        % Fixation spot
+        fixSpotDiam % fixation spot size
+        fixSpotRect % fixation-spot rectangle
+        fixSpotCentRect % fixation-spot rectangle
+       
+        % Other
+        rotationRad % rotation radius
+        heliImageRad % heli image radius
+        tendencyThreshold % threshold counting as first movement 
+        unit % circle rotation step size
+        initialRotAngle % initial rotation angle
+        rotAngle % rotation angle
+        tickWidth % tick-mark width
+        circleWidth % circle width
         
     end
     
@@ -68,40 +61,26 @@ classdef al_circle
             %       self: Circle object with default values
             
             self.windowRect = windowRect;
-            self.shieldAngle = 30; % Todo: is this currently used?
             self.shieldWidth = 30; 
             self.shieldOffset = 10; 
             self.shieldFixedSizeFactor = 2; 
-            self.cannonEndCent = nan;
-            self.cannonEndRect = nan;
             self.outcCentSpotRect = nan;
-            self.fixSpotCentSpotRect = nan;
-            self.predSpotRad = 10; % Todo: can this be combined with diameter?
-            self.outcSize = 10;
-            self.fixSpotSize = 10;
-            self.meanPoint = 1;
+            self.fixSpotCentRect = nan;
             self.rotationRad = 150;
-            self.chineseCannonRad = 500; % Todo: used to be 300; update when getting back to chinese version
             self.shieldImageRad = 275;
             self.heliImageRad = 70;
-            self.tendencyThreshold = 15;
-            self.boatRect = [0 0 50 50];
-            self.centBoatRect = nan;  
+            self.tendencyThreshold = 15;  
             self.predCentSpotRect = nan;
-            self.outcCentRect = nan;
-            self.centSpotRectMean = nan;
-            self.unit = 2*pi/360;  % Todo: maybe get rid of unit and use rad2deg for computing pred
-            self.initialRotAngle = 0*self.unit; % Todo: delete unit here when tets are implemented
+            self.unit = 2*pi/360;
+            self.initialRotAngle = 0;
             self.rotAngle = self.initialRotAngle;
-            self.cannonEndDiam = 10;
-            self.cannonEndRect = [0 0 self.cannonEndDiam self.cannonEndDiam];
             self.tickWidth = 2;
             self.circleWidth = 10;
             
         end
 
-        function self = compute_circle_props(self)
-            % COMPUTE_CIRCLE_PROPS This function computes the parameters of
+        function self = computeCircleProps(self)
+            % COMPUTECIRCLEPROPS This function computes the parameters of
             % the circle
             %
             %   Input
@@ -109,25 +88,16 @@ classdef al_circle
             %       
             %   Output
             %       self: Circle object with default values
-
-            % Todo: rename function to computeCircleProps
             
-            self.predSpotDiam = self.predSpotRad * 2;
-            self.outcDiam = self.outcSize * 2;  % todo: rad instead of size
-            self.fixSpotDiam = self.fixSpotSize * 2; % todo: rad instead of size
-            self.spotDiamMean = self.meanPoint * 2;
+            self.predSpotDiam = 20;
+            self.outcDiam = 20; 
+            self.fixSpotDiam = 20;
             self.predSpotRect = [0 0 self.predSpotDiam self.predSpotDiam];
             self.outcRect = [0 0 self.outcDiam self.outcDiam];
             self.fixSpotRect = [0 0 self.fixSpotDiam self.fixSpotDiam];
-            self.spotRectMean = [0 0 self.spotDiamMean self.spotDiamMean];
-
-            self.centBoatRect = CenterRect(self.boatRect, self.windowRect);
             self.predCentSpotRect = CenterRect(self.predSpotRect, self.windowRect);
-            self.outcCentRect = CenterRect(self.outcRect, self.windowRect);
             self.outcCentSpotRect = CenterRect(self.outcRect, self.windowRect);
-            self.fixSpotCentSpotRect = CenterRect(self.fixSpotRect, self.windowRect);
-            self.cannonEndCent = CenterRect(self.cannonEndRect, self.windowRect);
-            self.centSpotRectMean = CenterRect(self.spotRectMean, self.windowRect);
+            self.fixSpotCentRect = CenterRect(self.fixSpotRect, self.windowRect);
         end
 
         function self = rightMovement(self, keySpeed)

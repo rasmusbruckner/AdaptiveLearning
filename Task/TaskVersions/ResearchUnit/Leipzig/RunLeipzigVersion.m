@@ -116,9 +116,6 @@ practiceTrialCriterionEstErr = 9;
 % Rotation radius
 rotationRad = 200;
 
-% Radius of prediction spot
-predSpotRad = 10;
-
 % Tickmark width
 tickWidth = 1;
 
@@ -201,7 +198,6 @@ trialflow.input = "mouse";
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-% Todo: Add some of the other cannon properties
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
@@ -210,7 +206,6 @@ cannon.confettiStd = confettiStd;
 % Create object instance with color parameters
 % ---------------------------------------------
 
-% Todo: Are all color already part of this class?
 colors = al_colors();
 
 % ------------------------------------------
@@ -225,10 +220,6 @@ else
 end
 keys.s = s;
 keys.enter = enter;
-
-% -----------------------------------------------------------------
-% Todo: Do we have to create object instance with mouse parameters?
-% -----------------------------------------------------------------
 
 % ---------------------------------------------
 % Create object instance with timing parameters
@@ -332,11 +323,10 @@ display.backgroundCol = [66, 66, 66];
 display.imageRect = imageRect;
 display.doctorRect = doctorRect;
 
-
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Docment this
+% Create stimuli
 display = display.createRects();
 display = display.createTextures(trialflow.cannonType);
 
@@ -350,14 +340,11 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ------------------------------------------------
 % Create object instance with unit-test parameters
@@ -400,7 +387,7 @@ totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
 header = 'Ende des Versuchs!';
 txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
-al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
+al_bigScreen(taskParam, header, txt, feedback, true);
 
 ListenChar();
 ShowCursor;

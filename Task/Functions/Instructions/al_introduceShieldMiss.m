@@ -30,7 +30,6 @@ WaitSecs(0.5);
 % Show cannon and instructions
 initRT_Timestamp = GetSecs(); % reference value to compute initiation RT
 
-% Todo update using trialflow mouse vs. keyboard
 % and explosion only optionally
 if strcmp(taskParam.gParam.taskType, 'sleep') || strcmp(taskParam.gParam.taskType, 'dresden') || strcmp(taskParam.gParam.taskType, 'MagdeburgFMRI')
 

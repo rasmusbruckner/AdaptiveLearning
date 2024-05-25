@@ -8,8 +8,6 @@ function [dataNoPush, dataPush] = al_sleepConditions(taskParam)
 %   Output
 %       dataNoPush: Task-data-object noPush condition
 %       dataPush: Task-data-object push condition
-%
-%  Todo: Write a unit test and include this in integration tests
 
 % -----------------------------------------------------
 % 1. Extract some variables from task-parameters object

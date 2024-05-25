@@ -34,7 +34,6 @@ classdef al_trialflow
         shotAndShield
             % simultaneously: togehter
             % sequential: separately  
-            %% todo: check if getting rid of static is issue
         
         % Confetti instead of ball
         confetti

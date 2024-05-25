@@ -169,8 +169,6 @@ for i = 1:nFrames
     % Flip screen and present changes
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     tUpdate = tUpdate + taskParam.timingParam.cannonBallAnimation / nFrames;
-    
-    % todo: measure flip time to adjust nFrames and timing. 
     Screen('Flip', taskParam.display.window.onScreen, timestamp + tUpdate);
     
     % Check for escape key 

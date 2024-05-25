@@ -92,8 +92,7 @@ for i = 1:trial
     % Prediction error & estimation error
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
     taskData.estErr(i) = al_diff(taskData.distMean(i), taskData.pred(i));
-    %% todo: compare to memory error in other versions
-
+    
     % Record hit
     if abs(taskData.predErr(i)) <= taskData.allShieldSize(i)/2
         taskData.hit(i) = 1;

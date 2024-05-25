@@ -33,7 +33,6 @@ while 1
     al_drawCannon(taskParam, taskData.distMean(trial))
     al_drawCircle(taskParam)
     
-    % todo: update when working on dresden etc.
     if (taskParam.subject.rew == 1 && win) || (taskParam.subject.rew == 2 && ~win)
         al_shield(taskParam, 20, taskData.pred(trial), 1)
     elseif (taskParam.subject.rew == 2 && win) || (taskParam.subject.rew == 1 && ~win)

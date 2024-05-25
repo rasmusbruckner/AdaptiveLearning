@@ -97,9 +97,6 @@ practiceTrialCriterionEstErr = 9;
 % Rotation radius
 rotationRad = 200;
 
-% Radius of prediction spot
-predSpotRad = 10;
-
 % Tickmark width
 tickWidth = 1;
 
@@ -153,9 +150,6 @@ responseThreshold = 10;
 % Create object instance with general task parameters
 % ---------------------------------------------------
 
-% Todo: For independent versions make sure that
-% all variables are still in use.
-
 if runUnitTest
     trials = 20;
 else
@@ -196,7 +190,6 @@ cd(gParam.dataDirectory);
 % Create object instance for trial flow
 % -------------------------------------
 
-% Todo: What is the best way to document this?
 trialflow = al_trialflow();
 trialflow.shot = 'animate cannonball';
 trialflow.confetti = 'none';
@@ -218,7 +211,6 @@ cannon.nFrames = nFrames;
 % Create object instance with color parameters
 % ---------------------------------------------
 
-% Todo: Are all color already part of this class?
 colors = al_colors();
 colors.background = [0, 0, 0];
 colors.circleCol = [224, 224, 224];
@@ -355,7 +347,7 @@ display.screensize = screensize;
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Document this
+% Create stimuli
 display = display.createRects();
 display = display.createTextures("standard");
 
@@ -374,9 +366,8 @@ end
 
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ------------------------------------------------
 % Create object instance with unit-test parameters
@@ -420,7 +411,7 @@ if runIntro
     header = 'Übung geschafft!';
     txt = 'Sie haben die Übung erfolgreich abgeschlossen\n\n\nGleich geht es mit dem Experiment weiter.';
     feedback = true; % indicate that this is the instruction mode
-    al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
+    al_bigScreen(taskParam, header, txt, feedback, true);
 
 else
 
@@ -433,7 +424,7 @@ else
     header = 'Ende des Versuchs!';
     txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
     feedback = true; % indicate that this is the instruction mode
-    al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
+    al_bigScreen(taskParam, header, txt, feedback, true);
 
 end
 

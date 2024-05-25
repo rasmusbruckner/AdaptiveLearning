@@ -66,7 +66,6 @@ classdef al_taskDataMain
         pred % predictoin
         predErr % prediction error
         estErr % estimation error
-        % cannonDev % difference mean and outcome (for asymRew) (todo:delete)
         diffLastOutcPred % difference last outcome and prediction for Dresden version
         UP % update
         hit % hit vs. miss
@@ -273,7 +272,6 @@ classdef al_taskDataMain
             % self.safe = repmat(safe, length(self.trials), 1);
             % self.safeVar = repmat(self.safeVar, length(self.trials), 1);
             
-            % Todo: ensure that this is updated in main branch as well
             self.haz = repmat(haz, self.trials, 1);
             self.hazVar = repmat(taskParam.gParam.hazVar, self.trials, 1);
             self.safe = repmat(safe, self.trials, 1);

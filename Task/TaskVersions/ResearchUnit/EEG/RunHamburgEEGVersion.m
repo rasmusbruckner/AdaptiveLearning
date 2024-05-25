@@ -112,9 +112,6 @@ practiceTrialCriterionEstErr = 9;
 % Rotation radius
 rotationRad = 140;
 
-% Radius of prediction spot
-predSpotRad = 10;
-
 % Tickmark width
 tickWidth = 2;
 
@@ -215,7 +212,6 @@ trialflow.colors = 'dark';
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-%% Todo: Add some of the other cannon properties
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
@@ -227,7 +223,6 @@ cannon = cannon.al_staticConfettiCloud(trialflow.colors);
 % Create object instance with color parameters
 % ---------------------------------------------
 
-%% Todo: Are all color already part of this class?
 colors = al_colors(nParticles);
 
 % ------------------------------------------
@@ -355,7 +350,7 @@ display.socialFeedbackRect = socialFeedbackRect;
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Docment this
+% Create stimuli
 display = display.createRects();
 display = display.createTextures(trialflow.cannonType);
 
@@ -369,14 +364,10 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-circle.outcSize = 5;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ----------------------------------------------
 % Create object instance with trigger parameters
@@ -439,7 +430,7 @@ totWin = dataMonetaryReward.accPerf(end) + dataMonetaryPunishment.accPerf(end);
 header = 'Ende des Versuchs!';
 txt = sprintf('Vielen Dank für Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
-al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
+al_bigScreen(taskParam, header, txt, feedback, true);
 
 ListenChar();
 ShowCursor;

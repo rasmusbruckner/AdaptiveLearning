@@ -9,7 +9,6 @@ function [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam)
 %       dataLowNoise: Task-data object low-noise condition
 %       dataHighNoise: Task-data object high-noise condition
 %
-%  Todo: Write a unit test and integration test for high/low noise
 
 % Screen background
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);

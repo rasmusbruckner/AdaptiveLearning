@@ -8,13 +8,6 @@ function al_dresdenInstructions(taskParam, whichPractice)
 %   Output
 %       None
 
-
-%% ok nach cleaning muss ich noch sicherstellen dass die "just instructions"
-% in conditions dann kommen.. aber das ist ja nu text... also morgen
-% erstaml diese funktion aufräumen
-%% todo: schon gemacht??
-
-
 % Indicate that cannon will be displayed during instructions
 taskParam.trialflow.cannon = 'show cannon';
 
@@ -181,7 +174,7 @@ if isequal(whichPractice, 'main') || isequal(whichPractice, 'followCannon')
             header = 'Leider gefangen!';
             txt = 'Sie haben die Kanonenkugel gefangen. Versuchen Sie bitte, die Kugel nicht zu fangen!';
             feedback = false; % indicate that this is the instruction mode
-            al_bigScreen(taskParam, header, txt, feedback);  % todo: code needs to be re-organized
+            al_bigScreen(taskParam, header, txt, feedback);
         else
             break
         end

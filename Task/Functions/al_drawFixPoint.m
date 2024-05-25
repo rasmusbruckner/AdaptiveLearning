@@ -14,7 +14,7 @@ if ~exist('color', 'var') || isempty(color)
 end
 
 % Compute outcome spot coordinates
-fixPoint = OffsetRect(taskParam.circle.fixSpotCentSpotRect, 0, 0);
+fixPoint = OffsetRect(taskParam.circle.fixSpotCentRect, 0, 0);
 
 % Draw point
 Screen('FillOval', taskParam.display.window.onScreen, color, fixPoint);

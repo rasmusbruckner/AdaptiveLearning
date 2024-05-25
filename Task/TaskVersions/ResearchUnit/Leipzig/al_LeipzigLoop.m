@@ -11,15 +11,6 @@ function taskData = al_LeipzigLoop(taskParam, condition, taskData, trial)
 %   Output
 %       taskData: Task-data-object instance
 %
-%   Events (Todo: verify)
-%       1: Trial Onset
-%       2: Prediction            (self-paced)
-%       3: Confetti animation    (1500 ms)
-%       4: ITI                   (900 ms)
-%       5: Jitter                (0-200 ms)
-%                                ------------
-%                                 2.5 s + pred (~ 2s)
-%
 % todo: maybe get rid of "condition" input
 % todo: some comments should be added and some outdated comments should be
 % deleted

@@ -123,9 +123,6 @@ practiceTrialCriterionEstErr = 9;
 % Rotation radius
 rotationRad = 200;
 
-% Radius of prediction spot
-predSpotRad = 10;
-
 % Tickmark width
 tickWidth = 1;
 
@@ -191,7 +188,6 @@ cd(gParam.dataDirectory);
 % Create object instance for trial flow
 % -------------------------------------
 
-% Todo: What is the best way to document this?
 trialflow = al_trialflow();
 trialflow.confetti = 'show confetti cloud';
 trialflow.cannonball_start = 'center';
@@ -210,7 +206,6 @@ trialflow.colors = 'colorful';
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-% Todo: Add some of the other cannon properties
 cannon = al_cannon();
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
@@ -230,10 +225,6 @@ colors = al_colors(nParticles);
 keys = al_keys();
 keys.s = s;
 keys.enter = enter;
-
-% -----------------------------------------------------------------
-% Todo: Do we have to create object instance with mouse parameters?
-% -----------------------------------------------------------------
 
 % ---------------------------------------------
 % Create object instance with timing parameters
@@ -342,7 +333,7 @@ display.imageRect = imageRect;
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Docment this
+% Create stimuli
 display = display.createRects();
 display = display.createTextures(trialflow.cannonType);
 
@@ -356,14 +347,11 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ------------------------------------------------
 % Create object instance with unit-test parameters
@@ -407,7 +395,7 @@ totWin = round(sum(dataStandard.nParticlesCaught)/10) + round(sum(dataAsymReward
 header = 'Ende des Versuchs!';
 txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %.0f Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
-al_bigScreen(taskParam, header, txt, feedback, true); % todo: function has to be cleaned
+al_bigScreen(taskParam, header, txt, feedback, true);
 
 ListenChar();
 ShowCursor;

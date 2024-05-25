@@ -423,9 +423,6 @@ classdef al_sleepIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataPush_cBal1_day2.y, expectedY_Push, 'AbsTol', 1.e-10);
             testCase.verifyEqual(dataNoPush_cBal2_day2.y, zeros(20, 1), 'AbsTol', 1.e-10);
             testCase.verifyEqual(dataPush_cBal2_day2.y, expectedY_Push, 'AbsTol', 1.e-10);
-
-            % Timestamps: Not testing absolute values bc the reference
-            % value depends on manual input (todo: fix when doing CI)
             
             % Difference prediction and trial onset
             expectedOnsetPredDiff = repmat(0.5, 20, 1);

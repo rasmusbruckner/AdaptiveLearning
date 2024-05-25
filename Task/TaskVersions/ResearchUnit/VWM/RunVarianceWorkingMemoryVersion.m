@@ -128,10 +128,7 @@ practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
 rotationRad = 200;
-
-% Radius of prediction spot
-predSpotRad = 10;
-
+    
 % Tickmark width
 tickWidth = 1;
 
@@ -370,14 +367,11 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
 circle.shieldFixedSizeFactor = shieldFixedSizeFactor;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ------------------------------------------------
 % Create object instance with unit-test parameters

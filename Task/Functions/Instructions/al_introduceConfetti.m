@@ -14,7 +14,6 @@ function [taskData, taskParam] = al_introduceConfetti(taskParam, taskData, trial
 % Set time stamp
 initRT_Timestamp = 0;
 
-% Todo update using trialflow mouse vs. keyboard
 if strcmp(taskParam.gParam.taskType, 'Sleep')
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);

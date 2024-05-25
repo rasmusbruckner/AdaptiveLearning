@@ -14,6 +14,7 @@ function trigger = al_sendTrigger(taskParam, taskData, condition, trial, Tevent)
 
 %% todo: change to from trigger to triggerID to avoid conflict with MEG triggering
 % todo: store catch trial info in trigger
+% todo: condition is part of taskParam. use this instead
 
 % % Check if unit test is requested
 % if ~exist('printTrigger', 'var') || isempty(printTrigger)

@@ -101,7 +101,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440]; %[1 1 1920 1080];  %[1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: [screenWidth, screenHeight] = Screen('WindowSize', 0); screenSize = [1, 1, screenWidth, screenHeight];
+screensize = [0 0 1920 1080]; %[1 1 1920 1080];  %[1 1 1920 1080];%[1    1    2560    1440]; %[1 1 1920 1080];%[1    1    2560    1440]; % Für MD: [screenWidth, screenHeight] = Screen('WindowSize', 0); screenSize = [1, 1, screenWidth, screenHeight];
 
 %[1    1    2560    1440]; %[1 1 1920 1080]; %[1    1    2560    1440]; %[1 1 1920 1080]; % [1    1    2560    1440];%[1 1 1920 1080]; % fu ohne bildschirm [1    1    2560    1440];%[1 1 1920 1080]; %fu mit bildschirm [1 1 1920 1080]; % magdeburg : [1    1    2560    1440]; %[1 1 1920 1080];%get(0,'MonitorPositions');%[1    1    2560    1440]; %get(0,'MonitorPositions'); %[1    1    2560    1440]%
 %displayobj.screensize = get(0,'MonitorPositions'); %[1    1
@@ -114,9 +114,6 @@ practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
 rotationRad = 200;
-
-% Radius of prediction spot
-predSpotRad = 10;
 
 % Tickmark width
 tickWidth = 1;
@@ -145,9 +142,6 @@ dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';  % Hier bitte anpass
 % ---------------------------------------------------
 % Create object instance with general task parameters
 % ---------------------------------------------------
-
-% Todo: For independent versions make sure that
-% all variables are still in use.
 
 if runUnitTest
     trials = trialsTesting;
@@ -182,7 +176,6 @@ cd(gParam.dataDirectory);
 % Create object instance for trial flow
 % -------------------------------------
 
-% Todo: What is the best way to document this?
 trialflow = al_trialflow();
 trialflow.shot = 'animate cannonball';
 trialflow.confetti = 'none';
@@ -201,7 +194,6 @@ cannon = al_cannon();
 % Create object instance with color parameters
 % ---------------------------------------------
 
-% Todo: Are all color already part of this class?
 colors = al_colors();
 colors.background = [0, 0, 0];
 colors.circleCol = [224, 224, 224];
@@ -318,7 +310,7 @@ display.screensize = screensize;
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Document this
+% Create stimuli
 display = display.createRects();
 display = display.createTextures("standard");
 
@@ -332,13 +324,10 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ------------------------------------------------
 % Create object instance with unit-test parameters
@@ -381,7 +370,7 @@ totWin = sum(dataNoPush.hit) + sum(dataPush.hit);
 header = 'Ende des Versuchs!';
 txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
-al_bigScreen(taskParam, header, txt, feedback, true);  % todo: function has to be cleaned
+al_bigScreen(taskParam, header, txt, feedback, true);
 
 ListenChar();
 ShowCursor;

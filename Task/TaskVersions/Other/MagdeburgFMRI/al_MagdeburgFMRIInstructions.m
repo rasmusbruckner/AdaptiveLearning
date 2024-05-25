@@ -108,7 +108,7 @@ while 1
         header = 'Leider gefangen!';
         txt = 'Sie haben die Kanonenkugel gefangen. Versuchen Sie bitte, die Kugel nicht zu fangen!';
         feedback = false; % indicate that this is the instruction mode
-        al_bigScreen(taskParam, header, txt, feedback);  % todo: code needs to be re-organized
+        al_bigScreen(taskParam, header, txt, feedback);
     else
         break
     end

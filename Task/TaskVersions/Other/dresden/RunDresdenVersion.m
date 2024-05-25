@@ -96,9 +96,6 @@ practiceTrialCriterionEstErr = 9;
 % Rotation radius
 rotationRad = 200; % this value should be differen on other computers
 
-% Radius of prediction spot
-predSpotRad = 10;
-
 % Tickmark width
 tickWidth = 1;
 
@@ -164,7 +161,6 @@ cd(gParam.dataDirectory);
 % Create object instance for trial flow
 % -------------------------------------
 
-%% Todo: What is the best way to document this?
 trialflow = al_trialflow();
 trialflow.cannon = 'hide cannon';
 trialflow.background = 'noPicture';
@@ -177,7 +173,6 @@ trialflow.currentTickmarks = "show";
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-%% Todo: Add some of the other cannon properties
 cannon = al_cannon();
 cannon.nFrames = nFrames;
 
@@ -301,7 +296,6 @@ end
 % Create object instance with color parameters
 % ---------------------------------------------
 
-%% Todo: Are all colors already part of this class?
 colors = al_colors();
 
 if subject.rew == 1
@@ -337,7 +331,7 @@ display.backgroundCol = colors.background;
 % Open psychtoolbox window
 display = display.openWindow(gParam);
 
-% Todo: Docment this
+% Create stimuli
 display = display.createRects();
 display = display.createTextures(trialflow.cannonType);
 
@@ -351,13 +345,10 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
-% Todo: Delete a couple of variables when versions are independent;
-% document properly
 circle = al_circle(display.windowRect);
 circle.rotationRad = rotationRad;
-circle.predSpotRad = predSpotRad;
 circle.tickWidth = tickWidth;
-circle = circle.compute_circle_props();
+circle = circle.computeCircleProps();
 
 % ---------------------------------------------
 % Create object instance with trigger parameters

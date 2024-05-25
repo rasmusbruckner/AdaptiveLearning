@@ -51,7 +51,7 @@ taskData.catchTrial(1:nTrials) = 0; % no catch trials
 taskData.initiationRTs(1:nTrials) = nan; % set initiation RT to nan to indicate that this is the first response
 taskData.initialTendency(1:nTrials) = nan; % set initial tendency of mouse movement
 taskData.block(1:nTrials) = 1; % block number
-taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/12)); % shield size TODO: Adjust to new noise conditions
+taskData.allShieldSize(1:nTrials) = rad2deg(2*sqrt(1/12));
 taskData.shieldType(1:nTrials) = 1; % shield color
 taskData.distMean = [300, 240, 300, 65]; % aim of the helicopter
 taskData.outcome = taskData.distMean; % in practice phase, mean and outcome are the same
@@ -121,7 +121,7 @@ while 1
         header = 'Leider gefangen!';
         txt = 'Sie haben zu viele Medikamente gefangen. Versuchen Sie bitte, die Medikamente zu verfehlen!';
         feedback = false; % indicate that this is the instruction mode
-        al_bigScreen(taskParam, header, txt, feedback);  % todo: code needs to be re-organized
+        al_bigScreen(taskParam, header, txt, feedback);
     else
         break
     end

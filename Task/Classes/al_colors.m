@@ -83,21 +83,20 @@ classdef al_colors
             totalPixels = 0;
 
             % 1. Size of fixation spot in pixels
-            fixSpotPixels = self.surfaceArea(taskParam.circle.fixSpotSize);
+            fixSpotPixels = self.surfaceArea(taskParam.circle.fixSpotDiam);
             totalPixels = totalPixels + fixSpotPixels;
 
             % 2. Size of outcome spot in pixels
-            outcSpotPixels = self.surfaceArea(taskParam.circle.outcSize);
+            outcSpotPixels = self.surfaceArea(taskParam.circle.outcDiam);
             totalPixels = totalPixels + outcSpotPixels;
 
             % 3. Size of prediction spot in pixels
-            predSpotPixels = self.surfaceArea(taskParam.circle.predSpotRad);
+            predSpotPixels = self.surfaceArea(taskParam.circle.predSpotDiam);
             totalPixels = totalPixels + predSpotPixels;
 
             % 4. Size of circle
             circleOuterPixels = self.surfaceArea(taskParam.circle.rotationRad);
             circleInnerPixels = self.surfaceArea(taskParam.circle.rotationRad-taskParam.circle.circleWidth);
-            %circlePixels = round(circleOuterPixels - circleInnerPixels, 1);
             circlePixels = round(circleOuterPixels - circleInnerPixels);
             totalPixels = totalPixels + circlePixels;
 

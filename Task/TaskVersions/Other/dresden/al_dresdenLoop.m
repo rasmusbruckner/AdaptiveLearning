@@ -221,7 +221,6 @@ for i = 1:trial
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send outcome 2 trigger
-    %% todo: ditch condition here and in other cases... in future versions done with trialflow.condition
     taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 5);
 
     % Fixation cross 3
@@ -236,12 +235,10 @@ for i = 1:trial
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send fixation cross 3 trigger
-    %% todo: same here: ditch condition
     taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 6);
     WaitSecs(taskParam.timingParam.fixedITI / 2);
 
     % Send trial summary trigger
-    %% todo: same here: ditch condition
     taskData.triggers(i,7) =  al_sendTrigger(taskParam, taskData, taskParam.trialflow.condition, i, 16);
     WaitSecs(taskParam.timingParam.fixedITI / 2);
     taskData.timestampOffset(i,:) = GetSecs - taskParam.timingParam.ref;

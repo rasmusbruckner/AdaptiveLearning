@@ -2,13 +2,9 @@ classdef al_gparam
     %AL_GPARAM This class definition file specifies the 
     %   properties and methods of a gParam object
     %
-    %   A gParam object contains general task parameters such as 
+    %   A general-parameter object contains general task parameters such as 
     %   number of trials and blocks, hazard rate, and concentration.
     
-
-    % Todo: finish comments and delete unnecessary parameters when
-    % versions are fully independent
-
     % Properties of the subject object
     % --------------------------------
     
