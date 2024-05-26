@@ -382,7 +382,10 @@ display = al_display();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = colors.background;% [127.5 127.5 127.5];%[66, 66, 66];
+display.backgroundCol = [109 107 109]; % [109 107 109]
+if any((display.backgroundCol == colors.background) == 0)
+    error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
+end
 display.imageRect = imageRect;
 
 % Open psychtoolbox window
