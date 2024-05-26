@@ -107,7 +107,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440]; %[1 1 1920 1080];
+screensize = [1 1 1920 1080];
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -319,7 +319,6 @@ display = al_display();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = [66, 66, 66];
 display.imageRect = imageRect;
 display.doctorRect = doctorRect;
 

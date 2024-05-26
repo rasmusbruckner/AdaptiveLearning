@@ -327,7 +327,6 @@ display = al_display();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = [66, 66, 66];
 display.imageRect = imageRect;
 
 % Open psychtoolbox window

@@ -442,11 +442,10 @@ classdef al_taskDataMain
                     % ... and random colors
                     if isequal(taskParam.trialflow.colors, 'colorful')
                         self.dotCol(i).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
-                    elseif isequal(taskParam.trialflow.colors, 'dark')
+                    elseif isequal(taskParam.trialflow.colors, 'dark')                        
                         self.dotCol(i).rgb = taskParam.colors.colorsDark;
                     elseif isequal(taskParam.trialflow.colors, 'blackWhite')
                         self.dotCol(i).rgb = taskParam.colors.colorsBlackWhite;
-
                     else
                         error('Color input not defined')
                     end

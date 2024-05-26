@@ -35,6 +35,7 @@ config.sendTrigger = false;
 config.rotationRad = 140; % 170
 config.customInstructions = true;
 config.instructionText = al_commonConfettiInstructionsDefaultText(config.language);
+config.noPtbWarnings = false;
 
 % Run task with config input
 RunCommonConfettiVersion(config);

@@ -112,12 +112,12 @@ classdef al_colors
             end
 
             % 5. Compute average particle size first, then multiply by number
-            % of particles to get total number of pixels
-            confettiPixels = mean(al_confettiSize(1000)) * taskParam.cannon.nParticles;  
+            % of particles to get total number of pixels (ignoring potential overlap)
+            confettiPixels = round(mean(taskParam.cannon.sCloud)) * length(taskParam.cannon.sCloud);  
             totalPixels = totalPixels + confettiPixels;
 
             % 6. Confetti cloud (in center)
-            fixCloudPixels = length(taskParam.cannon.sCloud) * round(mean(taskParam.cannon.sCloud));
+            fixCloudPixels = round(mean(taskParam.cannon.sCloud)) * length(taskParam.cannon.sCloud);
             totalPixels = totalPixels + fixCloudPixels;
 
             % Size and color of tick marks
@@ -177,6 +177,8 @@ classdef al_colors
                 tickOutcWeight * tickOutcColor +...
                 tickPredWeight * tickPredCol +...
                 tickShieldWeight * tickShieldCol;
+
+            self.background = round(self.background, 4);
 
             sprintf('Average value: %1.f %1.f %1.f', self.background(1), self.background(2), self.background(3))
 

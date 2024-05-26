@@ -41,6 +41,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.screenNumber = 1;
             config.customInstructions = true;
             config.instructionText = al_commonConfettiInstructionsDefaultText();
+            config.noPtbWarnings = false;
 
             unitTest = al_unitTest();
             unitTest.run = true;

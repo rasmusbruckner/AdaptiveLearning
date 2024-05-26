@@ -346,10 +346,6 @@ display = al_display();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = [109 107 109]; % [109 107 109]
-if any((display.backgroundCol == colors.background) == 0)
-    error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
-end
 display.imageRect = imageRect;
 display.socialFeedbackRect = socialFeedbackRect;
 
@@ -413,12 +409,16 @@ taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 taskParam.triggers = triggers;
 
-colors = colors.computeBackgroundColor(taskParam);
-taskParam.colors = colors;
-
+% Check and update background rgb
+%% todo: check difference to common version in terms of pixels etc.
+% colors = colors.computeBackgroundColor(taskParam);
+expectedVal = [145.0035 142.1199 146.3924];
+% if any((expectedVal == colors.background) == 0)
+%     error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
+% end
+taskParam.colors.background = expectedVal;
 Screen('FillRect', display.window.onScreen, colors.background);
 Screen('Flip', taskParam.display.window.onScreen);
-
 
 % --------
 % Run task

@@ -32,13 +32,13 @@ if ~exist('config', 'var') || isempty(config)
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
     config.runIntro = false;
-    config.baselineArousal = true;
+    config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
-    config.screenSize = get(0,'MonitorPositions')*1.0;
+    config.screenSize = get(0,'MonitorPositions')*1;
     config.screenNumber = 1;
     config.s = 40;
     config.enter = 37;
@@ -53,6 +53,7 @@ if ~exist('config', 'var') || isempty(config)
     config.rotationRad = 140;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
+    config.noPtbWarnings = false;
 end
 
 
@@ -112,6 +113,7 @@ scanner = config.scanner; % turn scanner on/off
 rotationRad = config.rotationRad; % rotation radius
 customInstructions = config.customInstructions;
 instructionText = config.instructionText;
+noPtbWarnings = config.noPtbWarnings;
 
 % More general paramters
 % ----------------------
@@ -383,14 +385,12 @@ display = al_display();
 
 % Deal with psychtoolbox warnings
 %% Todo: Make sure that all tests are passed on task PC
-% display.screen_warnings();
+if noPtbWarnings
+    display.screen_warnings();
+end
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = [109 107 109]; % [109 107 109]
-if any((display.backgroundCol == colors.background) == 0)
-    error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
-end
 display.imageRect = imageRect;
 
 % Open psychtoolbox window
@@ -456,9 +456,13 @@ taskParam.unitTest = unitTest;
 taskParam.triggers = triggers;
 taskParam.instructionText = instructionText;
 
+% Check and update background rgb
 colors = colors.computeBackgroundColor(taskParam);
+expectedVal = [145.0035 142.1199 146.3924];
+if any((expectedVal == colors.background) == 0)
+    error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
+end
 taskParam.colors = colors;
-
 Screen('FillRect', display.window.onScreen, colors.background);
 Screen('Flip', taskParam.display.window.onScreen);
 

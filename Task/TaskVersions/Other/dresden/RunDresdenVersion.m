@@ -87,7 +87,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1    1    2560    1440]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
+screensize = [0 0 1920 1080]; %; [1 1 1920 1080];  % fu ohne bildschirm [1    1    2560    1440]; get(0,'MonitorPositions'); ausprobieren
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -326,7 +326,6 @@ display = al_display();
 
 % Set screensize
 display.screensize = screensize;
-display.backgroundCol = colors.background;
 
 % Open psychtoolbox window
 display = display.openWindow(gParam);
