@@ -82,7 +82,7 @@ classdef al_commonConfettiInstructionsDefaultText
 
             % Introduce confetti
             if isequal(self.language, 'German')
-                self.introduceConfetti = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Drücken Sie die linke Maustaste, damit die Konfetti-Kanone schießt.';
+                self.introduceConfetti = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Steuern Sie den rosafarbenen Punkt auf den Kreis und drücken Sie die linke Maustaste, damit die Konfetti-Kanone schießt.';
             elseif isequal(self.language, 'English')
                 self.introduceConfetti = 'The aim of the cannon is indicated by the black line. Hit the left mouse button to fire the cannon.';
             else

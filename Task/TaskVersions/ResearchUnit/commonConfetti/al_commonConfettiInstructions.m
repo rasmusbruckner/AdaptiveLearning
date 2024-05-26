@@ -78,7 +78,7 @@ taskParam = al_introduceCannon(taskParam, taskData, currTrial, txt);
 if taskParam.gParam.customInstructions
     txt = taskParam.instructionText.introduceConfetti;
 else
-    txt = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Drücken Sie die linke Maustaste, damit die Konfetti-Kanone schießt.';
+    txt = 'Das Ziel der Konfetti-Kanone wird mit der schwarzen Linie angezeigt. Steuern Sie den rosafarbenen Punkt auf den Kreis und drücken Sie die linke Maustaste, damit die Konfetti-Kanone schießt.';
 end
 currTrial = 2; % update trial number
 [taskData, taskParam] = al_introduceConfetti(taskParam, taskData, currTrial, txt);
