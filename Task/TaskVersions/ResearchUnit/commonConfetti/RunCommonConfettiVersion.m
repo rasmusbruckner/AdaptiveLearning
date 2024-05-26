@@ -366,7 +366,7 @@ else
     subject.checkID(checkString, 5);
     subject.checkGender();
     subject.checkGroup();
-    subject.checkCBal(),
+    subject.checkCBal(2),
 end
 
 % ------------------

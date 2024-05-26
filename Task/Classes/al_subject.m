@@ -55,10 +55,10 @@ classdef al_subject
             %
             %   Input
             %       self: Subject object
-            %       checkString: XX Comment
+            %       checkString: String that should be checked in folder
             %
             %   Output
-            %       ~
+            %       None
             
             if ~(numel(self.ID) == ID_len) 
                 error('ID: Please use %i digits!', ID_len)
@@ -82,7 +82,7 @@ classdef al_subject
             %       self: Subject object
             %
             %   Output
-            %       ~
+            %       None
 
 
             if self.group ~= 1 && self.group ~= 2
@@ -103,7 +103,7 @@ classdef al_subject
             %       self: Subject object
             %
             %   Output
-            %       ~
+            %       None
 
             if self.gender ~= 'm' && self.gender ~= 'f' && self.gender ~= 'd'
                 error('Gender: "m", "f", or "d"?');
@@ -111,7 +111,7 @@ classdef al_subject
             
         end
         
-        function checkCBal(self)
+        function checkCBal(self, levels)
             %CHECKCBAL This function tests input related to
             % counterbalancing
             %
@@ -120,15 +120,28 @@ classdef al_subject
             %
             %   Input
             %       self: Subject object
+            %       levels: Optional input how many different value we
+            %       allow
             %
             %   Output
-            %       ~
+            %       None
 
-            % Todo: Since different versions have different cBals, 
-            % this needs to be more general, maybe based on additional
-            % input specifying how many conditions we have
-            if self.cBal ~= 1 && self.cBal ~= 2 && self.cBal ~= 3 && self.cBal ~= 4
-                error('cBal: 1, 2, 3, or 4?');
+            % Check if cBal levels is defined, otherwise set to default
+            if ~exist('levels', 'var') || isempty(levels)
+                levels = 4;
+            end
+
+            % Check cBal
+            if levels == 2
+                if self.cBal ~= 1 && self.cBal ~= 2
+                    error('cBal: 1 or 2?');
+                end
+            elseif levels == 4
+                if self.cBal ~= 1 && self.cBal ~= 2 && self.cBal ~= 3 && self.cBal ~= 4
+                    error('cBal: 1, 2, 3, or 4?');
+                end
+            else 
+                error('cBal level unspecified');
             end
             
         end
@@ -143,7 +156,7 @@ classdef al_subject
             %       self: Subject object
             %
             %   Output
-            %       ~
+            %       None
 
             if self.testDay ~= 1 && self.testDay ~= 2
                 error('Day: 1 or 2?')
@@ -162,7 +175,7 @@ classdef al_subject
             %       self: Subject object
             %
             %   Output
-            %       ~
+            %       None
 
             if self.rew ~= 1 && self.rew ~= 2
                 error('Rew: 1 or 2?')
