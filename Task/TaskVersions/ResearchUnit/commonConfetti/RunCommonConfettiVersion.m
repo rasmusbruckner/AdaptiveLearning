@@ -191,6 +191,11 @@ else
     trials = trialsExp;
 end
 
+% Check if practice trials exceeds max of 20
+if practTrials > 20
+    error('Practice trials max 20 (because pre-defined)')
+end
+
 % Initialize general task parameters
 gParam = al_gparam();
 gParam.taskType = 'Hamburg';
