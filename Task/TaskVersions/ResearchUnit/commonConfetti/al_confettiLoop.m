@@ -55,7 +55,7 @@ end
 for i = 1:trial
 
     % Presenting trial number at the bottom of the eyetracker display - optional
-    if taskParam.gParam.eyeTracker
+    if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
         Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, trial);
         Eyelink('message', 'TRIALID %d', i);
     end
