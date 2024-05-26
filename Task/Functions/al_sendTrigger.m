@@ -250,15 +250,20 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
 elseif isequal(taskParam.gParam.taskType, 'Hamburg')
 
     if isequal(Tevent, 'trialOnset')
-        trigger = 1; %%199;
+        trigger = 1;
     elseif isequal(Tevent, 'responseOnset')
-        trigger = 2; %200;
+        trigger = 2;
     elseif isequal(Tevent, 'responseLogged')
-        trigger = 3; %201;
+        trigger = 3;
     elseif isequal(Tevent, 'fix')
-        trigger = 4; %202;
-
-        % Outcome
+        trigger = 4;
+    elseif isequal(Tevent, 'black')
+        trigger = 5;
+    elseif isequal(Tevent, 'white')
+        trigger = 6;
+    elseif isequal(Tevent, 'gray')
+        trigger = 7;
+        
     elseif isequal(Tevent, 'outcome')
 
         if taskData.cp(trial) == 0
