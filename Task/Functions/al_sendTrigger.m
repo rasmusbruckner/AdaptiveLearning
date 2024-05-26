@@ -265,8 +265,10 @@ elseif isequal(taskParam.gParam.taskType, 'Hamburg')
         trigger = 7;
         
     elseif isequal(Tevent, 'outcome')
-
-        if taskData.cp(trial) == 0
+        
+        if taskData.catchTrial(trial) == 1
+            trigger = 49;
+        elseif taskData.cp(trial) == 0
             trigger = 50;
         elseif taskData.cp(trial) == 1
             trigger = 51;

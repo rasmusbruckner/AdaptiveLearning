@@ -25,7 +25,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.textSize = 35;
             config.headerSize = 50;
             config.vSpacing = 1;
-            config.screenSize = get(0,'MonitorPositions')*1;
+            config.screenSize = get(0,'MonitorPositions')*1.0;
             config.screenNumber = 1;
             config.s = 40;
             config.enter = 37;
@@ -338,15 +338,19 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Outcome trigger
             expectedTriggers_5_lowNoise_cBal1 = ones(20,1)*50;
             expectedTriggers_5_lowNoise_cBal1(unitTest.taskDataIntegrationTest_HamburgLowNoise.cp==1) = 51;
+            expectedTriggers_5_lowNoise_cBal1(unitTest.taskDataIntegrationTest_HamburgLowNoise.catchTrial==1) = 49;
             testCase.verifyEqual(dataLowNoise_cBal1.triggers(:,5), expectedTriggers_5_lowNoise_cBal1);
             expectedTriggers_5_highNoise_cBal1 = ones(20,1)*50;
             expectedTriggers_5_highNoise_cBal1(unitTest.taskDataIntegrationTest_HamburgHighNoise.cp==1) = 51;
+            expectedTriggers_5_highNoise_cBal1(unitTest.taskDataIntegrationTest_HamburgHighNoise.catchTrial==1) = 49;
             testCase.verifyEqual(dataHighNoise_cBal1.triggers(:,5), expectedTriggers_5_highNoise_cBal1);
             expectedTriggers_5_lowNoise_cBal2 = ones(20,1)*50;
             expectedTriggers_5_lowNoise_cBal2(unitTest.taskDataIntegrationTest_HamburgLowNoise.cp==1) = 51;
+            expectedTriggers_5_lowNoise_cBal2(unitTest.taskDataIntegrationTest_HamburgLowNoise.catchTrial==1) = 49;
             testCase.verifyEqual(dataLowNoise_cBal2.triggers(:,5), expectedTriggers_5_lowNoise_cBal2);
             expectedTriggers_5_highNoise_cBal2= ones(20,1)*50;
             expectedTriggers_5_highNoise_cBal2(unitTest.taskDataIntegrationTest_HamburgHighNoise.cp==1) = 51;
+            expectedTriggers_5_highNoise_cBal2(unitTest.taskDataIntegrationTest_HamburgHighNoise.catchTrial==1) = 49;
             testCase.verifyEqual(dataHighNoise_cBal2.triggers(:,5), expectedTriggers_5_highNoise_cBal2);
 
             % Shield trigger
