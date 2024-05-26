@@ -318,7 +318,7 @@ else
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*%s*', num2str(subject.ID)));
+    checkString = dir(sprintf('*EEG*%s*', num2str(subject.ID)));
     subject.checkID(checkString, 5);
     subject.checkGender();
     subject.checkGroup();
