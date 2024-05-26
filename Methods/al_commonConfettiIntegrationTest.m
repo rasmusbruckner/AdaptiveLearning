@@ -18,6 +18,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.practTrials = 5;
             config.blockIndices = [1 51 101 151];
             config.runIntro = true;
+            config.baselineArousal = true;
             config.language = 'German';
             config.sentenceLength = 100;
             config.vSpacing = 1;
@@ -39,7 +40,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.rotationRad = 140; % 170
             config.screenNumber = 1;
             config.customInstructions = true;
-            config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
+            config.instructionText = al_commonConfettiInstructionsDefaultText();
 
             unitTest = al_unitTest();
             unitTest.run = true;

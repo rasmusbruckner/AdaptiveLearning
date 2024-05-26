@@ -14,6 +14,7 @@ config.trialsExp = 2;
 config.practTrials = 2;
 config.blockIndices = [1 51 101 151];
 config.runIntro = true;
+config.baselineArousal = true;
 config.language = 'German'; %'English';
 config.sentenceLength = 100;
 config.textSize = 35;

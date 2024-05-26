@@ -4,6 +4,7 @@ function al_drawFixPoint(taskParam, color)
 %
 %   Input
 %       taskParam: Task-parameter-object instance
+%       color: Optional argument
 %
 %   Output
 %       None

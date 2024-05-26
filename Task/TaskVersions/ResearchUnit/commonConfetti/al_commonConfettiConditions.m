@@ -20,8 +20,6 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 runIntro = taskParam.gParam.runIntro;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
-
-% Not yet included but relevant in future
 cBal = taskParam.subject.cBal;
 
 % --------------------------------
@@ -41,12 +39,12 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 % Initialize eye-tracker file
 if taskParam.gParam.eyeTracker
     et_file_name = sprintf('ec_%s', taskParam.subject.ID);
-    et_file_name=[et_file_name]; 
+    et_file_name=[et_file_name];
 end
 
 % Set up eye-tracker
 if taskParam.gParam.eyeTracker
-    
+
     options.dist = 40; % viewing distance in cm
     options.width = 30; % physical width of the screen in cm
     options.height = 21; % physical height of the screen in cm
@@ -54,7 +52,7 @@ if taskParam.gParam.eyeTracker
     options.frameDur = Screen('GetFlipInterval', taskParam.display.window.onScreen); %duration of one frame
     options.frameRate = Screen('NominalFrameRate', taskParam.display.window.onScreen); %Hz
     [el, options] = ELconfig(taskParam.display.window.onScreen, et_file_name, options, 1); % screenNumber
-    
+
     % Calibrate the eye tracker
     EyelinkDoTrackerSetup(el);
 end
@@ -70,8 +68,31 @@ if taskParam.gParam.eyeTracker
     taskParam.timingParam.ref = GetSecs();
 end
 
+% ------------------------------
+% 3. Optionally baseline arousal
+% ------------------------------
+
+if taskParam.gParam.baselineArousal
+
+    % Display pupil info
+    if taskParam.gParam.customInstructions
+        header = taskParam.instructionText.firstPupilBaselineHeader;
+        txt = taskParam.instructionText.firstPupilBaseline;
+    else
+        header = 'Erste Pupillenmessung';
+        txt=['Include correct instructions here'];
+    end
+
+    feedback = false; % indicate that this is the instruction mode
+    al_bigScreen(taskParam, header, txt, feedback);
+
+    % Meaure baseline arousal
+    al_baselineArousal(taskParam)
+
+end
+
 % ------------
-% 3. Main task
+% 4. Main task
 % ------------
 
 % Extract number of trials
@@ -94,7 +115,7 @@ if ~taskParam.unitTest.run
     taskDataLowNoise = taskData.al_confettiData(taskParam);
 
 else
-    
+
     taskDataLowNoise = taskParam.unitTest.taskDataIntegrationTest_HamburgLowNoise;
 
 end
@@ -113,7 +134,7 @@ if ~taskParam.unitTest.run
     taskDataHighNoise = taskData.al_confettiData(taskParam);
 
 else
-    
+
     taskDataHighNoise = taskParam.unitTest.taskDataIntegrationTest_HamburgHighNoise;
 
 end
@@ -149,6 +170,29 @@ else
     % Run task
     al_indicateNoise(taskParam, 'lowNoise')
     dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
+
+end
+
+% ------------------------------
+% 5. Optionally baseline arousal
+% ------------------------------
+
+if taskParam.gParam.baselineArousal
+
+    % Display pupil info
+    if taskParam.gParam.customInstructions
+        header = taskParam.instructionText.secondPupilBaselineHeader;
+        txt = taskParam.instructionText.secondPupilBaseline;
+    else
+        header = 'Zweite Pupillenmessung';
+        txt=['Include correct instructions here'];
+    end
+
+    feedback = false; % indicate that this is the instruction mode
+    al_bigScreen(taskParam, header, txt, feedback);
+
+    % Meaure baseline arousal
+    al_baselineArousal(taskParam)
 
 end
 

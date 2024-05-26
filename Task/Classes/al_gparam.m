@@ -64,7 +64,9 @@ classdef al_gparam
         responseThreshold % response threshold value
         automaticBackgroundRGB % set background to average of stimuli?
         customInstructions % local instructions based on instruction-text class
-               
+        baselineArousal % turn on or off
+        baselineArousalDuration % measurement in seconds
+
     end
     
     % Methods of the gparam object
@@ -122,6 +124,9 @@ classdef al_gparam
             self.responseThreshold = 6;
             self.automaticBackgroundRGB = false;
             self.customInstructions = nan;
+            self.baselineArousal = false;
+            self.baselineArousalDuration = 180;
+            
         end
     end
 end

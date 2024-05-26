@@ -32,6 +32,7 @@ if ~exist('config', 'var') || isempty(config)
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
     config.runIntro = false;
+    config.baselineArousal = true;
     config.language = 'German';
     config.sentenceLength = 100;
     config.textSize = 35;
@@ -51,7 +52,7 @@ if ~exist('config', 'var') || isempty(config)
     config.sendTrigger = false;
     config.rotationRad = 140;
     config.customInstructions = true;
-    config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
+    config.instructionText = al_commonConfettiInstructionsDefaultText();
 end
 
 
@@ -90,6 +91,7 @@ trialsExp = config.trialsExp; % number of experimental trials
 practTrials = config.practTrials; % number of practice trials
 blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
+baselineArousal = config.baselineArousal; % w/ or w/o baseline arousal
 language = config.language; % language
 sentenceLength = config.sentenceLength; % sentence length instructions
 textSize = config.textSize; % textsize
@@ -195,6 +197,7 @@ gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
+gParam.baselineArousal = baselineArousal;
 gParam.askSubjInfo = askSubjInfo;
 gParam.blockIndices = blockIndices;
 gParam.useCatchTrials = useCatchTrials;

@@ -17,6 +17,7 @@ classdef al_colors
         silver
         green
         black
+        white
         gray
         background 
         lineAndBack
@@ -48,6 +49,7 @@ classdef al_colors
             self.green = [0, 128, 0]; %[50, 205, 50];
             self.red = [178, 34, 34];
             self.black = [0, 0, 0];
+            self.white = [255, 255, 255];
             self.gray = [66 66 66];
             self.background = [109 107 109];
             self.lineAndBack = 'blue';

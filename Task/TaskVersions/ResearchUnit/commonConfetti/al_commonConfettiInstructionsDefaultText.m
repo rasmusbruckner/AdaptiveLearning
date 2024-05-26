@@ -31,6 +31,10 @@ classdef al_commonConfettiInstructionsDefaultText
         accidentalCatch
         practiceBlockFailHeader
         practiceBlockFail
+        firstPupilBaselineHeader
+        firstPupilBaseline
+        secondPupilBaselineHeader
+        secondPupilBaseline
 
     end
 
@@ -300,6 +304,29 @@ classdef al_commonConfettiInstructionsDefaultText
             else
                 error('language parameter unknown')
             end
+
+            % First pupil baseline
+            if isequal(self.language, 'German')
+                self.firstPupilBaselineHeader = 'Erste Pupillenmessung';
+                self.firstPupilBaseline = ['Include correct instructions here'];
+            elseif isequal(self.language, 'English')
+                self.firstPupilBaselineHeader = 'First Pupil Assessment';
+                self.firstPupilBaseline = ['Include correct instructions here'];
+            else
+                error('language parameter unknown')
+            end
+
+            % Second pupil baseline
+            if isequal(self.language, 'German')
+                self.secondPupilBaselineHeader = 'Zweite Pupillenmessung';
+                self.secondPupilBaseline = ['Include correct instructions here'];
+            elseif isequal(self.language, 'English')
+                self.secondPupilBaselineHeader = 'Second Pupil Assessment';
+                self.secondPupilBaseline = ['Include correct instructions here'];
+            else
+                error('language parameter unknown')
+            end
+
         end
 
     end
