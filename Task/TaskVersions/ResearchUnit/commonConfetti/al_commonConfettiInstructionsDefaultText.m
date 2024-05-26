@@ -1,4 +1,4 @@
-classdef al_commonConfettiInstructionsDefaultText_updated
+classdef al_commonConfettiInstructionsDefaultText
     %AL_COMMONCONFETTIINSTRUCTIONSDEFAULTTEXT This class-definition file
     % specifiec the properties of the instruction text.
     %
@@ -19,12 +19,10 @@ classdef al_commonConfettiInstructionsDefaultText_updated
         introducePracticeSession
         firstPracticeHeader
         firstPractice
+        reduceShieldHeader
+        reduceShield
         secondPracticeHeader
         secondPractice
-        thirdPracticeHeader
-        thirdPractice
-        fourthPracticeHeader
-        fourthPractice
         startTaskHeader
         startTask
         noCatchHeader
@@ -38,7 +36,7 @@ classdef al_commonConfettiInstructionsDefaultText_updated
 
     methods
 
-        function self = al_commonConfettiInstructionsDefaultText_updated(language)
+        function self = al_commonConfettiInstructionsDefaultText(language)
             % This function creates an object of
             % class al_commonConfettiInstructionsDefaultText
             %
@@ -166,6 +164,28 @@ classdef al_commonConfettiInstructionsDefaultText_updated
                 error('language parameter unknown')
             end
 
+            % Reduced shield header
+            if isequal(self.language, 'German')
+                self.reduceShieldHeader = 'Illustration Ihres Eimers';
+            elseif isequal(self.language, 'English')
+                self.reduceShieldHeader = 'Demonstration of your bucket';
+            else
+                error('language parameter unknown')
+            end
+
+            % Reduced
+            if isequal(self.language, 'German')
+                self.reduceShield = ['Ab jetzt sehen Sie den Eimer nur noch mit zwei Strichen dargestellt. Außerdem sehen Sie die Aufgabe in weniger Farben. ' ...
+                                    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
+                                    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und blinzeln '...
+                                    'so gut es geht zu vermeiden.\n\n'...
+                                    'Jetzt folgt zunächst eine kurze Demonstration, wie der Eimer mit Strichen im Vergleich zum Eimer der vorherigen Übung aussieht.'];
+            elseif isequal(self.language, 'English')
+                self.reduceShield = 'Please update if you plan to use this.';
+            else
+                error('language parameter unknown')
+            end
+
             % Second practice header
             if isequal(self.language, 'German')
                 self.secondPracticeHeader = 'Zweiter Übungsdurchgang';
@@ -175,72 +195,25 @@ classdef al_commonConfettiInstructionsDefaultText_updated
                 error('language parameter unknown')
             end
 
-            % Second practice
-            if isequal(self.language, 'German')
-                self.secondPractice = ['Ab jetzt sehen Sie das Spiel ohne Animationen und mit weniger bunten Farben. In dieser Übung wird Ihr Eimer in der Mitte durchsichtig sein. ' ...
-                    'Wie in der vorherigen Übung zählt es als Treffer, wenn mindestens die Hälfte der Konfetti-Wolke im Eimer gefangen wurde.\n\n'...
-                    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
-                    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie, während eines Versuchs Augenbewegungen und Blinzeln '...
-                    'so gut es geht zu vermeiden.\n\nAm Ende eines Versuchs dürfen Sie blinzeln. Während dieser Phase ist der Punkt in der Mitte hellgrau.'];
-            elseif isequal(self.language, 'English')
-                self.secondPractice = ['From now on, you will play the game without animations and with fewer bright colors. In this exercise, your bucket will be transparent in the middle. ' ...
-                    'As in the previous exercise, it counts as a "catch" if at least half of the confetti burst is caught by the bucket.\n\n'...
-                    'This is necessary to measure your pupil size . Therefore, please pay special attention to '...
-                    'fixing your gaze on the dot in the center of the circle. Please try to avoid eye movements and blinking '...
-                    'as best as possible.\n\nAt the end of a trial, you may blink. During this phase, the dot in the middle is light grey.'];
-            else
-                error('language parameter unknown')
-            end
-
-            % Third practice header
-            if isequal(self.language, 'German')
-                self.thirdPracticeHeader = 'Dritter Übungsdurchgang';
-            elseif isequal(self.language, 'English')
-                self.thirdPracticeHeader = 'Third Practice Run';
-            else
-                error('language parameter unknown')
-            end
-
-            % Third practice
-            if isequal(self.language, 'German')
-                self.thirdPractice = ['Im nächsten Übungsdurchgang wird Ihr Eimer nur noch durch zwei Striche dargestellt. Achten Sie bitte weiterhin besonders darauf, '...
-                    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie, Augenbewegungen und Blinzeln '...
-                    'so gut es geht zu vermeiden. Am Ende eines Versuchs dürfen Sie blinzeln (angezeigt durch den hellgrauen Punkt in der Mitte).'];
-            elseif isequal(self.language, 'English')
-                self.thirdPractice = ['In the next excercise, your bucket will only be represented by two lines. Please continue to pay special attention to '...
-                    'fixing your gaze on the dot in the center of the circle. Please try to avoid eye movements and blinking '...
-                    'as best as possible. At the end of a trial, you may blink (indicated by the light grey dot in the middle).'];
-
-            else
-                error('language parameter unknown')
-            end
-
-            % Fourth practice header
-            if isequal(self.language, 'German')
-                self.fourthPracticeHeader = 'Vierter Übungsdurchgang';
-            elseif isequal(self.language, 'English')
-                self.fourthPracticeHeader = 'Fourth Practice Run';
-            else
-                error('language parameter unknown')
-            end
-
             % Fourth practice
             if isequal(self.language, 'German')
-                self.fourthPractice = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
+                self.secondPractice = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
                     'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
                     'der vorherigen Schüsse einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
                     'steuern. Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
                     'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
                     'als auch einer eher ungenauen Konfetti-Kanone zu tun haben. Beachten Sie, dass Sie das Konfetti trotz '...
-                    'guter Vorhersagen auch häufig nicht fangen können.'];
+                    'guter Vorhersagen auch häufig nicht fangen können. \n\n'...
+                    'Bitte versuchen Sie Augenbewegungen und blinzeln '...
+                    'so gut es geht zu vermeiden. Am Ende eines Versuchs dürfen Sie blinzeln (angezeigt durch den hellgrauen Punkt in der Mitte).'];
             elseif isequal(self.language, 'English')
-                self.fourthPractice = ['In this practice run, the confetti cannon is no longer visible. Instead of the confetti cannon, you will see a dot. '...
+                self.secondPractice = ['In this practice run, the confetti cannon is no longer visible. Instead of the confetti cannon, you will see a dot. '...
                     'You can also see where the confetti is flying to.\n\nIn order to continue catching lots of confetti, you must predict where the confetti is flying to based on '...
                     'the previous shots and move the bucket to this position. '...
                     'If you think that the confetti cannon has changed direction, you should also move the bucket '...
                     'there.\n\nIn the following exercise, you will try it with both a relatively accurate '...
                     'and a rather inaccurate confetti cannon. Please note that despite '...
-                    'good predictions, you often wont be able to catch the confetti.'];
+                    'good predictions, you often wont be able to catch the confetti.']; % update few things if planning to use this
             else
                 error('language parameter unknown')
             end

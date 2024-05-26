@@ -74,7 +74,6 @@ for i = 1:trial
     taskData.date{i} = taskParam.subject.date;
     taskData.cBal(i) = taskParam.subject.cBal;
     taskData.rew(i) = taskParam.subject.rew;
-    % taskData.testDay(i) = taskParam.subject.testDay;
     taskData.group(i) = taskParam.subject.group;
     taskData.confettiStd(i) = taskParam.cannon.confettiStd;
     taskData.cond{i} = condition;

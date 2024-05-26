@@ -669,7 +669,7 @@ classdef al_taskDataMain
 
             % Sample shield size from exponential distribution
             while ~isfinite(angShieldSize) || angShieldSize < minAngShieldSize || angShieldSize > maxAngShieldSize
-                angShieldSize = self.sampleRand('exprnd', shieldMu); %exprnd(shieldMu);
+                angShieldSize = self.sampleRand('exprnd', shieldMu);
             end
         end
 
