@@ -24,7 +24,7 @@ The common version is used across most projects and allows us to compare adaptiv
 * EEG (PI: Anja Riesel)
 * MEG (PI: Tobias Donner).
 
-To run the common version, we recommend using a local config file. Since the version is shared across many labs, and every lab has its own local settings, we implemented a local config file that is specific to each lab. To create your own config file, use <em>al_commonConfettiConfigExample</em> as a template and update it with your own settings. Please put it outside of the git patch to ensure that it is not pushed to GitHub (but remains a local config file just for your own purpose).
+To run the common version, we recommend using a local config file. Since the version is shared across many labs, and every lab has its own local settings, we implemented a local config file that is specific to each lab. To create your own config file, use <em>al_commonConfettiConfigExample</em> as a template and update it with your own settings. Please put it outside of the git path to ensure that it is not pushed to GitHub (but remains a local config file just for your own purpose).
 	
 ### EEG version
 
@@ -84,7 +84,7 @@ We currently have two integration tests
 * al_commonConfettiIntegrationTest  
 * al_sleepIntegrationTest
 
-All research-unit versions will ultimately be tested. You can also run all unit- and integration tests at the same time: al_runAllTests.
+All research-unit versions will ultimately be tested. You can also run all unit- and integration tests at the same time: <em>al_runAllTests</em>.
 
 ## Common Parameters
 

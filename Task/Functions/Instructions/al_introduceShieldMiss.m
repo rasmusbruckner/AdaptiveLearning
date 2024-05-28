@@ -16,7 +16,12 @@ al_lineAndBack(taskParam)
 
 al_drawCircle(taskParam)
 if ~strcmp(taskParam.gParam.taskType, 'Leipzig')
-    al_drawCross(taskParam)
+    if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
+    else
+        al_drawCross(taskParam)
+    end
 end
 
 % Tell PTB that everything has been drawn and flip screen

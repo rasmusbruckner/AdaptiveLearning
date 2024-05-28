@@ -15,7 +15,12 @@ function varargout = al_introduceSpot(taskParam, taskData, trial, txt)
 al_lineAndBack(taskParam)
 
 if ~strcmp(taskParam.gParam.taskType, 'Leipzig')
-    al_drawCross(taskParam)
+    if strcmp(taskParam.trialflow.confetti, 'show confetti cloud')
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
+    else
+        al_drawCross(taskParam)
+    end
 end
 
 al_drawCircle(taskParam)

@@ -93,6 +93,10 @@ classdef al_taskDataMain
         timestampOffset
         triggers
 
+        % Stimulus size
+        % -------------
+        rotationRad
+
     end
 
     % Methods of the taskDataMain object
@@ -166,7 +170,6 @@ classdef al_taskDataMain
             self.predErr = nan(trials, 1);
             self.estErr = nan(trials, 1);
             self.diffLastOutcPred = nan(trials, 1);
-            % self.cannonDev = nan(trials, 1);
             self.UP = nan(trials, 1);
             self.hit = nan(trials, 1);
             self.perf = nan(trials, 1);
@@ -191,6 +194,9 @@ classdef al_taskDataMain
             self.timestampReward = nan(trials, 1);
             self.timestampOffset = nan(trials, 1);
             self.triggers = zeros(trials, 8);
+
+            % Stimuli
+            self.rotationRad = nan;
 
         end
 
@@ -781,6 +787,8 @@ classdef al_taskDataMain
                 s.timestampShield = self.timestampShield;
                 s.timestampOffset = self.timestampOffset;
                 s.triggers = self.triggers;
+                
+                s.rotationRad = self.rotationRad;
                 
             elseif isequal(self.taskType, 'HamburgEEG')
 

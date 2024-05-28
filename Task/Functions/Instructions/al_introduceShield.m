@@ -19,7 +19,13 @@ function taskData = al_introduceShield(taskParam, taskData, win, trial, txt, xyE
 if isequal(taskParam.trialflow.shotAndShield, 'sequential')
     al_lineAndBack(taskParam)
     al_drawCircle(taskParam)
-    al_drawCross(taskParam)
+    if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
+    else
+        al_drawCross(taskParam)
+    end
+
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen, 1);

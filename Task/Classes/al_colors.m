@@ -180,7 +180,7 @@ classdef al_colors
 
             self.background = round(self.background, 4);
 
-            sprintf('Average value: %1.f %1.f %1.f', self.background(1), self.background(2), self.background(3))
+            % sprintf('Average value: %1.f %1.f %1.f', self.background(1), self.background(2), self.background(3))
 
         end
     end

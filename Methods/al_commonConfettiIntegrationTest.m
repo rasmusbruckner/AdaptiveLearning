@@ -36,8 +36,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
             config.scanner = false;
             config.eyeTracker = false;
+            config.useDegreesVisualAngle = true;
+            config.distance2screen = 700;
+            config.screenWidthInMM = 309.40;
             config.sendTrigger = false;
-            config.rotationRad = 140; % 170
+            config.rotationRadPixel = 140;
+            config.rotationRadDeg = 1.8; % todo: note that this is preliminary
             config.screenNumber = 1;
             config.customInstructions = true;
             config.instructionText = al_commonConfettiInstructionsDefaultText();
@@ -449,6 +453,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal2.actJitterShield, 0.0)
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.6)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.0)
+
+            % Rotation radius
+            testCase.verifyEqual(dataLowNoise_cBal1.rotationRad, 136.4674, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataHighNoise_cBal1.rotationRad, 136.4674, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataLowNoise_cBal2.rotationRad, 136.4674, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataHighNoise_cBal2.rotationRad, 136.4674, 'AbsTol', 0.0001)
 
         end
     end

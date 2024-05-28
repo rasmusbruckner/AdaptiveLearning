@@ -159,14 +159,14 @@ else
     % -------------------
 
     % Run task
-    al_indicateNoise(taskParam, 'highNoise')
+    al_indicateNoise(taskParam, 'highNoise', true)
     dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
 
     % ... low noise second
     % --------------------
 
     % Run task
-    al_indicateNoise(taskParam, 'lowNoise')
+    al_indicateNoise(taskParam, 'lowNoise', true)
     dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
 
 end

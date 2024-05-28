@@ -1,26 +1,28 @@
 classdef al_display
-    %AL_DISPLAY This class definition file specifies the 
+    %AL_DISPLAY This class definition file specifies the
     %   properties and methods of a display object
     %
     %   A display object has general display methods such as
     %   creating the psychtoolbox window and parameters, e.g.,
     %   screen coordinates
-    
+
 
     % Properties of the display object
     % --------------------------------
-    
+
     properties
-        
+
         % General
         screensize % screen size
         screensizePart % witdh and height of screen
+        distance2screen % participant distance to screen in mm
+        screenWidthInMM % for degrees visual angle
         window % psychtoolbox window
         zero % center of the screen
         backgroundCoords % background coordinates
 
         % Textures
-        cannonTxt 
+        cannonTxt
         doctorTxt
         heliTxt
         pill1Txt
@@ -28,12 +30,12 @@ classdef al_display
         pill3Txt
         pill4Txt
         syringeTxt
-        
-        % Image rectangles        
+
+        % Image rectangles
         %% todo: check if dst and image rects can be merged
         imageRect % cannon image rectangle size (before centering)
         dstRect % cannon image rectangle size (after centering)
-        doctorRect 
+        doctorRect
         centeredSocialFeedbackRect
         windowRect
         heliImageRect
@@ -44,30 +46,33 @@ classdef al_display
         % Textures
         backgroundTxt % background texture
         backgroundCol % background color
-        socialHasTxts 
-        socialDisTxts 
+        socialHasTxts
+        socialDisTxts
 
         % Number of textures in social task (also potentially child class)
         nHas
         nDis
 
     end
-    
+
     % Methods of the display object
     % -----------------------------
     methods
-        
+
         function self = al_display()
             %AL_self This function creates a displayob object of
             % class al_display
             %
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.
-            
+
             self.cannonTxt = nan;
             self.doctorTxt = nan;
             self.dstRect = nan;
             self.backgroundTxt = nan;
+            %% todo: add common value here (not yet decided)
+            self.distance2screen = 700;
+            self.screenWidthInMM = 309.40; % Rasmus' default laptop
             self.backgroundCol = [0, 0, 0];
             self.socialFeedbackRect = [0 0 562 762]/4;
             self.imageRect = [0 0 180 270];
@@ -83,12 +88,11 @@ classdef al_display
             %   screen
             %
             %   Input
-            %       self: Display object
             %       gParam: General task parameters
-            
+
             % Get screen properties
             % set(0,'units','pixels')
-            
+
             % screensize = screensize(taskParam.gParam.screenNumber, :);
             self.screensizePart = self.screensize(3:4);
             self.zero = self.screensizePart / 2;
@@ -99,13 +103,13 @@ classdef al_display
             else
                 [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, self.screensize); % []% self.screensize% [] %  1    1    2560    1440  1    1    2560 1440 1707.6    9602560x1440   66 66 66
             end
-                       
+
             [self.window.screenX, self.window.screenY] = Screen('WindowSize', self.window.onScreen);
             self.window.centerX = self.window.screenX * 0.5; % center of screen in X direction
             self.window.centerY = self.window.screenY * 0.5; % center of screen in Y direction
             self.window.centerXL = floor(mean([0 self.window.centerX])); % center of left half of screen in X direction
             self.window.centerXR = floor(mean([self.window.centerX self.window.screenX])); % center of right half of screen in X direction
-            
+
         end
 
         function self = createRects(self)
@@ -116,7 +120,7 @@ classdef al_display
 
             self.dstRect = CenterRect(self.imageRect, self.windowRect);
             self.doctorRect = CenterRect(self.doctorRect, self.windowRect);
-            self.heliImageRect = CenterRect(self.heliImageRect, self.windowRect);            
+            self.heliImageRect = CenterRect(self.heliImageRect, self.windowRect);
             self.pillImageRect = CenterRect(self.pillImageRect, self.windowRect);
             self.syringeImageRect = CenterRect(self.syringeImageRect, self.windowRect);
             self.centeredSocialFeedbackRect = CenterRect(self.socialFeedbackRect, self.windowRect);
@@ -127,15 +131,14 @@ classdef al_display
         function self = createTextures(self, cannonType)
             % CREATETEXTURES This function creates textures of displayed
             %   images
-            % 
+            %
             %   Input
-            %       self: Display object
             %       cannonType: Which type of cannon should be shown
             %
 
             % Todo: these should be methods that are specific to these
             % versions
-            
+
             % Load images
             %[cannonPic, ~, alpha]  = imread('cannon.png');
             if strcmp(cannonType, 'standard')
@@ -144,20 +147,20 @@ classdef al_display
                 [cannonPic, ~, alpha]  = imread('helicopter.png');
                 [doctorPic, ~, doctorAlpha]  = imread('doctor.png');
                 [heliPic, ~, heliAlpha]  = imread('helicopter.png');
-                [pill1Pic, ~, pill1Alpha]  = imread('pill_1.png'); 
-                [pill2Pic, ~, pill2Alpha]  = imread('pill_2.png'); 
-                [pill3Pic, ~, pill3Alpha]  = imread('pill_3.png'); 
-                [pill4Pic, ~, pill4Alpha]  = imread('pill_4.png'); 
+                [pill1Pic, ~, pill1Alpha]  = imread('pill_1.png');
+                [pill2Pic, ~, pill2Alpha]  = imread('pill_2.png');
+                [pill3Pic, ~, pill3Alpha]  = imread('pill_3.png');
+                [pill4Pic, ~, pill4Alpha]  = imread('pill_4.png');
                 [syringePic, ~, syringeAlpha]  = imread('syringe.png');
 
-            else            
+            else
                 [cannonPic, ~, alpha]  = imread('confetti_cannon.png');
             end
             [backgroundPic, ~, backgroundPicAlpha] = imread('Greybanner Coliseum - Day - Large - 44x32.jpg');
 
-            %% Todo: make optional when combining with other versions 
+            %% Todo: make optional when combining with other versions
             % Load social-fedback images
-            
+
             % Textures social task
             %% Consider to put this in child class because it is
             % not shared across projects -- will be done when new images
@@ -167,22 +170,22 @@ classdef al_display
             self.nDis = length(dir([parentDirectory '/Files/socialFeedback/DIS/*.JPG']));
 
             for n=1:self.nHas
-              imagesHas{n} = imread(sprintf('has_%d.JPG',n));
-              self.socialHasTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesHas{n});
+                imagesHas{n} = imread(sprintf('has_%d.JPG',n));
+                self.socialHasTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesHas{n});
             end
 
             for n=1:self.nDis
-              imagesDis{n} = imread(sprintf('dis_%d.JPG',n));
-              self.socialDisTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesDis{n});
+                imagesDis{n} = imread(sprintf('dis_%d.JPG',n));
+                self.socialDisTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesDis{n});
             end
 
             backgroundPicSize = size(backgroundPic);
-            ySize = self.window.screenY; 
-            scaleFactor = ySize/backgroundPicSize(1); 
+            ySize = self.window.screenY;
+            scaleFactor = ySize/backgroundPicSize(1);
             xSize = backgroundPicSize(2) * scaleFactor;
             self.backgroundCoords = [self.zero(1)-xSize/2, self.zero(2)-ySize/2, self.zero(1)+xSize/2, self.zero(2)+ySize/2];
-        
-            % Create pictures based on images   
+
+            % Create pictures based on images
             cannonPic(:,:,4) = alpha(:,:);
             if strcmp(cannonType, 'helicopter')
                 doctorPic(:,:,4) = doctorAlpha(:,:);
@@ -196,11 +199,11 @@ classdef al_display
 
             % todo: add description
             Screen('BlendFunction', self.window.onScreen, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
             % Create textures
             self.cannonTxt = Screen('MakeTexture', self.window.onScreen, cannonPic);
             self.backgroundTxt = Screen('MakeTexture', self.window.onScreen, backgroundPic);
-          
+
             if strcmp(cannonType, 'helicopter')
                 self.doctorTxt = Screen('MakeTexture', self.window.onScreen, doctorPic);
                 self.heliTxt = Screen('MakeTexture', self.window.onScreen, heliPic);
@@ -211,16 +214,69 @@ classdef al_display
                 self.syringeTxt = Screen('MakeTexture', self.window.onScreen, syringePic);
             end
         end
+
+        function sizePixel = deg2pix(self, sizeDeg)
+            %DEG2PIX This function translates degrees visual angle to
+            % pixels
+            %
+            %   The function is used to define stimulus size in terms of
+            %   degrees visual angle and to translate it to pixels for
+            %   psychtoolbox
+            %
+            %   Input
+            %       sizeDeg: Stimulus size in degrees visual angle
+            %
+            %   Output
+            %       sizePixel: Stimulus size in pixels
+            
+            % Extract relevant parameters
+            screenWidth = self.screenWidthInMM; % screen width in mm
+            distance = self.distance2screen; % distance to screen in mm
+            horizontalRes = self.screensize(3); % horizontal resolution in pixels
+
+            % compute size of each pixel in mm
+            singlePixelMM = screenWidth / horizontalRes;
+
+            % compute degrees visual angle of each pixel
+            singlePixelDeg = rad2deg(atan(singlePixelMM/distance));
+
+            % Compute degrees visual angle for stimulus
+            sizePixel = sizeDeg / singlePixelDeg;
+
+        end
+
+        function sizeDeg = pix2deg(self, sizePixel)
+            %PIX2DEG This function translates pixels to degrees visual
+            % angle
+            %
+            %   Input
+            %       sizePixels: Stimulus size in pixels
+            %
+            %   Output
+            %       sizeDeg: Stimulus size in degrees visual angle
+
+            % Extract relevant parameters
+            screenWidth = self.screenWidthInMM; % screen width in mm
+            distance = self.distance2screen; % distance to screen in mm
+            horizontalRes = self.screensize(3); % horizontal resolution in pixels
+
+            % Compute size of each pixel in mm
+            singlePixelMM = screenWidth / horizontalRes;
+
+            % Compute stimulus size in degrees visual angle
+            sizeDeg = rad2deg(atan((sizePixel*singlePixelMM)/distance));
+
+        end
     end
 
-    methods (Static)    
+    methods (Static)
         function screen_warnings()
             % SCREENWARNINGS This function handles screen warnings
 
             Screen('Preference', 'VisualDebugLevel', 3);
             Screen('Preference', 'SuppressAllWarnings', 1);
             Screen('Preference', 'SkipSyncTests', 2);
-   
+
         end
     end
 end

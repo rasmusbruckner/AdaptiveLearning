@@ -127,6 +127,16 @@ classdef al_unittests < matlab.unittest.TestCase
             triggerOutcomeCP = al_sendTrigger(taskParam, taskData, condition, 1, 'outcome');
             testCase.verifyEqual(triggerOutcomeCP, 51)
 
+            taskData.catchTrial(1) = 1;
+            taskData.cp(1) = 0;
+            triggerOutcomeCP = al_sendTrigger(taskParam, taskData, condition, 1, 'outcome');
+            testCase.verifyEqual(triggerOutcomeCP, 49)
+
+            taskData.catchTrial(1) = 1;
+            taskData.cp(1) = 1;
+            triggerOutcomeCP = al_sendTrigger(taskParam, taskData, condition, 1, 'outcome');
+            testCase.verifyEqual(triggerOutcomeCP, 49)
+
             taskData.hit(1) = 0;
             triggerOutcomeNoHit = al_sendTrigger(taskParam, taskData, condition, 1, 'shield');
             testCase.verifyEqual(triggerOutcomeNoHit, 90)
@@ -140,5 +150,72 @@ classdef al_unittests < matlab.unittest.TestCase
 %         function testSendTriggerHamburgEEG(testCase)
 % 
 %         end
+
+
+        function testDeg2pix(testCase)
+            %TESTDEG2PIX This function tests the deg2pix function
+            %
+            %   We have also compared the values to the SR Research 
+            %   Visual Angle Calculator:
+            %   https://www.sr-research.com/visual-angle-calculator/
+
+            
+            % Display-object instance
+            display = al_display();
+            display.screensize = [0 0 1920 1080];
+            display.distance2screen = 700;
+            display.screenWidthInMM = 544;
+            
+            sizePixel = display.deg2pix(0.0);
+            testCase.verifyEqual(sizePixel, 0)
+
+            sizePixel = display.deg2pix(10.0);
+            testCase.verifyEqual(sizePixel, 431.1990, 'AbsTol', 0.0001)
+            % visual angle calculator yields 432.3, so quite similar
+
+            sizePixel = display.deg2pix(3.0);
+            testCase.verifyEqual(sizePixel, 129.3597, 'AbsTol', 0.0001)
+            % visual angle calculator yields 129.39, so quite similar
+            
+            % Similar to our settings
+            display.screenWidthInMM = 309.40; % for degrees visual angle
+            sizePixel = display.deg2pix(1.8);
+            testCase.verifyEqual(sizePixel, 136.4674, 'AbsTol', 0.0001)
+            % visual angle calculator yields 136.48, so quite similar
+
+        end
+
+        function testPix2deg(testCase)
+            %TESTPIX2DEG This function tests the pix2deg function
+            %
+            %   We have also compared the values to the SR Research 
+            %   Visual Angle Calculator:
+            %   https://www.sr-research.com/visual-angle-calculator/
+
+
+            % Display-object instance
+            display = al_display();
+            display.screensize = [0 0 1920 1080];
+            display.distance2screen = 700;
+            display.screenWidthInMM = 544;
+            
+            sizeDeg = display.pix2deg(0.0);
+            testCase.verifyEqual(sizeDeg, 0)
+
+            sizeDeg = display.pix2deg(10.0);
+            testCase.verifyEqual(sizeDeg, 0.2319, 'AbsTol', 0.0001)
+            % visual angle calculator yields 0.23, so quite similar
+
+            sizeDeg = display.pix2deg(150.0);
+            testCase.verifyEqual(sizeDeg, 3.4744, 'AbsTol', 0.0001)
+            % visual angle calculator yields 3.48, so quite similar
+
+             % Similar to our settings
+            display.screenWidthInMM = 309.40; % for degrees visual angle
+            sizePixel = display.pix2deg(140);
+            testCase.verifyEqual(sizePixel, 1.8459, 'AbsTol', 0.0001)
+            % visual angle calculator yields 1.85, so quite similar
+
+        end
     end
 end

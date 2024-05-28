@@ -49,8 +49,12 @@ if ~exist('config', 'var') || isempty(config)
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
     config.scanner = false;
     config.eyeTracker = false;
+    config.useDegreesVisualAngle = true;
+    config.distance2screen = 700;
+    config.screenWidthInMM = 309.40;
     config.sendTrigger = false;
-    config.rotationRad = 140;
+    config.rotationRadPixel = 140;
+    config.rotationRadDeg = 1.8;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
@@ -108,9 +112,13 @@ printTiming = config.printTiming; % print timing for checking
 hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
 eyeTracker = config.eyeTracker; % doing eye-tracking?
+useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
+distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
+screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
 sendTrigger = config.sendTrigger; % EEG
 scanner = config.scanner; % turn scanner on/off
-rotationRad = config.rotationRad; % rotation radius
+rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
+rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
 customInstructions = config.customInstructions;
 instructionText = config.instructionText;
 noPtbWarnings = config.noPtbWarnings;
@@ -392,6 +400,8 @@ end
 % Set screensize
 display.screensize = screensize;
 display.imageRect = imageRect;
+display.distance2screen = distance2screen;
+display.screenWidthInMM = screenWidthInMM;
 
 % Open psychtoolbox window
 display = display.openWindow(gParam);
@@ -410,8 +420,25 @@ ListenChar(2);
 % Create object instance with circle parameters
 % ---------------------------------------------
 
+% Circle-object instance
 circle = al_circle(display.windowRect);
-circle.rotationRad = rotationRad;
+
+% For internal checking, maybe implement translation, if useful
+% display.pix2deg(rotationRadPixel)
+
+% Determine rotation radius, depending on unit (deg. vis. angle vs. pixels)
+if useDegreesVisualAngle
+    circle.rotationRad = display.deg2pix(rotationRadDeg);
+    fprintf('You have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels %.2f',round(rotationRadDeg,2), round(circle.rotationRad, 2));
+
+elseif useDegreesVisualAngle == false
+    circle.rotationRad = rotationRadPixel;
+else
+    error('Option undefined')
+end
+
+% Other parameters
+% todo: more in deg. vis. angle
 circle.tickWidth = tickWidth;
 circle.circleWidth = circleWidth;
 circle = circle.computeCircleProps();
@@ -425,14 +452,6 @@ if sendTrigger
     triggers.sampleRate = sampleRate;
     triggers.session = session;
 end
-
-% ------------------------------------------------
-% Create object instance with unit-test parameters
-% ------------------------------------------------
-
-% unitTest = al_unitTest();
-% unitTest.run = runUnitTest;
-% unitTest.pred = [0, 0, 0, 0, 0, 90, 90, 90, 90, 90, 180, 180, 180, 180, 180, 270, 270, 270, 270, 270];
 
 % ---------------------------------------
 % Put all object instances in task object
@@ -459,8 +478,9 @@ taskParam.instructionText = instructionText;
 % Check and update background rgb
 colors = colors.computeBackgroundColor(taskParam);
 expectedVal = [145.0035 142.1199 146.3924];
+%% Todo: ensure to update when final stimulus size is used in degrees visual angle
 if any((expectedVal == colors.background) == 0)
-    error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
+    %error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
 end
 taskParam.colors = colors;
 Screen('FillRect', display.window.onScreen, colors.background);

@@ -10,6 +10,8 @@ function al_indicateNoise(taskParam, noiseCondition, variableShield)
 %   Output:
 %       None
 
+%% Todo: Potentially necessary to outsource to text file 
+
 % Check for variable shield input
 if ~exist('variableShield', 'var') || isempty(variableShield)
     variableShield = false; 
@@ -39,7 +41,7 @@ elseif strcmp(noiseCondition, 'highNoise') && ~variableShield
         header = 'Ungenauere Konfetti-Kanone';
         txt = ['Im folgenden Block wird die Konfetti-Kanone relativ ungenau sein.\n\n'...
             'Weil Sie das Konfetti hier schwieriger vorhersagen können, '...
-            'wird der Eimer, mit dem Sie das Konfetti fangen sollen, relativ groß sein.\n\n'
+            'wird der Eimer, mit dem Sie das Konfetti fangen sollen, relativ groß sein.\n\n'...
             'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
             'Strich zeigt die Position der letzten Konfetti-Wolke.'];
     elseif isequal(taskParam.gParam.language, 'English')

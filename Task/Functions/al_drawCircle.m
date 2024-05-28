@@ -6,7 +6,8 @@ function al_drawCircle(taskParam)
 %
 %   Output
 %        None
-
+%
+% Todo: integrate in circle class
 
 % Extract rotation radius
 rotRad = taskParam.circle.rotationRad;

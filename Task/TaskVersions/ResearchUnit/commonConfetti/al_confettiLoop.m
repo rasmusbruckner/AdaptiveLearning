@@ -342,23 +342,13 @@ for i = 1:trial
 
 end
 
-% % % % Save Eyelink data
-% % % if taskParam.gParam.eyeTracker
-% % %     fprintf('Saving EyeLink data to %s\n', et_path)
-% % %     eyefilename = fullfile(et_path,et_file_name);
-% % %     Eyelink('CloseFile');
-% % %     Eyelink('WaitForModeReady', 500);
-% % %     try
-% % %         status = Eyelink('ReceiveFile', et_file_name, eyefilename);
-% % %         disp(['File ' eyefilename ' saved to disk']);
-% % %     catch
-% % %         warning(['File ' eyefilename ' not saved to disk']);
-% % %     end
-% % %     Eyelink('StopRecording');
-% % % end
+% Add stimulus values
+%--------------------
+    
+taskData.rotationRad = taskParam.circle.rotationRad;
 
 % Give feedback and save data
-% ----------------------------
+% ---------------------------
 
 if ~taskParam.unitTest.run
 
@@ -392,6 +382,7 @@ if ~taskParam.unitTest.run
 
     % Save data
     %----------
+    
     if isequal(taskParam.gParam.saveName, 'vwm')
         savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
     elseif isequal(taskParam.gParam.saveName, 'asymmetric')
