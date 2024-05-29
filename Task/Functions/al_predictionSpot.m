@@ -7,10 +7,10 @@ function al_predictionSpot(taskParam)
 %   Output
 %       None
 
-% todo: -5 parameterized and in degrees visual angle
 % Compute coordinates of prediction spot
-xPredS = ((taskParam.circle.rotationRad-5) * sin(taskParam.circle.rotAngle));
-yPredS = ((taskParam.circle.rotationRad-5) * (-cos(taskParam.circle.rotAngle)));
+centerParam = -taskParam.circle.circleWidth/2;
+xPredS = ((taskParam.circle.rotationRad+centerParam) * sin(taskParam.circle.rotAngle));
+yPredS = ((taskParam.circle.rotationRad+centerParam) * (-cos(taskParam.circle.rotAngle)));
 predSpot = OffsetRect(taskParam.circle.predCentSpotRect, xPredS, yPredS);
 
 % Display prediction spot
