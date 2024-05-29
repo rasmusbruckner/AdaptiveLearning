@@ -38,6 +38,9 @@ classdef al_circle
         initialRotAngle % initial rotation angle
         rotAngle % rotation angle
         tickWidth % tick-mark width
+        tickLengthPred % for prediction
+        tickLengthOutc % for outcome
+        tickLengthShield % for shield
         circleWidth % circle width
         
     end
@@ -67,6 +70,9 @@ classdef al_circle
             self.outcCentSpotRect = nan;
             self.fixSpotCentRect = nan;
             self.rotationRad = 150;
+            self.predSpotDiam = 20;
+            self.outcDiam = 20; 
+            self.fixSpotDiam = 20;
             self.shieldImageRad = 275;
             self.heliImageRad = 70;
             self.tendencyThreshold = 15;  
@@ -75,6 +81,9 @@ classdef al_circle
             self.initialRotAngle = 0;
             self.rotAngle = self.initialRotAngle;
             self.tickWidth = 2;
+            self.tickLengthPred = 40;
+            self.tickLengthOutc = 30;
+            self.tickLengthShield = 50;
             self.circleWidth = 10;
             
         end
@@ -89,9 +98,6 @@ classdef al_circle
             %   Output
             %       self: Circle object with default values
             
-            self.predSpotDiam = 20;
-            self.outcDiam = 20; 
-            self.fixSpotDiam = 20;
             self.predSpotRect = [0 0 self.predSpotDiam self.predSpotDiam];
             self.outcRect = [0 0 self.outcDiam self.outcDiam];
             self.fixSpotRect = [0 0 self.fixSpotDiam self.fixSpotDiam];

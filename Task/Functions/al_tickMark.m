@@ -9,32 +9,32 @@ function [tickLength, col] = al_tickMark(taskParam, parameter, type)
 %   Output
 %       tickLength: Length of tick mark to compute backgound RGB
 %       col: Color to compute background RGB
+%
+% Todo: integrate in circle
 
 % Depending on tick-mark type, choose properties of tickmark
 if isequal(type, 'pred')
     col = taskParam.colors.blue;
-    tickLength = 40;
-    tickNormalization = 15;
+    tickLength = taskParam.circle.tickLengthPred;
     tickWidth = taskParam.circle.tickWidth;
 elseif isequal(type,'outc')
     col = [0 0 0];
-    tickLength = 30;
-    tickNormalization = 10;
+    tickLength = taskParam.circle.tickLengthOutc;
     tickWidth = taskParam.circle.tickWidth;
-elseif isequal(type,'aim')
-    col = taskParam.colors.red;
+elseif isequal(type,'aim') 
+    % this is for heli (Leipzig) and not yet working with degrees visual angle
+    col = taskParam.colors.red; 
     tickLength = 40;
-    tickNormalization = 15;
     tickWidth = 3;
 elseif isequal(type,'shield')
-    col = taskParam.colors.purple; %taskParam.colors.blue; %taskParam.colors.purple;
-    tickLength = 50; %30;
-    tickNormalization = 20; %10;
+    col = taskParam.colors.purple;
+    tickLength = taskParam.circle.tickLengthShield;
     tickWidth = taskParam.circle.tickWidth;
 end
 
 % Compute location of tickmark
-rotRad = taskParam.circle.rotationRad + tickNormalization;
+tickCentering = - taskParam.circle.circleWidth/2 + tickLength/2;
+rotRad = taskParam.circle.rotationRad + tickCentering;
 tickPosition = parameter - tickWidth/2;
 
 % Extract center

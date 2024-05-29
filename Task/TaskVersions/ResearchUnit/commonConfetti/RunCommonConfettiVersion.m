@@ -154,20 +154,15 @@ catchTrialProb = 0.1;
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
-% Tickmark width
-tickWidth = 2;
-
 % Reward magnitude
 rewMag = 0.1;
 
 % Confetti cannon image rectangle determining the size of the cannon
-imageRect = [0 00 60 200];
+imageRectPixel = [0 0 60 200];
 
 % Confetti end point
 confettiEndMean = 100; % 150% this is added to the circle radius
 confettiEndStd = 4; % 20 % this is the spread around the average end point
-
-circleWidth = 10;
 
 % Running task in MEG?
 meg = false;
@@ -186,10 +181,21 @@ joy = nan;
 % Sampling rate for EEG
 sampleRate = 500; 
 
-
 if sendTrigger
     [session, status] = IOPort( 'OpenSerialPort', 'COM3' );
 end
+
+% Degrees visal angle
+% -------------------
+
+predSpotDiamDeg = 0.2638;
+fixSpotDiamDeg = 0.2638;
+circleWidthDeg = 0.1319;
+tickWidthDeg = 0.0264;
+tickLengthPredDeg = 0.5276;
+tickLengthOutcDeg = 0.3957;
+tickLengthShieldDeg = 0.6595;
+imageRectDeg = [0 0 0.7913 2.6361];
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -399,9 +405,20 @@ end
 
 % Set screensize
 display.screensize = screensize;
-display.imageRect = imageRect;
 display.distance2screen = distance2screen;
 display.screenWidthInMM = screenWidthInMM;
+
+% For internal checking, maybe implement translation, if useful
+% display.pix2deg(imageRectPixel(3))
+% display.pix2deg(imageRectPixel(4))
+
+% Cannon image
+if useDegreesVisualAngle
+    display.imageRect(3) = display.deg2pix(imageRectDeg(3));
+    display.imageRect(4) = display.deg2pix(imageRectDeg(4));
+else
+    display.imageRect = imageRectPixel;
+end
 
 % Open psychtoolbox window
 display = display.openWindow(gParam);
@@ -425,22 +442,31 @@ circle = al_circle(display.windowRect);
 
 % For internal checking, maybe implement translation, if useful
 % display.pix2deg(rotationRadPixel)
+% display.pix2deg(circle.predSpotDiam)
+% display.pix2deg(circle.circleWidth)
+% display.pix2deg(circle.tickWidth)
+% display.pix2deg(circle.tickLengthPred)
+% display.pix2deg(circle.tickLengthOutc)
+% display.pix2deg(circle.tickLengthShield)
 
 % Determine rotation radius, depending on unit (deg. vis. angle vs. pixels)
+% also adjust other parameters accordingly
 if useDegreesVisualAngle
     circle.rotationRad = display.deg2pix(rotationRadDeg);
-    fprintf('You have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels %.2f',round(rotationRadDeg,2), round(circle.rotationRad, 2));
-
+    circle.predSpotDiam = display.deg2pix(predSpotDiamDeg);
+    circle.fixSpotDiam = display.deg2pix(fixSpotDiamDeg);
+    circle.circleWidth = display.deg2pix(circleWidthDeg);
+    circle.tickWidth = display.deg2pix(tickWidthDeg);
+    circle.tickLengthPred = display.deg2pix(tickLengthPredDeg);
+    circle.tickLengthOutc = display.deg2pix(tickLengthOutcDeg);
+    circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);
+    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg,2), round(circle.rotationRad, 2));
 elseif useDegreesVisualAngle == false
     circle.rotationRad = rotationRadPixel;
 else
     error('Option undefined')
 end
 
-% Other parameters
-% todo: more in deg. vis. angle
-circle.tickWidth = tickWidth;
-circle.circleWidth = circleWidth;
 circle = circle.computeCircleProps();
 
 % ----------------------------------------------
