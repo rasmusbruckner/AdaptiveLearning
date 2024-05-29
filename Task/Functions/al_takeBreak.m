@@ -17,7 +17,7 @@ if ~exist('siezen', 'var') || isempty(siezen)
     siezen = true;
 end
 
-if currTrial > 1 && currTrial < lastTrial
+if currTrial < lastTrial % currTrial > 1 && currTrial < lastTrial
     
     if taskData.block(currTrial+1) ~= taskData.block(currTrial)
 

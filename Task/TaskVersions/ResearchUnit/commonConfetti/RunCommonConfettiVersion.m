@@ -28,7 +28,7 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 2;
+    config.trialsExp = 20;
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
     config.runIntro = false;
@@ -54,7 +54,7 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
-    config.rotationRadDeg = 1.8;
+    config.rotationRadDeg = 3.16; %1.8;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
@@ -188,14 +188,13 @@ end
 % Degrees visal angle
 % -------------------
 
-predSpotDiamDeg = 0.2638;
-fixSpotDiamDeg = 0.2638;
-circleWidthDeg = 0.1319;
-tickWidthDeg = 0.0264;
-tickLengthPredDeg = 0.5276;
-tickLengthOutcDeg = 0.3957;
-tickLengthShieldDeg = 0.6595;
-imageRectDeg = [0 0 0.7913 2.6361];
+predSpotDiamDeg = 0.4519; %0.2638;
+fixSpotDiamDeg = 0.4519; %0.2638;
+circleWidthDeg = 0.2259; % 0.1319;
+tickLengthPredDeg = 0.9037; %0.5276;
+tickLengthOutcDeg = 0.6778; %%0.3957;
+tickLengthShieldDeg = 1.1296; %0.6595;
+imageRectDeg = [0 0 1.3554 4.5095]; %[0 0 0.7913 2.6361];
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -444,7 +443,6 @@ circle = al_circle(display.windowRect);
 % display.pix2deg(rotationRadPixel)
 % display.pix2deg(circle.predSpotDiam)
 % display.pix2deg(circle.circleWidth)
-% display.pix2deg(circle.tickWidth)
 % display.pix2deg(circle.tickLengthPred)
 % display.pix2deg(circle.tickLengthOutc)
 % display.pix2deg(circle.tickLengthShield)
@@ -456,7 +454,6 @@ if useDegreesVisualAngle
     circle.predSpotDiam = display.deg2pix(predSpotDiamDeg);
     circle.fixSpotDiam = display.deg2pix(fixSpotDiamDeg);
     circle.circleWidth = display.deg2pix(circleWidthDeg);
-    circle.tickWidth = display.deg2pix(tickWidthDeg);
     circle.tickLengthPred = display.deg2pix(tickLengthPredDeg);
     circle.tickLengthOutc = display.deg2pix(tickLengthOutcDeg);
     circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);

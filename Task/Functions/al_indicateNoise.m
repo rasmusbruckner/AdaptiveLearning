@@ -11,6 +11,7 @@ function al_indicateNoise(taskParam, noiseCondition, variableShield)
 %       None
 
 %% Todo: Potentially necessary to outsource to text file 
+% todo: more pupil instruction to avoid blinks
 
 % Check for variable shield input
 if ~exist('variableShield', 'var') || isempty(variableShield)
