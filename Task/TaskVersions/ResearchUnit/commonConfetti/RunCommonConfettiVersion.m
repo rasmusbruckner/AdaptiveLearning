@@ -52,6 +52,7 @@ if ~exist('config', 'var') || isempty(config)
     config.useDegreesVisualAngle = true;
     config.distance2screen = 700;
     config.screenWidthInMM = 309.40;
+    config.screenHeightInMM = 210;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
     config.rotationRadDeg = 3.16;
@@ -115,6 +116,7 @@ eyeTracker = config.eyeTracker; % doing eye-tracking?
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
 distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
+screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
 scanner = config.scanner; % turn scanner on/off
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
@@ -484,6 +486,18 @@ if sendTrigger
     triggers.session = session;
 end
 
+% ---------------------------------------------------
+% Create object instance with eye-tracking parameters
+% ---------------------------------------------------
+
+% todo: verify that ET wants cm
+eyeTracker = al_eyeTracker(display);
+eyeTracker.dist = distance2screen /10; 
+eyeTracker.width = screenWidthInMM / 10;
+eyeTracker.height = screenHeightInMM / 10;
+eyeTracker.frameDur = Screen('GetFlipInterval', display.window.onScreen);
+eyeTracker.frameRate = Screen('NominalFrameRate', display.window.onScreen);
+
 % ---------------------------------------
 % Put all object instances in task object
 % ---------------------------------------
@@ -504,6 +518,7 @@ taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 taskParam.triggers = triggers;
+taskParam.eyeTracker = eyeTracker;
 taskParam.instructionText = instructionText;
 
 % Check and update background rgb

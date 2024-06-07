@@ -12,6 +12,7 @@ classdef al_objectClass
        circle % circle-object instance
        keys % keys-object instance
        triggers % triggers-object instance
+       eyeTracker % eye-tracker-object instance
        timingParam % timing-object instance
        colors % colors-object instance
        strings % strings-object instance

@@ -39,6 +39,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.useDegreesVisualAngle = true;
             config.distance2screen = 700;
             config.screenWidthInMM = 309.40;
+            config.screenHeightInMM = 210;
             config.sendTrigger = false;
             config.rotationRadPixel = 140;
             config.rotationRadDeg = 3.16; % todo: note that this is preliminary
