@@ -31,7 +31,7 @@ if ~exist('config', 'var') || isempty(config)
     config.trialsExp = 2;
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = true;
+    config.runIntro = false;
     config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
@@ -312,7 +312,8 @@ timingParam.jitterOutcome = 2;
 timingParam.jitterShield = 0.6;
 timingParam.jitterITI = 0.5;
 timingParam.outcomeLength = 0.5;
-timingParam.shieldLength = 0.5;
+timingParam.shieldLength = 0.25;
+timingParam.baselineFixLength = 0.25;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using

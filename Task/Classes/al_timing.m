@@ -22,6 +22,7 @@ classdef al_timing
         jitterITI % length of jitter for ITI
         fixedITI % fixed inter-trial interval
         ref % reference for timing; timestamp recorded at beginning of study
+        baselineFixLength % baseline before prediction
         
     end
     
@@ -46,6 +47,7 @@ classdef al_timing
             self.jitterShield = 0.6;
             self.fixedITI = 0.9;
             self.ref = nan;
+            self.baselineFixLength = 0.25;
         end
     end
 end

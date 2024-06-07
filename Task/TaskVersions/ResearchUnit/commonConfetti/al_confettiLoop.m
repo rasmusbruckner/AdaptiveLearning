@@ -87,16 +87,27 @@ for i = 1:trial
     taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
 
     WaitSecs(taskData.actJitterOnset(i));
-    initRT_Timestamp = GetSecs();
 
     % Print out jitter duration, if desired
     if taskParam.gParam.printTiming
         fprintf('\nTrial %.0f:\nJitter duration: %.5f\n', i, GetSecs() - jitTest)
     end
 
+    % This is the new baseline period
+    % Todo: check if timing is good
+    % And consider adding trigger (but coordinate with others first)
+    fixationPhase(taskParam)
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = GetSecs() + 0.001;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+    WaitSecs(taskParam.timingParam.baselineFixLength);
+
     % Send trial-onset trigger
     taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'trialOnset');
     taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
+
+    % Timestamp prediction phase onset for RT
+    initRT_Timestamp = GetSecs();
 
     % Self-paced prediction phase
     % ---------------------------
@@ -310,7 +321,6 @@ for i = 1:trial
         % Tell PTB that everything has been drawn and flip screen
         fixationPhase(taskParam, [222,222,222])
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        %taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
         timestamp = timestamp + taskParam.timingParam.shieldLength;
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
@@ -412,6 +422,14 @@ end
 end
 
 function fixationPhase(taskParam, color)
+%FIXATIONPHASE This function implements the fixation phase
+%
+%   Input
+%       taskParam: task-parameter-objects instance
+%       color: optional color of fixation dot
+%
+%   Output
+%       None
 
 % Check if reduced shield is requested
 if ~exist('color', 'var') || isempty(color)
