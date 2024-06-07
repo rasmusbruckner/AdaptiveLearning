@@ -41,7 +41,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.screenWidthInMM = 309.40;
             config.sendTrigger = false;
             config.rotationRadPixel = 140;
-            config.rotationRadDeg = 1.8; % todo: note that this is preliminary
+            config.rotationRadDeg = 3.16; % todo: note that this is preliminary
             config.screenNumber = 1;
             config.customInstructions = true;
             config.instructionText = al_commonConfettiInstructionsDefaultText();
@@ -295,11 +295,11 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataHighNoise_cBal2.nParticles, expectedNParticles)
 
             % Confetti standard deviation
-            expectedConfettiStd = repmat(6, 20, 1);
-            testCase.verifyEqual(dataLowNoise_cBal1.confettiStd, expectedConfettiStd)
-            testCase.verifyEqual(dataHighNoise_cBal1.confettiStd, expectedConfettiStd)
-            testCase.verifyEqual(dataLowNoise_cBal2.confettiStd, expectedConfettiStd)
-            testCase.verifyEqual(dataHighNoise_cBal2.confettiStd, expectedConfettiStd)
+            expectedConfettiStd = repmat(9.85597712654728, 20, 1);
+            testCase.verifyEqual(dataLowNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
+            testCase.verifyEqual(dataHighNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
+            testCase.verifyEqual(dataLowNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
+            testCase.verifyEqual(dataHighNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
 
             % Triggers
             % --------
@@ -455,10 +455,10 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.0)
 
             % Rotation radius
-            testCase.verifyEqual(dataLowNoise_cBal1.rotationRad, 136.4674, 'AbsTol', 0.0001)
-            testCase.verifyEqual(dataHighNoise_cBal1.rotationRad, 136.4674, 'AbsTol', 0.0001)
-            testCase.verifyEqual(dataLowNoise_cBal2.rotationRad, 136.4674, 'AbsTol', 0.0001)
-            testCase.verifyEqual(dataHighNoise_cBal2.rotationRad, 136.4674, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataLowNoise_cBal1.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataHighNoise_cBal1.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataLowNoise_cBal2.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataHighNoise_cBal2.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
 
         end
     end

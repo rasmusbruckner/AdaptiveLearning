@@ -53,6 +53,9 @@ classdef al_display
         nHas
         nDis
 
+        % Indicate if we want to use degrees visual angle
+        useDegreesVisualAngle
+
     end
 
     % Methods of the display object
@@ -80,6 +83,7 @@ classdef al_display
             self.heliImageRect = [0 0 100 100];
             self.pillImageRect = [0 0 30 30];
             self.syringeImageRect = [0 0 50 50];
+            self.useDegreesVisualAngle = false;
 
         end
 

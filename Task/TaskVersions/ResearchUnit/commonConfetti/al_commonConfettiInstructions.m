@@ -277,7 +277,7 @@ taskData = struct();
 taskData.allShieldSize = [20, 30, 15, 50, 10];
 taskData.pred = [40, 190, 80, 1, 340];
 taskParam.trialflow.colors = 'dark';
-taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
+taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 al_introduceReducedShield(taskParam, taskData, 5)
 
 % 11. Introduce hidden confetti cannon
@@ -308,7 +308,7 @@ taskParam.trialflow.colors = 'dark';
 taskParam.trialflow.shot = 'static';
 taskParam.trialflow.exp = 'practHid';
 taskParam.trialflow.shieldAppearance = 'lines';
-taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
+taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
 % 1) Low noise
 taskData = load('hidCannonPracticeHamburg_c16.mat');

@@ -9,7 +9,7 @@ function al_cannonball(taskParam, taskData, lineAndBack, trial, timestamp)
 %       timestamp: Timestamp start of trial for timing
 %
 %   Output
-%        ~
+%        None
 
 
 % Number of times that cannonball is printed while flying from cannon to aim

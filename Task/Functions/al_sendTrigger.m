@@ -298,10 +298,10 @@ if taskParam.gParam.sendTrigger == true
     %     WaitSecs(1/taskParam.triggers.sampleRate);
     %     outp(taskParam.triggers.port,0) % Set port to 0.
 
-    %io64(ioObject,taskParam.triggers.port, trigger)
+    % io64(ioObject,taskParam.triggers.port, trigger)
 
     % This is Hamburg
-    duration = 0.001; % singlePulseLength in WPT Hamburg
+    duration = 0.001;
     IOPort( 'Write', taskParam.triggers.session,uint8(trigger), 0);
     WaitSecs(duration);
     IOPort( 'Write', taskParam.triggers.session, uint8(0), 0);

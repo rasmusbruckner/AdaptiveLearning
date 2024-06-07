@@ -14,6 +14,9 @@ taskParam.trialflow.cannon = 'show cannon';
 % Turn off tick marks for first trial
 taskParam.trialflow.currentTickmarks = 'hide';
 
+% Turn off confetti
+taskParam.trialflow.confetti = 'none';
+
 % Adjust text settings
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 Screen('TextSize', taskParam.display.window.onScreen, 50);

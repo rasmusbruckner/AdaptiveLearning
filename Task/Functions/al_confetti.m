@@ -130,7 +130,7 @@ for i = 1:nFrames
     end
 
     % Show orange prediction spot
-    al_predictionSpot(taskParam)
+    % al_predictionSpot(taskParam)
    
     % Show shield
     al_shield(taskParam, taskData.allShieldSize(currTrial), taskData.pred(currTrial), taskData.shieldType(currTrial));

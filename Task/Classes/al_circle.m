@@ -10,10 +10,10 @@ classdef al_circle
         windowRect % window rectangle PTB screen
         
         % Shield 
-        shieldOffset % shield offset from circle
         shieldWidth % width of shield
         shieldFixedSizeFactor % relation shield size: only applied when shield depends in concentration
         shieldImageRad % currently doctor image in Leipzig version
+        shieldOffset % offset of shield wrt circle
 
         % Outcome
         outcDiam % outcome-spot diameter
@@ -65,7 +65,6 @@ classdef al_circle
             
             self.windowRect = windowRect;
             self.shieldWidth = 30; 
-            self.shieldOffset = 10; 
             self.shieldFixedSizeFactor = 2; 
             self.outcCentSpotRect = nan;
             self.fixSpotCentRect = nan;
@@ -85,6 +84,7 @@ classdef al_circle
             self.tickLengthOutc = 30;
             self.tickLengthShield = 50;
             self.circleWidth = 10;
+            self.shieldOffset = 10;
             
         end
 
@@ -142,6 +142,10 @@ classdef al_circle
             else
                 self.rotAngle = 360*self.unit;
             end
+        end
+
+        function self = getShieldOffset(self)
+            self.shieldOffset =  - self.circleWidth/2 + self.shieldWidth/2;
         end
     end
 end

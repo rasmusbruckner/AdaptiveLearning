@@ -240,7 +240,7 @@ for i = 1:trial
         Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
         al_drawFixPoint(taskParam)
         al_tickMark(taskParam, taskData.pred(i), 'pred');
-        al_confettiOutcome(taskParam, taskData, i)
+        taskParam = al_confettiOutcome(taskParam, taskData, i);
 
         % Tell PTB that everything has been drawn and flip screen
         Screen('DrawingFinished', taskParam.display.window.onScreen);
@@ -285,7 +285,8 @@ for i = 1:trial
     % Optionally draw outcome and shield
     if isequal(taskParam.trialflow.shot, 'static')
         al_shield(taskParam, taskData.allShieldSize(i), taskData.pred(i), taskData.shieldType(i))
-        al_confettiOutcome(taskParam, taskData, i)
+        regenerateParticles = false;
+        al_confettiOutcome(taskParam, taskData, i, regenerateParticles);
     end
 
     % Tell PTB that everything has been drawn and flip screen

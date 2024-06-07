@@ -30,11 +30,13 @@ if runIntro
     al_commonConfettiInstructions(taskParam)
 end
 
-taskParam.trialflow.exp = 'exp';
+% Update trial flow
 taskParam.trialflow.shot = 'static';
 taskParam.trialflow.colors = 'dark';
 taskParam.trialflow.shieldAppearance = 'lines';
-taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors);
+taskParam.trialflow.exp = 'exp';
+
+taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
 % Initialize and set up eye-tracker file
 if taskParam.gParam.eyeTracker

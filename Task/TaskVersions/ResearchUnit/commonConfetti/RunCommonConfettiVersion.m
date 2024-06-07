@@ -16,7 +16,7 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       05/24
+%       06/24
 
 
 KbName('UnifyKeyNames')
@@ -28,10 +28,10 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 20;
+    config.trialsExp = 2;
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = false;
+    config.runIntro = true;
     config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
@@ -54,7 +54,7 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
-    config.rotationRadDeg = 3.16; %1.8;
+    config.rotationRadDeg = 3.16;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
@@ -188,13 +188,15 @@ end
 % Degrees visal angle
 % -------------------
 
-predSpotDiamDeg = 0.4519; %0.2638;
-fixSpotDiamDeg = 0.4519; %0.2638;
+predSpotDiamDeg = 0.4519; % 0.2638;
+fixSpotDiamDeg = 0.4519; % 0.2638;
 circleWidthDeg = 0.2259; % 0.1319;
-tickLengthPredDeg = 0.9037; %0.5276;
-tickLengthOutcDeg = 0.6778; %%0.3957;
-tickLengthShieldDeg = 1.1296; %0.6595;
-imageRectDeg = [0 0 1.3554 4.5095]; %[0 0 0.7913 2.6361];
+tickLengthPredDeg = 0.9037; % 0.5276;
+tickLengthOutcDeg = 0.6778; % 0.3957;
+tickLengthShieldDeg = 1.1296; % 0.6595;
+particleSizeDeg = 0.1;% 0.08;  % todo just same value for sCloud?
+confettiStdDeg = 0.13; % 0.1356;
+imageRectDeg = [0 0 1.0843 3.6076]; % [0 0 1.3554 4.5095]; % [0 0 0.7913 2.6361];
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -260,8 +262,8 @@ trialflow.shield = 'variableWithSD';
 trialflow.shieldType = 'constant';
 trialflow.input = 'mouse'; 
 
-%trialflow.colors = 'dark';
-%trialflow.colors = 'blackWhite';
+% trialflow.colors = 'dark';
+% trialflow.colors = 'blackWhite';
 trialflow.colors = 'colorful';
 
 % ---------------------------------------------
@@ -275,7 +277,6 @@ cannon.confettiAnimationStd = confettiAnimationStd;
 cannon.nFrames = 50;
 cannon.confettiEndMean = confettiEndMean;
 cannon.confettiEndStd = confettiEndStd;
-cannon = cannon.al_staticConfettiCloud(trialflow.colors);
 
 % ---------------------------------------------
 % Create object instance with color parameters
@@ -406,13 +407,10 @@ end
 display.screensize = screensize;
 display.distance2screen = distance2screen;
 display.screenWidthInMM = screenWidthInMM;
-
-% For internal checking, maybe implement translation, if useful
-% display.pix2deg(imageRectPixel(3))
-% display.pix2deg(imageRectPixel(4))
+display.useDegreesVisualAngle = useDegreesVisualAngle;
 
 % Cannon image
-if useDegreesVisualAngle
+if display.useDegreesVisualAngle
     display.imageRect(3) = display.deg2pix(imageRectDeg(3));
     display.imageRect(4) = display.deg2pix(imageRectDeg(4));
 else
@@ -449,7 +447,7 @@ circle = al_circle(display.windowRect);
 
 % Determine rotation radius, depending on unit (deg. vis. angle vs. pixels)
 % also adjust other parameters accordingly
-if useDegreesVisualAngle
+if display.useDegreesVisualAngle
     circle.rotationRad = display.deg2pix(rotationRadDeg);
     circle.predSpotDiam = display.deg2pix(predSpotDiamDeg);
     circle.fixSpotDiam = display.deg2pix(fixSpotDiamDeg);
@@ -457,14 +455,24 @@ if useDegreesVisualAngle
     circle.tickLengthPred = display.deg2pix(tickLengthPredDeg);
     circle.tickLengthOutc = display.deg2pix(tickLengthOutcDeg);
     circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);
+    circle = circle.getShieldOffset();
     fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg,2), round(circle.rotationRad, 2));
-elseif useDegreesVisualAngle == false
+elseif display.useDegreesVisualAngle == false
     circle.rotationRad = rotationRadPixel;
 else
     error('Option undefined')
 end
 
 circle = circle.computeCircleProps();
+
+% Adjust size according to degrees visual angle for cannon parameters
+if display.useDegreesVisualAngle
+    cannon.particleSize = display.deg2pix(particleSizeDeg);
+    cannon.confettiStd = display.deg2pix(confettiStdDeg);   
+    cannon = cannon.al_staticConfettiCloud(trialflow.colors, display);
+else
+    cannon = cannon.al_staticConfettiCloud(trialflow.colors);
+end
 
 % ----------------------------------------------
 % Create object instance with trigger parameters
