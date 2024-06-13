@@ -184,7 +184,7 @@ joy = nan;
 sampleRate = 500; 
 
 if sendTrigger
-    [session, status] = IOPort( 'OpenSerialPort', 'COM3' );
+    [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
 end
 
 % Degrees visal angle

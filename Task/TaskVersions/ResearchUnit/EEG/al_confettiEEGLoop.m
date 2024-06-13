@@ -145,6 +145,9 @@ for i = 1:trial
     % 6. Trial phase: Reward
     % ----------------------
 
+    % Update text size temporarily for feedback phase
+    oldTextSize=Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.socialVersionFeedbackTextSize);
+
     % Monetary condition
     if isequal(taskParam.trialflow.reward, 'monetary') && taskData.hit(i)
 
@@ -185,6 +188,9 @@ for i = 1:trial
             al_drawFixPoint(taskParam)
         end
     end
+
+    % Set text size back to default value
+    Screen('TextSize', taskParam.display.window.onScreen, oldTextSize);
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);

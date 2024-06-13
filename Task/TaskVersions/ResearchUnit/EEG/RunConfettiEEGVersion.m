@@ -44,8 +44,16 @@ if ~exist('config', 'var') || isempty(config)
     config.printTiming = true;
     config.hidePtbCursor = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
+    config.eyeTracker = false;
+    config.useDegreesVisualAngle = true;
+    config.distance2screen = 700;
+    config.screenWidthInMM = 309.40;
+    config.screenHeightInMM = 210;
     config.sendTrigger = false;
-    config.rotationRad = 140;
+    config.rotationRadPixel = 140;
+    config.rotationRadDeg = 3.16;
+    config.noPtbWarnings = false;
+
     % config.customInstructions = true;
     % config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end
@@ -96,8 +104,16 @@ showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for v
 printTiming = config.printTiming; % print timing for checking
 hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
+useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
+distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
+screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
+screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
-rotationRad = config.rotationRad; % rotation radius
+%rotationRad = config.rotationRad; % rotation radius
+rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
+rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
+noPtbWarnings = config.noPtbWarnings;
+
 % customInstructions = config.customInstructions;
 % instructionText = config.instructionText;
 
@@ -133,7 +149,7 @@ practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
 % Tickmark width
-tickWidth = 2;
+% tickWidth = 2;
 
 % Reward magnitude
 rewMag = 0.2;
@@ -152,6 +168,19 @@ confettiEndStd = 10; % 10; % 20 % this is the spread around the average end poin
 if sendTrigger
     [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
 end
+
+% Degrees visal angle
+% -------------------
+
+predSpotDiamDeg = 0.4519;
+fixSpotDiamDeg = 0.4519;
+circleWidthDeg = 0.2259;
+tickLengthPredDeg = 0.9037;
+tickLengthOutcDeg = 0.6778;
+tickLengthShieldDeg = 1.1296;
+particleSizeDeg = 0.1;
+confettiStdDeg = 0.13;
+imageRectDeg = [0 0 1.0843 3.6076];
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -264,6 +293,7 @@ strings = al_strings();
 strings.txtPressEnter = 'Weiter mit Enter';
 strings.sentenceLength = sentenceLength;
 strings.textSize = textSize;
+strings.socialVersionFeedbackTextSize = 55;
 strings.headerSize = headerSize;
 strings.vSpacing = vSpacing;
 
@@ -337,13 +367,26 @@ subject.startingBudget = startingBudget;
 display = al_display();
 
 % Deal with psychtoolbox warnings
-% Todo: Make sure that all tests are passed on task PC
-% display.screen_warnings();
+%% Todo: Make sure that all tests are passed on task PC
+if noPtbWarnings
+    display.screen_warnings();
+end
 
 % Set screensize
 display.screensize = screensize;
-display.imageRect = imageRect;
+% display.imageRect = imageRect;
 display.socialFeedbackRect = socialFeedbackRect;
+display.distance2screen = distance2screen;
+display.screenWidthInMM = screenWidthInMM;
+display.useDegreesVisualAngle = useDegreesVisualAngle;
+
+% Cannon image
+if display.useDegreesVisualAngle
+    display.imageRect(3) = display.deg2pix(imageRectDeg(3));
+    display.imageRect(4) = display.deg2pix(imageRectDeg(4));
+else
+    display.imageRect = imageRectPixel;
+end
 
 % Open psychtoolbox window
 display = display.openWindow(gParam);
@@ -363,9 +406,40 @@ ListenChar(2);
 % ---------------------------------------------
 
 circle = al_circle(display.windowRect);
-circle.rotationRad = rotationRad;
-circle.tickWidth = tickWidth;
+
+% circle.rotationRad = rotationRad;
+% circle.tickWidth = tickWidth;
+% circle = circle.computeCircleProps();
+
+% Determine rotation radius, depending on unit (deg. vis. angle vs. pixels)
+% also adjust other parameters accordingly
+if display.useDegreesVisualAngle
+    circle.rotationRad = display.deg2pix(rotationRadDeg);
+    circle.predSpotDiam = display.deg2pix(predSpotDiamDeg);
+    circle.fixSpotDiam = display.deg2pix(fixSpotDiamDeg);
+    circle.circleWidth = display.deg2pix(circleWidthDeg);
+    circle.tickLengthPred = display.deg2pix(tickLengthPredDeg);
+    circle.tickLengthOutc = display.deg2pix(tickLengthOutcDeg);
+    circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);
+    circle = circle.getShieldOffset();
+    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg,2), round(circle.rotationRad, 2));
+elseif display.useDegreesVisualAngle == false
+    circle.rotationRad = rotationRadPixel;
+else
+    error('Option undefined')
+end
+
 circle = circle.computeCircleProps();
+
+% Adjust size according to degrees visual angle for cannon parameters
+if display.useDegreesVisualAngle
+    cannon.particleSize = display.deg2pix(particleSizeDeg);
+    cannon.confettiStd = display.deg2pix(confettiStdDeg);   
+    cannon = cannon.al_staticConfettiCloud(trialflow.colors, display);
+else
+    cannon = cannon.al_staticConfettiCloud(trialflow.colors);
+end
+
 
 % ----------------------------------------------
 % Create object instance with trigger parameters

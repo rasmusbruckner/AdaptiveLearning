@@ -13,6 +13,7 @@ classdef al_strings
         
         txtPressEnter
         textSize
+        socialVersionFeedbackTextSize
         headerSize
         sentenceLength
         vSpacing
@@ -32,6 +33,7 @@ classdef al_strings
             
             self.txtPressEnter = 'Press Enter to continue';
             self.textSize = 30;
+            self.socialVersionFeedbackTextSize = 55;
             self.headerSize = 30;
             self.sentenceLength = 85;
             self.vSpacing = 1;
