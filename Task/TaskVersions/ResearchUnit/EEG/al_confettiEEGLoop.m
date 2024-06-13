@@ -12,7 +12,6 @@ function taskData = al_confettiEEGLoop(taskParam, condition, taskData, trial)
 
 
 % Todo:
-% Check timing with Hamburg and document final choices above
 % Ensure timing output in console is up to date
 
 % Wait until keys released
@@ -45,7 +44,7 @@ for i = 1:trial
     taskData.confettiStd(i) = taskParam.cannon.confettiStd;
     taskData.cond{i} = condition;
 
-    if isequal(taskParam.trialflow.reward, 'monetaryPunishment')
+    if isequal(taskParam.trialflow.reward, 'monetary')
         taskData.startingBudget(i) = taskParam.subject.startingBudget;
     else
         taskData.startingBudget(i) = 0;
@@ -106,9 +105,9 @@ for i = 1:trial
     end
 
     % Performance depends on hit vs miss and condition
-    if taskData.hit(i) == 1 && isequal(taskParam.trialflow.reward, 'monetaryReward')
+    if taskData.hit(i) == 1 && isequal(taskParam.trialflow.reward, 'monetary')
         taskData.perf(i) = taskParam.gParam.rewMag;
-    elseif taskData.hit(i) == 0 && isequal(taskParam.trialflow.reward, 'monetaryPunishment')
+    elseif taskData.hit(i) == 0 && isequal(taskParam.trialflow.reward, 'monetary')
         taskData.perf(i) = -1*taskParam.gParam.rewMag;
     else
         taskData.perf(i) = 0;
@@ -206,19 +205,19 @@ for i = 1:trial
     % ----------------------
 
     % Monetary-reward condition
-    if isequal(taskParam.trialflow.reward, 'monetaryReward') && taskData.hit(i)
+    if isequal(taskParam.trialflow.reward, 'monetary') && taskData.hit(i)
 
         txt = sprintf('+%.1f Euro', taskData.perf(i));
         DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', taskParam.colors.green);
 
         % Monetary-punishment condition
-    elseif isequal(taskParam.trialflow.reward, 'monetaryPunishment') && ~taskData.hit(i)
+    elseif isequal(taskParam.trialflow.reward, 'monetary') && ~taskData.hit(i)
 
         txt = sprintf('%.1f Euro', taskData.perf(i));
         DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', taskParam.colors.red); %[255 0 0]
 
         % Social-reward condition
-    elseif isequal(taskParam.trialflow.reward, 'socialReward') && taskData.hit(i)
+    elseif isequal(taskParam.trialflow.reward, 'social') && taskData.hit(i)
 
         txt = 'Super!';
         DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', taskParam.display.screensize(4)*0.35, taskParam.colors.green);
@@ -226,7 +225,7 @@ for i = 1:trial
         Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialHasTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);
 
         % Social-punishment condition
-    elseif isequal(taskParam.trialflow.reward, 'socialPunishment') && ~taskData.hit(i)
+    elseif isequal(taskParam.trialflow.reward, 'social') && ~taskData.hit(i)
 
         txt = 'Schlecht!';
         DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', taskParam.display.screensize(4)*0.35, taskParam.colors.red); % [255 0 0]
@@ -307,24 +306,23 @@ end
 % ----------------------------
 
 if ~taskParam.unitTest.run
-
-    % currPoints = sum(taskData.hit, 'omitnan');
-    if isequal(taskParam.trialflow.reward, "monetaryReward")
-
-        txt = sprintf('In diesem Block hast Du %.2f Euro verdient.', taskData.accPerf(end));
-
-    elseif isequal(taskParam.trialflow.reward, "monetaryPunishment")
-
-        txt = sprintf('In diesem Block hast Du inklusive Deines Startbudgets %.2f Euro verdient.', taskData.accPerf(end));
-
-    elseif isequal(taskParam.trialflow.reward, "socialReward")
-
-        txt = sprintf('In diesem Block hast Du %.0f Likes erhalten.', sum(taskData.hit==1));
-
+    
+    if isequal(taskParam.trialflow.exp, 'exp')
+        if isequal(taskParam.trialflow.reward, "monetary")
+            txt = sprintf('In diesem Block hast Du inklusive Deines Startbudgets %.2f Euro verdient.', taskData.accPerf(end));
+        elseif isequal(taskParam.trialflow.reward, "social")
+            txt = sprintf('In diesem Block hast Du %.0f Likes erhalten.', sum(taskData.hit==1));
+        else
+            error('reward condition undefined')
+        end
     else
-
-        txt = sprintf('In diesem Block hast Du %.0f Dislikes erhalten.', sum(taskData.hit==0));
-
+        if isequal(taskParam.trialflow.reward, "monetary")
+            txt = sprintf('In diesem Block hättest Du inklusive Deines Startbudgets %.2f Euro verdient.', taskData.accPerf(end));
+        elseif isequal(taskParam.trialflow.reward, "social")
+            txt = sprintf('In diesem Block hättest Du %.0f Likes erhalten.', sum(taskData.hit==1));
+        else
+            error('reward condition undefined')
+        end
     end
 
     header = 'Zwischenstand';

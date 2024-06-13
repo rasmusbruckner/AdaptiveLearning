@@ -179,70 +179,46 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
 
     % Trial onset
     if isequal(Tevent, 'trialOnset')
-        trigger = 1; %199;
+        trigger = 1;
     elseif isequal(Tevent, 'responseOnset')
-        trigger = 2; %200;
+        trigger = 2;
     elseif isequal(Tevent, 'responseLogged')
-        trigger = 3; %201;
+        trigger = 3;
     elseif isequal(Tevent, 'fix')
-        trigger = 4; %202;
+        trigger = 4;
 
         % Shield
     elseif isequal(Tevent, 'shield')
 
-        if isequal(condition, 'monetaryReward') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
+        if isequal(condition, 'monetary') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
             trigger = 50;
-        elseif isequal(condition, 'monetaryReward') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
+        elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
             trigger = 51;
-        elseif isequal(condition, 'monetaryReward') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
+        elseif isequal(condition, 'monetary') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
             trigger = 52;
-        elseif isequal(condition, 'monetaryReward') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
+        elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
             trigger = 53;
-        elseif isequal(condition, 'monetaryPunishment') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
             trigger = 60;
-        elseif isequal(condition, 'monetaryPunishment') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
             trigger = 61;
-        elseif isequal(condition, 'monetaryPunishment') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
             trigger = 62;
-        elseif isequal(condition, 'monetaryPunishment') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
             trigger = 63;
-        elseif isequal(condition, 'socialReward') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
-            trigger = 70;
-        elseif isequal(condition, 'socialReward') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
-            trigger = 71;
-        elseif isequal(condition, 'socialReward') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
-            trigger = 72;
-        elseif isequal(condition, 'socialReward') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
-            trigger = 73;
-        elseif isequal(condition, 'socialPunishment') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
-            trigger = 80;
-        elseif isequal(condition, 'socialPunishment') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
-            trigger = 81;
-        elseif isequal(condition, 'socialPunishment') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
-            trigger = 82;
-        elseif isequal(condition, 'socialPunishment') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
-            trigger = 83;
         end
 
         % Reward
     elseif isequal(Tevent, 'reward')
 
-        if isequal(condition, 'monetaryReward') && taskData.hit(trial) == 0
-            trigger = 90;
-        elseif isequal(condition, 'monetaryReward') && taskData.hit(trial) == 1
-            trigger = 91;
-        elseif isequal(condition, 'monetaryPunishment') && taskData.hit(trial) == 0
-            trigger = 100;
-        elseif isequal(condition, 'monetaryPunishment') && taskData.hit(trial) == 1
-            trigger = 101;
-        elseif isequal(condition, 'socialReward') && taskData.hit(trial) == 0
-            trigger = 110;
-        elseif isequal(condition, 'socialReward') && taskData.hit(trial) == 1
-            trigger = 111;
-        elseif isequal(condition, 'socialPunishment') && taskData.hit(trial) == 0
-            trigger = 120;
-        elseif isequal(condition, 'socialPunishment') && taskData.hit(trial) == 1
-            trigger = 121;
+        if isequal(condition, 'monetary') && taskData.hit(trial) == 0
+            trigger = 70;
+        elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1
+            trigger = 71;
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 0
+            trigger = 80;
+        elseif isequal(condition, 'social') && taskData.hit(trial) == 1
+            trigger = 81;
         end
     end
 

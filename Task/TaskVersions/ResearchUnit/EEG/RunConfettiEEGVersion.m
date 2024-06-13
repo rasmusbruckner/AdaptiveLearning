@@ -1,5 +1,5 @@
-function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = RunConfettiEEGVersion(config, runUnitTest, cBal)
-%RUNHAMBURGEEGVERSION This function runs the EEG version of the confetti-cannon task
+function [dataMonetary, dataSocial] = RunConfettiEEGVersion(config, runUnitTest, cBal)
+%RUNCONFETTIEEGVERSION This function runs the EEG version of the confetti-cannon task
 %
 %   Input
 %       config: Structure with local configuration parameters
@@ -7,21 +7,17 @@ function [dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSoci
 %       cBal: Current cBal (only allowed when running unit test)
 %
 %   Output
-%       dataMonetaryReward: Task-data object monetary-reward condition
-%       dataMonetaryPunishment: Task-data object monetary-punishment condition
-%       dataSocialReward: Task-data object social-reward condition
-%       dataSocialPunishment: Task-data object social-punishment condition
+%       dataMonetary: Task-data object monetary condition
+%       dataSocial: Task-data object social condition
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       05/24
+%       06/24
 
 % todo: tailored integration tests
-% todo: starting budet also in reward condition (and social?)
-% reduce conditions to 2 (monetary vs. social)
 
 KbName('UnifyKeyNames')
 
@@ -32,10 +28,10 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 2;
-    config.practTrials = 2;
+    config.trialsExp = 10;
+    config.practTrials = 3;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = false;
+    config.runIntro = true;
     config.sentenceLength = 100;
     config.textSize = 35;
     config.headerSize = 50;
@@ -121,7 +117,7 @@ nParticles = 40;
 confettiStd = 6;
 
 % Start-up budget in Euros
-startingBudget = 20;  % only for monetaryPunishment?
+startingBudget = 20;  % for monetary condition
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -424,10 +420,10 @@ Screen('Flip', taskParam.display.window.onScreen);
 % Run task
 % --------
 
-[dataMonetaryReward, dataMonetaryPunishment, dataSocialReward, dataSocialPunishment] = al_confettiEEGConditions(taskParam);
+[dataMonetary, dataSocial] = al_confettiEEGConditions(taskParam);
 
 % Compute bonus
-totWin = dataMonetaryReward.accPerf(end) + dataMonetaryPunishment.accPerf(end);
+totWin = dataMonetary.accPerf(end);
 
 % -----------
 % End of task

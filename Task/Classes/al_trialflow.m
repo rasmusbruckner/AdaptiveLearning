@@ -60,10 +60,8 @@ classdef al_trialflow
         reward
             % standad: points for catching
             % asymmetric: Jan Gläscher's asymmetric-reward version
-            % monetaryReward
-            % monetaryPunishment
-            % socialReward
-            % socialPunishment
+            % monetary
+            % social
         
         % Whether or not tickmarks for current trial are used
         currentTickmarks
