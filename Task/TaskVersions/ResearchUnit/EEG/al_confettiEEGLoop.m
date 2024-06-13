@@ -142,81 +142,21 @@ for i = 1:trial
     taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
     taskData.timestampFixCross1(i) = GetSecs() - taskParam.timingParam.ref;
 
-    % 4. Trial phase: Shield
-    % ----------------------
-
-    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-        al_drawCannon(taskParam, taskData.distMean(i))
-    else
-        %[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
-        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-        al_drawFixPoint(taskParam)
-    end
-
-    % Draw circle and confetti cloud
-    al_drawCircle(taskParam)
-
-    % Draw shield
-    al_shield(taskParam, taskData.allShieldSize(i), taskData.pred(i), taskData.shieldType(i))
-
-    % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
-    al_confettiOutcome(taskParam, taskData, i)
-
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
-
-    % Send shield trigger
-    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'shield');
-    taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
-
-    if taskParam.gParam.printTiming
-        fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross1(i))
-    end
-
-    % 5. Trial phase: Fixation cross 2
-    % --------------------------------
-
-    al_drawFixPoint(taskParam)
-    al_drawCircle(taskParam)
-
-    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
-        al_drawCannon(taskParam, taskData.distMean(i))
-    else
-        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-        al_drawFixPoint(taskParam)
-    end
-
-    % Tell PTB that everything has been drawn and flip screen
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.shieldLength;  % taskParam.timingParam.cannonBallAnimation; %
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
-
-    % Send fixation cross 2 trigger
-    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
-    taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
-
-    if taskParam.gParam.printTiming
-        fprintf('Shield duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampShield(i))
-    end
-
     % 6. Trial phase: Reward
     % ----------------------
 
-    % Monetary-reward condition
+    % Monetary condition
     if isequal(taskParam.trialflow.reward, 'monetary') && taskData.hit(i)
 
         txt = sprintf('+%.1f Euro', taskData.perf(i));
         DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', taskParam.colors.green);
 
-        % Monetary-punishment condition
     elseif isequal(taskParam.trialflow.reward, 'monetary') && ~taskData.hit(i)
 
         txt = sprintf('%.1f Euro', taskData.perf(i));
         DrawFormattedText(taskParam.display.window.onScreen, txt, 'center', 'center', taskParam.colors.red); %[255 0 0]
 
-        % Social-reward condition
+        % Social condition
     elseif isequal(taskParam.trialflow.reward, 'social') && taskData.hit(i)
 
         txt = 'Super!';
@@ -224,7 +164,6 @@ for i = 1:trial
         r = randi([1,taskParam.display.nHas]);
         Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialHasTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);
 
-        % Social-punishment condition
     elseif isequal(taskParam.trialflow.reward, 'social') && ~taskData.hit(i)
 
         txt = 'Schlecht!';
@@ -234,7 +173,7 @@ for i = 1:trial
         Screen('DrawTexture', taskParam.display.window.onScreen, taskParam.display.socialDisTxts{r}, [], taskParam.display.centeredSocialFeedbackRect, 0);
     else
 
-        % If not feedback is shown, show circle
+        % If no feedback is shown, show circle
         al_drawFixPoint(taskParam)
         al_drawCircle(taskParam)
 
@@ -253,7 +192,7 @@ for i = 1:trial
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send reward trigger
-    taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'reward');
+    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'reward');
     taskData.timestampReward(i) = GetSecs - taskParam.timingParam.ref;
 
     % Print timing
@@ -280,12 +219,12 @@ for i = 1:trial
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send fixation cross 3 trigger
-    taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'fix');
-    taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
+    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'fix');
+    taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
 
     % Print timing
     if taskParam.gParam.printTiming
-        fprintf('Reward duration: %.5f\n', taskData.timestampFixCross3(i) - taskData.timestampReward(i))
+        fprintf('Reward duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampReward(i))
     end
 
     % Fixed inter-trial interval
@@ -294,7 +233,7 @@ for i = 1:trial
 
     % Reward timestamp
     if taskParam.gParam.printTiming
-        fprintf('Fixation-cross 3 duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampFixCross3(i))
+        fprintf('Fixation-cross 3 duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampFixCross2(i))
     end
 
     % Manage breaks
