@@ -18,6 +18,10 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %   Last updated
 %       06/24
 
+% Todo: write integration test for fMRI version.
+% First ensure version is good to go and then keep in mind that output
+% arguments have to updated to include the three runs (this has to be 
+% compatible with two files in no-scanner version)
 
 KbName('UnifyKeyNames')
 
@@ -41,13 +45,14 @@ if ~exist('config', 'var') || isempty(config)
     config.screenSize = get(0,'MonitorPositions')*1;
     config.screenNumber = 1;
     config.s = 40;
+    config.five = 15; % '5';
     config.enter = 37;
     config.debug = false;
     config.showConfettiThreshold = false;
     config.printTiming = true;
     config.hidePtbCursor = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
-    config.scanner = false;
+    config.scanner = true;
     config.eyeTracker = false;
     config.useDegreesVisualAngle = true;
     config.distance2screen = 700;
@@ -93,7 +98,7 @@ end
 
 % Config parameters
 % -----------------
-trialsExp = config.trialsExp; % number of experimental trials
+trialsExp = config.trialsExp; % number of experimental trials per block
 practTrials = config.practTrials; % number of practice trials
 blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
@@ -107,6 +112,7 @@ screensize = config.screenSize; % screen size
 screenNumber = config.screenNumber; % screen number 
 s = config.s; % s key
 enter = config.enter; % enter key
+five = config.five; % number 5 for triggering at UKE
 debug = config.debug; % debug mode
 showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
 printTiming = config.printTiming; % print timing for checking
@@ -125,11 +131,15 @@ customInstructions = config.customInstructions;
 instructionText = config.instructionText;
 noPtbWarnings = config.noPtbWarnings;
 
-% More general paramters
+% More general parameters
 % ----------------------
 
-% Risk parameter: Precision of confetti average
-concentration = [16, 8];
+% Risk parameter: Precision of confetti shot
+if scanner == false
+    concentration = [16, 8];
+elseif scanner == true
+    concentration = 12;
+end
 
 % Hazard rate determining a priori changepoint probability
 haz = .125;
@@ -298,6 +308,7 @@ else
 end
 keys.s = s;
 keys.enter = enter;
+keys.five = five; 
 
 % ---------------------------------------------
 % Create object instance with timing parameters
@@ -358,39 +369,75 @@ if gParam.askSubjInfo == false || unitTest.run
     subject.age = str2double(age);
     subject.gender = gender;
     subject.group = str2double(group);
-    subject.cBal = str2double(cBal);
     subject.date = date;
 
+    if scanner == false
+        subject.cBal = str2double(cBal);
+    end
+       
     % If user input requested
 else
+    
+    if scanner == false
+        % Variables that we want to put in the dialogue box
+        prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
+        name = 'SubjInfo';
+        numlines = 1;
+    
+        % Add defaults from above
+        defaultanswer = {ID, age, gender, group, cBal};
+    
+        % Put everything together
+        subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
+    
+        % Put all relevant subject info in structure
+        % ------------------------------------------
+    
+        subject.ID = subjInfo{1};
+        subject.age = str2double(subjInfo{2});
+        subject.gender = subjInfo{3};
+        subject.group = str2double(subjInfo{4});
+        subject.cBal = str2double(subjInfo{5});
+        subject.date = date;
+    
+        % Test user input
+        checkString = dir(sprintf('*%s*', num2str(subject.ID)));
+        subject.checkID(checkString, 5);
+        subject.checkGender();
+        subject.checkGroup();
+        subject.checkCBal(2);
+    
+    elseif scanner == true
+    
+        % Variables that we want to put in the dialogue box
+        prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'startsWithRun:'};
+        name = 'SubjInfo';
+        numlines = 1;
+    
+        % Add defaults from above
+        defaultanswer = {ID, age, gender, group, cBal};
+    
+        % Put everything together
+        subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
+    
+        % Put all relevant subject info in structure
+        % ------------------------------------------
+    
+        subject.ID = subjInfo{1};
+        subject.age = str2double(subjInfo{2});
+        subject.gender = subjInfo{3};
+        subject.group = str2double(subjInfo{4});
+        subject.date = date;
 
-    % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
-    name = 'SubjInfo';
-    numlines = 1;
-
-    % Add defaults from above
-    defaultanswer = {ID, age, gender, group, cBal};
-
-    % Add information that is not specified by user (i.e., date)
-    subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
-
-    % Put all relevant subject info in structure
-    % ------------------------------------------
-
-    subject.ID = subjInfo{1};
-    subject.age = str2double(subjInfo{2});
-    subject.gender = subjInfo{3};
-    subject.group = str2double(subjInfo{4});
-    subject.cBal = str2double(subjInfo{5});
-    subject.date = date;
-
-    % Test user input
-    checkString = dir(sprintf('*%s*', num2str(subject.ID)));
-    subject.checkID(checkString, 5);
-    subject.checkGender();
-    subject.checkGroup();
-    subject.checkCBal(2),
+        % Extract startsWithRun variable
+        startsWithRun = str2double(subjInfo{5});
+    
+        % Test user input
+        checkString = dir(sprintf('*%s*', num2str(subject.ID)));
+        subject.checkID(checkString, 5);
+        subject.checkGender();
+        subject.checkGroup();
+    end
 end
 
 % ------------------
@@ -537,8 +584,19 @@ Screen('Flip', taskParam.display.window.onScreen);
 % Run task
 % --------
 
-[dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam);
-totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
+if scanner == false
+
+    % When experiment does not take place in scanner
+    [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam);
+    totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
+
+elseif scanner == true
+
+    % For Hendrik's project in the scanner and with stress manipulation
+    [dataRun1, dataRun2, dataRun3] = al_commonConfettiConditionsFMRI(taskParam, startsWithRun);
+    totWin = sum(dataRun1.hit) + sum(dataRun2.hit) + sum(dataRun3.hit);
+    
+end
 
 % -----------
 % End of task

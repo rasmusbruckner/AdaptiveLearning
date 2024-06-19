@@ -24,6 +24,9 @@ classdef al_trialflow
             % practHidPush: practice hidden cannon push condition
             % practHidcolor: practice hidden cannon color block
             % practHidAsym: practice hidden cannon asymmetric reward
+            % run1: fMRI run 1
+            % run2: fMRI run 2
+            % run3: fMRI run 3
 
         % Cannonball animation
         shot

@@ -51,7 +51,7 @@ classdef al_keys
             self.space = KbName('Space');
             self.enter = 37;
             self.s = 40;
-            self.five = '5';
+            self.five = 15; %'5';
             self.esc = KbName('ESCAPE');
             self.leftRelease = 43;
             self.rightRelease = 44; 

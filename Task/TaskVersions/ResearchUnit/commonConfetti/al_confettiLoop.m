@@ -34,6 +34,9 @@ KbReleaseWait();
 
 % Wait for scanner trigger
 if taskParam.gParam.scanner
+    
+    % Display that we're waiting for scanner
+    al_waitForScanner(taskParam, 'Messung startet in wenigen Sekunden...')
 
     triggered = 0;
     fprintf('Waiting for trigger\n')

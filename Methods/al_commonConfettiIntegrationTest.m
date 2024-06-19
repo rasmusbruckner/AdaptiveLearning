@@ -28,6 +28,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.screenSize = get(0,'MonitorPositions')*1.0;
             config.screenNumber = 1;
             config.s = 40;
+            config.five = 15;
             config.enter = 37;
             config.debug = false;
             config.showConfettiThreshold = false;

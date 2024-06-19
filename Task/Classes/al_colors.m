@@ -19,6 +19,7 @@ classdef al_colors
         black
         white
         gray
+        lightGray
         background 
         lineAndBack
         colRew
@@ -51,6 +52,7 @@ classdef al_colors
             self.black = [0, 0, 0];
             self.white = [255, 255, 255];
             self.gray = [66 66 66];
+            self.lightGray = 102;
             self.background = [109 107 109];
             self.lineAndBack = 'blue';
             self.colRew = 'gold';
