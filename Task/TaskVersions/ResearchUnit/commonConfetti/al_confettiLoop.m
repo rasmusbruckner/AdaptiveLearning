@@ -55,6 +55,7 @@ end
 
 % Cycle over trials
 % -----------------
+
 for i = 1:trial
 
     % Presenting trial number at the bottom of the eyetracker display - optional
@@ -89,6 +90,9 @@ for i = 1:trial
     taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
     taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
 
+    % Onset jitter
+    % ------------
+
     WaitSecs(taskData.actJitterOnset(i));
 
     % Print out jitter duration, if desired
@@ -96,6 +100,8 @@ for i = 1:trial
         fprintf('\nTrial %.0f:\nJitter duration: %.5f\n', i, GetSecs() - jitTest)
     end
 
+    % Baseline period
+    % ---------------
     % This is the new baseline period
     % Todo: check if timing is good
     % And consider adding trigger (but coordinate with others first)
@@ -247,6 +253,9 @@ for i = 1:trial
         end
     end
 
+    % Outcome 
+    % -------
+    
     if isequal(taskParam.trialflow.shot, 'static')
 
         % Draw circle and confetti cloud
@@ -326,7 +335,8 @@ for i = 1:trial
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         timestamp = timestamp + taskParam.timingParam.shieldLength;
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
-
+        
+        % Send fixation cross 3 trigger
         taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
         taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
 

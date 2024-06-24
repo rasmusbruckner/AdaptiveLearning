@@ -6,7 +6,7 @@ function al_showHelicopter(taskParam, distMean)
 %       distMean: Current mean of the distribution
 %
 %   Output
-%       ~
+%       None
 
 
 % Compute helicopter coordinates

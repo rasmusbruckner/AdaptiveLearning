@@ -133,7 +133,7 @@ else
         % Run 1
         al_indicateRun(taskParam, 1)
         taskParam.trialflow.exp = 'run1';
-        dataRun1 = al_confettiLoop(taskParam, 'main', taskDataRun1, trial);
+        dataRun1 = al_MRILoop(taskParam, 'main', taskDataRun1, trial);
 
     end
 
@@ -142,7 +142,7 @@ else
         % Run 2
         al_indicateRun(taskParam, 2)
         taskParam.trialflow.exp = 'run2';
-        dataRun2 = al_confettiLoop(taskParam, 'main', taskDataRun2, trial);
+        dataRun2 = al_MRILoop(taskParam, 'main', taskDataRun2, trial);
 
         % Questions with Likert scale
         % ---------------------------
@@ -180,7 +180,7 @@ else
         % Run 3
         al_indicateRun(taskParam, 3)       
         taskParam.trialflow.exp = 'run3';
-        dataRun3 = al_confettiLoop(taskParam, 'main', taskDataRun3, trial);
+        dataRun3 = al_MRILoop(taskParam, 'main', taskDataRun3, trial);
 
     end
 
