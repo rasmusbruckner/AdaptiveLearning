@@ -40,16 +40,10 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 
 % Initialize and set up eye-tracker file
 if taskParam.gParam.eyeTracker
+    
     et_file_name = sprintf('ec_%s', taskParam.subject.ID);
     et_file_name=[et_file_name]; % todo: check if this is really necessary
-
-    % options.dist = 40; % viewing distance in cm
-    % options.width = 30; % physical width of the screen in cm
-    % options.height = 21; % physical height of the screen in cm
-    % options.window_rect = taskParam.display.windowRect;
-    % options.frameDur = Screen('GetFlipInterval', taskParam.display.window.onScreen); % duration of one frame
-    % options.frameRate = Screen('NominalFrameRate', taskParam.display.window.onScreen); % Hz
-    
+ 
     % Todo test if we can also pass object instead instead of new structure
     options.dist = taskParam.eyeTracker.dist;
     options.width = taskParam.eyeTracker.width;
@@ -57,7 +51,7 @@ if taskParam.gParam.eyeTracker
     options.window_rect = taskParam.display.windowRect;
     options.frameDur = taskParam.eyeTracker.frameDur;
     options.frameRate = taskParam.eyeTracker.frameRate;
-    [el, options] = ELconfig(taskParam.display.window.onScreen, et_file_name, options, 1); % eye-link config file
+    [el, ~] = ELconfig(taskParam.display.window.onScreen, et_file_name, options);
 
     % Calibrate the eye tracker
     EyelinkDoTrackerSetup(el);
