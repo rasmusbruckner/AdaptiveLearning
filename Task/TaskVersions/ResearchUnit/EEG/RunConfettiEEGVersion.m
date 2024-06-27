@@ -28,7 +28,7 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 10;
+    config.trialsExp = 2;
     config.practTrials = 3;
     config.blockIndices = [1 51 101 151];
     config.runIntro = true;

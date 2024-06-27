@@ -188,7 +188,7 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
         trigger = 4;
 
         % Shield
-    elseif isequal(Tevent, 'shield')
+    elseif isequal(Tevent, 'outcome')
 
         if isequal(condition, 'monetary') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
             trigger = 50;

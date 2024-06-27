@@ -142,6 +142,62 @@ for i = 1:trial
     taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
     taskData.timestampFixCross1(i) = GetSecs() - taskParam.timingParam.ref;
 
+    % 4. Trial phase: Outcome
+    % -----------------------
+
+    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+        al_drawCannon(taskParam, taskData.distMean(i))
+    else
+        %[xymatrix_ring, s_ring, colvect_ring] = al_staticConfettiCloud();
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
+    end
+
+    % Draw circle and confetti cloud
+    al_drawCircle(taskParam)
+
+    % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+    al_confettiOutcome(taskParam, taskData, i)
+
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+
+    % Send shield trigger
+    taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'outcome');
+    taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
+
+    if taskParam.gParam.printTiming
+        fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross1(i))
+    end
+
+    % 5. Trial phase: Fixation cross 2
+    % --------------------------------
+
+    al_drawFixPoint(taskParam)
+    al_drawCircle(taskParam)
+
+    if isequal(taskParam.trialflow.cannon, 'show cannon') || taskData.catchTrial(i)
+        al_drawCannon(taskParam, taskData.distMean(i))
+    else
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
+    end
+
+    % Tell PTB that everything has been drawn and flip screen
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = timestamp + taskParam.timingParam.shieldLength;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+
+    % Send fixation cross 2 trigger
+    taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
+    taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
+
+    if taskParam.gParam.printTiming
+        fprintf('Shield duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampShield(i))
+    end
+
     % 6. Trial phase: Reward
     % ----------------------
 
