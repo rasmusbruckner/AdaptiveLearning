@@ -36,7 +36,7 @@ if ~exist('config', 'var') || isempty(config)
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
     config.runIntro = false;
-    config.baselineArousal = false;
+    config.baselineArousal = true;
     config.language = 'German';
     config.sentenceLength = 100;
     config.textSize = 35;
@@ -52,7 +52,7 @@ if ~exist('config', 'var') || isempty(config)
     config.printTiming = true;
     config.hidePtbCursor = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
-    config.scanner = true;
+    config.scanner = false;
     config.eyeTracker = false;
     config.useDegreesVisualAngle = true;
     config.distance2screen = 700;

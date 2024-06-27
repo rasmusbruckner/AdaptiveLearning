@@ -27,8 +27,11 @@ classdef al_circle
 
         % Fixation spot
         fixSpotDiam % fixation spot size
+        fixSpotDiamBaseline % fixation spot size baseline measurement
         fixSpotRect % fixation-spot rectangle
+        fixSpotBaselineRect % fixation-spot baselien rectangle
         fixSpotCentRect % fixation-spot rectangle
+        fixSpotBaselineCentRect % fixation-spot rectangle baseline measurement
        
         % Other
         rotationRad % rotation radius
@@ -68,10 +71,12 @@ classdef al_circle
             self.shieldFixedSizeFactor = 2; 
             self.outcCentSpotRect = nan;
             self.fixSpotCentRect = nan;
+            self.fixSpotBaselineCentRect = nan;
             self.rotationRad = 150;
             self.predSpotDiam = 20;
             self.outcDiam = 20; 
             self.fixSpotDiam = 20;
+            self.fixSpotDiamBaseline = 10;
             self.shieldImageRad = 275;
             self.heliImageRad = 70;
             self.tendencyThreshold = 15;  
@@ -101,9 +106,12 @@ classdef al_circle
             self.predSpotRect = [0 0 self.predSpotDiam self.predSpotDiam];
             self.outcRect = [0 0 self.outcDiam self.outcDiam];
             self.fixSpotRect = [0 0 self.fixSpotDiam self.fixSpotDiam];
+            self.fixSpotBaselineRect = [0 0 self.fixSpotDiamBaseline self.fixSpotDiamBaseline];
             self.predCentSpotRect = CenterRect(self.predSpotRect, self.windowRect);
             self.outcCentSpotRect = CenterRect(self.outcRect, self.windowRect);
             self.fixSpotCentRect = CenterRect(self.fixSpotRect, self.windowRect);
+            self.fixSpotBaselineCentRect = CenterRect(self.fixSpotBaselineRect, self.windowRect);
+
         end
 
         function self = rightMovement(self, keySpeed)

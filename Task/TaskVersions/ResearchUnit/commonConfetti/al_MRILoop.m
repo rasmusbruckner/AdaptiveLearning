@@ -25,6 +25,10 @@ function taskData = al_MRILoop(taskParam, condition, taskData, trial)
 % the first or last time a stimulus is presented (and that logging doesn't
 % constantly take place)
 
+% Todo: for fMRI it will be necessary to have timestamps relative to run
+% onset, not only trial onset (which is also necessary for timing)
+% Add run-based values as well
+ 
 % Wait until keys released
 KbReleaseWait();
 
@@ -62,6 +66,9 @@ for i = 1:trial
     % Define trial-onset clock for events before the prediction
     trialOnsetClock = GetSecs();
 
+    % Timestamp for measuring jitter duration for validation purposes
+    jitTest = GetSecs();
+
     % Presenting trial number at the bottom of the eyetracker display
     if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
         Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, trial);
@@ -79,9 +86,6 @@ for i = 1:trial
     taskData.group(i) = taskParam.subject.group;
     taskData.confettiStd(i) = taskParam.cannon.confettiStd;
     taskData.cond{i} = condition;
-
-    % Timestamp for measuring jitter duration for validation purposes
-    jitTest = GetSecs();
 
     % Take jitter into account and get timestamps for initiation RT
     taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;

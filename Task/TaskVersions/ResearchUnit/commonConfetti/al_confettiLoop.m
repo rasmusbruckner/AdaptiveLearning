@@ -29,9 +29,6 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 % % %     taskParam.timingParam.ref = GetSecs();
 % % % end
 
-% Wait until keys released
-KbReleaseWait();
-
 % Wait for scanner trigger
 if taskParam.gParam.scanner
     

@@ -28,7 +28,7 @@ for i = 1:size(arousalColors,1)
 
         % Present current color
         Screen('FillRect', taskParam.display.window.onScreen, arousalColors(colorOrder(i), :));
-        al_drawFixPoint(taskParam, taskParam.colors.gray)
+        al_drawFixPoint(taskParam, taskParam.colors.gray, true)
         Screen('Flip', taskParam.display.window.onScreen);
         
         % Send trigger after first flip
