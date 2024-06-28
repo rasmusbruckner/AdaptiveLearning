@@ -411,12 +411,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(expectedOutcFix2Diff, actualOutcFix2Diff, 'AbsTol', 0.05)
     
             % Difference shield and fixation-coss 3
-            expectedShieldFix3Diff = repmat(0.25, 20, 1);
+            expectedShieldFix3Diff = repmat(0.5, 20, 1);
             actualShieldFix3Diff = dataLowNoise_cBal1.timestampFixCross3 - dataLowNoise_cBal1.timestampShield;
             testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
             actualShieldFix3Diff = dataHighNoise_cBal1.timestampFixCross3 - dataHighNoise_cBal1.timestampShield;
             testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
-            expectedShieldFix3Diff = repmat(0.25, 20, 1);
+            expectedShieldFix3Diff = repmat(0.5, 20, 1);
             actualShieldFix3Diff = dataLowNoise_cBal2.timestampFixCross3 - dataLowNoise_cBal2.timestampShield;
             testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
             actualShieldFix3Diff = dataHighNoise_cBal2.timestampFixCross3 - dataHighNoise_cBal2.timestampShield;

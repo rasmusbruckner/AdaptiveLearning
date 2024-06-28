@@ -323,7 +323,7 @@ timingParam.jitterOutcome = 2;
 timingParam.jitterShield = 0.6;
 timingParam.jitterITI = 0.5;
 timingParam.outcomeLength = 0.5;
-timingParam.shieldLength = 0.25;
+timingParam.shieldLength = 0.5; % 0.25;
 timingParam.baselineFixLength = 0.25;
 
 % This is a reference timestamp at the start of the experiment.
