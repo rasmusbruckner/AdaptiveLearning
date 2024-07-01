@@ -27,6 +27,8 @@ classdef al_trialflow
             % run1: fMRI run 1
             % run2: fMRI run 2
             % run3: fMRI run 3
+            % block1: infant
+            % block2: infant 
 
         % Cannonball animation
         shot

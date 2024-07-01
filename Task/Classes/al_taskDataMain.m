@@ -48,6 +48,7 @@ classdef al_taskDataMain
         cp % changepoint index
         cpVar % variance changepoint index
         cpRew % reward-distribution-changepoint index
+        oddball % oddball index
         outcome % current outcome
         distMean % mean of outcome-generating distribution
         TAC % trials after changepoint
@@ -82,6 +83,8 @@ classdef al_taskDataMain
 
         % EEG and pupillometry
         % --------------------
+        
+        % General
         timestampOnset
         timestampPrediction
         timestampFixCross1
@@ -91,6 +94,14 @@ classdef al_taskDataMain
         timestampShield
         timestampReward
         timestampOffset
+
+        % Duck pond
+        timestampDuckCenterStatic
+        timestampDuckCenterMoving
+        timestampOutcomeStatic
+        timestampOutcomeMovement
+
+        % triggers
         triggers
 
         % Stimulus size
@@ -151,6 +162,7 @@ classdef al_taskDataMain
             self.actJitterOutcome = nan(trials, 1);
             self.actJitterShield = nan(trials, 1);
             self.cp = nan(trials, 1);
+            self.oddball = nan(trials, 1);
             self.cpVar = nan(trials, 1);
             self.cpRew = nan(trials, 1);
             self.outcome = nan(trials, 1);
@@ -193,6 +205,9 @@ classdef al_taskDataMain
             self.timestampShield = nan(trials, 1);
             self.timestampReward = nan(trials, 1);
             self.timestampOffset = nan(trials, 1);
+
+            self.timestampDuckCenterStatic = nan(trials, 1);
+            self.timestampDuckCenterMoving = nan(trials, 1);
             self.triggers = zeros(trials, 8);
 
             % Stimuli
@@ -277,7 +292,7 @@ classdef al_taskDataMain
             % self.hazVar = repmat(self.hazVar, length(self.trials), 1);
             % self.safe = repmat(safe, length(self.trials), 1);
             % self.safeVar = repmat(self.safeVar, length(self.trials), 1);
-            
+
             self.haz = repmat(haz, self.trials, 1);
             self.hazVar = repmat(taskParam.gParam.hazVar, self.trials, 1);
             self.safe = repmat(safe, self.trials, 1);
@@ -448,7 +463,7 @@ classdef al_taskDataMain
                     % ... and random colors
                     if isequal(taskParam.trialflow.colors, 'colorful')
                         self.dotCol(i).rgb = uint8(round(rand(3, taskParam.cannon.nParticles)*255));
-                    elseif isequal(taskParam.trialflow.colors, 'dark')                        
+                    elseif isequal(taskParam.trialflow.colors, 'dark')
                         self.dotCol(i).rgb = taskParam.colors.colorsDark;
                     elseif isequal(taskParam.trialflow.colors, 'blackWhite')
                         self.dotCol(i).rgb = taskParam.colors.colorsBlackWhite;
@@ -495,10 +510,10 @@ classdef al_taskDataMain
                 % Concentration expressed as variance (approximation)
                 GaussStd = rad2deg((1/currConcentration)^.5);
                 sample = normcdf(currMean,0,GaussStd);
-                
+
                 % Exponential
             elseif isequal(type, 'exprnd')
-                
+
                 sample = exprnd(currMean);
 
             end
@@ -709,7 +724,6 @@ classdef al_taskDataMain
             s.pred = self.pred;
             s.predErr = self.predErr;
             s.estErr = self.estErr;
-            %s.cannonDev = self.cannonDev;
             s.UP = self.UP;
             s.hit = self.hit;
             s.perf = self.perf;
@@ -720,7 +734,7 @@ classdef al_taskDataMain
             % Task specific
             if isequal(self.taskType, 'dresden')
 
-               % s.rew = self.rew;
+                % s.rew = self.rew;
                 s.group = self.group;
                 s.diffLastOutcPred = self.diffLastOutcPred;
                 s.actRew = self.actRew;
@@ -758,7 +772,7 @@ classdef al_taskDataMain
                 s.y = self.y;
                 s.actRew = self.actRew;
                 s.initialTendency = self.initialTendency;
-                
+
                 s.triggers = self.triggers;
                 s.timestampOnset = self.timestampOnset;
                 s.timestampPrediction = self.timestampPrediction;
@@ -787,9 +801,9 @@ classdef al_taskDataMain
                 s.timestampShield = self.timestampShield;
                 s.timestampOffset = self.timestampOffset;
                 s.triggers = self.triggers;
-                
+
                 s.rotationRad = self.rotationRad;
-                
+
             elseif isequal(self.taskType, 'HamburgEEG')
 
                 s.group = self.group;
@@ -807,6 +821,24 @@ classdef al_taskDataMain
                 s.timestampFixCross2 = self.timestampFixCross2;
                 s.timestampFixCross3 = self.timestampFixCross3;
                 s.timestampOffset = self.timestampOffset;
+            
+            elseif isequal(self.taskType, 'infant')
+
+                % Todo carefull check what we need
+                % when everything is implemented
+                
+                s.group = self.group;
+                s.oddball = self.oddball;
+
+                s.timestampOnset = self.timestampOnset;
+               
+                s.timestampFixCross1 = self.timestampFixCross1;
+                
+                s.timestampOutcome = self.timestampOutcome;
+                
+                s.triggers = self.triggers;
+
+                s.rotationRad = self.rotationRad;
 
             elseif isequal(self.taskType, 'asymReward')
 

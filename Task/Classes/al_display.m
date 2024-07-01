@@ -25,6 +25,7 @@ classdef al_display
         cannonTxt
         doctorTxt
         heliTxt
+        duckTxt
         pill1Txt
         pill2Txt
         pill3Txt
@@ -39,6 +40,7 @@ classdef al_display
         centeredSocialFeedbackRect
         windowRect
         heliImageRect
+        duckImageRect
         pillImageRect
         syringeImageRect
         socialFeedbackRect
@@ -81,6 +83,7 @@ classdef al_display
             self.imageRect = [0 0 180 270];
             self.doctorRect = [0 0 100 100];
             self.heliImageRect = [0 0 100 100];
+            self.duckImageRect = [0 0 100 100];
             self.pillImageRect = [0 0 30 30];
             self.syringeImageRect = [0 0 50 50];
             self.useDegreesVisualAngle = false;
@@ -125,6 +128,7 @@ classdef al_display
             self.dstRect = CenterRect(self.imageRect, self.windowRect);
             self.doctorRect = CenterRect(self.doctorRect, self.windowRect);
             self.heliImageRect = CenterRect(self.heliImageRect, self.windowRect);
+            self.duckImageRect = CenterRect(self.duckImageRect, self.windowRect);
             self.pillImageRect = CenterRect(self.pillImageRect, self.windowRect);
             self.syringeImageRect = CenterRect(self.syringeImageRect, self.windowRect);
             self.centeredSocialFeedbackRect = CenterRect(self.socialFeedbackRect, self.windowRect);
@@ -156,7 +160,8 @@ classdef al_display
                 [pill3Pic, ~, pill3Alpha]  = imread('pill_3.png');
                 [pill4Pic, ~, pill4Alpha]  = imread('pill_4.png');
                 [syringePic, ~, syringeAlpha]  = imread('syringe.png');
-
+            elseif strcmp(cannonType, 'duck')
+                [duckPic, ~, duckAlpha]  = imread('duck.png');
             else
                 [cannonPic, ~, alpha]  = imread('confetti_cannon.png');
             end
@@ -190,7 +195,6 @@ classdef al_display
             self.backgroundCoords = [self.zero(1)-xSize/2, self.zero(2)-ySize/2, self.zero(1)+xSize/2, self.zero(2)+ySize/2];
 
             % Create pictures based on images
-            cannonPic(:,:,4) = alpha(:,:);
             if strcmp(cannonType, 'helicopter')
                 doctorPic(:,:,4) = doctorAlpha(:,:);
                 heliPic(:,:,4) = heliAlpha(:,:);
@@ -199,13 +203,16 @@ classdef al_display
                 pill3Pic(:,:,4) = pill3Alpha(:,:);
                 pill4Pic(:,:,4) = pill4Alpha(:,:);
                 syringePic(:,:,4) = syringeAlpha(:,:);
+            elseif strcmp(cannonType, 'duck')
+                duckPic(:,:,4) = duckAlpha(:,:);
+            else
+                cannonPic(:,:,4) = alpha(:,:);
             end
 
             % todo: add description
             Screen('BlendFunction', self.window.onScreen, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             % Create textures
-            self.cannonTxt = Screen('MakeTexture', self.window.onScreen, cannonPic);
             self.backgroundTxt = Screen('MakeTexture', self.window.onScreen, backgroundPic);
 
             if strcmp(cannonType, 'helicopter')
@@ -216,6 +223,10 @@ classdef al_display
                 self.pill3Txt = Screen('MakeTexture', self.window.onScreen, pill3Pic);
                 self.pill4Txt = Screen('MakeTexture', self.window.onScreen, pill4Pic);
                 self.syringeTxt = Screen('MakeTexture', self.window.onScreen, syringePic);
+            elseif strcmp(cannonType, 'duck')
+                self.duckTxt = Screen('MakeTexture', self.window.onScreen, duckPic);
+            else
+                self.cannonTxt = Screen('MakeTexture', self.window.onScreen, cannonPic);
             end
         end
 

@@ -36,6 +36,7 @@ classdef al_circle
         % Other
         rotationRad % rotation radius
         heliImageRad % heli image radius
+        duckImageRad % duck image radius
         tendencyThreshold % threshold counting as first movement 
         unit % circle rotation step size
         initialRotAngle % initial rotation angle
@@ -79,6 +80,7 @@ classdef al_circle
             self.fixSpotDiamBaseline = 10;
             self.shieldImageRad = 275;
             self.heliImageRad = 70;
+            self.duckImageRad = 70;
             self.tendencyThreshold = 15;  
             self.predCentSpotRect = nan;
             self.unit = 2*pi/360;

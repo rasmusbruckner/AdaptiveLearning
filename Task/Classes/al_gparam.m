@@ -29,7 +29,7 @@ classdef al_gparam
         practTrials % number of practice trials
         shieldTrials % Number of shield-practice trials 
         controlTrials  % number of trials of the control versions (Dresden)
-
+        
         nBlocks % number of blocks
         blockIndices % trials AFTER which participants can take a break
 
@@ -66,6 +66,9 @@ classdef al_gparam
         customInstructions % local instructions based on instruction-text class
         baselineArousal % turn on or off
         baselineArousalDuration % measurement in seconds
+
+        duckMovementFrequency % duck movement frequency
+        duckMovementRange % duck movement range
 
     end
     
@@ -126,7 +129,9 @@ classdef al_gparam
             self.customInstructions = nan;
             self.baselineArousal = false;
             self.baselineArousalDuration = 180;
-            
+            self.duckMovementFrequency = 0.1;
+            self.duckMovementRange = 5;
+
         end
     end
 end

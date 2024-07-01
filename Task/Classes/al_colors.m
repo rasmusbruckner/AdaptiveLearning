@@ -226,14 +226,18 @@ classdef al_colors
            
             % Check if number of colors and particles fits and replicate
             % colors
-            if mod(nParticles/nColorsDark, 2) == 0
+            if mod(nParticles/nColorsDark, 2) == 0 
                 colorsDark = uint8(repmat(colorVecDark, 1, nParticles/5));
+            elseif isnan(nParticles)
+                colorsDark = nan;
             else
                 error('Number of particles and particle colors do not match. Number of particles and specified colors have to be divisible without remainder.')
             end
 
             if mod(nParticles/nColorsBlackWhite, 2) == 0
                 colorsBlackWhite = uint8(repmat([0,0,0; 255,255,255]', 1, nParticles/nColorsBlackWhite));
+            elseif isnan(nParticles)
+                colorsBlackWhite = nan;
             else
                 error('Number of particles and particle colors do not match. Number of particles and specified colors have to be divisible without remainder.')
             end

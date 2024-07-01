@@ -23,6 +23,11 @@ classdef al_timing
         fixedITI % fixed inter-trial interval
         ref % reference for timing; timestamp recorded at beginning of study
         baselineFixLength % baseline before prediction
+
+        staticDuck
+        movingDuck
+        staticOutcome
+        movingOutcome
         
     end
     
@@ -48,6 +53,11 @@ classdef al_timing
             self.fixedITI = 0.9;
             self.ref = nan;
             self.baselineFixLength = 0.25;
+
+            self.staticDuck = 1.0;
+            self.movingDuck = 1.0;
+            self.staticOutcome = 1.0;
+            self.movingOutcome = 1.0;
         end
     end
 end
