@@ -131,17 +131,17 @@ while ~KbCheck(-1)
     % If we are in a circle identify it with a frame (exploiting drawing
     % order of operations)
     if weInCircle == 1
-        Screen('DrawDots', taskParam.display.window.onScreen, coordsCircle, dim * 1.2, taskParam.colors.black, [], 2);
+        Screen('DrawDots', taskParam.display.window.onScreen, coordsCircle, dim * 1.2, taskParam.colors.black, [], 3);
     end
 
     % Draw the likert scale points
-    Screen('DrawDots', taskParam.display.window.onScreen, xyScalePoints, dim, taskParam.colors.lightGray, [], 2);
+    Screen('DrawDots', taskParam.display.window.onScreen, xyScalePoints, dim, taskParam.colors.lightGray, [], 3);
 
     % If we are clicking a circle we flag it (exploiting drawing order of operations)
     if weInCircle == 1 && sum(buttons) > 0
 
         % Highlight the pressed button
-        Screen('DrawDots', taskParam.display.window.onScreen, coordsCircle, dim * 1.2, taskParam.colors.black, [], 2);
+        Screen('DrawDots', taskParam.display.window.onScreen, coordsCircle, dim * 1.2, taskParam.colors.black, [], 3);
 
     end
 
@@ -151,7 +151,7 @@ while ~KbCheck(-1)
     end
 
     % Draw a white dot where the mouse cursor is
-    Screen('DrawDots', taskParam.display.window.onScreen, [mx my], 10, taskParam.colors.white, [], 2);
+    Screen('DrawDots', taskParam.display.window.onScreen, [mx my], 10, taskParam.colors.white, [], 3);
 
     % Flip to the screen
     Screen('Flip', taskParam.display.window.onScreen);
