@@ -44,12 +44,12 @@ if taskParam.gParam.scanner
     al_waitForScanner(taskParam, 'Messung startet in wenigen Sekunden...')
 
     triggered = 0;
-    fprintf('Waiting for trigger\n')
+    fprintf('Waiting for trigger\n\n')
     while triggered == 0
         [ ~, t_Vol, keyCode] = KbCheck();
         if keyCode(taskParam.keys.five)
             triggered = 1;
-            fprintf('Triggered!\n')
+            fprintf('Triggered!\n\n')
         end
     end
 

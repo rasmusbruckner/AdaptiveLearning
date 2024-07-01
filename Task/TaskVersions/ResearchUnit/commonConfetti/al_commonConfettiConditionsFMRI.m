@@ -134,7 +134,8 @@ else
         al_indicateRun(taskParam, 1)
         taskParam.trialflow.exp = 'run1';
         dataRun1 = al_MRILoop(taskParam, 'main', taskDataRun1, trial);
-
+    else
+        dataRun1.hit = 0;
     end
 
     if startsWithRun == 1 || startsWithRun == 2
@@ -151,7 +152,7 @@ else
         questionTxt = 'Wie schmerzhaft waren die letzten 20 Minuten?';
         scaleTxt = 'Schmerz-Level:';
         painLevel = al_stressSlider(taskParam, questionTxt, scaleTxt);
-        KbReleaseWait
+        KbReleaseWait;
 
         % Difficulty
         questionTxt = 'Wie schwierig waren die letzten 20 Minuten?';
@@ -163,15 +164,18 @@ else
         questionTxt = 'Wie gestresst fühlen Sie sich?';
         scaleTxt = 'Stress-Level:';
         stressLevel = al_stressSlider(taskParam, questionTxt, scaleTxt);
-        KbReleaseWait
+        KbReleaseWait;
 
         % Save rating data
         subjectRatings = struct();
         subjectRatings.painLevel = painLevel;
         subjectRatings.difficultyLevel = difficultyLevel;
         subjectRatings.stressLevel = stressLevel;
+        KbReleaseWait;
         savename = sprintf('subjectRatings_%s',taskParam.subject.ID);
         save(savename, 'subjectRatings');
+    else
+        dataRun2.hit = 0;
 
     end
 
