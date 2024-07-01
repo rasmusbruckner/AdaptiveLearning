@@ -24,14 +24,14 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 % % %     Eyelink('StartRecording');
 % % %     WaitSecs(0.1);
 % % %     Eyelink('message', 'Start recording Eyelink');
-% % % 
+% % %
 % % %     % Reference time stamp
 % % %     taskParam.timingParam.ref = GetSecs();
 % % % end
 
 % Wait for scanner trigger
 if taskParam.gParam.scanner
-    
+
     % Display that we're waiting for scanner
     al_waitForScanner(taskParam, 'Messung startet in wenigen Sekunden...')
 
@@ -199,7 +199,7 @@ for i = 1:trial
         timestamp = timestamp + 0.001;
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
-        
+
         % Send fixation cross 1 trigger
         taskData.triggers(i,4) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
         taskData.timestampFixCross1(i) = GetSecs() - taskParam.timingParam.ref;
@@ -250,9 +250,9 @@ for i = 1:trial
         end
     end
 
-    % Outcome 
+    % Outcome
     % -------
-    
+
     if isequal(taskParam.trialflow.shot, 'static')
 
         % Draw circle and confetti cloud
@@ -266,7 +266,7 @@ for i = 1:trial
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterOutcome(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
-        
+
         % Send outcome trigger
         taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, condition, i, 'outcome');
         taskData.timestampOutcome(i) = GetSecs - taskParam.timingParam.ref;
@@ -276,7 +276,7 @@ for i = 1:trial
             fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross1(i))
         end
     end
-    
+
     % Fixation cross (animated version) or shield (static version)
     % ------------------------------------------------------------
     if isequal(taskParam.trialflow.shot, 'static')
@@ -286,7 +286,7 @@ for i = 1:trial
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         timestamp = timestamp + taskParam.timingParam.outcomeLength;
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
-        
+
         % Send fixation cross 2 trigger
         taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
         taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
@@ -313,7 +313,7 @@ for i = 1:trial
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterShield(i);
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    
+
     % Send shield trigger
     taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, condition, i, 'shield');
     taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
@@ -332,7 +332,7 @@ for i = 1:trial
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         timestamp = timestamp + taskParam.timingParam.shieldLength;
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
-        
+
         % Send fixation cross 3 trigger
         taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
         taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
@@ -365,7 +365,7 @@ end
 
 % Add stimulus values
 %--------------------
-    
+
 taskData.rotationRad = taskParam.circle.rotationRad;
 
 % Give feedback and save data
@@ -379,12 +379,17 @@ if ~taskParam.unitTest.run
         % labs have more recent Matlab versions, potentially change to:
         % currPoints = sum(taskData.hit, 'omitnan');
 
-        if isequal(taskParam.gParam.language, 'German')
-            txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
-        elseif isequal(taskParam.gParam.language, 'English')
-            txt = sprintf('You have earned %.0f points in this block.', currPoints);
+        if taskParam.gParam.customInstructions
+            taskParam.instructionText = taskParam.instructionText.giveFeedback(currPoints, 'block');
+            txt = taskParam.instructionText.dynamicFeedbackTxt;
         else
-            error('language parameter unknown')
+            if isequal(taskParam.gParam.language, 'German')
+                txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
+            elseif isequal(taskParam.gParam.language, 'English')
+                txt = sprintf('You have earned %.0f points in this block.', currPoints);
+            else
+                error('language parameter unknown')
+            end
         end
     else
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
@@ -397,13 +402,13 @@ if ~taskParam.unitTest.run
     else
         error('language parameter unknown')
     end
-    
+
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Save data
     %----------
-    
+
     if isequal(taskParam.gParam.saveName, 'vwm')
         savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
     elseif isequal(taskParam.gParam.saveName, 'asymmetric')

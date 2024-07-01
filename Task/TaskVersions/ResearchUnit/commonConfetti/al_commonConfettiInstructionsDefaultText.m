@@ -35,6 +35,12 @@ classdef al_commonConfettiInstructionsDefaultText
         firstPupilBaseline
         secondPupilBaselineHeader
         secondPupilBaseline
+        introduceLowNoiseHeader
+        introduceLowNoise
+        introduceHighNoiseHeader
+        introduceHighNoise
+        dynamicFeedbackTxt
+        dynamicFeedbackHeader
 
     end
 
@@ -116,7 +122,7 @@ classdef al_commonConfettiInstructionsDefaultText
             elseif isequal(self.language, 'English')
                 self.introduceMiss = ['Now try to place the bucket so that you miss the confetti. Then press '...
                     'the left mouse button. '];
-            elseneedle
+            else
                 error('language parameter unknown')
             end
 
@@ -180,10 +186,10 @@ classdef al_commonConfettiInstructionsDefaultText
             % Reduced
             if isequal(self.language, 'German')
                 self.reduceShield = ['Ab jetzt sehen Sie den Eimer nur noch mit zwei Strichen dargestellt. Außerdem sehen Sie die Aufgabe in weniger Farben. ' ...
-                                    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
-                                    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und blinzeln '...
-                                    'so gut es geht zu vermeiden.\n\n'...
-                                    'Jetzt folgt zunächst eine kurze Demonstration, wie der Eimer mit Strichen im Vergleich zum Eimer der vorherigen Übung aussieht.'];
+                    'Dies ist notwendig, damit wir Ihre Pupillengröße gut messen können. Achten Sie daher bitte besonders darauf, '...
+                    'Ihren Blick auf den Punkt in der Mitte des Kreises zu fixieren. Bitte versuchen Sie Augenbewegungen und blinzeln '...
+                    'so gut es geht zu vermeiden.\n\n'...
+                    'Jetzt folgt zunächst eine kurze Demonstration, wie der Eimer mit Strichen im Vergleich zum Eimer der vorherigen Übung aussieht.'];
             elseif isequal(self.language, 'English')
                 self.reduceShield = 'Please update if you plan to use this.';
             else
@@ -328,7 +334,86 @@ classdef al_commonConfettiInstructionsDefaultText
                 error('language parameter unknown')
             end
 
+            % Indicate low noise
+            if isequal(self.language, 'German')
+                self.introduceLowNoiseHeader = 'Genauere Konfetti-Kanone';
+                self.introduceLowNoise = ['Im folgenden Block wird die Konfetti-Kanone relativ genau sein.\n\n'...
+                    'Die Größe des Eimers kann sich von Durchgang '...
+                    'zu Durchgang ändern. Diese Veränderung können Sie nicht beeinflussen '...
+                    'und auch nicht vorhersagen. Daher ist es immer die beste Strategie, '...
+                    'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
+                    'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
+                    'Strich zeigt die Position der letzten Konfetti-Wolke.'];
+            elseif isequal(self.language, 'English')
+                self.introduceLowNoiseHeader = 'More accurate confetti cannon';
+                self.introduceLowNoise = ['In the following block, the confetti cannon will be relatively accurate.\n\n'...
+                    'The size of the bucket can change from trial '...
+                    'to trial. You cannot influence this change '...
+                    'nor can you predict it. Therefore, the best strategy is always to '...
+                    'place the bucket exactly where you think the confetti cannon will be aimed.'];
+            else
+                error('language parameter unknown')
+            end
+
+            % Indicate low noise
+            if isequal(self.language, 'German')
+                self.introduceHighNoiseHeader = 'Ungenauere Konfetti-Kanone';
+                self.introduceHighNoise = ['Im folgenden Block wird die Konfetti-Kanone relativ ungenau sein.\n\n'...
+                    'Die Größe des Eimers kann sich von Durchgang '...
+                    'zu Durchgang ändern. Diese Veränderung können Sie nicht beeinflussen '...
+                    'und auch nicht vorhersagen. Daher ist es immer die beste Strategie, '...
+                    'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
+                    'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
+                    'Strich zeigt die Position der letzten Konfetti-Wolke.'];
+            elseif isequal(self.language, 'English')
+                self.introduceHighNoiseHeader = 'Less accurate confetti cannon';
+                self.introduceHighNoise = ['In the following block, the confetti cannon will be relatively inaccurate.\n\n'...
+                    'The size of the bucket can change from trial '...
+                    'to trial. You cannot influence this change '...
+                    'nor can you predict it. Therefore, the best strategy is always to '...
+                    'place the bucket exactly where you think the confetti cannon will be aimed.'];
+            else
+                error('language parameter unknown')
+            end
+
         end
 
+
+        function self = giveFeedback(self, currPoints, type)
+            %GIVEFEEDBACK This function displays feedback after a block or
+            %the task
+            %
+            %   Input
+            %       self: Instructions-text-object instance
+            %       currPoints: Number of points
+            %       type: single-block vs. whole task feedback
+            %
+            %   Output
+            %       self: Instructions-text-object instance
+
+
+            if isequal(type, 'block')
+                if isequal(self.language, 'German')
+                    self.dynamicFeedbackTxt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', currPoints);
+                elseif isequal(self.language, 'English')
+                    self.dynamicFeedbackTxt = sprintf('You have earned %.0f points in this block.', currPoints);
+                else
+                    error('language parameter unknown')
+                end
+
+            elseif isequal(type, 'task')
+                if isequal(self.language, 'German')
+                    self.dynamicFeedbackHeader = 'Ende des Versuchs!';
+                    self.dynamicFeedbackTxt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', currPoints);
+                elseif isequal(self.language, 'English')
+                    self.dynamicFeedbackHeader = 'End of the Experiment!';
+                    self.dynamicFeedbackTxt = sprintf('Thank you for taking part!\n\n\nYou have won a total of %i points!', currPoints);
+                else
+                    error('language parameter unknown')
+                end
+            else
+                error('type parameter unknown')
+            end
+        end
     end
 end

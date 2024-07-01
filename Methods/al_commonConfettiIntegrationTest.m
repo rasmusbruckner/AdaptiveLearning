@@ -401,30 +401,26 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Difference outcome and fixation-coss 2
             expectedOutcFix2Diff = repmat(0.5, 20, 1);
             actualOutcFix2Diff = dataLowNoise_cBal1.timestampFixCross2 - dataLowNoise_cBal1.timestampOutcome;
-            testCase.verifyEqual(expectedOutcFix2Diff, actualOutcFix2Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
             actualOutcFix2Diff = dataHighNoise_cBal1.timestampFixCross2 - dataHighNoise_cBal1.timestampOutcome;
-            testCase.verifyEqual(expectedOutcFix2Diff, actualOutcFix2Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
             expectedOutcFix2Diff = repmat(0.5, 20, 1);
             actualOutcFix2Diff = dataLowNoise_cBal2.timestampFixCross2 - dataLowNoise_cBal2.timestampOutcome;
-            testCase.verifyEqual(expectedOutcFix2Diff, actualOutcFix2Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
             actualOutcFix2Diff = dataHighNoise_cBal2.timestampFixCross2 - dataHighNoise_cBal2.timestampOutcome;
-            testCase.verifyEqual(expectedOutcFix2Diff, actualOutcFix2Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
     
             % Difference shield and fixation-coss 3
             expectedShieldFix3Diff = repmat(0.5, 20, 1);
             actualShieldFix3Diff = dataLowNoise_cBal1.timestampFixCross3 - dataLowNoise_cBal1.timestampShield;
-            testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
             actualShieldFix3Diff = dataHighNoise_cBal1.timestampFixCross3 - dataHighNoise_cBal1.timestampShield;
-            testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
             expectedShieldFix3Diff = repmat(0.5, 20, 1);
             actualShieldFix3Diff = dataLowNoise_cBal2.timestampFixCross3 - dataLowNoise_cBal2.timestampShield;
-            testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
+            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
             actualShieldFix3Diff = dataHighNoise_cBal2.timestampFixCross3 - dataHighNoise_cBal2.timestampShield;
-            testCase.verifyEqual(expectedShieldFix3Diff, actualShieldFix3Diff, 'AbsTol', 0.05)
-
-            % timingParam.jitterITI = 0.5;
-            % timingParam.jitterOutcome = 2;
-            % timingParam.jitterShield = 0.6;
+            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
 
             % Actual onset jitter
             testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterOnset, 0.5)

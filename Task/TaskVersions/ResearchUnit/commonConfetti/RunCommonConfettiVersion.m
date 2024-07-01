@@ -16,18 +16,18 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       06/24
+%       07/24
 
 % Todo: write integration test for fMRI version.
 % First ensure version is good to go and then keep in mind that output
-% arguments have to updated to include the three runs (this has to be 
+% arguments have to updated to include the three runs (this has to be
 % compatible with two files in no-scanner version)
 
 KbName('UnifyKeyNames')
 
 % Check if config structure is provided
 if ~exist('config', 'var') || isempty(config)
-    
+
     % Create structure
     config = struct();
 
@@ -36,7 +36,7 @@ if ~exist('config', 'var') || isempty(config)
     config.practTrials = 2;
     config.blockIndices = [1 51 101 151];
     config.runIntro = false;
-    config.baselineArousal = true;
+    config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
     config.textSize = 35;
@@ -109,7 +109,7 @@ textSize = config.textSize; % textsize
 vSpacing = config.vSpacing; % space between text lines
 headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
-screenNumber = config.screenNumber; % screen number 
+screenNumber = config.screenNumber; % screen number
 s = config.s; % s key
 enter = config.enter; % enter key
 five = config.five; % number 5 for triggering at UKE
@@ -144,14 +144,14 @@ end
 % Hazard rate determining a priori changepoint probability
 haz = .125;
 
-% Number of confetti particles 
+% Number of confetti particles
 nParticles = 40;
 
 % Confetti standard deviations
 confettiStd = 6;
 
 % Standard deviation during animation
-confettiAnimationStd = 2; 
+confettiAnimationStd = 2;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -191,7 +191,7 @@ joy = nan;
 % automaticBackgroundRGB = true;
 
 % Sampling rate for EEG
-sampleRate = 500; 
+sampleRate = 500;
 
 if sendTrigger
     [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
@@ -245,13 +245,13 @@ gParam.concentration = concentration;
 gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
-gParam.meg = meg; 
+gParam.meg = meg;
 gParam.eyeTracker = eyeTracker;
 gParam.sendTrigger = sendTrigger;
 gParam.scanner = scanner;
 gParam.uke = uke;
 gParam.joy = joy;
-gParam.screenNumber = screenNumber;  
+gParam.screenNumber = screenNumber;
 gParam.customInstructions = customInstructions;
 gParam.language = language;
 
@@ -272,7 +272,7 @@ trialflow.cannonType = 'confetti';
 trialflow.reward = 'standard';
 trialflow.shield = 'variableWithSD';
 trialflow.shieldType = 'constant';
-trialflow.input = 'mouse'; 
+trialflow.input = 'mouse';
 
 % trialflow.colors = 'dark';
 % trialflow.colors = 'blackWhite';
@@ -302,13 +302,13 @@ colors = al_colors(nParticles);
 
 keys = al_keys();
 if ~exist('kbDev')
-  keys = al_kbdev( keys );
+    keys = al_kbdev( keys );
 else
-  keys.kbDev = kbDev;
+    keys.kbDev = kbDev;
 end
 keys.s = s;
 keys.enter = enter;
-keys.five = five; 
+keys.five = five;
 
 % ---------------------------------------------
 % Create object instance with timing parameters
@@ -358,7 +358,7 @@ age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 if ~unitTest.run
-    cBal = '1'; % 1 or 2 
+    cBal = '1'; % 1 or 2
 end
 
 % If no user input requested
@@ -374,55 +374,55 @@ if gParam.askSubjInfo == false || unitTest.run
     if scanner == false
         subject.cBal = str2double(cBal);
     end
-       
+
     % If user input requested
 else
-    
+
     if scanner == false
         % Variables that we want to put in the dialogue box
         prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
         name = 'SubjInfo';
         numlines = 1;
-    
+
         % Add defaults from above
         defaultanswer = {ID, age, gender, group, cBal};
-    
+
         % Put everything together
         subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
-    
+
         % Put all relevant subject info in structure
         % ------------------------------------------
-    
+
         subject.ID = subjInfo{1};
         subject.age = str2double(subjInfo{2});
         subject.gender = subjInfo{3};
         subject.group = str2double(subjInfo{4});
         subject.cBal = str2double(subjInfo{5});
         subject.date = date;
-    
+
         % Test user input
         checkString = dir(sprintf('*%s*', num2str(subject.ID)));
         subject.checkID(checkString, 5);
         subject.checkGender();
         subject.checkGroup();
         subject.checkCBal(2);
-    
+
     elseif scanner == true
-    
+
         % Variables that we want to put in the dialogue box
         prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'startsWithRun:'};
         name = 'SubjInfo';
         numlines = 1;
-    
+
         % Add defaults from above
         defaultanswer = {ID, age, gender, group, cBal};
-    
+
         % Put everything together
         subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
-    
+
         % Put all relevant subject info in structure
         % ------------------------------------------
-    
+
         subject.ID = subjInfo{1};
         subject.age = str2double(subjInfo{2});
         subject.gender = subjInfo{3};
@@ -431,7 +431,7 @@ else
 
         % Extract startsWithRun variable
         startsWithRun = str2double(subjInfo{5});
-    
+
         % Test user input
         checkString = dir(sprintf('*%s*', num2str(subject.ID)));
         subject.checkID(checkString, 5);
@@ -518,7 +518,7 @@ circle = circle.computeCircleProps();
 % Adjust size according to degrees visual angle for cannon parameters
 if display.useDegreesVisualAngle
     cannon.particleSize = display.deg2pix(particleSizeDeg);
-    cannon.confettiStd = display.deg2pix(confettiStdDeg);   
+    cannon.confettiStd = display.deg2pix(confettiStdDeg);
     cannon = cannon.al_staticConfettiCloud(trialflow.colors, display);
 else
     cannon = cannon.al_staticConfettiCloud(trialflow.colors);
@@ -540,7 +540,7 @@ end
 
 % todo: verify that ET wants cm
 eyeTracker = al_eyeTracker(display);
-eyeTracker.dist = distance2screen /10; 
+eyeTracker.dist = distance2screen /10;
 eyeTracker.width = screenWidthInMM / 10;
 eyeTracker.height = screenHeightInMM / 10;
 eyeTracker.frameDur = Screen('GetFlipInterval', display.window.onScreen);
@@ -595,21 +595,27 @@ elseif scanner == true
     % For Hendrik's project in the scanner and with stress manipulation
     [dataRun1, dataRun2, dataRun3] = al_commonConfettiConditionsFMRI(taskParam, startsWithRun);
     totWin = sum(dataRun1.hit) + sum(dataRun2.hit) + sum(dataRun3.hit);
-    
+
 end
 
 % -----------
 % End of task
 % -----------
 
-if isequal(language, 'German')
-    header = 'Ende des Versuchs!';
-    txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
-elseif isequal(language, 'English')
-    header = 'End of the Experiment!';
-    txt = sprintf('Thank you for taking part!\n\n\nYou have won a total of %i points!', totWin);
+if taskParam.gParam.customInstructions
+    taskParam.instructionText = taskParam.instructionText.giveFeedback(totWin, 'task');
+    header = taskParam.instructionText.dynamicFeedbackHeader;
+    txt = taskParam.instructionText.dynamicFeedbackTxt;
 else
-    error('language parameter unknown')
+    if isequal(language, 'German')
+        header = 'Ende des Versuchs!';
+        txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
+    elseif isequal(language, 'English')
+        header = 'End of the Experiment!';
+        txt = sprintf('Thank you for taking part!\n\n\nYou have won a total of %i points!', totWin);
+    else
+        error('language parameter unknown')
+    end
 end
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
