@@ -355,7 +355,7 @@ classdef al_commonConfettiInstructionsDefaultText
                 error('language parameter unknown')
             end
 
-            % Indicate low noise
+            % Indicate high noise
             if isequal(self.language, 'German')
                 self.introduceHighNoiseHeader = 'Ungenauere Konfetti-Kanone';
                 self.introduceHighNoise = ['Im folgenden Block wird die Konfetti-Kanone relativ ungenau sein.\n\n'...
