@@ -236,7 +236,7 @@ while 1
     end
 
     % Check for escape key
-    taskParam.keys.checkQuitTask();
+    taskParam.keys.checkQuitTask(taskParam.gParam.eyeTracker, taskParam.subject.ID);
 
 end
 end

@@ -78,19 +78,47 @@ classdef al_keys
         end
 
 
-        function self = checkQuitTask(self)
+        function self = checkQuitTask(self, eyeTracker, ID)
             % CHECKQUITTASK This function checks if esc was pressed to
             % quit task
+            %
+            %   Input
+            %       eyeTracker: Optional eye-tracker argument (true/false)
+            %       ID: Optional subject ID
+            %
+            %   Output
+            %       None
+
+            % Check if eye-tracker is used
+            if ~exist('eyeTracker', 'var') || isempty(eyeTracker)
+                eyeTracker = false;
+            end
+
+            % Check if ID is provided
+            if ~exist('ID', 'var') || isempty(ID)
+                ID = nan;
+            end
                 
             [ ~, ~, keyCode] = KbCheck(self.kbDev);
             if keyCode(self.esc)
+                
+                if eyeTracker
+
+                    et_path=pwd;
+                    et_file_name = sprintf('ec_%s', ID, 'incomplete');
+                    et_file_name=[et_file_name]; % todo: check if this is really necessary
+
+                    al_saveEyelinkData(et_path, et_file_name)
+                    Eyelink('StopRecording');
+
+                end
+
                 ListenChar();
                 ShowCursor;
                 Screen('CloseAll');
                 error('User pressed Escape to quit task')
             end
         end
-
     end
 end
 

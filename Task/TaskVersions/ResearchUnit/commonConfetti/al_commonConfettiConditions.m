@@ -203,15 +203,18 @@ if taskParam.gParam.eyeTracker
     et_path=pwd;
     et_file_name=[et_file_name, '.edf'];
 
-    fprintf('Saving EyeLink data to %s\n', et_path)
-    eyefilename = fullfile(et_path,et_file_name);
-    Eyelink('CloseFile');
-    Eyelink('WaitForModeReady', 500);
-    try
-        status = Eyelink('ReceiveFile', et_file_name, eyefilename);
-        disp(['File ' eyefilename ' saved to disk']);
-    catch
-        warning(['File ' eyefilename ' not saved to disk']);
-    end
+    % fprintf('Saving EyeLink data to %s\n', et_path)
+    % eyefilename = fullfile(et_path,et_file_name);
+    % Eyelink('CloseFile');
+    % Eyelink('WaitForModeReady', 500);
+    % try
+    %     status = Eyelink('ReceiveFile', et_file_name, eyefilename);
+    %     disp(['File ' eyefilename ' saved to disk']);
+    % catch
+    %     warning(['File ' eyefilename ' not saved to disk']);
+    % end
+    % Eyelink('StopRecording');
+
+    al_saveEyelinkData(et_path, et_file_name)
     Eyelink('StopRecording');
 end
