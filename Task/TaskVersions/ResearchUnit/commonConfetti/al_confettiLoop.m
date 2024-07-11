@@ -50,6 +50,9 @@ if taskParam.gParam.scanner
 
 end
 
+% Indicate if passive viewing or not to determine what to save later on
+taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
+
 % Cycle over trials
 % -----------------
 
@@ -78,6 +81,7 @@ for i = 1:trial
     taskData.group(i) = taskParam.subject.group;
     taskData.confettiStd(i) = taskParam.cannon.confettiStd;
     taskData.cond{i} = condition;
+    taskData.passiveViewing(i) = taskParam.gParam.passiveViewing;
 
     % Timestamp for measuring jitter duration for validation purposes
     jitTest = GetSecs();
@@ -102,11 +106,15 @@ for i = 1:trial
     % This is the new baseline period
     % Todo: check if timing is good
     % And consider adding trigger (but coordinate with others first)
-    fixationPhase(taskParam)
-    Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = GetSecs() + 0.001;
-    Screen('Flip', taskParam.display.window.onScreen, timestamp);
-    WaitSecs(taskParam.timingParam.baselineFixLength);
+    if taskParam.gParam.passiveViewing == false
+        fixationPhase(taskParam)
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        timestamp = GetSecs() + 0.001;
+        Screen('Flip', taskParam.display.window.onScreen, timestamp);
+        WaitSecs(taskParam.timingParam.baselineFixLength);
+    else
+        taskData = al_passiveViewingAttentionCheck(taskParam, taskData, i);
+    end
 
     % Send trial-onset trigger
     taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'trialOnset');
@@ -122,7 +130,13 @@ for i = 1:trial
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen)
 
     % Participant indicates prediction
-    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
+    if taskParam.gParam.passiveViewing == false
+        [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
+    else
+        taskData = al_passiveViewingSpot(taskParam, taskData, i, initRT_Timestamp);
+    end
+
+    % Timestamp prediction
     taskData.timestampPrediction(i) = GetSecs - taskParam.timingParam.ref;
 
     % Display RT and initiation RT in console
@@ -373,7 +387,7 @@ taskData.rotationRad = taskParam.circle.rotationRad;
 
 if ~taskParam.unitTest.run
 
-    if ~isequal(taskParam.trialflow.reward, 'asymmetric')
+    if isequal(taskParam.trialflow.reward, 'asymmetric') == false && taskParam.gParam.passiveViewing == false
         currPoints = nansum(taskData.hit);
         % The above is included for backward compatibility. In future, when all
         % labs have more recent Matlab versions, potentially change to:
@@ -391,8 +405,10 @@ if ~taskParam.unitTest.run
                 error('language parameter unknown')
             end
         end
-    else
+    elseif isequal(taskParam.trialflow.reward, 'asymmetric') == true && taskParam.gParam.passiveViewing == false
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
+    elseif taskParam.gParam.passiveViewing
+        txt = sprintf('In diesem Block haben Sie %.0f Mal richtig reagiert.', sum(taskData.targetCorr));
     end
 
     if isequal(taskParam.gParam.language, 'German')

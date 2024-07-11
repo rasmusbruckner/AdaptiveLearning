@@ -27,6 +27,8 @@ if runIntro %&& ~taskParam.unitTest.run
     al_sleepInstructions(taskParam)
 end
 
+taskParam.trialflow.currentTickmarks = 'show';
+
 % ------------
 % 3. Main task
 % ------------

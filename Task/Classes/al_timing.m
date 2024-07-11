@@ -23,7 +23,8 @@ classdef al_timing
         fixedITI % fixed inter-trial interval
         ref % reference for timing; timestamp recorded at beginning of study
         baselineFixLength % baseline before prediction
-
+        passiveViewingAnimationMean % for pupillometry control task: average time
+        passiveViewingAnimationSD % for pupillometry control task: SD
         staticDuck
         movingDuck
         staticOutcome
@@ -53,6 +54,8 @@ classdef al_timing
             self.fixedITI = 0.9;
             self.ref = nan;
             self.baselineFixLength = 0.25;
+            self.passiveViewingAnimationMean = 0.8;
+            self.passiveViewingAnimationSD = 0.2;
 
             self.staticDuck = 1.0;
             self.movingDuck = 1.0;

@@ -34,6 +34,8 @@ if ~exist('config', 'var') || isempty(config)
     % Default parameters
     config.trialsExp = 2;
     config.practTrials = 2;
+    config.passiveViewing = false;
+    config.baselineFixLength = 0.25;
     config.blockIndices = [1 51 101 151];
     config.runIntro = false;
     config.baselineArousal = false;
@@ -100,6 +102,8 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials per block
 practTrials = config.practTrials; % number of practice trials
+passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
+baselineFixLength = config.baselineFixLength;
 blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
 baselineArousal = config.baselineArousal; % w/ or w/o baseline arousal
@@ -156,8 +160,12 @@ confettiAnimationStd = 2;
 % Choose if dialogue box should be shown
 askSubjInfo = true;
 
-% Use catch trials where cannon is shown occasionally
-useCatchTrials = true;
+% Use catch trials where cannon is shown occasionally (not for passive viewing)
+if passiveViewing == false
+    useCatchTrials = true;
+elseif passiveViewing 
+    useCatchTrials = false;
+end
 
 % Catch-trial probability
 catchTrialProb = 0.1;
@@ -230,6 +238,7 @@ gParam = al_gparam();
 gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
+gParam.passiveViewing = passiveViewing;
 gParam.runIntro = runIntro;
 gParam.baselineArousal = baselineArousal;
 gParam.askSubjInfo = askSubjInfo;
@@ -323,8 +332,8 @@ timingParam.jitterOutcome = 2;
 timingParam.jitterShield = 0.6;
 timingParam.jitterITI = 0.5;
 timingParam.outcomeLength = 0.5;
-timingParam.shieldLength = 0.5; % 0.25;
-timingParam.baselineFixLength = 0.25;
+timingParam.shieldLength = 0.5;
+timingParam.baselineFixLength = baselineFixLength;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -401,7 +410,11 @@ else
         subject.date = date;
 
         % Test user input
-        checkString = dir(sprintf('*%s*', num2str(subject.ID)));
+        if passiveViewing == false
+            checkString = dir(sprintf('*exp*%s*', num2str(subject.ID)));
+        elseif passiveViewing == true
+            checkString = dir(sprintf('*passive*%s*', num2str(subject.ID)));
+        end
         subject.checkID(checkString, 5);
         subject.checkGender();
         subject.checkGroup();
@@ -588,13 +601,18 @@ if scanner == false
 
     % When experiment does not take place in scanner
     [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam);
-    totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
+    if passiveViewing == false
+        totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
+    elseif passiveViewing
+        totWin = sum(dataLowNoise.targetCorr) + sum(dataHighNoise.targetCorr);
+    end
 
 elseif scanner == true
 
     % For Hendrik's project in the scanner and with stress manipulation
     [dataRun1, dataRun2, dataRun3] = al_commonConfettiConditionsFMRI(taskParam, startsWithRun);
     totWin = sum(dataRun1.hit) + sum(dataRun2.hit) + sum(dataRun3.hit);
+    
 
 end
 
@@ -602,11 +620,11 @@ end
 % End of task
 % -----------
 
-if taskParam.gParam.customInstructions
+if taskParam.gParam.customInstructions && passiveViewing == false
     taskParam.instructionText = taskParam.instructionText.giveFeedback(totWin, 'task');
     header = taskParam.instructionText.dynamicFeedbackHeader;
     txt = taskParam.instructionText.dynamicFeedbackTxt;
-else
+elseif taskParam.gParam.customInstructions == false && passiveViewing == false
     if isequal(language, 'German')
         header = 'Ende des Versuchs!';
         txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
@@ -616,6 +634,9 @@ else
     else
         error('language parameter unknown')
     end
+elseif passiveViewing
+    header = 'Ende des Versuchs!';
+    txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Mal richtig reagiert', totWin);
 end
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);

@@ -27,7 +27,7 @@ if baseline == false
 
 else
 
-    % Compute outcome spot coordinates
+    % Compute baseline spot coordinates
     fixPoint = OffsetRect(taskParam.circle.fixSpotBaselineCentRect, 0, 0);
 end
 

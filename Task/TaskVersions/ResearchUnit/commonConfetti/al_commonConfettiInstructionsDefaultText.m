@@ -41,6 +41,8 @@ classdef al_commonConfettiInstructionsDefaultText
         introduceHighNoise
         dynamicFeedbackTxt
         dynamicFeedbackHeader
+        introducePassiveViewingHeader
+        introducePassiveViewing
 
     end
 
@@ -375,6 +377,11 @@ classdef al_commonConfettiInstructionsDefaultText
             else
                 error('language parameter unknown')
             end
+
+            self.introducePassiveViewingHeader = 'Beobachtungsaufgabe';
+            self.introducePassiveViewing = ['Versuchen Sie in dieser Aufgabe bitte in die Mitte '...
+            'des Bildschirms zu fixieren. Wenn Sie das schwarze Kästchen sehen, drücken Sie '...
+            'bitte schnell die Leertaste!'];
 
         end
 

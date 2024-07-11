@@ -21,6 +21,7 @@ runIntro = taskParam.gParam.runIntro;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
 cBal = taskParam.subject.cBal;
+passiveViewingCondition = taskParam.gParam.passiveViewing;
 
 % --------------------------------
 % 2. Show instructions, if desired
@@ -34,7 +35,12 @@ end
 taskParam.trialflow.shot = 'static';
 taskParam.trialflow.colors = 'dark';
 taskParam.trialflow.shieldAppearance = 'lines';
-taskParam.trialflow.exp = 'exp';
+
+if passiveViewingCondition == false
+    taskParam.trialflow.exp = 'exp';
+elseif passiveViewingCondition == true
+    taskParam.trialflow.exp = 'passive';
+end
 
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
@@ -145,14 +151,14 @@ if cBal == 1
     % ------------------
 
     % Run task
-    al_indicateNoise(taskParam, 'lowNoise', true)
+    al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
     dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
 
     % ... high noise second
     % ---------------------
 
     % Run task
-    al_indicateNoise(taskParam, 'highNoise', true)
+    al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
     dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
 
 else
@@ -161,14 +167,14 @@ else
     % -------------------
 
     % Run task
-    al_indicateNoise(taskParam, 'highNoise', true)
+    al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
     dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
 
     % ... low noise second
     % --------------------
 
     % Run task
-    al_indicateNoise(taskParam, 'lowNoise', true)
+    al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
     dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
 
 end

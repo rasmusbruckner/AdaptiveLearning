@@ -20,6 +20,9 @@ if ~exist('breakKey', 'var') ||  isempty(breakKey)
     breakKey = nan;
 end
 
+% Extract screen coordinates
+screensize = taskParam.display.screensize;
+
 while 1
 
     % If no text as input, assume we're in the main task and just present
@@ -47,9 +50,6 @@ while 1
 
         % Get current mouse coordinates
         [x,y,buttons] = GetMouse(taskParam.display.window.onScreen);
-
-        % Extract screen coordinates
-        screensize = taskParam.display.screensize;
 
         %% This is a temporary implementation for the joystick which might be updated in the future
         if taskParam.gParam.uke

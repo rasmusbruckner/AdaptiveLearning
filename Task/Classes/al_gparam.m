@@ -51,6 +51,7 @@ classdef al_gparam
         sendTrigger % indicates if EEG triggers are going to be sent      
         printTrigger % should triggers be printed out?
         runIntro % determines if practice phase will be completed before main task
+        passiveViewing % version to validate pupil signals 
         showTickmark % turns tick mark in reversal version on and off
         dataDirectory % data directory to save data
         saveName % Name of output file

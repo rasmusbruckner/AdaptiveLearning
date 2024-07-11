@@ -1,4 +1,4 @@
-function al_indicateNoise(taskParam, noiseCondition, variableShield)
+function al_indicateNoise(taskParam, noiseCondition, variableShield, passiveViewing)
 % AL_INDICATENOISE This function indicates the noise
 % condition
 %
@@ -6,6 +6,7 @@ function al_indicateNoise(taskParam, noiseCondition, variableShield)
 %       taskParam: Task-parameter-object instance
 %       noiseCondition: High vs. low noise
 %       variableShield: Indicates if shield is fixed or variable (optional)
+%       passiveViewing: Indicates if we are in passive-viewing condition (optional)
 %
 %   Output:
 %       None
@@ -17,7 +18,12 @@ if ~exist('variableShield', 'var') || isempty(variableShield)
     variableShield = false;
 end
 
-if strcmp(noiseCondition, 'lowNoise') && ~variableShield
+% Check for passive-viewing input
+if ~exist('passiveViewing', 'var') || isempty(passiveViewing)
+    passiveViewing = false;
+end
+
+if strcmp(noiseCondition, 'lowNoise') && variableShield == false
 
     if isequal(taskParam.gParam.language, 'German')
         header = 'Genauere Konfetti-Kanone';
@@ -35,7 +41,7 @@ if strcmp(noiseCondition, 'lowNoise') && ~variableShield
         error('language parameter unknown')
     end
 
-elseif strcmp(noiseCondition, 'highNoise') && ~variableShield
+elseif strcmp(noiseCondition, 'highNoise') && variableShield == false
 
     if isequal(taskParam.gParam.language, 'German')
         header = 'Ungenauere Konfetti-Kanone';
@@ -53,7 +59,7 @@ elseif strcmp(noiseCondition, 'highNoise') && ~variableShield
         error('language parameter unknown')
     end
 
-elseif strcmp(noiseCondition, 'lowNoise') && variableShield
+elseif strcmp(noiseCondition, 'lowNoise') && variableShield && passiveViewing == false
 
     if taskParam.gParam.customInstructions
         header = taskParam.instructionText.introduceLowNoiseHeader;
@@ -80,7 +86,7 @@ elseif strcmp(noiseCondition, 'lowNoise') && variableShield
         end
     end
 
-elseif strcmp(noiseCondition, 'highNoise') && variableShield
+elseif strcmp(noiseCondition, 'highNoise') && variableShield && passiveViewing == false
 
     if taskParam.gParam.customInstructions
         header = taskParam.instructionText.introduceHighNoiseHeader;
@@ -106,7 +112,19 @@ elseif strcmp(noiseCondition, 'highNoise') && variableShield
             error('language parameter unknown')
         end
     end
+elseif passiveViewing == true
 
+    if taskParam.gParam.customInstructions
+
+        header = taskParam.instructionText.introducePassiveViewingHeader;
+        txt = taskParam.instructionText.introducePassiveViewing;
+
+    else
+        header = 'Beobachtungsaufgabe';
+        txt = ['Versuchen Sie in dieser Aufgabe bitte in die Mitte '...
+            'des Bildschirms zu fixieren. Wenn Sie das schwarze Kästchen sehen, drücken Sie '...
+            'bitte schnell die Leertaste!'];
+    end
 end
 
 feedback = true;

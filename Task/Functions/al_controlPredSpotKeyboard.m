@@ -123,7 +123,6 @@ if ~taskParam.gParam.scanner
 
             taskParam.circle = leftMovement(taskParam.circle, taskParam.keys.keySpeed);
 
-
             % Slow left movement
         elseif keyCode(taskParam.keys.leftSlowKey)
 

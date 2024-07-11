@@ -16,6 +16,8 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Default parameters
             config.trialsExp = 20;
             config.practTrials = 5;
+            config.passiveViewing = false; % test with true and false
+            config.baselineFixLength = 0.25; 
             config.blockIndices = [1 51 101 151];
             config.runIntro = true;
             config.baselineArousal = true;
@@ -75,7 +77,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             expectedPredErrHighNoise_cBal2 = rad2deg(circ_dist(deg2rad(unitTest.taskDataIntegrationTest_HamburgHighNoise.outcome), deg2rad(unitTest.pred)));
             testCase.verifyEqual(dataHighNoise_cBal2.predErr, expectedPredErrHighNoise_cBal2, "AbsTol", 1.e-10);
 
-            % Estimation Error
+            % Estimation error
             expectedEstErrLowNoise_cBal1 = rad2deg(circ_dist(deg2rad(unitTest.taskDataIntegrationTest_HamburgLowNoise.distMean), deg2rad(unitTest.pred)));
             testCase.verifyEqual(dataLowNoise_cBal1.estErr, expectedEstErrLowNoise_cBal1, unitTest.pred, 'AbsTol', 1.e-10);
             expectedEstErrHighNoise_cBal1 = rad2deg(circ_dist(deg2rad(unitTest.taskDataIntegrationTest_HamburgHighNoise.distMean), deg2rad(unitTest.pred)));
@@ -249,12 +251,14 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataHighNoise_cBal2.RT, expectedRT, "AbsTol", 0.1);
 
             % Initiation RTs with tolerance of 100 ms
-            expectedInitiationRTs = repmat(0.25,20,1);
-            testCase.verifyEqual(dataLowNoise_cBal1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
-            testCase.verifyEqual(dataHighNoise_cBal1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
-            testCase.verifyEqual(dataLowNoise_cBal2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
-            testCase.verifyEqual(dataHighNoise_cBal2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
-    
+            if config.passiveViewing == false
+                expectedInitiationRTs = repmat(0.25,20,1);
+                testCase.verifyEqual(dataLowNoise_cBal1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+                testCase.verifyEqual(dataHighNoise_cBal1.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+                testCase.verifyEqual(dataLowNoise_cBal2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+                testCase.verifyEqual(dataHighNoise_cBal2.initiationRTs, expectedInitiationRTs, "AbsTol", 0.1);
+            end
+
             % All angular shield size
             testCase.verifyEqual(dataLowNoise_cBal1.allShieldSize, unitTest.taskDataIntegrationTest_HamburgLowNoise.allShieldSize, "AbsTol", 1.e-10);
             testCase.verifyEqual(dataHighNoise_cBal1.allShieldSize, unitTest.taskDataIntegrationTest_HamburgHighNoise.allShieldSize, "AbsTol", 1.e-10);
@@ -284,10 +288,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataHighNoise_cBal2.shieldType, expectedShieldType);
 
             % Initial tendency
-            testCase.verifyEqual(dataLowNoise_cBal1.initialTendency, unitTest.pred);
-            testCase.verifyEqual(dataHighNoise_cBal1.initialTendency, unitTest.pred);
-            testCase.verifyEqual(dataLowNoise_cBal2.initialTendency, unitTest.pred);
-            testCase.verifyEqual(dataHighNoise_cBal2.initialTendency, unitTest.pred);
+            if config.passiveViewing == false
+                testCase.verifyEqual(dataLowNoise_cBal1.initialTendency, unitTest.pred);
+                testCase.verifyEqual(dataHighNoise_cBal1.initialTendency, unitTest.pred);
+                testCase.verifyEqual(dataLowNoise_cBal2.initialTendency, unitTest.pred);
+                testCase.verifyEqual(dataHighNoise_cBal2.initialTendency, unitTest.pred);
+            end
 
             % Number of confetti particles shot
             expectedNParticles = repmat(40, 20, 1);

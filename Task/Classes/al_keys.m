@@ -104,7 +104,7 @@ classdef al_keys
                 
                 if eyeTracker
 
-                    et_path=pwd;
+                    et_path = pwd;
                     et_file_name = sprintf('ec_%s', ID, 'incomplete');
                     et_file_name=[et_file_name]; % todo: check if this is really necessary
 
