@@ -1,4 +1,4 @@
-function trigger = al_sendTrigger(taskParam, taskData, condition, trial, Tevent)
+function triggerID = al_sendTrigger(taskParam, taskData, condition, trial, Tevent)
 %AL_SENDTRIGGER This function sends the M/EEG and pupil triggers
 %
 %   Input
@@ -9,7 +9,7 @@ function trigger = al_sendTrigger(taskParam, taskData, condition, trial, Tevent)
 %       Tevent: Event type that gets triggered
 %
 %   Ouptut
-%       trigger: Current trigger
+%       triggerID: Current trigger
 
 
 %% todo: change to from trigger to triggerID to avoid conflict with MEG triggering
@@ -44,8 +44,8 @@ if isequal(taskParam.gParam.taskType, 'dresden')
         if sum(Tevent == 1:7) == 1
 
             digit3 = Tevent;
-            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
-            trigger = str2double(trigger);
+            triggerID = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
+            triggerID = str2double(triggerID);
 
         elseif trial > 1 && Tevent == 16
 
@@ -88,25 +88,25 @@ if isequal(taskParam.gParam.taskType, 'dresden')
             end
 
         else
-            trigger = 255;
+            triggerID = 255;
         end
 
         if Tevent == 16 && trial > 1
 
-            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4), num2str(digit5));
-            %trigger = str2double(trigger);
-            trigger = base2dec(trigger, 2) + 100;
+            triggerID = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4), num2str(digit5));
+            %triggerID = str2double(triggerID);
+            triggerID = base2dec(triggerID, 2) + 100;
         end
     else
-        trigger = 255;
+        triggerID = 255;
     end
 
     if taskParam.gParam.sendTrigger == true
 
         if taskParam.gParam.oddball
-            io64(ioObject,taskParam.triggers.port,trigger) % This is for brown.
+            io64(ioObject,taskParam.triggers.port,triggerID) % This is for brown.
         else
-            outp(taskParam.triggers.port, trigger); %This is the Dresden version
+            outp(taskParam.triggers.port, triggerID); %This is the Dresden version
             WaitSecs(1/taskParam.triggers.sampleRate);
             outp(taskParam.triggers.port,0) % Set port to 0.
         end
@@ -127,8 +127,8 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
         if sum(Tevent == 1:7) == 1
 
             digit3 = Tevent;
-            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
-            trigger = str2double(trigger);
+            triggerID = strcat(num2str(digit1),num2str(digit2),num2str(digit3));
+            triggerID = str2double(triggerID);
 
         elseif trial > 1 && Tevent == 16
 
@@ -159,17 +159,17 @@ elseif isequal(taskParam.gParam.taskType, 'oddball')
             end
 
         else
-            trigger = 255;
+            triggerID = 255;
         end
 
         if Tevent == 16 && trial > 1
 
-            trigger = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
-            %trigger = str2double(trigger);
-            trigger = base2dec(trigger, 2) + 100;
+            triggerID = strcat(num2str(digit1),num2str(digit2),num2str(digit3), num2str(digit4));
+            %triggerID = str2double(triggerID);
+            triggerID = base2dec(triggerID, 2) + 100;
         end
     else
-        trigger = 255;
+        triggerID = 255;
 
     end
 
@@ -179,46 +179,46 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
 
     % Trial onset
     if isequal(Tevent, 'trialOnset')
-        trigger = 1;
+        triggerID = 1;
     elseif isequal(Tevent, 'responseOnset')
-        trigger = 2;
+        triggerID = 2;
     elseif isequal(Tevent, 'responseLogged')
-        trigger = 3;
+        triggerID = 3;
     elseif isequal(Tevent, 'fix')
-        trigger = 4;
+        triggerID = 4;
 
         % Shield
     elseif isequal(Tevent, 'outcome')
 
         if isequal(condition, 'monetary') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
-            trigger = 50;
+            triggerID = 50;
         elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
-            trigger = 51;
+            triggerID = 51;
         elseif isequal(condition, 'monetary') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
-            trigger = 52;
+            triggerID = 52;
         elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
-            trigger = 53;
+            triggerID = 53;
         elseif isequal(condition, 'social') && taskData.hit(trial) == 0 && taskData.cp(trial) == 0
-            trigger = 60;
+            triggerID = 60;
         elseif isequal(condition, 'social') && taskData.hit(trial) == 1 && taskData.cp(trial) == 0
-            trigger = 61;
+            triggerID = 61;
         elseif isequal(condition, 'social') && taskData.hit(trial) == 0 && taskData.cp(trial) == 1
-            trigger = 62;
+            triggerID = 62;
         elseif isequal(condition, 'social') && taskData.hit(trial) == 1 && taskData.cp(trial) == 1
-            trigger = 63;
+            triggerID = 63;
         end
 
         % Reward
     elseif isequal(Tevent, 'reward')
 
         if isequal(condition, 'monetary') && taskData.hit(trial) == 0
-            trigger = 70;
+            triggerID = 70;
         elseif isequal(condition, 'monetary') && taskData.hit(trial) == 1
-            trigger = 71;
+            triggerID = 71;
         elseif isequal(condition, 'social') && taskData.hit(trial) == 0
-            trigger = 80;
+            triggerID = 80;
         elseif isequal(condition, 'social') && taskData.hit(trial) == 1
-            trigger = 81;
+            triggerID = 81;
         end
     end
 
@@ -226,46 +226,46 @@ elseif isequal(taskParam.gParam.taskType, 'HamburgEEG')
 elseif isequal(taskParam.gParam.taskType, 'Hamburg')
 
     if isequal(Tevent, 'trialOnset')
-        trigger = 1;
+        triggerID = 1;
     elseif isequal(Tevent, 'responseOnset')
-        trigger = 2;
+        triggerID = 2;
     elseif isequal(Tevent, 'responseLogged')
-        trigger = 3;
+        triggerID = 3;
     elseif isequal(Tevent, 'fix')
-        trigger = 4;
+        triggerID = 4;
     elseif isequal(Tevent, 'black')
-        trigger = 5;
+        triggerID = 5;
     elseif isequal(Tevent, 'white')
-        trigger = 6;
+        triggerID = 6;
     elseif isequal(Tevent, 'gray')
-        trigger = 7;
+        triggerID = 7;
         
     elseif isequal(Tevent, 'outcome')
         
         if taskData.catchTrial(trial) == 1
-            trigger = 49;
+            triggerID = 49;
         elseif taskData.cp(trial) == 0
-            trigger = 50;
+            triggerID = 50;
         elseif taskData.cp(trial) == 1
-            trigger = 51;
+            triggerID = 51;
         end
 
     elseif isequal(Tevent, 'shield')
 
         if taskData.hit(trial) == 0
-            trigger = 90;
+            triggerID = 90;
         elseif taskData.hit(trial) == 1
-            trigger = 91;
+            triggerID = 91;
         end
     end
 
 else
-    trigger = 255;
+    triggerID = 255;
 end
 
 % Send the pupil trigger
 if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
-    Eyelink('message', num2str(trigger));
+    Eyelink('message', num2str(triggerID));
 end
 
 % Send the EEG trigger
@@ -278,13 +278,13 @@ if taskParam.gParam.sendTrigger == true
 
     % This is Hamburg
     duration = 0.001;
-    IOPort( 'Write', taskParam.triggers.session,uint8(trigger), 0);
+    IOPort( 'Write', taskParam.triggers.session,uint8(triggerID), 0);
     WaitSecs(duration);
     IOPort( 'Write', taskParam.triggers.session, uint8(0), 0);
 end
 
 % Print out trigger for checking
 if taskParam.gParam.printTrigger
-    fprintf('Current trigger: %.1f\n', trigger);
+    fprintf('Current trigger: %.1f\n', triggerID);
 end
 end
