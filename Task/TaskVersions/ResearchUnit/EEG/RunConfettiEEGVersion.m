@@ -48,11 +48,12 @@ if ~exist('config', 'var') || isempty(config)
     config.useDegreesVisualAngle = true;
     config.distance2screen = 700;
     config.screenWidthInMM = 309.40;
-    config.screenHeightInMM = 210;
+    % config.screenHeightInMM = 210;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
     config.rotationRadDeg = 3.16;
     config.noPtbWarnings = false;
+    config.predSpotCircleTolerance = 2;
 
     % config.customInstructions = true;
     % config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
@@ -107,12 +108,13 @@ dataDirectory = config.dataDirectory;
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
 distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
-screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
+% screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
 %rotationRad = config.rotationRad; % rotation radius
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
 rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
 noPtbWarnings = config.noPtbWarnings;
+predSpotCircleTolerance = config.predSpotCircleTolerance;
 
 % customInstructions = config.customInstructions;
 % instructionText = config.instructionText;
@@ -406,6 +408,7 @@ ListenChar(2);
 % ---------------------------------------------
 
 circle = al_circle(display.windowRect);
+circle.predSpotCircleTolerance = predSpotCircleTolerance;
 
 % circle.rotationRad = rotationRad;
 % circle.tickWidth = tickWidth;

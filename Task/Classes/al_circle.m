@@ -24,6 +24,7 @@ classdef al_circle
         predSpotDiam % prediction-spot diameter
         predSpotRect % prediction-spot rectangle
         predCentSpotRect % centered prediction-spot rectangle
+        predSpotCircleTolerance % tolerance when locking in prediction
 
         % Fixation spot
         fixSpotDiam % fixation spot size
@@ -92,6 +93,7 @@ classdef al_circle
             self.tickLengthShield = 50;
             self.circleWidth = 10;
             self.shieldOffset = 10;
+            self.predSpotCircleTolerance = 2;
             
         end
 

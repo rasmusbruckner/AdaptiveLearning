@@ -66,6 +66,7 @@ if ~exist('config', 'var') || isempty(config)
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
+    config.predSpotCircleTolerance = 2;
 end
 
 
@@ -134,6 +135,7 @@ rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angl
 customInstructions = config.customInstructions;
 instructionText = config.instructionText;
 noPtbWarnings = config.noPtbWarnings;
+predSpotCircleTolerance = config.predSpotCircleTolerance;
 
 % More general parameters
 % ----------------------
@@ -499,7 +501,7 @@ ListenChar(2);
 
 % Circle-object instance
 circle = al_circle(display.windowRect);
-
+circle.predSpotCircleTolerance = predSpotCircleTolerance;
 % For internal checking, maybe implement translation, if useful
 % display.pix2deg(rotationRadPixel)
 % display.pix2deg(circle.predSpotDiam)

@@ -217,9 +217,9 @@ while 1
             WaitSecs(1);
             break
         end
-    elseif buttons(1) == 1 && hyp >= taskParam.circle.rotationRad-2 % ensure that prediction is only possible when spot on circle
+    elseif buttons(1) == 1 && hyp >= taskParam.circle.rotationRad-taskParam.circle.predSpotCircleTolerance % ensure that prediction is only possible when spot on circle
         
-        taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle); %((taskParam.circle.rotAngle) / taskParam.circle.unit);
+        taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle);
         taskData.RT(trial) = GetSecs() - startTimestamp;
 
         % If initiation RT has not been stored (if button press occurs between check above and here [unlikely, but possible])
