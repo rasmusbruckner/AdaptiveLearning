@@ -278,9 +278,14 @@ if taskParam.gParam.sendTrigger == true
 
     % This is Hamburg
     duration = 0.001;
-    IOPort( 'Write', taskParam.triggers.session,uint8(triggerID), 0);
+    IOPort( 'Write', taskParam.triggers.session, uint8(triggerID), 0);
     WaitSecs(duration);
     IOPort( 'Write', taskParam.triggers.session, uint8(0), 0);
+end
+
+% Send the MEG trigger
+if taskParam.gParam.meg
+    trigger(triggerID);
 end
 
 % Print out trigger for checking

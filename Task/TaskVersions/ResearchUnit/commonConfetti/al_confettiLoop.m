@@ -64,11 +64,11 @@ for i = 1:trial
         Eyelink('message', 'TRIALID %d', i);
     end
 
-    % This is a pre-liminary test-trigger for MEG
-    %% Todo: implement all triggers in al_sendTrigger
-    if taskParam.gParam.meg
-        trigger(50);
-    end
+    % % This is a pre-liminary test-trigger for MEG
+    % %% Todo: implement all triggers in al_sendTrigger
+    % if taskParam.gParam.meg
+    %     trigger(50);
+    % end
 
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
