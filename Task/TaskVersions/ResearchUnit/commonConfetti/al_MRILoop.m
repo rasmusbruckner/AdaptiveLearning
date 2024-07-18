@@ -45,10 +45,10 @@ if taskParam.gParam.scanner
 
     triggered = 0;
     fprintf('Waiting for trigger\n\n')
-    while triggered == 0
+    while triggered < 4
         [ ~, t_Vol, keyCode] = KbCheck();
-        if keyCode(taskParam.keys.five)
-            triggered = 1;
+        if keyCode(taskParam.keys.s)
+            triggered = triggered+1;
             fprintf('Triggered!\n\n')
         end
     end

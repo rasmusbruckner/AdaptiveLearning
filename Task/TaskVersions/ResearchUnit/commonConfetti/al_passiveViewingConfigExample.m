@@ -47,6 +47,7 @@ config.rotationRadDeg = 3.16; %1.8; % todo: note that this is preliminary
 config.customInstructions = true;
 config.instructionText = al_commonConfettiInstructionsDefaultText(config.language);
 config.noPtbWarnings = false;
+config.predSpotCircleTolerance = 2;
 
 % Run task with config input
 RunCommonConfettiVersion(config);
