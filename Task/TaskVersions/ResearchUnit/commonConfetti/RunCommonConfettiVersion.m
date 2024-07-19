@@ -522,7 +522,7 @@ if display.useDegreesVisualAngle
     circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);
     circle = circle.getShieldOffset();
     %fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg,2), round(circle.rotationRad, 2));
-    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg), round(circle.rotationRad));
+    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',rotationRadDeg, circle.rotationRad);
 elseif display.useDegreesVisualAngle == false
     circle.rotationRad = rotationRadPixel;
 else
