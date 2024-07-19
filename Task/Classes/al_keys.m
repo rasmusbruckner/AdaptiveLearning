@@ -106,7 +106,7 @@ classdef al_keys
 
                     et_path = pwd;
                     et_file_name = sprintf('ec_%s', ID);
-                    et_file_name=[et_file_name]; % todo: check if this is really necessary
+                    et_file_name=[et_file_name, '.edf']; % todo: check if this is really necessary
 
                     al_saveEyelinkData(et_path, et_file_name)
                     Eyelink('StopRecording');

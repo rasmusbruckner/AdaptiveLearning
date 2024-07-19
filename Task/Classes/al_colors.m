@@ -180,7 +180,8 @@ classdef al_colors
                 tickPredWeight * tickPredCol +...
                 tickShieldWeight * tickShieldCol;
 
-            self.background = round(self.background, 4);
+            %self.background = round(self.background, 4);
+            self.background = round(self.background); % todo: ensure that this is fine
 
             % sprintf('Average value: %1.f %1.f %1.f', self.background(1), self.background(2), self.background(3))
 
