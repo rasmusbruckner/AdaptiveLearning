@@ -1,4 +1,4 @@
-function taskData = al_infantLoop(taskParam, condition, concentration, trial)
+function taskData = al_infantLoop(taskParam, condition, concentration, trial, myTobii)
 %AL_INFANTLOOP This function runs the cannon-task trials for the infant version
 %
 %   The task updates the display continuously to ensure smooth interaction
@@ -9,6 +9,7 @@ function taskData = al_infantLoop(taskParam, condition, concentration, trial)
 %       condtion: Condition type
 %       concentration: Noise in outcomes
 %       trial: Number of trials
+%       myTobii: Tobii eye-tracker object
 %
 %   Output
 %       taskData: Task-data-object instance
@@ -31,6 +32,25 @@ taskParam.timingParam.ref = GetSecs();
 
 % Extract cBal
 cBal = taskParam.subject.cBal;
+
+% Choose gaze sampling rate: Rate at which we check the fixation online to
+% determine when trial continues. This is currently lower than the ET
+% sampling rate
+gazeSamplingRate = 10;
+
+% How many seconds infant has to fixate stimulus before trial continues
+fixationCriterion = 1;
+
+% TODO: When setting up Tobii, consider adding it here. This has to be
+% properly tested WITH eye-tracker because I don't know how it works
+% exactly. It will be important to ensure that the sampling rate it 
+% properly taken into account to ensure trial continues after 
+% desired time in seconds.
+ 
+% Not sure if this is the right function or if this has to be in while loop
+% Add if statement for any solution to ensure it does not interfere with
+% mouse case
+% gaze_data = my_eyetracker.get_gaze_data();
 
 % Trial counter
 i = 0;
@@ -85,10 +105,15 @@ while 1
     timestampDuckMovementOffset = timestampDuckStaticOffset + taskParam.timingParam.movingDuck;
     timestampfixCrossOutcomeOffset = timestampDuckMovementOffset + taskParam.timingParam.fixCrossOutcome;
     timestampOutcomeStaticOffset = timestampfixCrossOutcomeOffset + taskParam.timingParam.staticOutcome;
-    timestampOutcomeMovementOffset = timestampOutcomeStaticOffset + taskParam.timingParam.movingOutcome;
+    
+    % Todo: if not used anymore, get rid of this in timingParam as well
+    % timestampOutcomeMovementOffset = timestampOutcomeStaticOffset + taskParam.timingParam.movingOutcome;
 
     % Initilalize variable controlling movement frequency
     duckLastMovement = GetSecs() - taskParam.gParam.duckMovementFrequency;
+
+    % Initilalize variable controlling gaze sampling
+    lastGazeSample = GetSecs() - 1/gazeSamplingRate;
 
     % Generate change point
     safe = 0;
@@ -119,6 +144,8 @@ while 1
         end
     end
 
+    samplesInAOI = 0;
+    
     % Cycle over phases within trial
     % ------------------------------
 
@@ -162,7 +189,7 @@ while 1
                 end
             end
 
-            % Todo: for test phase we will add attention getter to ensure
+            % Todo: for test phase we will potentially add attention getter to ensure
             % infant fixates screen again before next stimulus appears
 
             % Stimulus appears in screen center
@@ -277,42 +304,100 @@ while 1
 
             % Todo: add trigger once code clear
 
-            % Outcome movement
-            % --------------
-        elseif (GetSecs() - trialOnsetClock > timestampOutcomeStaticOffset) && (GetSecs() - trialOnsetClock <= timestampOutcomeMovementOffset)
-
-
-            al_drawFixPoint(taskParam)
-            al_drawCircle(taskParam)
-
-            if GetSecs() - duckLastMovement >= taskParam.gParam.duckMovementFrequency
-                duckAngle = normrnd(0, taskParam.gParam.duckMovementRange, 1); % static duck
-                duckLastMovement = GetSecs();
-            end
-
-            al_showDuck(taskParam, taskData.outcome(i), false, duckAngle)
-            Screen('DrawingFinished', taskParam.display.window.onScreen);
-            Screen('Flip', taskParam.display.window.onScreen);
-
-            % Send moving-outcome trigger
-            if outcomeMovementStarted == false
-
-                taskData.timestampOutcomeMovement(i) = GetSecs - taskParam.timingParam.ref;
-                outcomeMovementStarted = true;
-
-                % Display timing info in console
-                if taskParam.gParam.printTiming
-                    fprintf('Outcome static duration: %.5f\n',  taskData.timestampOutcomeMovement(i) - taskData.timestampOutcomeStatic(i) )
-                end
-            end
-            % Todo: add trigger once code clear
-
         else
             % Go to next trial
             break
         end
     end
 
+    % Delete duckSpot variable, if it exists -- this ensures it's updated
+    clear duckSpot
+    
+    while 1
+
+         % Check for quit
+        [ ~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
+        if keyCode(taskParam.keys.esc)
+            ListenChar();
+            ShowCursor;
+            Screen('CloseAll');
+            error('User pressed Escape to finish task')
+        end
+
+        % Outcome movement
+        % ----------------
+
+        al_drawFixPoint(taskParam)
+        al_drawCircle(taskParam)        
+
+        % Area of interest definition
+        % Todo: Consider using degrees visual angle 
+        AOIRad = 50; 
+        
+        if GetSecs() - lastGazeSample >= 1/gazeSamplingRate
+            
+            if isnan(myTobii)
+                [gazeX, gazeY,~] = GetMouse(taskParam.display.window.onScreen);
+            else
+                
+                % Todo: this has to be properly tested
+                % And ensure that gazeX and gazeY can be extracted
+                % Access latest data point
+                % latest_gaze_data = gaze_data(end);
+  
+            end
+
+            % Update sampling time point
+            lastGazeSample = GetSecs();
+           
+            % This if statement is just for debugging
+            % When full screen with eye-tracker, always chech if samples in
+            % AOI
+            if isnan(myTobii) && (gazeX > taskParam.display.screensizePart(1)) == false && (gazeY > taskParam.display.screensizePart(2)) == false
+            
+                % Check if gaze in AOI
+                [samplesInAOI, duckSpot] = al_infantAOI(taskParam, taskData.outcome(i), AOIRad, gazeX, gazeY, samplesInAOI);
+            end
+
+        end
+
+        % Duck movement
+        if GetSecs() - duckLastMovement >= taskParam.gParam.duckMovementFrequency
+            duckAngle = normrnd(0, taskParam.gParam.duckMovementRange, 1);
+            duckLastMovement = GetSecs();
+        end
+
+        % Show moving duck
+        al_showDuck(taskParam, taskData.outcome(i), false, duckAngle)
+        
+        % For debugging/validation
+        if exist("duckSpot", 'var')
+            AOICircleWidth = 5;
+            Screen(taskParam.display.window.onScreen, 'FrameOval', [0 0 0], [duckSpot(1) - AOIRad, duckSpot(2) - AOIRad, duckSpot(1) + AOIRad, duckSpot(2) + AOIRad], [], AOICircleWidth, []);
+        end
+
+        Screen('DrawingFinished', taskParam.display.window.onScreen);
+        Screen('Flip', taskParam.display.window.onScreen);
+
+        % Send moving-outcome trigger
+        if outcomeMovementStarted == false
+
+            taskData.timestampOutcomeMovement(i) = GetSecs - taskParam.timingParam.ref;
+            outcomeMovementStarted = true;
+
+            % Display timing info in console
+            if taskParam.gParam.printTiming
+                fprintf('Outcome static duration: %.5f\n',  taskData.timestampOutcomeMovement(i) - taskData.timestampOutcomeStatic(i) )
+            end
+        end
+
+        if samplesInAOI >= gazeSamplingRate * fixationCriterion
+
+            break
+
+        end
+        % Todo: add trigger once code clear
+    end
     % Stop block
     if i >= trial
 

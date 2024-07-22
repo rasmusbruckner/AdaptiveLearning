@@ -44,6 +44,9 @@ end
 
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
+% Todo: ensure that recalibration is possible: either before each sub-block
+% or each block
+
 % Initialize and set up eye-tracker file
 if taskParam.gParam.eyeTracker
     
