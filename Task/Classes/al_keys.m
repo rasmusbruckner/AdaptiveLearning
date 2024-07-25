@@ -78,13 +78,13 @@ classdef al_keys
         end
 
 
-        function self = checkQuitTask(self, eyeTracker, ID)
+        function self = checkQuitTask(self, eyeTracker, et_file_name)
             % CHECKQUITTASK This function checks if esc was pressed to
             % quit task
             %
             %   Input
             %       eyeTracker: Optional eye-tracker argument (true/false)
-            %       ID: Optional subject ID
+            %       et_file_name: Optional eye-tracking-file name
             %
             %   Output
             %       None
@@ -94,9 +94,9 @@ classdef al_keys
                 eyeTracker = false;
             end
 
-            % Check if ID is provided
-            if ~exist('ID', 'var') || isempty(ID)
-                ID = nan;
+            % Check if et_file_name is provided
+            if ~exist('et_file_name', 'var') || isempty(et_file_name)
+                et_file_name = nan;
             end
                 
             [ ~, ~, keyCode] = KbCheck(self.kbDev);

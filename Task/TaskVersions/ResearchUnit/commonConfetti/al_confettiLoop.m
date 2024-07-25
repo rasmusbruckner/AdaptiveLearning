@@ -27,7 +27,7 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 
 % Initialize and start eye-tracker
 if taskParam.gParam.eyeTracker
-    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
+    el = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
 end
 
@@ -394,7 +394,7 @@ if ~taskParam.unitTest.run
     
     if taskParam.gParam.eyeTracker
         et_path = pwd;
-        et_file_name=[et_file_name, '.edf'];
+        et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
         al_saveEyelinkData(et_path, et_file_name)
         Eyelink('StopRecording');
     end

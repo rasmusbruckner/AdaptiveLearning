@@ -14,7 +14,7 @@ classdef al_eyeTracker
         height % physical height of the screen in cm
         frameDur % duration of one frame
         frameRate % in Hz
-
+        et_file_name % current file name
     end
 
     % Methods of the eye-tracker object
@@ -41,7 +41,7 @@ classdef al_eyeTracker
 
         end
 
-        function [el, et_file_name] = initializeEyeLink(self, taskParam, et_file_name_suffix)
+        function el = initializeEyeLink(self, taskParam, et_file_name_suffix)
             % INITIALIZEEYELINK This function initialzes the eye-tracker
             %
             %   Input
@@ -50,11 +50,10 @@ classdef al_eyeTracker
             %
             %   Output:
             %       el: Eye-link object
-            %       et_file_name: Eye-tracking-file name
 
 
-            et_file_name = sprintf('%s_%s', taskParam.subject.ID, et_file_name_suffix);
-            et_file_name = [et_file_name]; % todo: check if this is really necessary
+            self.et_file_name = sprintf('%s_%s', taskParam.subject.ID, et_file_name_suffix);
+            self.et_file_name = [self.et_file_name]; % todo: check if this is really necessary
 
             % Todo test if we can also pass object instead instead of new structure
             options.dist = self.dist;
@@ -63,7 +62,7 @@ classdef al_eyeTracker
             options.window_rect = taskParam.display.windowRect;
             options.frameDur = self.frameDur;
             options.frameRate = self.frameRate;
-            [el, ~] = ELconfig(taskParam.display.window.onScreen, et_file_name, options);
+            [el, ~] = ELconfig(taskParam.display.window.onScreen, self.et_file_name, options);
 
             % Calibrate the eye tracker
             EyelinkDoTrackerSetup(el);
