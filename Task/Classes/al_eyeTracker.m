@@ -46,8 +46,8 @@ classdef al_eyeTracker
             %
             %   Input
             %       taskParam: Task-parameter-object instance
-            %       
-            %   Output: 
+            %
+            %   Output:
             %       el: Eye-link object
 
 
@@ -66,6 +66,28 @@ classdef al_eyeTracker
             % Calibrate the eye tracker
             EyelinkDoTrackerSetup(el);
 
+        end
+
+    end
+
+    methods(Static)
+
+        function taskParam = startRecording(taskParam)
+            % STARTRECORDING This function starts the eyeLink eye-tracker
+            %
+            %   Input
+            %       taskParam: Task-parameter-object instance
+            %
+            %   Output
+            %       taskParam: Task-parameter-object instance
+
+
+            Eyelink('StartRecording');
+            WaitSecs(0.1);
+            Eyelink('message', 'Start recording Eyelink');
+
+            % Reference time stamp
+            taskParam.timingParam.ref = GetSecs();
         end
     end
 end

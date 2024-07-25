@@ -44,40 +44,22 @@ end
 
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
-% Todo: ensure that recalibration is possible: either before each sub-block
-% or each block
-
-% Initialize and set up eye-tracker file
+% Initialize and start eye-tracker
 if taskParam.gParam.eyeTracker
-    
     taskParam.eyeTracker.initializeEyeLink(taskParam);
-
-    % et_file_name = sprintf('ec_%s', taskParam.subject.ID);
-    % et_file_name=[et_file_name]; % todo: check if this is really necessary
-    % 
-    % % Todo test if we can also pass object instead instead of new structure
-    % options.dist = taskParam.eyeTracker.dist;
-    % options.width = taskParam.eyeTracker.width;
-    % options.height = taskParam.eyeTracker.height;
-    % options.window_rect = taskParam.display.windowRect;
-    % options.frameDur = taskParam.eyeTracker.frameDur;
-    % options.frameRate = taskParam.eyeTracker.frameRate;
-    % [el, ~] = ELconfig(taskParam.display.window.onScreen, et_file_name, options);
-    % 
-    % % Calibrate the eye tracker
-    % EyelinkDoTrackerSetup(el);
+    taskParam = taskParam.eyeTracker.startRecording(taskParam);
 end
 
 
 % Start Eyelink recording - calibration and validation of eye-tracker before each block
-if taskParam.gParam.eyeTracker
-    Eyelink('StartRecording');
-    WaitSecs(0.1);
-    Eyelink('message', 'Start recording Eyelink');
-
-    % Reference time stamp
-    taskParam.timingParam.ref = GetSecs();
-end
+% if taskParam.gParam.eyeTracker
+%     Eyelink('StartRecording');
+%     WaitSecs(0.1);
+%     Eyelink('message', 'Start recording Eyelink');
+% 
+%     % Reference time stamp
+%     taskParam.timingParam.ref = GetSecs();
+% end
 
 % ------------------------------
 % 3. Optionally baseline arousal
