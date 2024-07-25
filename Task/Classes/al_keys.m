@@ -105,7 +105,7 @@ classdef al_keys
                 if eyeTracker
 
                     et_path = pwd;
-                    et_file_name = sprintf('ec_%s', ID);
+                    %et_file_name = sprintf('ec_%s', ID);
                     et_file_name=[et_file_name, '.edf']; % todo: check if this is really necessary
 
                     al_saveEyelinkData(et_path, et_file_name)

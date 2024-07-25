@@ -41,7 +41,7 @@ classdef al_eyeTracker
 
         end
 
-        function el = initializeEyeLink(self, taskParam, et_file_name_suffix)
+        function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
             % INITIALIZEEYELINK This function initialzes the eye-tracker
             %
             %   Input

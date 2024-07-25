@@ -27,7 +27,7 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 
 % Initialize and start eye-tracker
 if taskParam.gParam.eyeTracker
-    el = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
+    taskParam.eyeTracker = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
 end
 
