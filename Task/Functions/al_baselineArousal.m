@@ -30,7 +30,13 @@ colorOrder(3) = 3;
 
 % Cycle over colors
 for i = 1:size(arousalColors,1)
-    
+
+    % Presenting trial number at the bottom of the eyetracker display - optional
+    if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
+        Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, 3);
+        Eyelink('message', 'TRIALID %d', i);
+    end
+
     % Only send trigger on first interation
     firstIteration = true;
 
@@ -43,7 +49,7 @@ for i = 1:size(arousalColors,1)
         Screen('FillRect', taskParam.display.window.onScreen, arousalColors(colorOrder(i), :));
         al_drawFixPoint(taskParam, taskParam.colors.gray, true)
         Screen('Flip', taskParam.display.window.onScreen);
-        
+
         % Send trigger after first flip
         if firstIteration
             al_sendTrigger(taskParam, nan, 'baselineArousal', i, arousalColorsNames{colorOrder(i)});
@@ -59,15 +65,14 @@ for i = 1:size(arousalColors,1)
         taskParam.keys.checkQuitTask();
     end
 
+end
 
-    % Save Eyelink data
-    % -----------------
-    
-    if taskParam.gParam.eyeTracker
-        et_path = pwd;
-        et_file_name=[et_file_name, '.edf'];
-        al_saveEyelinkData(et_path, et_file_name)
-        Eyelink('StopRecording');
-    end
-    
+% Save Eyelink data
+% -----------------
+
+if taskParam.gParam.eyeTracker
+    et_path = pwd;
+    et_file_name=[et_file_name, '.edf'];
+    al_saveEyelinkData(et_path, et_file_name)
+    Eyelink('StopRecording');
 end

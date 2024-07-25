@@ -70,7 +70,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam)
+    al_baselineArousal(taskParam, 'a1')
 
 end
 
@@ -130,7 +130,7 @@ if cBal == 1
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 1);
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 'b1');
 
 
     % ... high noise second
@@ -138,7 +138,7 @@ if cBal == 1
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 2);
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 'b2');
 
 else
 
@@ -147,14 +147,14 @@ else
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 1);
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 'b1');
 
     % ... low noise second
     % --------------------
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 2);
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 'b2');
 
 end
 
@@ -174,10 +174,10 @@ if taskParam.gParam.baselineArousal
     end
 
     feedback = false; % indicate that this is the instruction mode
-    al_bigScreen(taskParam, header, txt, feedback);
+    al_bigScreen(taskParam, header, txt, feedback, 2);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam)
+    al_baselineArousal(taskParam, 'a2')
 
 end
 

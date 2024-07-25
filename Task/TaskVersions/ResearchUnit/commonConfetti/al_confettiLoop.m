@@ -1,4 +1,4 @@
-function taskData = al_confettiLoop(taskParam, condition, taskData, trial, blockNumber)
+function taskData = al_confettiLoop(taskParam, condition, taskData, trial, file_name_suffix)
 %AL_CONFETTILOOP This function runs the cannon-task trials for the common confetti-cannon version
 %
 %   Input
@@ -6,15 +6,15 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial, block
 %       condtion: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
-%       blockNumber: Suffix of eye-tracking file (optional)
+%       file_name_suffix: Suffix of saved files
 %
 %   Output
 %       taskData: Task-data-object instance
 
 
 % Check if unit test is requested
-if ~exist('blockNumber', 'var') || isempty(blockNumber)
-    error('No ')
+if ~exist('file_name_suffix', 'var') || isempty(file_name_suffix)
+    error('No file name suffix provides ')
 end
 
 % Wait until keys released
@@ -27,7 +27,7 @@ Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.backgroun
 
 % Initialize and start eye-tracker
 if taskParam.gParam.eyeTracker
-    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam, blockNumber);
+    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
 end
 
@@ -444,7 +444,7 @@ if ~taskParam.unitTest.run
         savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
     else
         concentration = unique(taskData.concentration);
-        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_b%d', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, blockNumber);
+        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
     end
 
     % Ensure that files cannot be overwritten

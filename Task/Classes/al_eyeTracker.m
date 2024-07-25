@@ -53,7 +53,7 @@ classdef al_eyeTracker
             %       et_file_name: Eye-tracking-file name
 
 
-            et_file_name = sprintf('%s_b%d', taskParam.subject.ID, et_file_name_suffix);
+            et_file_name = sprintf('%s_%s', taskParam.subject.ID, et_file_name_suffix);
             et_file_name = [et_file_name]; % todo: check if this is really necessary
 
             % Todo test if we can also pass object instead instead of new structure
