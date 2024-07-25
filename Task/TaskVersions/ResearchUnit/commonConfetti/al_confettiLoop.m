@@ -444,7 +444,7 @@ if ~taskParam.unitTest.run
         savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
     else
         concentration = unique(taskData.concentration);
-        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_b%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, blockNumber);
+        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_b%d', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, blockNumber);
     end
 
     % Ensure that files cannot be overwritten
