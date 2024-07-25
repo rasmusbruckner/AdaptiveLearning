@@ -373,14 +373,7 @@ for i = 1:trial
     end
 
     % Manage breaks
-    [taskParam, takeBreakNow] = al_takeBreak(taskParam, taskData, i, trial);
-
-    if takeBreakNow
-
-        % Recalibrate the eye tracker
-        EyelinkDoTrackerSetup(taskParam.eyeTracker.el);
-        
-    end
+    taskParam = al_takeBreak(taskParam, taskData, i, trial);
 
 end
 

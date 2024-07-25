@@ -1,4 +1,4 @@
-function [taskParam, takeBreakNow] = al_takeBreak(taskParam, taskData, currTrial, lastTrial, siezen)
+function taskParam = al_takeBreak(taskParam, taskData, currTrial, lastTrial, siezen)
 %AL_TAKEBREAK This function manages the breaks in the cannon task
 %
 %   Input
@@ -10,7 +10,6 @@ function [taskParam, takeBreakNow] = al_takeBreak(taskParam, taskData, currTrial
 %
 %   Output
 %       taskParam: Task-parameter-object instance
-%       takeBreakNow: Indicates if break takes place on current trial
 
 
 % Check if "du" or "Sie" is given in input (default: "Sie")
@@ -38,12 +37,6 @@ if currTrial < lastTrial % currTrial > 1 && currTrial < lastTrial
     
         % Set prediction spot to default after break
         taskParam.circle.rotAngle =  taskParam.circle.initialRotAngle;
-
-        takeBreakNow = true;
-    else
-
-        takeBreakNow = false;
-        
     end
 end
 end

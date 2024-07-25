@@ -60,10 +60,10 @@ if taskParam.gParam.eyeTracker
     options.window_rect = taskParam.display.windowRect;
     options.frameDur = taskParam.eyeTracker.frameDur;
     options.frameRate = taskParam.eyeTracker.frameRate;
-    [taskParam.eyeTracker.el, ~] = ELconfig(taskParam.display.window.onScreen, et_file_name, options);
+    [el, ~] = ELconfig(taskParam.display.window.onScreen, et_file_name, options);
 
     % Calibrate the eye tracker
-    EyelinkDoTrackerSetup(taskParam.eyeTracker.el);
+    EyelinkDoTrackerSetup(el);
 end
 
 
