@@ -1,4 +1,4 @@
-function al_baselineArousal(taskParam)
+function al_baselineArousal(taskParam, blockNumber)
 %AL_BASELINEAROUSAL This function presents the screens to measure baseline
 % arousal
 %
@@ -7,9 +7,16 @@ function al_baselineArousal(taskParam)
 %
 %   Input
 %       taskParam: Task-parameter-object instance
+%       blockNumber: That is, 1st or 2nd baseline session
 %
 %   Output
 %       None
+
+% Initialize and start eye-tracker
+if taskParam.gParam.eyeTracker
+    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam, blockNumber);
+    taskParam = taskParam.eyeTracker.startRecording(taskParam);
+end
 
 % Define color and random color order (black and white)
 arousalColors = [taskParam.colors.black; taskParam.colors.white];
@@ -52,4 +59,15 @@ for i = 1:size(arousalColors,1)
         taskParam.keys.checkQuitTask();
     end
 
+
+    % Save Eyelink data
+    % -----------------
+    
+    if taskParam.gParam.eyeTracker
+        et_path = pwd;
+        et_file_name=[et_file_name, '.edf'];
+        al_saveEyelinkData(et_path, et_file_name)
+        Eyelink('StopRecording');
+    end
+    
 end

@@ -1,4 +1,4 @@
-function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
+function taskData = al_confettiLoop(taskParam, condition, taskData, trial, blockNumber)
 %AL_CONFETTILOOP This function runs the cannon-task trials for the common confetti-cannon version
 %
 %   Input
@@ -6,10 +6,16 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial)
 %       condtion: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
+%       blockNumber: Suffix of eye-tracking file (optional)
 %
 %   Output
 %       taskData: Task-data-object instance
 
+
+% Check if unit test is requested
+if ~exist('blockNumber', 'var') || isempty(blockNumber)
+    error('No ')
+end
 
 % Wait until keys released
 KbReleaseWait();
@@ -19,15 +25,11 @@ Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize
 Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 Screen('FillRect', taskParam.display.window.onScreen, taskParam.colors.background);
 
-% % % % Start Eyelink recording - calibration and validation of eye-tracker before each block
-% % % if taskParam.gParam.eyeTracker
-% % %     Eyelink('StartRecording');
-% % %     WaitSecs(0.1);
-% % %     Eyelink('message', 'Start recording Eyelink');
-% % %
-% % %     % Reference time stamp
-% % %     taskParam.timingParam.ref = GetSecs();
-% % % end
+% Initialize and start eye-tracker
+if taskParam.gParam.eyeTracker
+    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam, blockNumber);
+    taskParam = taskParam.eyeTracker.startRecording(taskParam);
+end
 
 % Wait for scanner trigger
 if taskParam.gParam.scanner
@@ -387,6 +389,16 @@ taskData.rotationRad = taskParam.circle.rotationRad;
 
 if ~taskParam.unitTest.run
 
+    % Save Eyelink data
+    % -----------------
+    
+    if taskParam.gParam.eyeTracker
+        et_path = pwd;
+        et_file_name=[et_file_name, '.edf'];
+        al_saveEyelinkData(et_path, et_file_name)
+        Eyelink('StopRecording');
+    end
+
     if isequal(taskParam.trialflow.reward, 'asymmetric') == false && taskParam.gParam.passiveViewing == false
         currPoints = nansum(taskData.hit);
         % The above is included for backward compatibility. In future, when all
@@ -432,7 +444,7 @@ if ~taskParam.unitTest.run
         savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
     else
         concentration = unique(taskData.concentration);
-        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
+        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_b%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, blockNumber);
     end
 
     % Ensure that files cannot be overwritten

@@ -41,18 +41,19 @@ classdef al_eyeTracker
 
         end
 
-        function [el, et_file_name] = initializeEyeLink(self, taskParam)
+        function [el, et_file_name] = initializeEyeLink(self, taskParam, et_file_name_suffix)
             % INITIALIZEEYELINK This function initialzes the eye-tracker
             %
             %   Input
             %       taskParam: Task-parameter-object instance
+            %       et_file_name_suffix: Suffix of file name
             %
             %   Output:
             %       el: Eye-link object
             %       et_file_name: Eye-tracking-file name
 
 
-            et_file_name = sprintf('ec_%s', taskParam.subject.ID);
+            et_file_name = sprintf('%s_b%s', taskParam.subject.ID, et_file_name_suffix);
             et_file_name = [et_file_name]; % todo: check if this is really necessary
 
             % Todo test if we can also pass object instead instead of new structure

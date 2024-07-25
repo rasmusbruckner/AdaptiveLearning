@@ -44,27 +44,17 @@ end
 
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
-% Initialize and start eye-tracker
-if taskParam.gParam.eyeTracker
-    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam);
-    taskParam = taskParam.eyeTracker.startRecording(taskParam);
-end
-
-
-% Start Eyelink recording - calibration and validation of eye-tracker before each block
+% % Initialize and start eye-tracker
 % if taskParam.gParam.eyeTracker
-%     Eyelink('StartRecording');
-%     WaitSecs(0.1);
-%     Eyelink('message', 'Start recording Eyelink');
-% 
-%     % Reference time stamp
-%     taskParam.timingParam.ref = GetSecs();
+%     [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam);
+%     taskParam = taskParam.eyeTracker.startRecording(taskParam);
 % end
 
 % ------------------------------
 % 3. Optionally baseline arousal
 % ------------------------------
 
+% Todo: save et_data
 if taskParam.gParam.baselineArousal
 
     % Display pupil info
@@ -132,6 +122,7 @@ else
 
 end
 
+
 if cBal == 1
 
     % Low noise first...
@@ -139,14 +130,15 @@ if cBal == 1
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 1);
+
 
     % ... high noise second
     % ---------------------
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 2);
 
 else
 
@@ -155,14 +147,14 @@ else
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial);
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 1);
 
     % ... low noise second
     % --------------------
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial);
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 2);
 
 end
 
@@ -189,25 +181,12 @@ if taskParam.gParam.baselineArousal
 
 end
 
-% Save Eyelink data
-% -----------------
-
-if taskParam.gParam.eyeTracker
-    et_path=pwd;
-    et_file_name=[et_file_name, '.edf'];
-
-    % fprintf('Saving EyeLink data to %s\n', et_path)
-    % eyefilename = fullfile(et_path,et_file_name);
-    % Eyelink('CloseFile');
-    % Eyelink('WaitForModeReady', 500);
-    % try
-    %     status = Eyelink('ReceiveFile', et_file_name, eyefilename);
-    %     disp(['File ' eyefilename ' saved to disk']);
-    % catch
-    %     warning(['File ' eyefilename ' not saved to disk']);
-    % end
-    % Eyelink('StopRecording');
-
-    al_saveEyelinkData(et_path, et_file_name)
-    Eyelink('StopRecording');
-end
+% % Save Eyelink data
+% % -----------------
+% 
+% if taskParam.gParam.eyeTracker
+%     et_path = pwd;
+%     et_file_name=[et_file_name, '.edf'];
+%     al_saveEyelinkData(et_path, et_file_name)
+%     Eyelink('StopRecording');
+% end
