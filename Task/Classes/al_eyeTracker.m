@@ -41,7 +41,7 @@ classdef al_eyeTracker
 
         end
 
-        function el = initializeEyeLink(self, taskParam)
+        function [el, et_file_name] = initializeEyeLink(self, taskParam)
             % INITIALIZEEYELINK This function initialzes the eye-tracker
             %
             %   Input
@@ -49,6 +49,7 @@ classdef al_eyeTracker
             %
             %   Output:
             %       el: Eye-link object
+            %       et_file_name: Eye-tracking-file name
 
 
             et_file_name = sprintf('ec_%s', taskParam.subject.ID);

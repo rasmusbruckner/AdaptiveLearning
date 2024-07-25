@@ -46,7 +46,7 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 
 % Initialize and start eye-tracker
 if taskParam.gParam.eyeTracker
-    taskParam.eyeTracker.initializeEyeLink(taskParam);
+    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
 end
 
