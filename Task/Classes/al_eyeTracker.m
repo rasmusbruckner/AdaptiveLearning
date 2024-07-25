@@ -14,6 +14,7 @@ classdef al_eyeTracker
         height % physical height of the screen in cm
         frameDur % duration of one frame
         frameRate % in Hz
+        el % EyeLink object
 
     end
 
@@ -38,6 +39,7 @@ classdef al_eyeTracker
             self.height = 21;
             self.frameDur = Screen('GetFlipInterval', display.window.onScreen);
             self.frameRate = Screen('NominalFrameRate', display.window.onScreen);
+            self.el = nan;
 
         end
     end
