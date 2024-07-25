@@ -25,19 +25,46 @@ classdef al_eyeTracker
         function self = al_eyeTracker(display)
             % This function creates an object of
             % class al_eyeTracker
-            % 
+            %
             %   Input
             %       display: display-object instance
-            %   
+            %
             %   Output
             %       None
-            
+
 
             self.dist = 40;
             self.width = 30;
             self.height = 21;
             self.frameDur = Screen('GetFlipInterval', display.window.onScreen);
             self.frameRate = Screen('NominalFrameRate', display.window.onScreen);
+
+        end
+
+        function el = initializeEyeLink(self, taskParam)
+            % INITIALIZEEYELINK This function initialzes the eye-tracker
+            %
+            %   Input
+            %       taskParam: Task-parameter-object instance
+            %       
+            %   Output: 
+            %       el: Eye-link object
+
+
+            et_file_name = sprintf('ec_%s', taskParam.subject.ID);
+            et_file_name = [et_file_name]; % todo: check if this is really necessary
+
+            % Todo test if we can also pass object instead instead of new structure
+            options.dist = self.dist;
+            options.width = self.width;
+            options.height = self.height;
+            options.window_rect = taskParam.display.windowRect;
+            options.frameDur = self.frameDur;
+            options.frameRate = self.frameRate;
+            [el, ~] = ELconfig(taskParam.display.window.onScreen, et_file_name, options);
+
+            % Calibrate the eye tracker
+            EyelinkDoTrackerSetup(el);
 
         end
     end
