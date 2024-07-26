@@ -27,6 +27,9 @@ passiveViewingCondition = taskParam.gParam.passiveViewing;
 % 2. Show instructions, if desired
 % --------------------------------
 
+% Todo: turn on eye tracker for practice. To monitor saccades. Don't need
+% to save et though.
+
 if runIntro
     al_commonConfettiInstructions(taskParam)
 end
@@ -35,6 +38,7 @@ end
 taskParam.trialflow.shot = 'static';
 taskParam.trialflow.colors = 'dark';
 taskParam.trialflow.shieldAppearance = 'lines';
+taskParam.trialflow.saveData = 'true';
 
 if passiveViewingCondition == false
     taskParam.trialflow.exp = 'exp';
@@ -70,7 +74,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam, 'a1')
+    al_baselineArousal(taskParam, '_a1')
 
 end
 
@@ -130,7 +134,7 @@ if cBal == 1
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 'b1');
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, '_b1');
 
 
     % ... high noise second
@@ -138,7 +142,7 @@ if cBal == 1
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 'b2');
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, '_b2');
 
 else
 
@@ -147,14 +151,14 @@ else
 
     % Run task
     al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
-    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, 'b1');
+    dataHighNoise = al_confettiLoop(taskParam, 'main', taskDataHighNoise, trial, '_b1');
 
     % ... low noise second
     % --------------------
 
     % Run task
     al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
-    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, 'b2');
+    dataLowNoise = al_confettiLoop(taskParam, 'main', taskDataLowNoise, trial, '_b2');
 
 end
 
@@ -177,7 +181,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback, 2);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam, 'a2')
+    al_baselineArousal(taskParam, '_a2')
 
 end
 

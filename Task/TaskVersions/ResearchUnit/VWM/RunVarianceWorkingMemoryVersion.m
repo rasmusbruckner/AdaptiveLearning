@@ -176,6 +176,7 @@ gParam.taskType = 'Hamburg'; % todo: maybe specific category for this version (l
 gParam.trials = trials;
 gParam.practTrials = practTrials;
 gParam.runIntro = runIntro;
+gParam.passiveViewing = false;
 gParam.askSubjInfo = askSubjInfo;
 gParam.blockIndices = blockIndices;
 gParam.useCatchTrials = useCatchTrials;
@@ -193,6 +194,7 @@ gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.saveName = 'vwm';
 gParam.driftConc = driftConc;
+gParam.customInstructions = false;
 
 % Save directory
 cd(gParam.dataDirectory);

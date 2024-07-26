@@ -78,39 +78,44 @@ classdef al_keys
         end
 
 
-        function self = checkQuitTask(self, eyeTracker, et_file_name)
+        function self = checkQuitTask(self, taskParam, taskData)
             % CHECKQUITTASK This function checks if esc was pressed to
             % quit task
             %
             %   Input
-            %       eyeTracker: Optional eye-tracker argument (true/false)
-            %       et_file_name: Optional eye-tracking-file name
+            %       taskParam: Task-parameter-object instance
+            %       taskData: Task-data-object instance
             %
             %   Output
             %       None
 
-            % Check if eye-tracker is used
-            if ~exist('eyeTracker', 'var') || isempty(eyeTracker)
-                eyeTracker = false;
-            end
 
-            % Check if et_file_name is provided
-            if ~exist('et_file_name', 'var') || isempty(et_file_name)
-                et_file_name = nan;
-            end
-                
+            % Extract variables
+            eyeTracker = taskParam.gParam.eyeTracker;
+
+            % Check for quit
             [ ~, ~, keyCode] = KbCheck(self.kbDev);
             if keyCode(self.esc)
                 
+                % Save data when quitting task early
+                % ----------------------------------
+
+                % Eye-tracker
                 if eyeTracker
 
+                    et_file_name = taskParam.eyeTracker.et_file_name;
+
                     et_path = pwd;
-                    %et_file_name = sprintf('ec_%s', ID);
-                    et_file_name=[et_file_name, '.edf']; % todo: check if this is really necessary
+                    et_file_name = [et_file_name, '.edf'];
 
                     al_saveEyelinkData(et_path, et_file_name)
                     Eyelink('StopRecording');
 
+                end
+                
+                % Behavioral
+                if isequal(taskParam.trialflow.saveData, 'true') && isempty(taskData) == false
+                    al_saveData(taskData)
                 end
 
                 ListenChar();

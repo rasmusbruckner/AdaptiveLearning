@@ -18,6 +18,7 @@ taskParam.trialflow.push = 'practiceNoPush'; % turn off push manipulation
 taskParam.trialflow.shot = 'animate cannonball'; % in instructions, we animate the confetti
 taskParam.trialflow.colors = 'colorful';
 taskParam.trialflow.exp = 'pract'; % ensure that no triggers are sent during practice
+taskParam.trialflow.saveData = 'false';
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
@@ -220,6 +221,7 @@ condition = 'practice';
 taskData = load('visCannonPracticeHamburg.mat');
 taskData = taskData.taskData;
 taskParam.trialflow.exp = 'practVis';
+taskParam.trialflow.saveData = 'true';
 taskParam.trialflow.shieldAppearance = 'full';
 
 % Reset roation angle to starting location

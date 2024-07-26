@@ -62,7 +62,7 @@ for i = 1:size(arousalColors,1)
         end
 
         % Check for escape key
-        taskParam.keys.checkQuitTask();
+        taskParam.keys.checkQuitTask(taskParam);
     end
 
 end

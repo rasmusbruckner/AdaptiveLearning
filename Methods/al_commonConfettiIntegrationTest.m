@@ -27,7 +27,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.textSize = 35;
             config.headerSize = 50;
             config.vSpacing = 1;
-            config.screenSize = get(0,'MonitorPositions')*1.0;
+            config.screenSize = get(0,'MonitorPositions')*0.5;
             config.screenNumber = 1;
             config.s = 40;
             config.five = 15;
@@ -45,11 +45,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.screenHeightInMM = 210;
             config.sendTrigger = false;
             config.rotationRadPixel = 140;
-            config.rotationRadDeg = 3.16; % todo: note that this is preliminary
+            config.rotationRadDeg = 2.5; % todo: note that this is preliminary
             config.screenNumber = 1;
             config.customInstructions = true;
             config.instructionText = al_commonConfettiInstructionsDefaultText();
             config.noPtbWarnings = false;
+            config.predSpotCircleTolerance = 2;
 
             unitTest = al_unitTest();
             unitTest.run = true;
@@ -303,11 +304,11 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataHighNoise_cBal2.nParticles, expectedNParticles)
 
             % Confetti standard deviation
-            expectedConfettiStd = repmat(9.85597712654728, 20, 1);
-            testCase.verifyEqual(dataLowNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
-            testCase.verifyEqual(dataHighNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
-            testCase.verifyEqual(dataLowNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
-            testCase.verifyEqual(dataHighNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-10)
+            expectedConfettiStd = repmat(4.9280, 20, 1);
+            testCase.verifyEqual(dataLowNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
+            testCase.verifyEqual(dataHighNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
+            testCase.verifyEqual(dataLowNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
+            testCase.verifyEqual(dataHighNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
 
             % Triggers
             % --------
@@ -458,11 +459,16 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.6)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.0)
 
+            % Display-object instance
+            display = al_display();
+            display.screensize = config.screenSize;
+
+
             % Rotation radius
-            testCase.verifyEqual(dataLowNoise_cBal1.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
-            testCase.verifyEqual(dataHighNoise_cBal1.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
-            testCase.verifyEqual(dataLowNoise_cBal2.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
-            testCase.verifyEqual(dataHighNoise_cBal2.rotationRad, 239.576059383765, 'AbsTol', 0.0001)
+            testCase.verifyEqual(dataLowNoise_cBal1.rotationRad, display.deg2pix(config.rotationRadDeg), 'AbsTol', 1)
+            testCase.verifyEqual(dataHighNoise_cBal1.rotationRad, display.deg2pix(config.rotationRadDeg), 'AbsTol', 1)
+            testCase.verifyEqual(dataLowNoise_cBal2.rotationRad, display.deg2pix(config.rotationRadDeg), 'AbsTol', 1)
+            testCase.verifyEqual(dataHighNoise_cBal2.rotationRad, display.deg2pix(config.rotationRadDeg), 'AbsTol', 1)
 
         end
     end

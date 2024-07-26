@@ -115,6 +115,9 @@ classdef al_taskDataMain
         % -------------
         rotationRad
 
+        % Save name
+        savename
+
     end
 
     % Methods of the taskDataMain object

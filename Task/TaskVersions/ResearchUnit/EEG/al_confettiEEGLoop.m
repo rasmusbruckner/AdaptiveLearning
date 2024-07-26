@@ -14,6 +14,10 @@ function taskData = al_confettiEEGLoop(taskParam, condition, taskData, trial)
 % Todo:
 % Ensure timing output in console is up to date
 
+% Save name
+concentration = unique(taskData.concentration);
+taskData.savename = sprintf('confetti_EEG_%s_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.trialflow.reward, taskParam.subject.group, concentration, taskParam.subject.ID);
+
 % Wait until keys released
 KbReleaseWait();
 
@@ -28,7 +32,7 @@ taskParam.timingParam.ref = GetSecs();
 % -----------------
 for i = 1:trial
 
-    % 1. Trial phase: Trial Onset
+    % 1. Trial phase: Trial onset
     % ---------------------------
 
     % Save constant variables on each trial
@@ -82,11 +86,6 @@ for i = 1:trial
         fprintf('Initiation RT: %.5f\n', taskData.initiationRTs(i))
         fprintf('RT: %.5f\n', taskData.RT(i))
     end
-
-    % Deviation from cannon (estimation error) to compute performance
-    % criterion in practice
-    % Careful: same as est err. -- update in full version
-    % taskData.cannonDev(i) = al_diff(taskData.distMean(i), taskData.pred(i));
 
     % Prediction error & estimation error
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
@@ -333,19 +332,7 @@ if ~taskParam.unitTest.run
     % Save data
     %----------
 
-    concentration = unique(taskData.concentration);
-    savename = sprintf('confetti_EEG_%s_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.trialflow.reward, taskParam.subject.group, concentration, taskParam.subject.ID);
-
-    %% Todo: create function for this
-    checkString = dir([savename '*']);
-    fileNames = {checkString.name};
-    if  ~isempty(fileNames)
-        savename = [savename '_new'];
-    end
-
-    % Save as struct
-    taskData = saveobj(taskData);
-    save(savename, 'taskData')
+    al_saveData(taskData)
 
     % Wait until keys released
     KbReleaseWait();

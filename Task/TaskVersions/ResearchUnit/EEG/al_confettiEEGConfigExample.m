@@ -29,10 +29,9 @@ config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.useDegreesVisualAngle = true;
 config.distance2screen = 700; % defined in mm (for degrees visual angle) and eT
 config.screenWidthInMM = 309.40; % for degrees visual angle and ET
-% config.screenHeightInMM = 210; % for ET
 config.sendTrigger = false;
 config.rotationRadPixel = 140;
-config.rotationRadDeg = 3.16;
+config.rotationRadDeg = 2.5;
 config.noPtbWarnings = false;
 config.predSpotCircleTolerance = 2;
 

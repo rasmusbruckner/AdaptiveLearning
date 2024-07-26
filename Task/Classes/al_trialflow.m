@@ -128,7 +128,11 @@ classdef al_trialflow
             % colorful: standard
             % isoluminant: pupillometry
             % blackwhite: alternative version for pupillometry
-        
+
+        % Save data
+        saveData
+            % true
+            % false
     end
     
     methods
@@ -161,6 +165,7 @@ classdef al_trialflow
             self.variability = 'stable';
             self.currentTickmarks = 'standard';
             self.colors = 'colorful';
+            self.saveData = 'true';
         end
     end
     

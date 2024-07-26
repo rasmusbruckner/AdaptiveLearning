@@ -12,9 +12,20 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial, file_
 %       taskData: Task-data-object instance
 
 
-% Check if unit test is requested
+% Check if file name suffic is provided
 if ~exist('file_name_suffix', 'var') || isempty(file_name_suffix)
-    error('No file name suffix provides ')
+    file_name_suffix = '';
+end
+
+% Save name
+if isequal(taskParam.gParam.saveName, 'vwm')
+    taskData.savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
+elseif isequal(taskParam.gParam.saveName, 'asymmetric')
+    concentration = unique(taskData.concentration);
+    taskData.savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
+else
+    concentration = unique(taskData.concentration);
+    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
 end
 
 % Wait until keys released
@@ -437,26 +448,7 @@ if ~taskParam.unitTest.run
     % Save data
     %----------
 
-    if isequal(taskParam.gParam.saveName, 'vwm')
-        savename = sprintf('confetti_vwm_dm_%s_tm_%s_var_%s_id_%s', taskParam.trialflow.distMean, taskParam.trialflow.currentTickmarks, taskParam.trialflow.variability, taskParam.subject.ID);
-    elseif isequal(taskParam.gParam.saveName, 'asymmetric')
-        concentration = unique(taskData.concentration);
-        savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
-    else
-        concentration = unique(taskData.concentration);
-        savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
-    end
-
-    % Ensure that files cannot be overwritten
-    checkString = dir([savename '*']);
-    fileNames = {checkString.name};
-    if  ~isempty(fileNames)
-        savename = [savename '_new'];
-    end
-
-    % Save as struct
-    taskData = saveobj(taskData);
-    save(savename, 'taskData');
+    al_saveData(taskData)
 
     % Wait until keys released
     KbReleaseWait();

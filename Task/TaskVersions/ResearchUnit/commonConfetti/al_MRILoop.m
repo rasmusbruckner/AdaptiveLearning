@@ -58,6 +58,9 @@ if taskParam.gParam.scanner
 
 end
 
+% Indicate that we don't do passive viewing here
+taskData.passiveViewingCondition = false;
+
 % Cycle over trials
 % -----------------
 

@@ -249,10 +249,10 @@ classdef al_display
             distance = self.distance2screen; % distance to screen in mm
             horizontalRes = self.screensize(3); % horizontal resolution in pixels
 
-            % compute size of each pixel in mm
+            % Compute size of each pixel in mm
             singlePixelMM = screenWidth / horizontalRes;
 
-            % compute degrees visual angle of each pixel
+            % Compute degrees visual angle of each pixel
             singlePixelDeg = rad2deg(atan(singlePixelMM/distance));
 
             % Compute degrees visual angle for stimulus

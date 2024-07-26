@@ -166,6 +166,7 @@ gParam = al_gparam();
 gParam.taskType = 'asymReward';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
+gParam.passiveViewing = false;
 gParam.runIntro = runIntro;
 gParam.askSubjInfo = askSubjInfo;
 gParam.blockIndices = blockIndices;
@@ -180,6 +181,7 @@ gParam.concentration = concentration;
 gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
+gParam.customInstructions = false;
 
 % Save directory
 cd(gParam.dataDirectory);

@@ -61,7 +61,7 @@ end
 % ----------------------------
 
 % Set number of trials for experiment
-trialsExp = 10;  % 180;  Hier bitte anpassen
+trialsExp = 2;  % 180;  Hier bitte anpassen
 
 % Set number of trials for integration test
 trialsTesting = 20;
@@ -79,7 +79,7 @@ pushConcentration = 4;
 haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;

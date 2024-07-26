@@ -44,7 +44,7 @@ if ~exist('config', 'var') || isempty(config)
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
-    config.screenSize = get(0,'MonitorPositions')*1;
+    config.screenSize = get(0,'MonitorPositions')*0.5;
     config.screenNumber = 1;
     config.s = 40;
     config.five = 15;

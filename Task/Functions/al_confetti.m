@@ -172,6 +172,6 @@ for i = 1:nFrames
     Screen('Flip', taskParam.display.window.onScreen, timestamp + tUpdate);
     
     % Check for escape key 
-    taskParam.keys.checkQuitTask();
+    taskParam.keys.checkQuitTask(taskParam, taskData);
 end
 end
