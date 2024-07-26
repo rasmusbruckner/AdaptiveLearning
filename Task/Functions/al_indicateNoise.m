@@ -122,8 +122,8 @@ elseif passiveViewing == true
     else
         header = 'Beobachtungsaufgabe';
         txt = ['Versuchen Sie in dieser Aufgabe bitte in die Mitte '...
-            'des Bildschirms zu fixieren. Wenn Sie das schwarze Kästchen sehen, drücken Sie '...
-            'bitte schnell die Leertaste!'];
+            'des Bildschirms zu fixieren. Es ist wichtig, dass Sie Ihre Augen nicht bewegen!\n\n'...
+            'Versuchen Sie nur zu blinzeln, wenn der weiße Punkt erscheint'];
     end
 end
 

@@ -639,7 +639,7 @@ elseif taskParam.gParam.customInstructions == false && passiveViewing == false
     end
 elseif passiveViewing
     header = 'Ende des Versuchs!';
-    txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Mal richtig reagiert', totWin);
+    txt = 'Vielen Dank für Ihre Teilnahme!';
 end
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);

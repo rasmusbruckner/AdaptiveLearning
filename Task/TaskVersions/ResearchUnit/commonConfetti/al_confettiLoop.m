@@ -118,16 +118,12 @@ for i = 1:trial
     % ---------------
     % This is the new baseline period
     % Todo: check if timing is good
-    % And consider adding trigger (but coordinate with others first)
-    if taskParam.gParam.passiveViewing == false
-        fixationPhase(taskParam)
-        Screen('DrawingFinished', taskParam.display.window.onScreen);
-        timestamp = GetSecs() + 0.001;
-        Screen('Flip', taskParam.display.window.onScreen, timestamp);
-        WaitSecs(taskParam.timingParam.baselineFixLength);
-    else
-        taskData = al_passiveViewingAttentionCheck(taskParam, taskData, i);
-    end
+    
+    fixationPhase(taskParam)
+    Screen('DrawingFinished', taskParam.display.window.onScreen);
+    timestamp = GetSecs() + 0.001;
+    Screen('Flip', taskParam.display.window.onScreen, timestamp);
+    WaitSecs(taskParam.timingParam.baselineFixLength);
 
     % Send trial-onset trigger
     taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'trialOnset');
@@ -431,7 +427,7 @@ if ~taskParam.unitTest.run
     elseif isequal(taskParam.trialflow.reward, 'asymmetric') == true && taskParam.gParam.passiveViewing == false
         txt = sprintf('In diesem Block haben Sie %.0f Punkte verdient.', round(sum(taskData.nParticlesCaught))/10);
     elseif taskParam.gParam.passiveViewing
-        txt = sprintf('In diesem Block haben Sie %.0f Mal richtig reagiert.', sum(taskData.targetCorr));
+        txt = 'Block geschafft!';
     end
 
     if isequal(taskParam.gParam.language, 'German')

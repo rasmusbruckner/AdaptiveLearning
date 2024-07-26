@@ -13,10 +13,10 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 5;
+config.trialsExp = 5; % we will do 50 trials
 config.practTrials = 2;
 config.passiveViewing = true;
-config.baselineFixLength = 0.75; % in this case slightly longer baseline to ensure response window is long enough
+config.baselineFixLength = 0.25;
 config.blockIndices = [1 51 101 151];
 config.runIntro = false;
 config.baselineArousal = false;
@@ -29,7 +29,7 @@ config.screenSize = [0 0 1920 1080]*1;
 config.screenNumber = 1;
 config.s = 40;
 config.enter = 37;
-config.five = 15; %'5';
+config.five = 15;
 config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;
