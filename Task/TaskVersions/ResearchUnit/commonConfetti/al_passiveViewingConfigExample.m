@@ -15,10 +15,11 @@ config = struct();
 % Add desired parameters
 config.trialsExp = 5; % we will do 50 trials
 config.practTrials = 2;
+config.passiveViewingPractTrials = 10;
 config.passiveViewing = true;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 51 101 151];
-config.runIntro = false;
+config.runIntro = true;
 config.baselineArousal = false;
 config.language = 'German';
 config.sentenceLength = 100;

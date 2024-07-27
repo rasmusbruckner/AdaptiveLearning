@@ -84,10 +84,7 @@ classdef al_taskDataMain
         % Passive viewing
         passiveViewingCondition
         passiveViewing
-        targetPresent
-        spacePressed
-        targetCorr
-
+        
         % EEG and pupillometry
         % --------------------
         
@@ -208,10 +205,7 @@ classdef al_taskDataMain
             % Passive viewing
             self.passiveViewingCondition = nan;
             self.passiveViewing = nan(trials, 1);
-            self.targetPresent = nan(trials, 1);
-            self.spacePressed = nan(trials, 1);
-            self.targetCorr = nan(trials, 1);
-            
+
             % EEG and pupillometry
             self.timestampOnset = nan(trials, 1);
             self.timestampPrediction = nan(trials, 1);
@@ -822,13 +816,6 @@ classdef al_taskDataMain
 
                 s.rotationRad = self.rotationRad;
                 s.passiveViewing = self.passiveViewing;
-
-                % For passive viewing additionally
-                if self.passiveViewingCondition 
-                    s.targetPresent = self.targetPresent;
-                    s.spacePressed = self.spacePressed;
-                    s.targetCorr = self.targetCorr;
-                end
 
             elseif isequal(self.taskType, 'HamburgEEG')
 

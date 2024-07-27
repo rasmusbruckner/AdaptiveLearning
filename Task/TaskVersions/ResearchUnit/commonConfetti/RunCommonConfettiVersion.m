@@ -34,6 +34,7 @@ if ~exist('config', 'var') || isempty(config)
     % Default parameters
     config.trialsExp = 2;
     config.practTrials = 2;
+    config.passiveViewingPractTrials = 10;
     config.passiveViewing = false;
     config.baselineFixLength = 0.25;
     config.blockIndices = [1 51 101 151];
@@ -103,6 +104,7 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials per block
 practTrials = config.practTrials; % number of practice trials
+passiveViewingPractTrials = config.passiveViewingPractTrials;
 passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
 baselineFixLength = config.baselineFixLength;
 blockIndices = config.blockIndices; % breaks
@@ -240,6 +242,7 @@ gParam = al_gparam();
 gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.practTrials = practTrials;
+gParam.passiveViewingPractTrials = passiveViewingPractTrials;
 gParam.passiveViewing = passiveViewing;
 gParam.runIntro = runIntro;
 gParam.baselineArousal = baselineArousal;
@@ -606,8 +609,6 @@ if scanner == false
     [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam);
     if passiveViewing == false
         totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
-    elseif passiveViewing
-        totWin = sum(dataLowNoise.targetCorr) + sum(dataHighNoise.targetCorr);
     end
 
 elseif scanner == true
@@ -616,7 +617,6 @@ elseif scanner == true
     [dataRun1, dataRun2, dataRun3] = al_commonConfettiConditionsFMRI(taskParam, startsWithRun);
     totWin = sum(dataRun1.hit) + sum(dataRun2.hit) + sum(dataRun3.hit);
     
-
 end
 
 % -----------

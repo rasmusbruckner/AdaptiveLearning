@@ -30,8 +30,37 @@ passiveViewingCondition = taskParam.gParam.passiveViewing;
 % Todo: turn on eye tracker for practice. To monitor saccades. Don't need
 % to save et though.
 
-if runIntro
+if runIntro && passiveViewingCondition == false
+    
     al_commonConfettiInstructions(taskParam)
+
+elseif runIntro && passiveViewingCondition
+
+    % Update trial flow
+    taskParam.trialflow.shot = 'static';
+    taskParam.trialflow.colors = 'dark';
+    taskParam.trialflow.shieldAppearance = 'lines';
+    taskParam.trialflow.saveData = 'true';
+    taskParam.trialflow.exp = 'passive';
+    taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
+
+    % TaskData-object instance
+    taskData = al_taskDataMain(taskParam.gParam.passiveViewingPractTrials, taskParam.gParam.taskType);
+
+    % Generate outcomes using cannon-data function using average concentration
+    taskData = taskData.al_cannonData(taskParam, haz, mean(concentration), taskParam.gParam.safe);
+
+    % Generate outcomes using confetti-data function
+    taskDataPassiveViewingPract = taskData.al_confettiData(taskParam);
+
+    % Run task
+    txt = ['Versuchen Sie in dieser Aufgabe bitte in die Mitte '...
+            'des Bildschirms zu fixieren. Es ist wichtig, dass Sie Ihre Augen nicht bewegen!\n\n'...
+            'Versuchen Sie nur zu blinzeln, wenn der weiße Punkt erscheint. Während dieser Übung '...
+            'wird der Versuchsleiter Sie darauf hinweisen.'];
+    al_bigScreen(taskParam, 'Übung', txt, true);
+    al_confettiLoop(taskParam, 'main', taskDataPassiveViewingPract, taskParam.gParam.passiveViewingPractTrials, '');
+
 end
 
 % Update trial flow
