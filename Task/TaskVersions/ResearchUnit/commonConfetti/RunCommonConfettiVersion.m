@@ -340,9 +340,9 @@ timingParam.fixedITI = 1.0;
 timingParam.jitterFixCrossOutcome = 2;
 timingParam.jitterFixCrossShield = 0.6;
 timingParam.outcomeLength = 0.65; % 0.5;
-timingParam.jitterOutcome = 0.15; % 2;
+timingParam.jitterOutcome = 0.3; % 2;
 timingParam.shieldLength = 0.65; % 0.5;
-timingParam.jitterShield = 0.15; % 0.6;
+timingParam.jitterShield = 0.3; % 0.6;
 timingParam.jitterITI = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
