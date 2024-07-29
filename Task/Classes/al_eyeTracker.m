@@ -106,7 +106,7 @@ classdef al_eyeTracker
             pause(0.002)
 
             % Threshold value
-            saccThres = 1;
+            saccThres = 2;
             
             % Extract samples from eye-link
             [samples, ~, ~] = Eyelink('GetQueuedData');
