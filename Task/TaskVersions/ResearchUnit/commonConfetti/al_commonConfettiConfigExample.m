@@ -37,6 +37,7 @@ config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.scanner = false;
 config.eyeTracker = false; %true;
 config.onlineSaccades = true;
+config.saccThres = 1;
 config.useDegreesVisualAngle = true;
 config.distance2screen = 700; % defined in mm (for degrees visual angle) and eT
 config.screenWidthInMM = 309.40; % for degrees visual angle and ET

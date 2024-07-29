@@ -130,6 +130,7 @@ hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
 eyeTracker = config.eyeTracker; % doing eye-tracking?
 onlineSaccades = config.onlineSaccades; % online saccades tracking?
+saccThresh = config.saccadeThres;
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
 distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
@@ -574,6 +575,7 @@ eyeTracker.frameDur = Screen('GetFlipInterval', display.window.onScreen);
 eyeTracker.frameRate = Screen('NominalFrameRate', display.window.onScreen);
 eyeTracker.resolutionX = screensize(3);
 eyeTracker = eyeTracker.estimatePixelsPerDegree;
+eyeTracker.saccThres = saccThresh;
 
 % ---------------------------------------
 % Put all object instances in task object

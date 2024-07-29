@@ -17,7 +17,8 @@ classdef al_eyeTracker
         et_file_name % current file name
         ppd % estimated pixels per degree
         resolutionX % x resolution (in pixels)
-
+        saccThres % threshold value
+            
     end
 
     % Methods of the eye-tracker object
@@ -41,7 +42,7 @@ classdef al_eyeTracker
             self.height = 21;
             self.frameDur = Screen('GetFlipInterval', display.window.onScreen);
             self.frameRate = Screen('NominalFrameRate', display.window.onScreen);
-
+            self.saccThres = 1;
         end
 
         function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
@@ -105,9 +106,6 @@ classdef al_eyeTracker
             % Short break
             pause(0.002)
 
-            % Threshold value
-            saccThres = 2;
-            
             % Extract samples from eye-link
             [samples, ~, ~] = Eyelink('GetQueuedData');
             
@@ -123,7 +121,7 @@ classdef al_eyeTracker
             % Compute deviation from fixation spot and categorize saccades
             d = (x.^2 + y.^2).^.5;
             a = d(2:length(d));
-            if any(a>saccThres)
+            if any(a>self.saccThres)
                 sacc = 1;
             else 
                 sacc = 0;
