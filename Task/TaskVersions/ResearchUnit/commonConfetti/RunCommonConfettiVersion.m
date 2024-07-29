@@ -33,6 +33,7 @@ if ~exist('config', 'var') || isempty(config)
 
     % Default parameters
     config.trialsExp = 2;
+    config.nBlocks = 2;
     config.practTrials = 2;
     config.passiveViewingPractTrials = 10;
     config.passiveViewing = false;
@@ -103,6 +104,7 @@ end
 % Config parameters
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials per block
+nBlocks = config.nBlocks; % number of blocks for each 
 practTrials = config.practTrials; % number of practice trials
 passiveViewingPractTrials = config.passiveViewingPractTrials;
 passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
@@ -241,6 +243,7 @@ end
 gParam = al_gparam();
 gParam.taskType = 'Hamburg';
 gParam.trials = trials;
+gParam.nBlocks = nBlocks;
 gParam.practTrials = practTrials;
 gParam.passiveViewingPractTrials = passiveViewingPractTrials;
 gParam.passiveViewing = passiveViewing;
@@ -608,10 +611,7 @@ Screen('Flip', taskParam.display.window.onScreen);
 if scanner == false
 
     % When experiment does not take place in scanner
-    [dataLowNoise, dataHighNoise] = al_commonConfettiConditions(taskParam);
-    if passiveViewing == false
-        totWin = sum(dataLowNoise.hit) + sum(dataHighNoise.hit);
-    end
+    [dataLowNoise, dataHighNoise, totWin] = al_commonConfettiConditions(taskParam);
 
 elseif scanner == true
 

@@ -15,6 +15,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
 
             % Default parameters
             config.trialsExp = 20;
+            config.nBlocks = 1;
             config.practTrials = 5;
             config.passiveViewingPractTrials = 10;
             config.passiveViewing = false; % test with true and false
@@ -62,9 +63,13 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
 
             cBal = '1';
             [dataLowNoise_cBal1, dataHighNoise_cBal1] = RunCommonConfettiVersion(config, unitTest, cBal);
-            
+            dataLowNoise_cBal1 = dataLowNoise_cBal1.conditionBlock1;
+            dataHighNoise_cBal1 = dataHighNoise_cBal1.conditionBlock1;
+
             cBal = '2';
             [dataLowNoise_cBal2, dataHighNoise_cBal2] = RunCommonConfettiVersion(config, unitTest, cBal);
+            dataLowNoise_cBal2 = dataLowNoise_cBal2.conditionBlock1;
+            dataHighNoise_cBal2 = dataHighNoise_cBal2.conditionBlock1;
 
             % Test output
             % -----------

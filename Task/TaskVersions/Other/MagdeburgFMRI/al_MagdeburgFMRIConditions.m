@@ -48,6 +48,7 @@ else
         al_sleepLoop(taskParam, taskData, trial, false, true);
     
     end
+    
     % Instructions experimental blocks
     header = 'Jetzt kommen wir zum Experiment';
     txtStartTask = ['Bitte berücksichtigen Sie, dass die Zeit zwischen den einzelnen Bildern in der Aufgabe jetzt länger sein wird. Diesen zeitlichen '...
