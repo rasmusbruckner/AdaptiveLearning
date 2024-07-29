@@ -420,6 +420,14 @@ if ~taskParam.unitTest.run
         Eyelink('StopRecording');
     end
 
+    % Save behavioral data
+    % --------------------
+
+    al_saveData(taskData)
+
+    % Give feedback
+    % -------------
+
     if isequal(taskParam.trialflow.reward, 'asymmetric') == false && taskParam.gParam.passiveViewing == false
         currPoints = nansum(taskData.hit);
         % The above is included for backward compatibility. In future, when all
@@ -455,10 +463,12 @@ if ~taskParam.unitTest.run
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 
-    % Save data
-    %----------
-
-    al_saveData(taskData)
+    if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
+        feedback = true;
+        header = 'Information zu Ihren Augenbewegungen';
+        txt = sprintf('In diesem Block haben Sie %d Mal weggeschaut.', sacc);
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
 
     % Wait until keys released
     KbReleaseWait();

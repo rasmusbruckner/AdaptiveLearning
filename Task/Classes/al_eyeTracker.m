@@ -90,7 +90,7 @@ classdef al_eyeTracker
 
         end
 
-        function sacc = checkSaccade(eye, zero)
+        function sacc = checkSaccade(self, eye, zero)
             % CHECKSACCADE This function detects saccades online
             %
             %   Input
