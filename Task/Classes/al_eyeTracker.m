@@ -104,10 +104,10 @@ classdef al_eyeTracker
 
             % Short break
             pause(0.002)
-            
-            % Initialize saccade variable
-            sacc = 0;
 
+            % Threshold value
+            saccThres = 1;
+            
             % Extract samples from eye-link
             [samples, ~, ~] = Eyelink('GetQueuedData');
             
@@ -123,7 +123,7 @@ classdef al_eyeTracker
             % Compute deviation from fixation spot and categorize saccades
             d = (x.^2 + y.^2).^.5;
             a = d(2:length(d));
-            if any(a>4)
+            if any(a>saccThres)
                 sacc = 1;
             else 
                 sacc = 0;
