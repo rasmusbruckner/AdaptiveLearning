@@ -15,6 +15,9 @@ classdef al_eyeTracker
         frameDur % duration of one frame
         frameRate % in Hz
         et_file_name % current file name
+        ppd % estimated pixels per degree
+        resolutionX % x resolution (in pixels)
+
     end
 
     % Methods of the eye-tracker object
@@ -69,6 +72,21 @@ classdef al_eyeTracker
 
         end
 
+        function self = estimatePixelsPerDegree(self)
+            % ESTIMATEPIXELSPERDEGREE This function estimates the number of
+            % pixels per degree for online saccade detection
+            %
+            %   Input
+            %       self: eye-tracker-object instance
+            %
+            %   Output
+            %       self: eye-tracker-object instance
+
+
+            o = tan(0.5*pi/180)*self.dist; % self.dist = distance from screen (cm)
+            self.ppd = 2*o*self.resolutionX/self.width; % options.resolution(1) = x resolution (in pixels); self.width = width of screen (cm)
+
+        end
     end
 
     methods(Static)
