@@ -104,7 +104,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam, '_a1')
+    al_baselineArousal(taskParam, 'a1')
 
 end
 
@@ -153,7 +153,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback, 2);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam, '_a2')
+    al_baselineArousal(taskParam, 'a2')
 
 end
 end
@@ -224,7 +224,7 @@ for b = 1:taskParam.gParam.nBlocks
     end
 
     % Run task
-    data = al_confettiLoop(taskParam, 'main', taskData, trial, sprintf('_b%i', b));
+    data = al_confettiLoop(taskParam, 'main', taskData, trial, sprintf('b%i', b));
 
     % Transform to structure for integration test
     data = saveobj(data);
