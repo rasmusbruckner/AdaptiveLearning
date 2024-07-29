@@ -570,6 +570,7 @@ eyeTracker.height = screenHeightInMM / 10;
 eyeTracker.frameDur = Screen('GetFlipInterval', display.window.onScreen);
 eyeTracker.frameRate = Screen('NominalFrameRate', display.window.onScreen);
 eyeTracker.resolutionX = screensize(3);
+eyeTracker = eyeTracker.estimatePixelsPerDegree;
 
 % ---------------------------------------
 % Put all object instances in task object
