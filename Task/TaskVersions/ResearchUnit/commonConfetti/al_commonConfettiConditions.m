@@ -205,7 +205,16 @@ for b = 1:taskParam.gParam.nBlocks
         taskData = taskData.al_confettiData(taskParam);
 
         % Update block number
-        taskData.block(:) = b;
+        if half == 1
+            taskData.block(:) = b;
+            file_name_suffix = sprintf('b%i', b);
+        elseif half == 2
+            taskData.block(:) = b + taskParam.gParam.nBlocks;
+            file_name_suffix = sprintf('b%i' + taskParam.gParam.nBlocks);
+
+        else 
+            error('half parameter undefined')
+        end
 
     else
         if noiseCondition == 1
@@ -224,7 +233,7 @@ for b = 1:taskParam.gParam.nBlocks
     end
 
     % Run task
-    data = al_confettiLoop(taskParam, 'main', taskData, trial, sprintf('b%i', b));
+    data = al_confettiLoop(taskParam, 'main', taskData, trial, file_name_suffix);
 
     % Transform to structure for integration test
     data = saveobj(data);
