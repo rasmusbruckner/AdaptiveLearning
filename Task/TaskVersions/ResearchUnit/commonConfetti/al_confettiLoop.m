@@ -68,7 +68,6 @@ taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
 
 if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
     eyeused = Eyelink('EyeAvailable');
-    sacc = []; % and initializing saccade counter
 end
 
 % Cycle over trials
@@ -356,7 +355,7 @@ for i = 1:trial
     end
 
     if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
-        sacc(end+1) = taskParam.eyeTracker.checkSaccade(eyeused, taskParam.display.zero); 
+        taskData.sacc(i) = taskParam.eyeTracker.checkSaccade(eyeused, taskParam.display.zero); 
     end
 
     % Fixation cross (static version)
@@ -466,7 +465,7 @@ if ~taskParam.unitTest.run
     if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
         feedback = true;
         header = 'Information zu Ihren Augenbewegungen';
-        txt = sprintf('In diesem Block haben Sie %d Mal weggeschaut.', sacc);
+        txt = sprintf('In diesem Block haben Sie %d Mal weggeschaut.', sum(taskData.sacc));
         al_bigScreen(taskParam, header, txt, feedback);
     end
 

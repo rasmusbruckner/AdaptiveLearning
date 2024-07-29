@@ -125,6 +125,8 @@ classdef al_eyeTracker
             a = d(2:length(d));
             if any(a>4)
                 sacc = 1;
+            else 
+                sacc = 0;
             end
         end
     end
