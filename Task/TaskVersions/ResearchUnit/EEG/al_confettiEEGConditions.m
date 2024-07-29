@@ -36,6 +36,9 @@ if runIntro && ~taskParam.unitTest.run
     al_confettiEEGInstructions(taskParam)
 end
 
+% Ensure data is saved on pressing escape
+taskParam.trialflow.saveData = 'true';
+
 % ------------
 % 3. Main task
 % ------------

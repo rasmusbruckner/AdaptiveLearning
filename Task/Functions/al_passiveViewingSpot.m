@@ -95,6 +95,12 @@ for i = 1:nFrames
     xyExp(1) = xyExp(1) + xExpSteps(i);
     xyExp(2) = xyExp(2) + yExpSteps(i);
 
+    % Optionally, present tick marks
+    if isequal(taskParam.trialflow.currentTickmarks, 'show') && currTrial > 1 && (taskData.block(currTrial) == taskData.block(currTrial-1))
+        al_tickMark(taskParam, taskData.outcome(currTrial-1), 'outc');
+        al_tickMark(taskParam, taskData.pred(currTrial-1), 'pred');
+    end
+
     % Flip screen and present changes
     Screen('DrawingFinished', taskParam.display.window.onScreen);
     tUpdate = tUpdate + passiveViewingAnimation  / nFrames;

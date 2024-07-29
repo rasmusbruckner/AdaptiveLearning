@@ -16,6 +16,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Default parameters
             config.trialsExp = 20;
             config.practTrials = 5;
+            config.passiveViewingPractTrials = 10;
             config.passiveViewing = false; % test with true and false
             config.baselineFixLength = 0.25; 
             config.blockIndices = [1 51 101 151];
@@ -51,7 +52,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.instructionText = al_commonConfettiInstructionsDefaultText();
             config.noPtbWarnings = false;
             config.predSpotCircleTolerance = 2;
-
+           
             unitTest = al_unitTest();
             unitTest.run = true;
             unitTest.pred = [0; 0; 0; 0; 135; 90; 90; 90; 90; 288; 180; 180; 180; 180; 180; 270; 270; 270; 260; 130];
@@ -384,51 +385,32 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Timing
             % ------
 
-            % taskData.timestampOnset
-            % taskData.timestampPrediction
-            % taskData.timestampFixCross1
-            % taskData.timestampOutcome
-            % taskData.timestampShield
-            % taskData.timestampFixCross2
-            % taskData.timestampFixCross3
-            % taskData.timestampOffset
-
             % Difference prediction and trial onset
             expectedOnsetPredDiff = repmat(0.5, 20, 1);
             actualOnsetPredDiff = dataLowNoise_cBal1.timestampPrediction - dataLowNoise_cBal1.timestampOnset;
             testCase.verifyEqual(actualOnsetPredDiff, expectedOnsetPredDiff, 'AbsTol', 0.05)
             actualOnsetPredDiff = dataHighNoise_cBal1.timestampPrediction - dataHighNoise_cBal1.timestampOnset;
             testCase.verifyEqual(actualOnsetPredDiff, expectedOnsetPredDiff, 'AbsTol', 0.05)
-            expectedOnsetPredDiff = repmat(0.5, 20, 1);
             actualOnsetPredDiff = dataLowNoise_cBal2.timestampPrediction - dataLowNoise_cBal2.timestampOnset;
             testCase.verifyEqual(actualOnsetPredDiff, expectedOnsetPredDiff, 'AbsTol', 0.05)
             actualOnsetPredDiff = dataHighNoise_cBal2.timestampPrediction - dataHighNoise_cBal2.timestampOnset;
             testCase.verifyEqual(actualOnsetPredDiff, expectedOnsetPredDiff, 'AbsTol', 0.05)
     
             % Difference outcome and fixation-coss 2
-            expectedOutcFix2Diff = repmat(0.5, 20, 1);
+            tolerance = 0.05;
             actualOutcFix2Diff = dataLowNoise_cBal1.timestampFixCross2 - dataLowNoise_cBal1.timestampOutcome;
-            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
+            testCase.verifyLessThanOrEqual(actualOutcFix2Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualOutcFix2Diff, 0.0)
             actualOutcFix2Diff = dataHighNoise_cBal1.timestampFixCross2 - dataHighNoise_cBal1.timestampOutcome;
-            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
-            expectedOutcFix2Diff = repmat(0.5, 20, 1);
+            testCase.verifyLessThanOrEqual(actualOutcFix2Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualOutcFix2Diff, 0.0)
             actualOutcFix2Diff = dataLowNoise_cBal2.timestampFixCross2 - dataLowNoise_cBal2.timestampOutcome;
-            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
+            testCase.verifyLessThanOrEqual(actualOutcFix2Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualOutcFix2Diff, 0.0)
             actualOutcFix2Diff = dataHighNoise_cBal2.timestampFixCross2 - dataHighNoise_cBal2.timestampOutcome;
-            testCase.verifyEqual(actualOutcFix2Diff, expectedOutcFix2Diff, 'AbsTol', 0.05)
-    
-            % Difference shield and fixation-coss 3
-            expectedShieldFix3Diff = repmat(0.5, 20, 1);
-            actualShieldFix3Diff = dataLowNoise_cBal1.timestampFixCross3 - dataLowNoise_cBal1.timestampShield;
-            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
-            actualShieldFix3Diff = dataHighNoise_cBal1.timestampFixCross3 - dataHighNoise_cBal1.timestampShield;
-            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
-            expectedShieldFix3Diff = repmat(0.5, 20, 1);
-            actualShieldFix3Diff = dataLowNoise_cBal2.timestampFixCross3 - dataLowNoise_cBal2.timestampShield;
-            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
-            actualShieldFix3Diff = dataHighNoise_cBal2.timestampFixCross3 - dataHighNoise_cBal2.timestampShield;
-            testCase.verifyEqual(actualShieldFix3Diff, expectedShieldFix3Diff, 'AbsTol', 0.05)
-
+            testCase.verifyLessThanOrEqual(actualOutcFix2Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualOutcFix2Diff, 0.0)
+            
             % Actual onset jitter
             testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterOnset, 0.5)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterOnset, 0.0)
@@ -439,30 +421,63 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterOnset, 0.5)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterOnset, 0.0)
 
-            % Actual outcome jitter with tolerance
-            testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterOutcome, 2.0)
+            % Difference shield and fixation-coss 3
+            actualShieldFix3Diff = dataLowNoise_cBal1.timestampFixCross3 - dataLowNoise_cBal1.timestampShield;
+            testCase.verifyLessThanOrEqual(actualShieldFix3Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualShieldFix3Diff, 0.0)
+            actualShieldFix3Diff = dataHighNoise_cBal1.timestampFixCross3 - dataHighNoise_cBal1.timestampShield;
+            testCase.verifyLessThanOrEqual(actualShieldFix3Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualShieldFix3Diff, 0.0)
+            actualShieldFix3Diff = dataLowNoise_cBal2.timestampFixCross3 - dataLowNoise_cBal2.timestampShield;
+            testCase.verifyLessThanOrEqual(actualShieldFix3Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualShieldFix3Diff, 0.0)
+            actualShieldFix3Diff = dataHighNoise_cBal2.timestampFixCross3 - dataHighNoise_cBal2.timestampShield;
+            testCase.verifyLessThanOrEqual(actualShieldFix3Diff, 0.8 + tolerance)
+            testCase.verifyGreaterThanOrEqual(actualShieldFix3Diff, 0.0)
+
+            % Actual jitter fixation cross outcome with tolerance
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossOutcome, 2.0)
+            testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossOutcome, 0.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterFixCrossOutcome, 2.0)
+            testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal1.actJitterFixCrossOutcome, 0.0)
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal2.actJitterFixCrossOutcome, 2.0)
+            testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal2.actJitterFixCrossOutcome, 0.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossOutcome, 2.0)
+            testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossOutcome, 0.0)
+
+            % Actual jitter fixation cross outcome with tolerance
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterOutcome, 0.15)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterOutcome, 0.0)
-            testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterOutcome, 2.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterOutcome, 0.15)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal1.actJitterOutcome, 0.0)
-            testCase.verifyLessThanOrEqual(dataLowNoise_cBal2.actJitterOutcome, 2.0)
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal2.actJitterOutcome, 0.15)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal2.actJitterOutcome, 0.0)
-            testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterOutcome, 2.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterOutcome, 0.15)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterOutcome, 0.0)
 
-            % Actual shield jitter with tolerance
-            testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterShield, 0.6)
+            % Actual jitter fixation cross shield with tolerance
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossShield, 0.6)
+            testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossShield, 0.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterFixCrossShield, 0.6)
+            testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal1.actJitterFixCrossShield, 0.0)
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal2.actJitterFixCrossShield, 0.6)
+            testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal2.actJitterFixCrossShield, 0.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossShield, 0.6)
+            testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossShield, 0.0)
+
+            % Actual jitter fixation cross outcome with tolerance
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterShield, 0.15)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterShield, 0.0)
-            testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterShield, 0.6)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterShield, 0.15)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal1.actJitterShield, 0.0)
-            testCase.verifyLessThanOrEqual(dataLowNoise_cBal2.actJitterShield, 0.6)
+            testCase.verifyLessThanOrEqual(dataLowNoise_cBal2.actJitterShield, 0.15)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal2.actJitterShield, 0.0)
-            testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.6)
-            testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.0)
+            testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterShield, 0.15)
+            testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterOutcome, 0.0)
 
             % Display-object instance
             display = al_display();
             display.screensize = config.screenSize;
-
 
             % Rotation radius
             testCase.verifyEqual(dataLowNoise_cBal1.rotationRad, display.deg2pix(config.rotationRadDeg), 'AbsTol', 1)

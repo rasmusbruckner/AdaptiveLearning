@@ -220,6 +220,7 @@ timingParam = al_timing();
 % This is not equal to the first trial or so. So be carful when using
 % EEG or pupillometry and make sure the reference is specified as desired.
 timingParam.ref = GetSecs();
+timingParam.jitterFixCrossOutcome = 0; % we did not use jitter here
 
 % ----------------------------------------------
 % Create object instance with strings to display

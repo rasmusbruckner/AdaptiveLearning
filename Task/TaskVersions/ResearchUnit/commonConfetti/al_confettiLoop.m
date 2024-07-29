@@ -77,12 +77,6 @@ for i = 1:trial
         Eyelink('message', 'TRIALID %d', i);
     end
 
-    % % This is a pre-liminary test-trigger for MEG
-    % %% Todo: implement all triggers in al_sendTrigger
-    % if taskParam.gParam.meg
-    %     trigger(50);
-    % end
-
     % Save constant variables on each trial
     taskData.currTrial(i) = i;
     taskData.age(i) = taskParam.subject.age;
@@ -101,7 +95,13 @@ for i = 1:trial
 
     % Take jitter into account and get timestamps for initiation RT
     taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
+    
+    % taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+    taskData.actJitterFixCrossOutcome(i) = rand * taskParam.timingParam.jitterFixCrossOutcome;
     taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+
+    % taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
+    taskData.actJitterFixCrossShield(i) = rand * taskParam.timingParam.jitterFixCrossShield;
     taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
 
     % Onset jitter
@@ -287,7 +287,8 @@ for i = 1:trial
 
         % Tell PTB that everything has been drawn and flip screen
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterOutcome(i);
+        % timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterOutcome(i);
+        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterFixCrossOutcome(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
         % Send outcome trigger
@@ -307,7 +308,8 @@ for i = 1:trial
         % Tell PTB that everything has been drawn and flip screen
         fixationPhase(taskParam)
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        timestamp = timestamp + taskParam.timingParam.outcomeLength;
+        % timestamp = timestamp + taskParam.timingParam.outcomeLength;
+        timestamp = timestamp + taskParam.timingParam.outcomeLength + taskData.actJitterOutcome(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
         % Send fixation cross 2 trigger
@@ -334,7 +336,9 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterShield(i);
+    %timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterShield(i);
+    timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterFixCrossShield(i);
+
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send shield trigger
@@ -353,7 +357,8 @@ for i = 1:trial
         % Tell PTB that everything has been drawn and flip screen
         fixationPhase(taskParam, [222,222,222])
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        timestamp = timestamp + taskParam.timingParam.shieldLength;
+        % timestamp = timestamp + taskParam.timingParam.shieldLength;
+        timestamp = timestamp + taskParam.timingParam.shieldLength + taskData.actJitterShield(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
         % Send fixation cross 3 trigger

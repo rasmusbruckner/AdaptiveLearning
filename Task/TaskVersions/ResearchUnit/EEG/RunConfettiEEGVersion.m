@@ -50,7 +50,7 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
-    config.rotationRadDeg = 3.16;
+    config.rotationRadDeg = 2.5; %3.16;
     config.noPtbWarnings = false;
     config.predSpotCircleTolerance = 2;
 
@@ -278,8 +278,16 @@ keys.enter = enter;
 % Ensure this is properly documented in al_confettiEEGLoop
 timingParam = al_timing();
 timingParam.fixCrossOutcome = 1;
-timingParam.shieldLength = 0.5;
+timingParam.fixCrossShield = 1;
+timingParam.fixedITI = 0.9;
+timingParam.jitterFixCrossOutcome = 0.0;
+timingParam.jitterFixCrossShield = 0.0;
+timingParam.outcomeLength = 0.5;
 timingParam.rewardLength = 1.0;
+timingParam.jitterOutcome = 0.0;  %0.15;
+timingParam.jitterShield = 0.0; % 0.15; % we use this one for the reward phase 
+% for consistency with common task
+timingParam.jitterITI = 0.2;  
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using

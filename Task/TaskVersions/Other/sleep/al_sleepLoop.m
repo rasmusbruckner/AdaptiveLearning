@@ -164,7 +164,7 @@ for i = 1:trial
         taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
             
         % Sample fixation length
-        fixCossTemp = taskParam.timingParam.fixCrossOutcome + rand * taskParam.timingParam.jitterOutcome;
+        fixCossTemp = taskParam.timingParam.fixCrossOutcome + rand * taskParam.timingParam.jitterFixCrossOutcome; % taskParam.timingParam.jitterOutcome;
         WaitSecs(fixCossTemp);
         timestamp = timestamp + fixCossTemp;
         

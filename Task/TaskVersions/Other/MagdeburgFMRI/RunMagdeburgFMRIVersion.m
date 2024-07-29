@@ -258,7 +258,7 @@ if runIntro
     timingParam.fixedITI = 1;
 else
     timingParam.jitterITI = 4;
-    timingParam.jitterOutcome = 4;
+    timingParam.jitterFixCrossOutcome = 4;
     timingParam.fixCrossOutcome = 2;
     timingParam.fixedITI = 2;
 end

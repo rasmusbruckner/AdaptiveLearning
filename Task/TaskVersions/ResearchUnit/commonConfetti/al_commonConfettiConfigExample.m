@@ -13,6 +13,7 @@ config = struct();
 config.trialsExp = 2;
 config.practTrials = 2;
 config.passiveViewing = false;
+config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 51 101 151];
 config.runIntro = false;

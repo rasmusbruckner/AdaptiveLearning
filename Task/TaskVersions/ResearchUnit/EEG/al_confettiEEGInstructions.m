@@ -16,6 +16,7 @@ cBal = taskParam.subject.cBal;
 %taskParam.trialflow.cannon = 'show cannon'; % cannon will be displayed
 taskParam.trialflow.currentTickmarks = 'hide'; % tick marks initially not shown
 taskParam.trialflow.push = 'practiceNoPush'; % turn off push manipulation
+taskParam.trialflow.saveData = 'true';
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);

@@ -17,4 +17,4 @@ nTrials = 60;
 nBlocks = 6;
 
 % Compute expected length
-al_computeExperimentLength(expectedRT, timingParam, nTrials, nBlocks)
+al_computeExperimentLength(expectedRT, timingParam, nTrials, nBlocks, 'MagdeburgFMRI')

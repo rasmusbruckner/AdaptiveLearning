@@ -100,6 +100,7 @@ classdef al_unittests < matlab.unittest.TestCase
             taskParam.gParam.eyeTracker = false;
             taskParam.gParam.sendTrigger = false;
             taskParam.gParam.printTrigger = false;
+            taskParam.gParam.meg = false;
             
             % TaskData-object instance
             taskData = al_taskDataMain(200, condition);

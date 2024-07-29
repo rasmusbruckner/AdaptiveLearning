@@ -17,8 +17,10 @@ classdef al_timing
         outcomeLength % presentation of outcome 
         shieldLength % presentation of shield
         rewardLength % presentation of reward feedback        
-        jitterOutcome % length of jitter before outcome        
-        jitterShield % length of jitter before shield
+        jitterFixCrossOutcome % length of jitter before outcome
+        jitterOutcome % jitter outcome itself      
+        jitterFixCrossShield % length of jitter before shield
+        jitterShield % jitter shield itself
         jitterITI % length of jitter for ITI
         fixedITI % fixed inter-trial interval
         ref % reference for timing; timestamp recorded at beginning of study
@@ -48,15 +50,18 @@ classdef al_timing
             self.outcomeLength = 0.0;
             self.shieldLength = 0.0;
             self.rewardLength = 1.0;
-            self.jitterOutcome = 2;        
+            self.jitterFixCrossOutcome = 2;
+            self.jitterOutcome = 0.15;        
             self.jitterITI = 0.2;  
-            self.jitterShield = 0.6;
+            self.jitterFixCrossShield = 0.6;
+            self.jitterShield = 0.15;
             self.fixedITI = 0.9;
             self.ref = nan;
             self.baselineFixLength = 0.25;
             self.passiveViewingAnimationMean = 0.8;
             self.passiveViewingAnimationSD = 0.2;
-
+            
+            % Infant
             self.staticDuck = 1.0;
             self.movingDuck = 1.0;
             self.staticOutcome = 1.0;

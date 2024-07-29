@@ -59,6 +59,18 @@ for i = 1:trial
 
     % Take jitter into account and get timestamps for initiation RT
     taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
+    
+    % taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+    taskData.actJitterFixCrossOutcome(i) = rand * taskParam.timingParam.jitterFixCrossOutcome;
+    taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+
+    % taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
+    taskData.actJitterFixCrossShield(i) = rand * taskParam.timingParam.jitterFixCrossShield;
+    taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
+
+    % Onset jitter
+    % ------------
+
     WaitSecs(taskData.actJitterOnset(i));
     initRT_Timestamp = GetSecs();
 
@@ -152,23 +164,23 @@ for i = 1:trial
         al_drawFixPoint(taskParam)
     end
 
-    % Draw circle and confetti cloud
+    % Draw circle and confetti outcome
     al_drawCircle(taskParam)
-
-    % taskData = al_confetti(taskParam, taskData, i, background, timestamp);
+    al_tickMark(taskParam, taskData.pred(i), 'pred');
     al_confettiOutcome(taskParam, taskData, i)
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
+    % timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
+    timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterFixCrossOutcome(i);
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
-    % Send shield trigger
+    % Send outcome trigger
     taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, taskParam.trialflow.reward, i, 'outcome');
-    taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
+    taskData.timestampOutcome(i) = GetSecs - taskParam.timingParam.ref;
 
     if taskParam.gParam.printTiming
-        fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross1(i))
+        fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross1(i))
     end
 
     % 5. Trial phase: Fixation cross 2
@@ -186,7 +198,8 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.shieldLength;
+    % Using same jitter as for common task outcome
+    timestamp = timestamp + taskParam.timingParam.outcomeLength + taskData.actJitterOutcome(i);
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send fixation cross 2 trigger
@@ -194,7 +207,7 @@ for i = 1:trial
     taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
 
     if taskParam.gParam.printTiming
-        fprintf('Shield duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampShield(i))
+        fprintf('Shield duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
     end
 
     % 6. Trial phase: Reward
@@ -249,7 +262,8 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.fixCrossOutcome;
+    % Using same jitter as for common task fixation cross shield
+    timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterFixCrossShield(i);
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send reward trigger
@@ -276,7 +290,8 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    timestamp = timestamp + taskParam.timingParam.rewardLength;
+    % Using same jitter as for common task shield phase
+    timestamp = timestamp + taskParam.timingParam.rewardLength + taskData.actJitterShield(i); 
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send fixation cross 3 trigger

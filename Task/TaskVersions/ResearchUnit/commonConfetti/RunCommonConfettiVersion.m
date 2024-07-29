@@ -329,16 +329,18 @@ keys.five = five;
 % ---------------------------------------------
 
 timingParam = al_timing();
+timingParam.baselineFixLength = baselineFixLength;
 timingParam.cannonBallAnimation = 0.9;
 timingParam.fixCrossOutcome = 2;
 timingParam.fixCrossShield = 0.7;
 timingParam.fixedITI = 1.0;
-timingParam.jitterOutcome = 2;
-timingParam.jitterShield = 0.6;
+timingParam.jitterFixCrossOutcome = 2;
+timingParam.jitterFixCrossShield = 0.6;
+timingParam.outcomeLength = 0.65; % 0.5;
+timingParam.jitterOutcome = 0.15; % 2;
+timingParam.shieldLength = 0.65; % 0.5;
+timingParam.jitterShield = 0.15; % 0.6;
 timingParam.jitterITI = 0.5;
-timingParam.outcomeLength = 0.5;
-timingParam.shieldLength = 0.5;
-timingParam.baselineFixLength = baselineFixLength;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using

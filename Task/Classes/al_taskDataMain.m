@@ -42,9 +42,11 @@ classdef al_taskDataMain
         currTrial % trial number
         block % block number
         allShieldSize% all angular shield size
+        actJitterFixCrossOutcome % actual outcome jitter on each trial
+        actJitterFixCrossShield % actual shield jitter on each trial
         actJitterOnset % actual onset jitter on each trial
-        actJitterOutcome % actual outcome jitter on each trial
-        actJitterShield % actual shield jitter on each trial
+        actJitterOutcome % actual fixation cross outcome jitter
+        actJitterShield % actual fixation cross shield jitter
         cp % changepoint index
         cpVar % variance changepoint index
         cpRew % reward-distribution-changepoint index
@@ -828,7 +830,7 @@ classdef al_taskDataMain
 
                 s.timestampOnset = self.timestampOnset;
                 s.timestampPrediction = self.timestampPrediction;
-                s.timestampShield = self.timestampShield;
+                s.timestampOutcome = self.timestampOutcome;
                 s.timestampReward = self.timestampReward;
                 s.timestampFixCross1 = self.timestampFixCross1;
                 s.timestampFixCross2 = self.timestampFixCross2;
