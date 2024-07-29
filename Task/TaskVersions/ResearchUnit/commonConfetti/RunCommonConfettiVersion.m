@@ -217,15 +217,15 @@ end
 % Degrees visual angle
 % -------------------
 
-predSpotDiamDeg = 0.4519; % 0.2638;
-fixSpotDiamDeg = 0.4519; % 0.2638;
-circleWidthDeg = 0.2259; % 0.1319;
-tickLengthPredDeg = 0.9037; % 0.5276;
-tickLengthOutcDeg = 0.6778; % 0.3957;
-tickLengthShieldDeg = 1.1296; % 0.6595;
-particleSizeDeg = 0.1;% 0.08;  % todo just same value for sCloud?
-confettiStdDeg = 0.13; % 0.1356;
-imageRectDeg = [0 0 1.0843 3.6076]; % [0 0 1.3554 4.5095]; % [0 0 0.7913 2.6361];
+predSpotDiamDeg = 0.45;
+fixSpotDiamDeg = 0.45;
+circleWidthDeg = 0.25; 
+tickLengthPredDeg = 0.9;
+tickLengthOutcDeg = 0.7; 
+tickLengthShieldDeg = 1.1;
+particleSizeDeg = 0.1;
+confettiStdDeg = 0.13;
+imageRectDeg = [0 0 1.1 3.7];
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
