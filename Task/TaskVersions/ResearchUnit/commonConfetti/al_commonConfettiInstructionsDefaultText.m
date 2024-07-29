@@ -317,7 +317,8 @@ classdef al_commonConfettiInstructionsDefaultText
             % First pupil baseline
             if isequal(self.language, 'German')
                 self.firstPupilBaselineHeader = 'Erste Pupillenmessung';
-                self.firstPupilBaseline = ['Include correct instructions here'];
+                self.firstPupilBaseline = ['Sie werden jetzt für drei Minuten verschiedene Farben auf dem Bildschirm sehen. '...
+                    'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.'];
             elseif isequal(self.language, 'English')
                 self.firstPupilBaselineHeader = 'First Pupil Assessment';
                 self.firstPupilBaseline = ['Include correct instructions here'];
@@ -328,7 +329,8 @@ classdef al_commonConfettiInstructionsDefaultText
             % Second pupil baseline
             if isequal(self.language, 'German')
                 self.secondPupilBaselineHeader = 'Zweite Pupillenmessung';
-                self.secondPupilBaseline = ['Include correct instructions here'];
+                self.secondPupilBaseline = ['Sie werden jetzt noch mal für drei Minuten verschiedene Farben auf dem Bildschirm sehen. '...
+                    'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.'];
             elseif isequal(self.language, 'English')
                 self.secondPupilBaselineHeader = 'Second Pupil Assessment';
                 self.secondPupilBaseline = ['Include correct instructions here'];
@@ -380,8 +382,8 @@ classdef al_commonConfettiInstructionsDefaultText
 
             self.introducePassiveViewingHeader = 'Beobachtungsaufgabe';
             self.introducePassiveViewing = ['Versuchen Sie in dieser Aufgabe bitte in die Mitte '...
-            'des Bildschirms zu fixieren. Es ist wichtig, dass Sie Ihre Augen nicht bewegen!\n\n'...
-            'Versuchen Sie nur zu blinzeln, wenn der weiße Punkt erscheint.'];
+                'des Bildschirms zu fixieren. Es ist wichtig, dass Sie Ihre Augen nicht bewegen!\n\n'...
+                'Versuchen Sie nur zu blinzeln, wenn der weiße Punkt erscheint.'];
 
         end
 

@@ -88,8 +88,7 @@ classdef al_keys
             %
             %   Output
             %       None
-
-
+            
             % Extract variables
             eyeTracker = taskParam.gParam.eyeTracker;
 
@@ -114,7 +113,7 @@ classdef al_keys
                 end
                 
                 % Behavioral
-                if isequal(taskParam.trialflow.saveData, 'true') && isempty(taskData) == false
+                if isequal(taskParam.trialflow.saveData, 'true') && exist('taskData', 'var') == true
                     al_saveData(taskData)
                 end
 

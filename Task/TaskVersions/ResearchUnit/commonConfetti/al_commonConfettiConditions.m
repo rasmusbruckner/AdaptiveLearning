@@ -96,7 +96,8 @@ if taskParam.gParam.baselineArousal
         txt = taskParam.instructionText.firstPupilBaseline;
     else
         header = 'Erste Pupillenmessung';
-        txt=['Include correct instructions here'];
+        txt=['Sie werden jetzt für drei Minuten verschiedene Farben auf dem Bildschirm sehen. '...
+            'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.'];
     end
 
     feedback = false; % indicate that this is the instruction mode
@@ -117,18 +118,18 @@ totWin = 0;
 if cBal == 1
 
     % Low noise first...
-    [totWin, dataLowNoise] = blockLoop(taskParam, totWin, 1, 1);
+    [totWin, dataLowNoise] = blockLoop(taskParam, totWin, 1, 1, passiveViewingCondition);
 
     % ... high noise second
-    [totWin, dataHighNoise] = blockLoop(taskParam, totWin, 2, 2);
+    [totWin, dataHighNoise] = blockLoop(taskParam, totWin, 2, 2, passiveViewingCondition);
 
 elseif cBal == 2
 
     % High noise first...
-    [totWin, dataHighNoise] = blockLoop(taskParam, totWin, 2, 1);
+    [totWin, dataHighNoise] = blockLoop(taskParam, totWin, 2, 1, passiveViewingCondition);
 
     % ... low noise second
-    [totWin, dataLowNoise] = blockLoop(taskParam, totWin, 1, 2);
+    [totWin, dataLowNoise] = blockLoop(taskParam, totWin, 1, 2, passiveViewingCondition);
 
 end
 
@@ -144,7 +145,8 @@ if taskParam.gParam.baselineArousal
         txt = taskParam.instructionText.secondPupilBaseline;
     else
         header = 'Zweite Pupillenmessung';
-        txt=['Include correct instructions here'];
+        txt = ['Sie werden jetzt noch mal für drei Minuten verschiedene Farben auf dem Bildschirm sehen. '...
+            'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.']; 
     end
 
     feedback = false; % indicate that this is the instruction mode
@@ -167,7 +169,7 @@ end
 % end
 
 
-function [totWin, allTaskData] = blockLoop(taskParam, totWin, noiseCondition, half)
+function [totWin, allTaskData] = blockLoop(taskParam, totWin, noiseCondition, half, passiveViewingCondition)
 %BLOCKLOOP This function loops over task blocks for a given noise condition
 %
 %   Input
@@ -216,9 +218,9 @@ for b = 1:taskParam.gParam.nBlocks
 
     % Indicate condition
     if noiseCondition == 1
-        al_indicateNoise(taskParam, 'lowNoise', true, false)
+        al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
     elseif noiseCondition == 2
-        al_indicateNoise(taskParam, 'highNoise', true, false)
+        al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
     end
 
     % Run task

@@ -14,6 +14,7 @@ config = struct();
 
 % Add desired parameters
 config.trialsExp = 5; % we will do 50 trials
+config.nBlocks = 1;
 config.practTrials = 2;
 config.passiveViewingPractTrials = 10;
 config.passiveViewing = true;
