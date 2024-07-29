@@ -81,11 +81,53 @@ classdef al_eyeTracker
             %
             %   Output
             %       self: eye-tracker-object instance
+            %
+            % Credit: Donner lab
 
 
             o = tan(0.5*pi/180)*self.dist; % self.dist = distance from screen (cm)
             self.ppd = 2*o*self.resolutionX/self.width; % options.resolution(1) = x resolution (in pixels); self.width = width of screen (cm)
 
+        end
+
+        function sacc = checkSaccade(eye, xc, yc, ppd)
+            % CHECKSACCADE This function detects saccades online
+            %
+            %   Input
+            %       eye: Tracked eye
+            %       xc: x fixation position
+            %       yc: y fixation position
+            %       ppd: Estimated pixels per degree
+            %
+            %   Output
+            %       sacc: Detected saccades
+            %
+            %   Credit: Donner lab
+
+            % Short break
+            pause(0.002)
+            
+            % Initialize saccade variable
+            sacc = 0;
+
+            % Extract samples from eye-link
+            [samples, ~, ~] = Eyelink('GetQueuedData');
+            
+            % Extract relevant samples depending on tracked eye
+            if eye==0
+                x = (samples(14,:)-xc)/ppd;
+                y = (samples(16,:)-yc)/ppd;
+            else
+                x = (samples(15,:)-xc)/ppd;
+                y = (samples(17,:)-yc)/ppd;
+            end
+            
+            % Compute deviation from fixation spot and categorize saccades
+            d = (x.^2 + y.^2).^.5;
+            a = d(2:length(d));
+            if any(a>4)
+                sacc = 1;
+            end
         end
     end
 
