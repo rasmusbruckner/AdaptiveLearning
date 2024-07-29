@@ -210,7 +210,7 @@ for b = 1:taskParam.gParam.nBlocks
             file_name_suffix = sprintf('b%i', b);
         elseif half == 2
             taskData.block(:) = b + taskParam.gParam.nBlocks;
-            file_name_suffix = sprintf('b%i' + taskParam.gParam.nBlocks);
+            file_name_suffix = sprintf('b%i', b + taskParam.gParam.nBlocks);
 
         else 
             error('half parameter undefined')
