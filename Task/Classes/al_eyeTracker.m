@@ -90,14 +90,12 @@ classdef al_eyeTracker
 
         end
 
-        function sacc = checkSaccade(eye, xc, yc, ppd)
+        function sacc = checkSaccade(eye, zero)
             % CHECKSACCADE This function detects saccades online
             %
             %   Input
             %       eye: Tracked eye
-            %       xc: x fixation position
-            %       yc: y fixation position
-            %       ppd: Estimated pixels per degree
+            %       zero: central fixation position
             %
             %   Output
             %       sacc: Detected saccades
@@ -115,11 +113,11 @@ classdef al_eyeTracker
             
             % Extract relevant samples depending on tracked eye
             if eye==0
-                x = (samples(14,:)-xc)/ppd;
-                y = (samples(16,:)-yc)/ppd;
+                x = (samples(14,:)-zero(1))/self.ppd;
+                y = (samples(16,:)-zero(2))/self.ppd;
             else
-                x = (samples(15,:)-xc)/ppd;
-                y = (samples(17,:)-yc)/ppd;
+                x = (samples(15,:)-zero(1))/self.ppd;
+                y = (samples(17,:)-zero(2))/self.ppd;
             end
             
             % Compute deviation from fixation spot and categorize saccades

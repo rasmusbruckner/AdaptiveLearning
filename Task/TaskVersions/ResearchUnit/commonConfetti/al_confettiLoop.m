@@ -66,6 +66,11 @@ end
 % Indicate if passive viewing or not to determine what to save later on
 taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
 
+if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
+    eyeused = Eyelink('EyeAvailable');
+    sacc = []; % and initializing saccade counter
+end
+
 % Cycle over trials
 % -----------------
 
@@ -348,6 +353,10 @@ for i = 1:trial
     % Display timing info in console
     if taskParam.gParam.printTiming && isequal(taskParam.trialflow.shot, 'static')
         fprintf('Fixation-cross 2 duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross2(i))
+    end
+
+    if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
+        sacc(end+1) = taskParam.eyeTracker.checkSaccade(eyeused, taskParam.display.zero); 
     end
 
     % Fixation cross (static version)

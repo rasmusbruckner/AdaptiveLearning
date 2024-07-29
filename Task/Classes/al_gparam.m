@@ -60,6 +60,7 @@ classdef al_gparam
         scanner % indicates if experiment takes place in scanner        
         meg % indicates if experiment takes place with MEG
         eyeTracker % indicates if experiment takes place with eyeTracker
+        onlineSaccades % indicates if we track saccades during task
         uke % indicates uke fMRI scanner
         joy % potentially temporary joystick variable
         useResponseThreshold % determine if we use threshold for max response time
