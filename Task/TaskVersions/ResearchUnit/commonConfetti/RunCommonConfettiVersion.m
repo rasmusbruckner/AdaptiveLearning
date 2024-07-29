@@ -58,6 +58,7 @@ if ~exist('config', 'var') || isempty(config)
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
     config.scanner = false;
     config.eyeTracker = false;
+    config.onlineSaccades = true;
     config.useDegreesVisualAngle = true;
     config.distance2screen = 700;
     config.screenWidthInMM = 309.40;
@@ -128,6 +129,8 @@ printTiming = config.printTiming; % print timing for checking
 hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
 eyeTracker = config.eyeTracker; % doing eye-tracking?
+onlineSaccades = config.onlineSaccades; % online saccades tracking?
+saccThresh = config.saccThres;
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
 distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
@@ -264,6 +267,7 @@ gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.meg = meg;
 gParam.eyeTracker = eyeTracker;
+gParam.onlineSaccades = onlineSaccades;
 gParam.sendTrigger = sendTrigger;
 gParam.scanner = scanner;
 gParam.uke = uke;
@@ -569,6 +573,9 @@ eyeTracker.width = screenWidthInMM / 10;
 eyeTracker.height = screenHeightInMM / 10;
 eyeTracker.frameDur = Screen('GetFlipInterval', display.window.onScreen);
 eyeTracker.frameRate = Screen('NominalFrameRate', display.window.onScreen);
+eyeTracker.resolutionX = screensize(3);
+eyeTracker = eyeTracker.estimatePixelsPerDegree;
+eyeTracker.saccThres = saccThresh;
 
 % ---------------------------------------
 % Put all object instances in task object

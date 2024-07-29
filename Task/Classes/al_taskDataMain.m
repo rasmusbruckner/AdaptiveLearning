@@ -117,6 +117,9 @@ classdef al_taskDataMain
         % Save name
         savename
 
+        % Online saccade detection
+        sacc
+
     end
 
     % Methods of the taskDataMain object
@@ -226,6 +229,9 @@ classdef al_taskDataMain
 
             % Stimuli
             self.rotationRad = nan;
+
+            % Online saccade detection
+            self.sacc = nan(trials, 1);
 
         end
 
@@ -816,6 +822,7 @@ classdef al_taskDataMain
                 s.timestampOffset = self.timestampOffset;
                 s.triggers = self.triggers;
 
+                s.sacc = self.sacc;
                 s.rotationRad = self.rotationRad;
                 s.passiveViewing = self.passiveViewing;
 

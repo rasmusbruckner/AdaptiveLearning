@@ -15,6 +15,10 @@ classdef al_eyeTracker
         frameDur % duration of one frame
         frameRate % in Hz
         et_file_name % current file name
+        ppd % estimated pixels per degree
+        resolutionX % x resolution (in pixels)
+        saccThres % threshold value
+            
     end
 
     % Methods of the eye-tracker object
@@ -38,7 +42,7 @@ classdef al_eyeTracker
             self.height = 21;
             self.frameDur = Screen('GetFlipInterval', display.window.onScreen);
             self.frameRate = Screen('NominalFrameRate', display.window.onScreen);
-
+            self.saccThres = 1;
         end
 
         function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
@@ -69,6 +73,60 @@ classdef al_eyeTracker
 
         end
 
+        function self = estimatePixelsPerDegree(self)
+            % ESTIMATEPIXELSPERDEGREE This function estimates the number of
+            % pixels per degree for online saccade detection
+            %
+            %   Input
+            %       self: eye-tracker-object instance
+            %
+            %   Output
+            %       self: eye-tracker-object instance
+            %
+            % Credit: Donner lab
+
+
+            o = tan(0.5*pi/180)*self.dist; % self.dist = distance from screen (cm)
+            self.ppd = 2*o*self.resolutionX/self.width; % options.resolution(1) = x resolution (in pixels); self.width = width of screen (cm)
+
+        end
+
+        function sacc = checkSaccade(self, eye, zero)
+            % CHECKSACCADE This function detects saccades online
+            %
+            %   Input
+            %       eye: Tracked eye
+            %       zero: central fixation position
+            %
+            %   Output
+            %       sacc: Detected saccades
+            %
+            %   Credit: Donner lab
+
+            % Short break
+            pause(0.002)
+
+            % Extract samples from eye-link
+            [samples, ~, ~] = Eyelink('GetQueuedData');
+            
+            % Extract relevant samples depending on tracked eye
+            if eye==0
+                x = (samples(14,:)-zero(1))/self.ppd;
+                y = (samples(16,:)-zero(2))/self.ppd;
+            else
+                x = (samples(15,:)-zero(1))/self.ppd;
+                y = (samples(17,:)-zero(2))/self.ppd;
+            end
+            
+            % Compute deviation from fixation spot and categorize saccades
+            d = (x.^2 + y.^2).^.5;
+            a = d(2:length(d));
+            if any(a>self.saccThres)
+                sacc = 1;
+            else 
+                sacc = 0;
+            end
+        end
     end
 
     methods(Static)

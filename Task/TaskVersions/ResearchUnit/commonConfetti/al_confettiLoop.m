@@ -25,7 +25,7 @@ elseif isequal(taskParam.gParam.saveName, 'asymmetric')
     taskData.savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
 else
     concentration = unique(taskData.concentration);
-    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
+    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
 end
 
 % Wait until keys released
@@ -65,6 +65,10 @@ end
 
 % Indicate if passive viewing or not to determine what to save later on
 taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
+
+if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
+    eyeused = Eyelink('EyeAvailable');
+end
 
 % Cycle over trials
 % -----------------
@@ -350,6 +354,10 @@ for i = 1:trial
         fprintf('Fixation-cross 2 duration: %.5f\n', taskData.timestampShield(i) - taskData.timestampFixCross2(i))
     end
 
+    if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
+        taskData.sacc(i) = taskParam.eyeTracker.checkSaccade(eyeused, taskParam.display.zero); 
+    end
+
     % Fixation cross (static version)
     % -------------------------------
     if isequal(taskParam.trialflow.shot, 'static')
@@ -411,6 +419,14 @@ if ~taskParam.unitTest.run
         Eyelink('StopRecording');
     end
 
+    % Save behavioral data
+    % --------------------
+
+    al_saveData(taskData)
+
+    % Give feedback
+    % -------------
+
     if isequal(taskParam.trialflow.reward, 'asymmetric') == false && taskParam.gParam.passiveViewing == false
         currPoints = nansum(taskData.hit);
         % The above is included for backward compatibility. In future, when all
@@ -446,10 +462,12 @@ if ~taskParam.unitTest.run
     feedback = true;
     al_bigScreen(taskParam, header, txt, feedback);
 
-    % Save data
-    %----------
-
-    al_saveData(taskData)
+    if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
+        feedback = true;
+        header = 'Information zu Ihren Augenbewegungen';
+        txt = sprintf('In diesem Block haben Sie %d Mal weggeschaut.', sum(taskData.sacc));
+        al_bigScreen(taskParam, header, txt, feedback);
+    end
 
     % Wait until keys released
     KbReleaseWait();
