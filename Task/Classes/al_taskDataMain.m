@@ -811,8 +811,8 @@ classdef al_taskDataMain
                 s.initialTendency = self.initialTendency;
                 s.timestampOnset = self.timestampOnset;
                 s.timestampPrediction = self.timestampPrediction;
-                s.actJitterOutcome = self.actJitterOutcome;
-                s.actJitterShield = self.actJitterShield;
+                % s.actJitterOutcome = self.actJitterOutcome;
+                % s.actJitterShield = self.actJitterShield;
 
                 s.timestampFixCross1 = self.timestampFixCross1;
                 s.timestampFixCross2 = self.timestampFixCross2;
