@@ -25,7 +25,7 @@ elseif isequal(taskParam.gParam.saveName, 'asymmetric')
     taskData.savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
 else
     concentration = unique(taskData.concentration);
-    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
+    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
 end
 
 % Wait until keys released
@@ -76,7 +76,7 @@ end
 for i = 1:trial
 
     % Presenting trial number at the bottom of the eyetracker display - optional
-    if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
+    if taskParam.gParam.eyeTracker
         Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, trial);
         Eyelink('message', 'TRIALID %d', i);
     end
@@ -412,7 +412,7 @@ if ~taskParam.unitTest.run
     % Save Eyelink data
     % -----------------
     
-    if taskParam.gParam.eyeTracker
+    if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.saveEtData, 'true')
         et_path = pwd;
         et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
         al_saveEyelinkData(et_path, et_file_name)

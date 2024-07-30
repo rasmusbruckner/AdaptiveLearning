@@ -59,7 +59,7 @@ elseif runIntro && passiveViewingCondition
         'Versuchen Sie nur zu blinzeln, wenn der weiße Punkt erscheint. Während dieser Übung '...
         'wird der Versuchsleiter Sie darauf hinweisen.'];
     al_bigScreen(taskParam, 'Übung', txt, true);
-    al_confettiLoop(taskParam, 'main', taskDataPassiveViewingPract, taskParam.gParam.passiveViewingPractTrials, '');
+    al_confettiLoop(taskParam, 'main', taskDataPassiveViewingPract, taskParam.gParam.passiveViewingPractTrials, '_p0');
 
 end
 
@@ -104,7 +104,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam, 'a1')
+    al_baselineArousal(taskParam, '_a1')
 
 end
 
@@ -153,7 +153,7 @@ if taskParam.gParam.baselineArousal
     al_bigScreen(taskParam, header, txt, feedback, 2);
 
     % Meaure baseline arousal
-    al_baselineArousal(taskParam, 'a2')
+    al_baselineArousal(taskParam, '_a2')
 
 end
 end
@@ -207,11 +207,18 @@ for b = 1:taskParam.gParam.nBlocks
         % Update block number
         if half == 1
             taskData.block(:) = b;
-            file_name_suffix = sprintf('b%i', b);
+            if passiveViewingCondition == false
+                file_name_suffix = sprintf('_b%i', b);
+            else
+                file_name_suffix = sprintf('_p%i', b);
+            end
         elseif half == 2
             taskData.block(:) = b + taskParam.gParam.nBlocks;
-            file_name_suffix = sprintf('b%i', b + taskParam.gParam.nBlocks);
-
+            if passiveViewingCondition == false
+                file_name_suffix = sprintf('_b%i', b + taskParam.gParam.nBlocks);
+            else
+                file_name_suffix = sprintf('_p%i', b + taskParam.gParam.nBlocks);
+            end
         else 
             error('half parameter undefined')
         end

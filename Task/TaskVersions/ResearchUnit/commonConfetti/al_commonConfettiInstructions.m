@@ -19,6 +19,7 @@ taskParam.trialflow.shot = 'animate cannonball'; % in instructions, we animate t
 taskParam.trialflow.colors = 'colorful';
 taskParam.trialflow.exp = 'pract'; % ensure that no triggers are sent during practice
 taskParam.trialflow.saveData = 'false';
+taskParam.trialflow.saveEtData = 'false';
 
 % Set text size and font
 Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);

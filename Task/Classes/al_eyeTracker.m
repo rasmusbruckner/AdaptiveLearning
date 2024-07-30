@@ -56,7 +56,7 @@ classdef al_eyeTracker
             %       el: Eye-link object
 
 
-            self.et_file_name = sprintf('%s_%s', taskParam.subject.ID, et_file_name_suffix);
+            self.et_file_name = sprintf('%s%s', taskParam.subject.ID, et_file_name_suffix);
             self.et_file_name = [self.et_file_name]; % todo: check if this is really necessary
 
             % Todo test if we can also pass object instead instead of new structure
