@@ -173,15 +173,16 @@ end
 % Degrees visal angle
 % -------------------
 
-predSpotDiamDeg = 0.4519;
-fixSpotDiamDeg = 0.4519;
-circleWidthDeg = 0.2259;
-tickLengthPredDeg = 0.9037;
-tickLengthOutcDeg = 0.6778;
-tickLengthShieldDeg = 1.1296;
+predSpotDiamDeg = 0.45;
+fixSpotDiamDeg = 0.45;
+circleWidthDeg = 0.2; 
+tickLengthPredDeg = 0.9;
+tickLengthOutcDeg = 0.7; 
+tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.13;
-imageRectDeg = [0 0 1.0843 3.6076];
+confettiStdDeg = 0.1;
+imageRectDeg = [0 0 1.1 3.7];
+
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -489,14 +490,22 @@ taskParam.subject = subject;
 taskParam.unitTest = unitTest;
 taskParam.triggers = triggers;
 
-% Check and update background rgb
-%% todo: check difference to common version in terms of pixels etc.
-% colors = colors.computeBackgroundColor(taskParam);
-expectedVal = [145.0035 142.1199 146.3924];
-% if any((expectedVal == colors.background) == 0)
-%     error('Specified background color and stimulus average not equal. Check if anything was updated accidentally!')
-% end
+% Check and update background rgb:
+% It turns out that depending on screen resolution, the exactly ideal
+% background values are slightly different. But for research unit it is
+% more important to use the same values for comparability. We therefore use
+% fixed values based on a common screen. But it is recommended to check if these values strongly
+% differ from your set-up. Therefore, we print out a warning. 
+
+colors = colors.computeBackgroundColor(taskParam);
+expectedVal = [137 137 137];
+
+warning('Ensure that background RGB color computed for your display is close to actual values')
+
+fprintf('\n\nComputed values: %i %i %i', colors.background(1), colors.background(2), colors.background(3));
+
 taskParam.colors.background = expectedVal;
+fprintf('\n\nUsed values: %i %i %i', taskParam.colors.background(1), taskParam.colors.background(2), taskParam.colors.background(3));
 Screen('FillRect', display.window.onScreen, colors.background);
 Screen('Flip', taskParam.display.window.onScreen);
 
