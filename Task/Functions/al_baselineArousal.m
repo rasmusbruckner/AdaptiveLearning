@@ -70,9 +70,16 @@ end
 % Save Eyelink data
 % -----------------
 
-if taskParam.gParam.eyeTracker
+if taskParam.gParam.eyeTracker% && isequal(taskParam.trialflow.saveEtData, 'true')
     et_path = pwd;
-    et_file_name=[et_file_name, '.edf'];
+    et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
     al_saveEyelinkData(et_path, et_file_name)
     Eyelink('StopRecording');
 end
+
+% if taskParam.gParam.eyeTracker
+%     et_path = pwd;
+%     et_file_name=[et_file_name, '.edf'];
+%     al_saveEyelinkData(et_path, et_file_name)
+%     Eyelink('StopRecording');
+% end
