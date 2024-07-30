@@ -1,4 +1,4 @@
-function al_baselineArousal(taskParam, blockNumber)
+function al_baselineArousal(taskParam, file_name_suffix)
 %AL_BASELINEAROUSAL This function presents the screens to measure baseline
 % arousal
 %
@@ -7,14 +7,14 @@ function al_baselineArousal(taskParam, blockNumber)
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       blockNumber: That is, 1st or 2nd baseline session
+%       file_name_suffix: 1st or 2nd baseline session
 %
 %   Output
 %       None
 
 % Initialize and start eye-tracker
 if taskParam.gParam.eyeTracker
-    [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam, blockNumber);
+    taskParam.eyeTracker = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
 end
 
