@@ -25,7 +25,7 @@ elseif isequal(taskParam.gParam.saveName, 'asymmetric')
     taskData.savename = sprintf('confetti_asymrew_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID);
 else
     concentration = unique(taskData.concentration);
-    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s_%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
+    taskData.savename = sprintf('commonConfetti_%s_g%d_conc%d_%s%s', taskParam.trialflow.exp, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
 end
 
 % Wait until keys released
