@@ -130,7 +130,8 @@ classdef al_trialflow
             % blackwhite: alternative version for pupillometry
 
         % Save data
-        saveData
+        saveData % behavioral
+        saveEtData % eye-tracking
             % true
             % false
     end
@@ -166,6 +167,7 @@ classdef al_trialflow
             self.currentTickmarks = 'standard';
             self.colors = 'colorful';
             self.saveData = 'true';
+            self.saveEtData = 'true';
         end
     end
     

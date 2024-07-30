@@ -100,7 +100,7 @@ classdef al_keys
                 % ----------------------------------
 
                 % Eye-tracker
-                if eyeTracker && isequal(taskParam.trialflow.saveData, 'true')
+                if eyeTracker && isequal(taskParam.trialflow.saveEtData, 'true')
 
                     et_file_name = taskParam.eyeTracker.et_file_name;
 
