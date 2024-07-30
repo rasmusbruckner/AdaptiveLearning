@@ -56,16 +56,18 @@ if ~exist('config', 'var') || isempty(config)
     config.printTiming = true;
     config.hidePtbCursor = true;
     config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
+    config.meg = false;
     config.scanner = false;
     config.eyeTracker = false;
     config.onlineSaccades = true;
+    config.saccThres = 0.7;
     config.useDegreesVisualAngle = true;
     config.distance2screen = 700;
     config.screenWidthInMM = 309.40;
     config.screenHeightInMM = 210;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
-    config.rotationRadDeg = 3.16;
+    config.rotationRadDeg = 2.5;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
@@ -136,6 +138,7 @@ distance2screen = config.distance2screen; % defined in mm (for degrees visual an
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
 screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
+meg = config.meg; % running task in MEG?
 scanner = config.scanner; % turn scanner on/off
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
 rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
@@ -193,19 +196,11 @@ imageRectPixel = [0 0 60 200];
 confettiEndMean = 100; % 150% this is added to the circle radius
 confettiEndStd = 4; % 20 % this is the spread around the average end point
 
-% Running task in MEG?
-meg = false;
-
 % Running task at UKE (will be harmonized with scanner)
 uke = false;
 
 % ID for UKE joystick
-%ID = 1;
-%joy = vrjoystick(ID);
 joy = nan;
-
-%% to do add option to make sure default is used finally
-% automaticBackgroundRGB = true;
 
 % Sampling rate for EEG
 sampleRate = 500;
@@ -224,7 +219,7 @@ tickLengthPredDeg = 0.9;
 tickLengthOutcDeg = 0.7; 
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.13;
+confettiStdDeg = 0.1;
 imageRectDeg = [0 0 1.1 3.7];
 
 % ---------------------------------------------------

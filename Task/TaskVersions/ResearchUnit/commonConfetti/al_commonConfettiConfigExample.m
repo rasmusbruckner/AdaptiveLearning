@@ -34,6 +34,7 @@ config.showConfettiThreshold = false;
 config.printTiming = true;
 config.hidePtbCursor = true;
 config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
+config.meg = false;
 config.scanner = false;
 config.eyeTracker = false; %true;
 config.onlineSaccades = true;
