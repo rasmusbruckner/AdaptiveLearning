@@ -59,7 +59,7 @@ elseif runIntro && passiveViewingCondition
         'Versuchen Sie nur zu blinzeln, wenn der weiße Punkt erscheint. Während dieser Übung '...
         'wird der Versuchsleiter Sie darauf hinweisen.'];
     al_bigScreen(taskParam, 'Übung', txt, true);
-    al_confettiLoop(taskParam, 'main', taskDataPassiveViewingPract, taskParam.gParam.passiveViewingPractTrials, '');
+    al_confettiLoop(taskParam, 'main', taskDataPassiveViewingPract, taskParam.gParam.passiveViewingPractTrials, '_p0');
 
 end
 
