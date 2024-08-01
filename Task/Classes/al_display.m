@@ -255,7 +255,7 @@ classdef al_display
             % Compute degrees visual angle of each pixel
             singlePixelDeg = rad2deg(atan(singlePixelMM/distance));
 
-            % Compute degrees visual angle for stimulus
+            % Compute size in pixels
             sizePixel = sizeDeg / singlePixelDeg;
 
         end
