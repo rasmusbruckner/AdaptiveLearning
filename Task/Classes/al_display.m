@@ -20,6 +20,7 @@ classdef al_display
         window % psychtoolbox window
         zero % center of the screen
         backgroundCoords % background coordinates
+        socialsample
 
         % Textures
         cannonTxt
@@ -79,7 +80,8 @@ classdef al_display
             self.distance2screen = 700;
             self.screenWidthInMM = 309.40; % Rasmus' default laptop
             self.backgroundCol = [0, 0, 0];
-            self.socialFeedbackRect = [0 0 562 762]/4;
+            self.socialFeedbackRect = [0 0 2048 2048]/4; %[0 0 562 762]/4;
+            self.socialsample = 1;
             self.imageRect = [0 0 180 270];
             self.doctorRect = [0 0 100 100];
             self.heliImageRect = [0 0 100 100];
@@ -175,18 +177,30 @@ classdef al_display
             % not shared across projects -- will be done when new images
             % are there
             parentDirectory = fileparts(cd);
-            self.nHas = length(dir([parentDirectory '/Files/socialFeedback/HAS/*.JPG']));
-            self.nDis = length(dir([parentDirectory '/Files/socialFeedback/DIS/*.JPG']));
-
-            for n=1:self.nHas
-                imagesHas{n} = imread(sprintf('has_%d.JPG',n));
-                self.socialHasTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesHas{n});
+            OrDir = pwd; %save current directory, so we can go back later
+            if self.socialsample == 1    
+                ImDir = [parentDirectory '/Files/socialFeedback/YA']; %name directories for correct stimuli for different conditions
+                self.nHas = length(dir([ImDir '/HAS/*.JPG']));
+                self.nDis = length(dir([ImDir '/DIS/*.JPG']));
+            elseif self.socialsample == 2
+                ImDir = [parentDirectory '/Files/socialFeedback/Ado'];
+                self.nHas = length(dir([ImDir '/HAS/*.JPG']));
+                self.nDis = length(dir([ImDir '/DIS/*.JPG']));
             end
-
-            for n=1:self.nDis
-                imagesDis{n} = imread(sprintf('dis_%d.JPG',n));
+            
+            %load stimuli as Textures into struct
+            cd(ImDir)
+            for n=1:self.nDis           
+                imagesDis{n} = imread(sprintf('DIS/dis_%d.JPG',n));
                 self.socialDisTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesDis{n});
             end
+
+            for n=1:self.nHas
+                imagesHas{n} = imread(sprintf('HAS/has_%d.JPG',n));
+                self.socialHasTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesHas{n});
+            end
+            cd(OrDir)
+            
 
             backgroundPicSize = size(backgroundPic);
             ySize = self.window.screenY;

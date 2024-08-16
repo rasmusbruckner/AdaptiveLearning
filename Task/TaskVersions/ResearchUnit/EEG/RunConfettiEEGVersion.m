@@ -386,6 +386,14 @@ end
 display.screensize = screensize;
 % display.imageRect = imageRect;
 display.socialFeedbackRect = socialFeedbackRect;
+%code young adults 1, adolescents 2 for loading of textures
+if subject.age >= 25
+    display.socialsample = 1;
+elseif subject.age <= 17
+    display.socialsample = 2;
+else
+    error('wrong age for sample')
+end
 display.distance2screen = distance2screen;
 display.screenWidthInMM = screenWidthInMM;
 display.useDegreesVisualAngle = useDegreesVisualAngle;
@@ -523,7 +531,7 @@ totWin = dataMonetary.accPerf(end);
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
+txt = sprintf('Vielen Dank fï¿½r Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
 
