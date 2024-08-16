@@ -114,6 +114,8 @@ rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
 rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
 noPtbWarnings = config.noPtbWarnings;
 predSpotCircleTolerance = config.predSpotCircleTolerance;
+%
+
 
 % customInstructions = config.customInstructions;
 % instructionText = config.instructionText;
@@ -160,7 +162,7 @@ sampleRate = 500;
 
 % Confetti cannon image rectangle determining the size of the cannon
 imageRect = [0 00 60 200];
-socialFeedbackRect = [0 0 562 762]/4;
+socialFeedbackRect =  [0 0 1250 1250]/4;%[0 0 2048 2048]/4; %[0 0 562 762]/4;
 
 % Confetti end point
 confettiEndMean = 0; % 50; % 150% this is added to the circle radius
