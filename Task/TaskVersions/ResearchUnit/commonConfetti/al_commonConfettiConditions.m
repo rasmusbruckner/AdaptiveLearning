@@ -176,6 +176,8 @@ function [totWin, allTaskData] = blockLoop(taskParam, totWin, noiseCondition, ha
 %       taskParam: Task-parameter-object instance
 %       totWin: Total number of hits
 %       noiseCondition: Current condition (1: low noise; 2: high noise)
+%       half: First vs. second half of the task
+%       passiveViewing: Indicates if we are in passive-viewing condition
 %
 %   Output
 %       totWin: Total number of hits
@@ -255,7 +257,7 @@ for b = 1:taskParam.gParam.nBlocks
     totWin = totWin + sum(data.hit);
 
     % Short break before next block
-    if b < taskParam.gParam.nBlocks
+    if (half == 1) || (half == 2 && b < taskParam.gParam.nBlocks)
         al_blockBreak(taskParam, half, b)
     end
 end

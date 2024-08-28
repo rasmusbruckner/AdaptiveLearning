@@ -10,14 +10,14 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 5;
+config.trialsExp = 2;
 config.nBlocks = 2;
 config.practTrials = 2;
 config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
-config.runIntro = true;
+config.runIntro = false;
 config.baselineArousal = false; % true;
 config.language = 'German'; % 'English';
 config.sentenceLength = 100;

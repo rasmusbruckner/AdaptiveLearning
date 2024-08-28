@@ -10,12 +10,17 @@ function al_blockBreak(taskParam, half, currBlock)
 %       None
 
 % Present text indicating the break
-if half == 1
-    txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, taskParam.gParam.nBlocks*2);
-elseif half == 2
-    txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock+taskParam.gParam.nBlocks, taskParam.gParam.nBlocks*2);
+if taskParam.gParam.customInstructions
+    taskParam.instructionText = taskParam.instructionText.giveBlockFeedback(taskParam.gParam.nBlocks, half, currBlock);
+    txt = taskParam.instructionText.dynamicBlockTxt;
 else
-    error('half parameter undefined')
+    if half == 1
+        txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, taskParam.gParam.nBlocks*2);
+    elseif half == 2
+        txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock+taskParam.gParam.nBlocks, taskParam.gParam.nBlocks*2);
+    else
+        error('half parameter undefined')
+    end
 end
 
 % Display above text

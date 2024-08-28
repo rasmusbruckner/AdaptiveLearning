@@ -43,6 +43,7 @@ classdef al_commonConfettiInstructionsDefaultText
         dynamicFeedbackHeader
         introducePassiveViewingHeader
         introducePassiveViewing
+        dynamicBlockTxt
 
     end
 
@@ -399,7 +400,7 @@ classdef al_commonConfettiInstructionsDefaultText
             %   Input
             %       self: Instructions-text-object instance
             %       currPoints: Number of points
-            %       type: single-block vs. whole task feedback
+            %       type: Single-block vs. whole task feedback
             %
             %   Output
             %       self: Instructions-text-object instance
@@ -428,5 +429,29 @@ classdef al_commonConfettiInstructionsDefaultText
                 error('type parameter unknown')
             end
         end
+
+
+        function self = giveBlockFeedback(self, nBlocks, half, currBlock)
+            %GIVEBLOCKFEEDBACK This function displays how many blocks have
+            %been completed so far
+            %
+            %   Input
+            %       self: Instructions-text-object instance
+            %       nBlocks: Number of blocks
+            %       half: Number of points
+            %       currBlock: Indicates if we are in passive-viewing condition
+            %   Output
+            %       self: Instructions-text-object instance
+
+
+            if half == 1
+                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks*2);
+            elseif half == 2
+                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock+nBlocks, nBlocks*2);
+            else
+                error('half parameter undefined')
+            end
+        end
+
     end
 end
