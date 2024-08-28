@@ -228,7 +228,7 @@ classdef al_colors
             % Check if number of colors and particles fits and replicate
             % colors
             if mod(nParticles/nColorsDark, 2) == 0 
-                colorsDark = uint8(repmat(colorVecDark, 1, nParticles/5));
+                colorsDark = uint8(repmat(colorVecDark, 1, nParticles/length(colorVecDark)));
             elseif isnan(nParticles)
                 colorsDark = nan;
             else
@@ -236,7 +236,7 @@ classdef al_colors
             end
 
             if mod(nParticles/nColorsBlackWhite, 2) == 0
-                colorsBlackWhite = uint8(repmat([0,0,0; 255,255,255]', 1, nParticles/nColorsBlackWhite));
+                colorsBlackWhite = uint8(repmat(colorVecBlackWhite', 1, nParticles/nColorsBlackWhite));
             elseif isnan(nParticles)
                 colorsBlackWhite = nan;
             else
