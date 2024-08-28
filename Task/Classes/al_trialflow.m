@@ -60,6 +60,7 @@ classdef al_trialflow
             % standard: eLife style cannon
             % confetti: confetti-cannon style
             % helicopter: for Leipzig version
+            % duck: for infant version
 
         % How rewards are delivered (e.g., standard, asymmetric)
         reward
