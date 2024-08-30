@@ -39,8 +39,11 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.printTiming = true;
             config.hidePtbCursor = true;
             config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
+            config.meg = false;
             config.scanner = false;
             config.eyeTracker = false;
+            config.onlineSaccades = false;
+            config.saccThres = 1;
             config.useDegreesVisualAngle = true;
             config.distance2screen = 700;
             config.screenWidthInMM = 309.40;
@@ -310,7 +313,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataHighNoise_cBal2.nParticles, expectedNParticles)
 
             % Confetti standard deviation
-            expectedConfettiStd = repmat(4.9280, 20, 1);
+            expectedConfettiStd = repmat(3.7907, 20, 1);
             testCase.verifyEqual(dataLowNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
             testCase.verifyEqual(dataHighNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
             testCase.verifyEqual(dataLowNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
@@ -391,6 +394,17 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % ------
 
             % Difference prediction and trial onset
+            expectedBaselineOnsetDiff = repmat(0.25, 20, 1);
+            actualBaselineOnsetDiff = dataLowNoise_cBal1.timestampOnset - dataLowNoise_cBal1.timestampBaseline;
+            testCase.verifyEqual(actualBaselineOnsetDiff, expectedBaselineOnsetDiff, 'AbsTol', 0.05)
+            actualBaselineOnsetDiff = dataHighNoise_cBal1.timestampOnset - dataHighNoise_cBal1.timestampBaseline;
+            testCase.verifyEqual(actualBaselineOnsetDiff, expectedBaselineOnsetDiff, 'AbsTol', 0.05)
+            actualBaselineOnsetDiff = dataLowNoise_cBal2.timestampOnset - dataLowNoise_cBal2.timestampBaseline;
+            testCase.verifyEqual(actualBaselineOnsetDiff, expectedBaselineOnsetDiff, 'AbsTol', 0.05)
+            actualBaselineOnsetDiff = dataHighNoise_cBal2.timestampOnset - dataHighNoise_cBal2.timestampBaseline;
+            testCase.verifyEqual(actualBaselineOnsetDiff, expectedBaselineOnsetDiff, 'AbsTol', 0.05)
+    
+            % Difference prediction and trial onset
             expectedOnsetPredDiff = repmat(0.5, 20, 1);
             actualOnsetPredDiff = dataLowNoise_cBal1.timestampPrediction - dataLowNoise_cBal1.timestampOnset;
             testCase.verifyEqual(actualOnsetPredDiff, expectedOnsetPredDiff, 'AbsTol', 0.05)
@@ -426,7 +440,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterOnset, 0.5)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterOnset, 0.0)
 
-            % Difference shield and fixation-coss 3
+            % Difference shield and fixation-coss 3 
             actualShieldFix3Diff = dataLowNoise_cBal1.timestampFixCross3 - dataLowNoise_cBal1.timestampShield;
             testCase.verifyLessThanOrEqual(actualShieldFix3Diff, 0.8 + tolerance)
             testCase.verifyGreaterThanOrEqual(actualShieldFix3Diff, 0.0)
@@ -440,7 +454,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(actualShieldFix3Diff, 0.8 + tolerance)
             testCase.verifyGreaterThanOrEqual(actualShieldFix3Diff, 0.0)
 
-            % Actual jitter fixation cross outcome with tolerance
+            % Actual jitter fixation cross outcome
             testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossOutcome, 2.0)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossOutcome, 0.0)
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterFixCrossOutcome, 2.0)
@@ -450,7 +464,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossOutcome, 2.0)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossOutcome, 0.0)
 
-            % Actual jitter fixation cross outcome with tolerance
+            % Actual jitter fixation cross outcome
             testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterOutcome, 0.15)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterOutcome, 0.0)
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterOutcome, 0.15)
@@ -460,7 +474,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterOutcome, 0.15)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterOutcome, 0.0)
 
-            % Actual jitter fixation cross shield with tolerance
+            % Actual jitter fixation cross shield
             testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossShield, 0.6)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterFixCrossShield, 0.0)
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterFixCrossShield, 0.6)
@@ -470,7 +484,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossShield, 0.6)
             testCase.verifyGreaterThanOrEqual(dataHighNoise_cBal2.actJitterFixCrossShield, 0.0)
 
-            % Actual jitter fixation cross outcome with tolerance
+            % Actual jitter fixation cross outcome
             testCase.verifyLessThanOrEqual(dataLowNoise_cBal1.actJitterShield, 0.15)
             testCase.verifyGreaterThanOrEqual(dataLowNoise_cBal1.actJitterShield, 0.0)
             testCase.verifyLessThanOrEqual(dataHighNoise_cBal1.actJitterShield, 0.15)

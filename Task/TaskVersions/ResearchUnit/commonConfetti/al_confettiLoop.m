@@ -125,13 +125,22 @@ for i = 1:trial
     
     fixationPhase(taskParam)
     Screen('DrawingFinished', taskParam.display.window.onScreen);
+    
+    % Timestamp prediction
+    taskData.timestampBaseline(i) = GetSecs() - taskParam.timingParam.ref;
     timestamp = GetSecs() + 0.001;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
     WaitSecs(taskParam.timingParam.baselineFixLength);
 
+    % Display timing info in console
+    if taskParam.gParam.printTiming
+        baselineTiming = GetSecs() - taskParam.timingParam.ref;
+        fprintf('Baseline duration: %.5f\n', baselineTiming - taskData.timestampBaseline(i) )
+    end
+
     % Send trial-onset trigger
     taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'trialOnset');
-    taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
+    taskData.timestampOnset(i) = GetSecs() - taskParam.timingParam.ref;
 
     % Timestamp prediction phase onset for RT
     initRT_Timestamp = GetSecs();
@@ -150,7 +159,7 @@ for i = 1:trial
     end
 
     % Timestamp prediction
-    taskData.timestampPrediction(i) = GetSecs - taskParam.timingParam.ref;
+    taskData.timestampPrediction(i) = GetSecs() - taskParam.timingParam.ref;
 
     % Display RT and initiation RT in console
     if taskParam.gParam.printTiming
@@ -160,7 +169,7 @@ for i = 1:trial
 
     % Extract current time and determine when screen should be flipped
     % for accurate timing
-    timestamp = GetSecs;
+    timestamp = GetSecs();
 
     % Prediction error & estimation error
     taskData.predErr(i) = al_diff(taskData.outcome(i), taskData.pred(i));
@@ -252,7 +261,7 @@ for i = 1:trial
 
         % Display timing info in console
         if taskParam.gParam.printTiming
-            fixCrossTiming = GetSecs - taskParam.timingParam.ref;
+            fixCrossTiming = GetSecs() - taskParam.timingParam.ref;
             fprintf('Fixation-cross duration: %.5f\n', fixCrossTiming -  shotTiming)
         end
 
@@ -272,7 +281,7 @@ for i = 1:trial
 
         % Display timing info in console
         if taskParam.gParam.printTiming
-            taskData.timestampReward(i) = GetSecs - taskParam.timingParam.ref;
+            taskData.timestampReward(i) = GetSecs() - taskParam.timingParam.ref;
             fprintf('Feedback duration: %.5f\n', taskData.timestampReward(i) - fixCrossTiming)
         end
     end
@@ -297,7 +306,7 @@ for i = 1:trial
 
         % Send outcome trigger
         taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, condition, i, 'outcome');
-        taskData.timestampOutcome(i) = GetSecs - taskParam.timingParam.ref;
+        taskData.timestampOutcome(i) = GetSecs() - taskParam.timingParam.ref;
 
         % Display timing info in console
         if taskParam.gParam.printTiming
@@ -318,7 +327,7 @@ for i = 1:trial
 
         % Send fixation cross 2 trigger
         taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
-        taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+        taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
 
         % Display timing info in console
         if taskParam.gParam.printTiming
@@ -347,7 +356,7 @@ for i = 1:trial
 
     % Send shield trigger
     taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, condition, i, 'shield');
-    taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
+    taskData.timestampShield(i) = GetSecs() - taskParam.timingParam.ref;
 
     % Display timing info in console
     if taskParam.gParam.printTiming && isequal(taskParam.trialflow.shot, 'static')
@@ -371,7 +380,7 @@ for i = 1:trial
 
         % Send fixation cross 3 trigger
         taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
-        taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
+        taskData.timestampFixCross3(i) = GetSecs() - taskParam.timingParam.ref;
 
         % Display timing info in console
         if taskParam.gParam.printTiming
@@ -383,7 +392,7 @@ for i = 1:trial
     WaitSecs(taskParam.timingParam.fixedITI);
 
     % Offset timestamp
-    taskData.timestampOffset(i) = GetSecs - taskParam.timingParam.ref;
+    taskData.timestampOffset(i) = GetSecs() - taskParam.timingParam.ref;
     if taskParam.gParam.printTiming
         if strcmp(taskParam.trialflow.reward, 'asymmetric')
             fprintf('Fixation-cross duration: %.5f\n', taskData.timestampOffset(i) - taskData.timestampReward(i))

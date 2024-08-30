@@ -92,6 +92,7 @@ classdef al_taskDataMain
         
         % General
         timestampOnset
+        timestampBaseline
         timestampPrediction
         timestampFixCross1
         timestampFixCross2
@@ -213,6 +214,7 @@ classdef al_taskDataMain
 
             % EEG and pupillometry
             self.timestampOnset = nan(trials, 1);
+            self.timestampBaseline = nan(trials, 1);
             self.timestampPrediction = nan(trials, 1);
             self.timestampFixCross1 = nan(trials, 1);
             self.timestampFixCross2 = nan(trials, 1);
@@ -810,6 +812,7 @@ classdef al_taskDataMain
                 s.dotCol = self.dotCol;
                 s.initialTendency = self.initialTendency;
                 s.timestampOnset = self.timestampOnset;
+                s.timestampBaseline = self.timestampBaseline;
                 s.timestampPrediction = self.timestampPrediction;
                 % s.actJitterOutcome = self.actJitterOutcome;
                 % s.actJitterShield = self.actJitterShield;

@@ -231,6 +231,9 @@ for b = 1:taskParam.gParam.nBlocks
         elseif noiseCondition == 2
             taskData = taskParam.unitTest.taskDataIntegrationTest_HamburgHighNoise;
         end
+        
+        % Since we don't save the data, just use empty string
+        file_name_suffix = '';
 
     end
 
