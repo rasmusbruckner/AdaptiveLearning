@@ -66,7 +66,7 @@ classdef al_taskDataMain
         % Task-participant interaction
         % ----------------------------
 
-        pred % predictoin
+        pred % prediction
         predErr % prediction error
         estErr % estimation error
         diffLastOutcPred % difference last outcome and prediction for Dresden version

@@ -3,7 +3,7 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial, file_
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
+%       condition: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
 %       file_name_suffix: Suffix of saved files
@@ -12,7 +12,7 @@ function taskData = al_confettiLoop(taskParam, condition, taskData, trial, file_
 %       taskData: Task-data-object instance
 
 
-% Check if file name suffic is provided
+% Check if file name suffix is provided
 if ~exist('file_name_suffix', 'var') || isempty(file_name_suffix)
     file_name_suffix = '';
 end

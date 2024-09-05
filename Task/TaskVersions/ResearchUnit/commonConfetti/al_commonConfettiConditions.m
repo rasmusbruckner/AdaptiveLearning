@@ -87,7 +87,6 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 % 3. Optionally baseline arousal
 % ------------------------------
 
-% Todo: save et_data
 if taskParam.gParam.baselineArousal
 
     % Display pupil info
@@ -101,9 +100,9 @@ if taskParam.gParam.baselineArousal
     end
 
     feedback = false; % indicate that this is the instruction mode
-    al_bigScreen(taskParam, header, txt, feedback);
+    al_bigScreen(taskParam, header, txt, feedback, true);
 
-    % Meaure baseline arousal
+    % Measure baseline arousal
     al_baselineArousal(taskParam, '_a1')
 
 end
@@ -150,23 +149,13 @@ if taskParam.gParam.baselineArousal
     end
 
     feedback = false; % indicate that this is the instruction mode
-    al_bigScreen(taskParam, header, txt, feedback, 2);
+    al_bigScreen(taskParam, header, txt, feedback, true);
 
     % Meaure baseline arousal
     al_baselineArousal(taskParam, '_a2')
 
 end
 end
-
-% % Save Eyelink data
-% % -----------------
-%
-% if taskParam.gParam.eyeTracker
-%     et_path = pwd;
-%     et_file_name=[et_file_name, '.edf'];
-%     al_saveEyelinkData(et_path, et_file_name)
-%     Eyelink('StopRecording');
-% end
 
 
 function [totWin, allTaskData] = blockLoop(taskParam, totWin, noiseCondition, half, passiveViewingCondition)

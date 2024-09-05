@@ -8,7 +8,7 @@ function taskData = al_MRILoop(taskParam, condition, taskData, trial)
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
+%       condition: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
 %
@@ -149,7 +149,7 @@ for i = 1:trial
             % Send trial-onset trigger
             if baselineStarted == false
                 taskData.triggers(i,1) = al_sendTrigger(taskParam, taskData, condition, i, 'trialOnset');
-                taskData.timestampOnset(i,:) = GetSecs - taskParam.timingParam.ref;
+                taskData.timestampOnset(i,:) = GetSecs() - taskParam.timingParam.ref;
                 baselineStarted = true;
 
                 % Print out jitter duration, if desired
@@ -170,7 +170,7 @@ for i = 1:trial
 
             % Participant indicates prediction
             [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
-            taskData.timestampPrediction(i) = GetSecs - taskParam.timingParam.ref;
+            taskData.timestampPrediction(i) = GetSecs() - taskParam.timingParam.ref;
 
             % Start clock for timing during post-prediction part of trial
             trialPostPredClock = GetSecs();
@@ -247,7 +247,7 @@ for i = 1:trial
 
                 % Send outcome trigger
                 taskData.triggers(i,5) = al_sendTrigger(taskParam, taskData, condition, i, 'outcome');
-                taskData.timestampOutcome(i) = GetSecs - taskParam.timingParam.ref;
+                taskData.timestampOutcome(i) = GetSecs() - taskParam.timingParam.ref;
 
                 % Display timing info in console
                 if taskParam.gParam.printTiming
@@ -276,7 +276,7 @@ for i = 1:trial
 
                 % Trigger
                 taskData.triggers(i,6) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
-                taskData.timestampFixCross2(i) = GetSecs - taskParam.timingParam.ref;
+                taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
                 fixationCross_2_Started = true;
 
                 % Display timing info in console
@@ -309,7 +309,7 @@ for i = 1:trial
 
                 % Trigger
                 taskData.triggers(i,7) = al_sendTrigger(taskParam, taskData, condition, i, 'shield');
-                taskData.timestampShield(i) = GetSecs - taskParam.timingParam.ref;
+                taskData.timestampShield(i) = GetSecs() - taskParam.timingParam.ref;
                 shieldStarted = true;
 
                 % Display timing info in console
@@ -330,7 +330,7 @@ for i = 1:trial
 
                 % Trigger
                 taskData.triggers(i,8) = al_sendTrigger(taskParam, taskData, condition, i, 'fix');
-                taskData.timestampFixCross3(i) = GetSecs - taskParam.timingParam.ref;
+                taskData.timestampFixCross3(i) = GetSecs() - taskParam.timingParam.ref;
                 fixationCross_3_Started = true;
 
                 % Display timing info in console
@@ -342,7 +342,7 @@ for i = 1:trial
         else
 
             % Record fixed offset
-            taskData.timestampOffset(i) = GetSecs - taskParam.timingParam.ref;
+            taskData.timestampOffset(i) = GetSecs() - taskParam.timingParam.ref;
 
             % Display timing info in console
             if taskParam.gParam.printTiming
