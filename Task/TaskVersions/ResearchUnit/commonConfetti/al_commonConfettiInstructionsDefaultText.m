@@ -208,7 +208,7 @@ classdef al_commonConfettiInstructionsDefaultText
                 error('language parameter unknown')
             end
 
-            % Fourth practice
+            % Second practice
             if isequal(self.language, 'German')
                 self.secondPractice = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
                     'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...

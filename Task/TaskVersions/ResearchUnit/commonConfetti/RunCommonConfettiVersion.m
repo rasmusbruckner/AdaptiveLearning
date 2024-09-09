@@ -16,7 +16,7 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       07/24
+%       09/24
 
 % Todo: write integration test for fMRI version.
 % First ensure version is good to go and then keep in mind that output

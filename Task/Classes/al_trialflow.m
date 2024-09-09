@@ -37,7 +37,7 @@ classdef al_trialflow
 
         % Whether or not shot and shield are presented simultaneously
         shotAndShield
-            % simultaneously: togehter
+            % simultaneously: together
             % sequential: separately  
         
         % Confetti instead of ball
@@ -91,7 +91,7 @@ classdef al_trialflow
             % inside: currently used on all conditions
             % outside: previously used for chinese version
 
-        % Shield type (contant vs. reward)
+        % Shield type (constant vs. reward)
         shieldType
             % constant: always same reward type
             % reward: rewarding and neutral shields
