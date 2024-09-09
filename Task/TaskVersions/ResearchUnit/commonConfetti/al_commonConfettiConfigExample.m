@@ -44,12 +44,18 @@ config.distance2screen = 700; % defined in mm (for degrees visual angle) and eT
 config.screenWidthInMM = 309.40; % for degrees visual angle and ET
 config.screenHeightInMM = 210; % for ET
 config.sendTrigger = false;
+config.sampleRate = 500; % Sampling rate for EEG
+config.port = hex2dec('E050');
 config.rotationRadPixel = 140; % 170
 config.rotationRadDeg = 2.5; %3.16;%1.8; % todo: note that this is preliminary
 config.customInstructions = true;
 config.instructionText = al_commonConfettiInstructionsDefaultText(config.language);
 config.noPtbWarnings = false;
 config.predSpotCircleTolerance = 2;
+
+if config.sendTrigger
+    [config.session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+end
 
 % Run task with config input
 RunCommonConfettiVersion(config);

@@ -66,12 +66,20 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.screenHeightInMM = 210;
     config.sendTrigger = false;
+    config.sampleRate = 500;
+    config.port = hex2dec('E050');
     config.rotationRadPixel = 140;
     config.rotationRadDeg = 2.5;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
     config.predSpotCircleTolerance = 2;
+    
+    if config.sendTrigger
+        [config.session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+    else 
+        config.session = nan;
+    end
 end
 
 
@@ -138,6 +146,9 @@ distance2screen = config.distance2screen; % defined in mm (for degrees visual an
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
 screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
+sampleRate = config.sampleRate; % EEG sampling rate
+session = config.session; % EEG session
+port = config.port; % EEG port
 meg = config.meg; % running task in MEG?
 scanner = config.scanner; % turn scanner on/off
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
@@ -202,12 +213,12 @@ uke = false;
 % ID for UKE joystick
 joy = nan;
 
-% Sampling rate for EEG
-sampleRate = 500;
-
-if sendTrigger
-    [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
-end
+% % Sampling rate for EEG
+% sampleRate = 500;
+% 
+% if sendTrigger
+%     [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+% end
 
 % Degrees visual angle
 % -------------------
@@ -555,6 +566,7 @@ triggers = al_triggers();
 if sendTrigger
     triggers.sampleRate = sampleRate;
     triggers.session = session;
+    triggers.port = port;
 end
 
 % ---------------------------------------------------
