@@ -55,6 +55,8 @@ config.predSpotCircleTolerance = 2;
 
 if config.sendTrigger
     [config.session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+else
+    config.session = nan;
 end
 
 % Run task with config input
