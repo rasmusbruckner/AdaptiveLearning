@@ -1,0 +1,4 @@
+[codespell]
+# reference: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git,*.pdf,.codespellrc,*.svg
+ignore-words-list = sie,startet,oder,ist,als,alle,linke,ende,deines,manuell,egal,lief,relativ,zar,vor,wont,deine
