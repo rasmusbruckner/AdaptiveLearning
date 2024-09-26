@@ -254,7 +254,7 @@ for i = 1:trial
                     fprintf('Fixation-cross 1 duration: %.5f\n', taskData.timestampOutcome(i) - taskData.timestampFixCross1(i))
                 end
 
-                % ... then re-use dots for rest of the trial
+                % ... then reuse dots for rest of the trial
             else
                 regenerateParticles = false;
                 al_confettiOutcome(taskParam, taskData, i, regenerateParticles);

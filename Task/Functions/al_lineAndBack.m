@@ -1,5 +1,5 @@
 function al_lineAndBack(taskParam)
-%AL_LINEANDBACK This function draws the background for intructions in the cannon task
+%AL_LINEANDBACK This function draws the background for instructions in the cannon task
 %
 %   Input
 %       taskParam: Task-parameter-object instance

@@ -4,7 +4,7 @@ function taskData = al_LeipzigLoop(taskParam, condition, taskData, trial)
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
+%       condition: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
 %
@@ -78,7 +78,7 @@ for i = 1:trial
     %------------------------------
 
     % Send fixation cross 1 trigger
-    % todo: this should be done in mouse loop, like I did fo keyboardLoop
+    % todo: this should be done in mouse loop, like I did for keyboardLoop
     taskData.timestampPrediction(i,:) = GetSecs - taskParam.timingParam.ref;
 
     % Deviation from cannon (estimation error) to compute performance

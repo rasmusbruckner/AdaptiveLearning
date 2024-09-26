@@ -7,7 +7,7 @@ function [tickLength, col] = al_tickMark(taskParam, parameter, type)
 %       type: Tick-mark type
 %
 %   Output
-%       tickLength: Length of tick mark to compute backgound RGB
+%       tickLength: Length of tick mark to compute background RGB
 %       col: Color to compute background RGB
 %
 % Todo: integrate in circle

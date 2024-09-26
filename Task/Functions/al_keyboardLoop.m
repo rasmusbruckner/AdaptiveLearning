@@ -12,7 +12,7 @@ function [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, sta
 %       disableResponseThreshold: Optionally activate response time
 %                                 limit (if additionally specified in trialflow)
 %
-%   Ouptut
+%   Output
 %       taskData: Task-parameter-object instance
 %       taskParam: Task-data-object instance
 

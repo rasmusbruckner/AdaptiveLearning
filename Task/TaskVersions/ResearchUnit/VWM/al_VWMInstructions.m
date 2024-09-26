@@ -168,7 +168,7 @@ if testDay == 1
     taskData = taskData.taskData;
     taskData.initialTendency = nan(length(taskData.ID), 1);
 
-    % Reset roation angle to starting location
+    % Reset rotation angle to starting location
     taskParam.circle.rotAngle = 0;
 
     % Run task

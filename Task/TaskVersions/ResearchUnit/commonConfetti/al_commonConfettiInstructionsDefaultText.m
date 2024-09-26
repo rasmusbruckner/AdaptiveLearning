@@ -1,6 +1,6 @@
 classdef al_commonConfettiInstructionsDefaultText
     %AL_COMMONCONFETTIINSTRUCTIONSDEFAULTTEXT This class-definition file
-    % specifiec the properties of the instruction text.
+    % specifies the properties of the instruction text.
     %
     % The advantage of this kind of text file is that most text is in one
     % place and a local file can replace (specified in the config file) the

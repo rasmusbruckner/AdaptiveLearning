@@ -37,7 +37,7 @@ for i = 1:size(arousalColors,1)
         Eyelink('message', 'TRIALID %d', i);
     end
 
-    % Only send trigger on first interation
+    % Only send trigger on first iteration
     firstIteration = true;
 
     % Beginning of current color

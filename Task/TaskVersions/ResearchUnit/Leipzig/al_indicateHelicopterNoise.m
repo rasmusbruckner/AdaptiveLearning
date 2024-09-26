@@ -1,6 +1,6 @@
 function al_indicateHelicopterNoise(taskParam, noiseCondition)
 % AL_INDICATENOISE This function indicates the noise
-% condition in the Leipzig helicopter verion
+% condition in the Leipzig helicopter version
 %
 %   Input:
 %       taskParam: Task-parameter-object instance

@@ -14,7 +14,7 @@ classdef al_display
 
         % General
         screensize % screen size
-        screensizePart % witdh and height of screen
+        screensizePart % width and height of screen
         distance2screen % participant distance to screen in mm
         screenWidthInMM % for degrees visual angle
         window % psychtoolbox window

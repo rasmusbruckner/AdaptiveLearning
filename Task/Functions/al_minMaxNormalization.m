@@ -1,5 +1,5 @@
 function normalizedCoordinate = al_minMaxNormalization(currMouseCoord, minCoord, maxCoord)
-%AL_MINMAXNORMALIZATION This function perfoms min-max normalization for the
+%AL_MINMAXNORMALIZATION This function performs min-max normalization for the
 %joystick at the Donner MEG lab at UKE
 %
 %   Input

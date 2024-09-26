@@ -15,7 +15,7 @@ function [dataNoPush, dataPush] = RunSleepVersion(runUnitTest, cBal, day)
 %       This function runs the sleep-study version of the cannon task.
 %       Subjects are sleep deprived and perform the task within
 %       a larger test battery. The version is shorter that usual
-%       and focuses on the most essential intructions.
+%       and focuses on the most essential instructions.
 %
 %   Testing
 %       To run the integration test, run "al_sleepIntegrationTest"
@@ -217,7 +217,7 @@ keys.enter = enter;
 timingParam = al_timing();
 
 % This is a reference timestamp at the start of the experiment.
-% This is not equal to the first trial or so. So be carful when using
+% This is not equal to the first trial or so. So be careful when using
 % EEG or pupillometry and make sure the reference is specified as desired.
 timingParam.ref = GetSecs();
 timingParam.jitterFixCrossOutcome = 0; % we did not use jitter here

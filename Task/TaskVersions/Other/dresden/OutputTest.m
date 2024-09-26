@@ -912,7 +912,7 @@ classdef OutputTest < matlab.unittest.TestCase
 %             % Set number of trials of control task
 %             controlTrials = 4;  % this is the new control version that we added to control for differences between groups
 %             
-%             % Number of practice trials - note that in "reversal" version this is muliplied by 2
+%             % Number of practice trials - note that in "reversal" version this is multiplied by 2
 %             practTrials = 2;
 %             
 %             % Number of trials to introduce the shield in the cover story
@@ -1012,7 +1012,7 @@ classdef OutputTest < matlab.unittest.TestCase
 %             timingParam = al_timing(timing_init);
 %             
 %             % ---------------------------------------------
-%             % Create object instance with srings to display
+%             % Create object instance with strings to display
 %             % ---------------------------------------------
 %             
 %             strings_init = al_stringsinit();

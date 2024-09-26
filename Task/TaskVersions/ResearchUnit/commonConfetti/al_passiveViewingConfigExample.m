@@ -4,7 +4,7 @@
 % function that runs the task.
 %
 % It is recommended that you create your own script with the local 
-% parameter settings so that you can re-use your settings.
+% parameter settings so that you can reuse your settings.
 
 
 % todo: optionally no noise conditions and only random outcomes with haz=1

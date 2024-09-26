@@ -12,7 +12,7 @@ function [breakLoop, taskParam, taskData, keyCode] = al_controlPredSpotKeyboard(
 %       disableResponseThreshold: Optionally activate response time
 %                                 limit (if additionally specified in trialflow)
 %
-%   Ouptut
+%   Output
 %       breakLoop: Index response loop should be terminated
 %       taskParam: Task-parameter-object instance
 %       taskData: Task-data-object instance
@@ -98,7 +98,7 @@ end
 % Here, we separated both conditions for initRT and prediction control
 % to make sure that both would be completed even if button press was
 % extremely fast (which practically does not happen bc button press is
-% longer than one cyle in while loop).
+% longer than one cycle in while loop).
 
 % Second case: When other keys are pressed before space, update orange spot until space
 % is pressed

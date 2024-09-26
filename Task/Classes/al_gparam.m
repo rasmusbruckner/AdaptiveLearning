@@ -23,7 +23,7 @@ classdef al_gparam
 
         shieldMu % mean shield size        
         shieldMin % minimum angular shield size        
-        shieldMax % maximium angular shield size         
+        shieldMax % maximum angular shield size         
                 
         trials % number of trials
         practTrials % number of practice trials
