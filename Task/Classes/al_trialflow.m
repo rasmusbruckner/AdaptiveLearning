@@ -71,7 +71,7 @@ classdef al_trialflow
         
         % Whether or not tickmarks for current trial are used
         currentTickmarks
-            % show: standard tick makrs
+            % show: standard tick marks
             % workingMemory: 5 last outcomes
             % hide: no tick marks
         
@@ -141,7 +141,7 @@ classdef al_trialflow
         
         function self = al_trialflow()
             %AL_TRIALFLOW This function creates a trialflow object
-            % of classs al_trialflow
+            % of class al_trialflow
             %
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.

@@ -118,7 +118,7 @@ predSpotCircleTolerance = config.predSpotCircleTolerance;
 % customInstructions = config.customInstructions;
 % instructionText = config.instructionText;
 
-% More general paramters
+% More general parameters
 % ----------------------
 
 % Risk parameter: Precision of confetti average
@@ -291,7 +291,7 @@ timingParam.jitterShield = 0.0; % 0.15; % we use this one for the reward phase
 timingParam.jitterITI = 0.2;  
 
 % This is a reference timestamp at the start of the experiment.
-% This is not equal to the first trial or so. So be carful when using
+% This is not equal to the first trial or so. So be careful when using
 % EEG or pupillometry and make sure the reference is specified as desired.
 timingParam.ref = GetSecs();
 
@@ -523,7 +523,7 @@ totWin = dataMonetary.accPerf(end);
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
+txt = sprintf('Vielen Dank fï¿½r Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
 

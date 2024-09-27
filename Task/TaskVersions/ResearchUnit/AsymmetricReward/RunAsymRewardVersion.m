@@ -239,7 +239,7 @@ timingParam.rewardLength = 1.5;
 % timingParam.fixCrossOutcome = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
-% This is not equal to the first trial or so. So be carful when using
+% This is not equal to the first trial or so. So be careful when using
 % EEG or pupillometry and make sure the reference is specified as desired.
 timingParam.ref = GetSecs();
 

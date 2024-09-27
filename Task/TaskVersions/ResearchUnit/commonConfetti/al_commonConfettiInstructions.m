@@ -225,7 +225,7 @@ taskParam.trialflow.exp = 'practVis';
 taskParam.trialflow.saveData = 'true';
 taskParam.trialflow.shieldAppearance = 'full';
 
-% Reset roation angle to starting location
+% Reset rotation angle to starting location
 taskParam.circle.rotAngle = 0;
 
 % Update unit test predictions

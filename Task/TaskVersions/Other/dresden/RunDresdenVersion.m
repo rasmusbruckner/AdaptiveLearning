@@ -94,7 +94,7 @@ practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
 % Rotation radius
-rotationRad = 200; % this value should be differen on other computers
+rotationRad = 200; % this value should be different on other computers
 
 % Tickmark width
 tickWidth = 1;
@@ -205,7 +205,7 @@ timingParam.rewardLength = 1.0;
 timingParam.fixedITI = 0.9;
 
 % This is a reference timestamp at the start of the experiment.
-% This is not equal to the first trial or so. So be carful when using
+% This is not equal to the first trial or so. So be careful when using
 % EEG or pupillometry and make sure the reference is specified as desired.
 timingParam.ref = GetSecs();
 

@@ -716,7 +716,7 @@ classdef al_taskDataMain
         end
 
         function s = saveobj(self)
-            % SAVEOBJ This function tranlates data that we want to save
+            % SAVEOBJ This function translates data that we want to save
             % into a structure
             %
             %   Background:
@@ -849,7 +849,7 @@ classdef al_taskDataMain
             
             elseif isequal(self.taskType, 'infant')
 
-                % Todo carefull check what we need
+                % Todo careful check what we need
                 % when everything is implemented
                 
                 s.group = self.group;

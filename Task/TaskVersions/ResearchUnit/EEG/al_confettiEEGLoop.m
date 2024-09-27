@@ -3,7 +3,7 @@ function taskData = al_confettiEEGLoop(taskParam, condition, taskData, trial)
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
+%       condition: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
 %

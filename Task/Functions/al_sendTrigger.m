@@ -8,7 +8,7 @@ function triggerID = al_sendTrigger(taskParam, taskData, condition, trial, Teven
 %       trial: Current trial
 %       Tevent: Event type that gets triggered
 %
-%   Ouptut
+%   Output
 %       triggerID: Current trigger
 
 

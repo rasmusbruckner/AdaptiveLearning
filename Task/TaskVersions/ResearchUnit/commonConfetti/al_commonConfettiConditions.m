@@ -151,7 +151,7 @@ if taskParam.gParam.baselineArousal
     feedback = false; % indicate that this is the instruction mode
     al_bigScreen(taskParam, header, txt, feedback, true);
 
-    % Meaure baseline arousal
+    % Measure baseline arousal
     al_baselineArousal(taskParam, '_a2')
 
 end

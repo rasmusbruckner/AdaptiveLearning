@@ -368,7 +368,7 @@ while 1
     end
 end
 
-% Confim that cannon ball was missed
+% Confirm that cannon ball was missed
 win = true;
 if isequal(whichPractice, 'main') || isequal(whichPractice, 'followCannon')
     txt = 'Weil Sie die Kanonenkugel verpasst haben, hätten Sie nichts verdient.';
@@ -520,7 +520,7 @@ al_bigScreen(taskParam, header, txt, feedback);
 practData = load('CP_Noise.mat');
 taskData = practData.practData;
 
-% Reset roation angle to starting location
+% Reset rotation angle to starting location
 taskParam.circle.rotAngle = 0;
 
 % Practice session

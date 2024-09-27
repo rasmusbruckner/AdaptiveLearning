@@ -6,7 +6,7 @@ function taskData = al_infantLoop(taskParam, condition, concentration, trial, my
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       condtion: Condition type
+%       condition: Condition type
 %       concentration: Noise in outcomes
 %       trial: Number of trials
 %       myTobii: Tobii eye-tracker object
@@ -109,10 +109,10 @@ while 1
     % Todo: if not used anymore, get rid of this in timingParam as well
     % timestampOutcomeMovementOffset = timestampOutcomeStaticOffset + taskParam.timingParam.movingOutcome;
 
-    % Initilalize variable controlling movement frequency
+    % Initialize variable controlling movement frequency
     duckLastMovement = GetSecs() - taskParam.gParam.duckMovementFrequency;
 
-    % Initilalize variable controlling gaze sampling
+    % Initialize variable controlling gaze sampling
     lastGazeSample = GetSecs() - 1/gazeSamplingRate;
 
     % Generate change point
@@ -351,7 +351,7 @@ while 1
             lastGazeSample = GetSecs();
            
             % This if statement is just for debugging
-            % When full screen with eye-tracker, always chech if samples in
+            % When full screen with eye-tracker, always check if samples in
             % AOI
             if isnan(myTobii) && (gazeX > taskParam.display.screensizePart(1)) == false && (gazeY > taskParam.display.screensizePart(2)) == false
             

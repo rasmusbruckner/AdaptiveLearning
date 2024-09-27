@@ -26,7 +26,7 @@ classdef al_strings
         
         function self = al_strings()
             % AL_STRINGS This function creates a strings object
-            % of classs al_strings
+            % of class al_strings
             %
             %   The initial values correspond to useful defaults that
             %   are often used across tasks.

@@ -25,7 +25,7 @@ smallTextSize = taskParam.strings.headerSize;
 scaleLengthPix = taskParam.display.screensize(4) / 1.5;
 scaleHLengthPix = scaleLengthPix / 2;
 
-% Coordiantes of the scale left and right ends
+% Coordinates of the scale left and right ends
 leftEnd = [taskParam.display.zero(1) - scaleHLengthPix taskParam.display.zero(2)];
 rightEnd = [taskParam.display.zero(1) + scaleHLengthPix taskParam.display.zero(2)];
 scaleLineCoords = [leftEnd' rightEnd'];
@@ -54,7 +54,7 @@ for i = 1:numScalePoints
     [~, ~, numBoundsAll(i, :)] = DrawFormattedText(taskParam.display.window.onScreen, num2str(i), 0, 0, taskParam.colors.white);
 end
 
-% Width and height of the scale number text bounding boxs
+% Width and height of the scale number text bounding boxes
 numWidths = numBoundsAll(:, 3)';
 halfNumWidths = numWidths / 2;
 numHeights = [range([numBoundsAll(:, 2) numBoundsAll(:, 4)], 2)]';
@@ -64,7 +64,7 @@ halfNumHeights = numHeights / 2;
 dim = 40;
 hDim = dim / 2;
 
-% The numbers are aligned to be directly under the relevent button (tops of
+% The numbers are aligned to be directly under the relevant button (tops of
 % their bounding boxes "numShiftDownPix" below the button y coordinate, and
 % aligned laterally such that the centre of the text bounding boxes aligned
 % with the x coordinate of the button

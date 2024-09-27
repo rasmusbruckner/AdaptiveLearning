@@ -62,7 +62,7 @@ function A = catstruct(varargin)
 %                  (thanks to Tor Inge Birkenes).
 %                  Rephrased the help section as well.
 %   4.0 (dec 2013) fixed problem with unique due to version differences in
-%                  ML. Unique(...,'last') is no longer the deafult.
+%                  ML. Unique(...,'last') is no longer the default.
 %                  (thanks to Isabel P)
 
 %error(nargchk(1,Inf,nargin)) ;
