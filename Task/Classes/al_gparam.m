@@ -26,7 +26,8 @@ classdef al_gparam
         shieldMax % maximium angular shield size         
                 
         trials % number of trials
-        practTrials % number of practice trials
+        practTrialsVis % number of practice trials visible cannon
+        practTrialsHid % number of practice trials hidden cannon
         shieldTrials % number of shield-practice trials 
         controlTrials  % number of trials of the control versions (Dresden)
         passiveViewingPractTrials % practice passive viewing
@@ -39,7 +40,9 @@ classdef al_gparam
 
         practiceTrialCriterionNTrials % number of trials above estimation-error threshold determining when practice is repeated
         practiceTrialCriterionEstErr % estimation-error threshold in practice determining when practice is repeated
-
+        cannonPractCriterion % minimum number of passes to continue
+        cannonPractNumOutcomes % number of outcomes before prediction
+        
         rewMag % reward magnitude when "hit"
         useCatchTrials % indicates if catch trials are used
         catchTrialProb % Catch-trial proability
@@ -98,7 +101,8 @@ classdef al_gparam
             self.shieldMin = 10;
             self.shieldMax = 150;
             self.trials = nan; 
-            self.practTrials = nan; 
+            self.practTrialsVis = nan; 
+            self.practTrialsHid = nan; 
             self.shieldTrials = nan; 
             self.controlTrials = nan;
             self.passiveViewingPractTrials = 10;
@@ -108,6 +112,8 @@ classdef al_gparam
             self.screenNumber = 1;
             self.practiceTrialCriterionNTrials = nan; 
             self.practiceTrialCriterionEstErr = nan; 
+            self.cannonPractCriterion = nan;
+            self.cannonPractNumOutcomes = nan;
             self.rewMag = 0.1; 
             self.useCatchTrials = nan; 
             self.catchTrialProb = nan; 

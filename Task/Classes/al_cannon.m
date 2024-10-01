@@ -41,7 +41,7 @@ classdef al_cannon
             % This function creates an object of
             % class al_colors
 
-            self.nParticles = 41;
+            self.nParticles = 40;
             self.confettiStd = 3;
             self.confettiAnimationStd = 2;
             self.nFrames = 20;

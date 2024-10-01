@@ -64,14 +64,14 @@ while 1
             x = al_minMaxNormalization(xRaw, -0.3741, 0.6909);
             y = al_minMaxNormalization(yRaw, -0.8286, 0.6052);
 
-            % Normalize biased center values 
+            % Normalize biased center values
             xBiasCenterPix = al_minMaxNormalization(0, -0.3741, 0.6909) * screensize(3);
-            yBiasCenterPix = al_minMaxNormalization(0, -0.8286, 0.6052) * screensize(4); 
+            yBiasCenterPix = al_minMaxNormalization(0, -0.8286, 0.6052) * screensize(4);
 
             % Normalize actual center values
             xCenterPix = al_minMaxNormalization(0.1584, -0.3741, 0.6909) * screensize(3);
             yCenterPix = al_minMaxNormalization(-0.1117, -0.8286, 0.6052) * screensize(4);
-            
+
             % Correct current x and y
             x = x * screensize(3) + xCenterPix - xBiasCenterPix;
             y = y * screensize(4) + yCenterPix - yBiasCenterPix;
@@ -79,7 +79,7 @@ while 1
             % Same as for mouse input for psychtoolbox
             x = x-(screensize(3)/2);
             y = (y-(screensize(4)/2))*-1;
-            
+
             % Check buttons
             buttons(2) = button(taskParam.gParam.joy, 1); % top
             buttons(1) = button(taskParam.gParam.joy, 3); % front
@@ -127,7 +127,7 @@ while 1
         if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
             Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
             al_drawFixPoint(taskParam)
-        else
+        elseif isequal(condition, 'cannonPract1') == false ||  isequal(condition, 'cannonPract2') == false
             % Otherwise just fixation cross
             al_drawFixPoint(taskParam)
         end
@@ -153,6 +153,8 @@ while 1
         hyp = nan;
     end
 
+
+
     % Store initial tendency and initiation RT:
     % Only entering the condition when no initial tendency has been
     % recorded (first movement) or unit testing
@@ -167,33 +169,34 @@ while 1
 
     end
 
+    % Optional instructions for cannon practice
+    if isequal(condition, 'cannonPract1') || isequal(condition, 'cannonPract2')
+
+        % Instruction text
+        cannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+        if isequal(condition, 'cannonPract1')
+            addTxt = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
+                'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+            cannonText = strcat(cannonText, addTxt);
+        end
+        DrawFormattedText(taskParam.display.window.onScreen,cannonText, 'center', taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength, [], [], taskParam.strings.vSpacing);
+
+        % Show subject's cannon estimate
+        if isnan(taskData.initialTendency(trial)) == false
+            alpha = 0.4;
+            al_drawCannon(taskParam, degree, alpha, [100 100 100])
+            al_aim(taskParam, degree)
+        end
+    end
+
     % Optionally, present tick marks
     if isequal(taskParam.trialflow.currentTickmarks, 'show') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
         al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred');
     elseif isequal(taskParam.trialflow.currentTickmarks, 'workingMemory') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
-        if trial > 5 && (taskData.block(trial) == taskData.block(trial-5))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-5), 'outc');
-        elseif trial > 4 && (taskData.block(trial) == taskData.block(trial-4))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-4), 'outc');
-        elseif trial > 3 && (taskData.block(trial) == taskData.block(trial-3))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-3), 'outc');
-        elseif trial > 2 && (taskData.block(trial) == taskData.block(trial-2))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
-            al_tickMark(taskParam, taskData.outcome(trial-2), 'outc');
-        elseif trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
-            al_tickMark(taskParam, taskData.outcome(trial-1), 'outc');
-        end
-
+        al_showTickMarkSeries(taskData, taskParam, trial)
+    elseif isequal(taskParam.trialflow.currentTickmarks, 'cannonPractice')
+        al_showTickMarkSeries(taskData, taskParam, trial)
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred');
     end
 
@@ -218,7 +221,7 @@ while 1
             break
         end
     elseif buttons(1) == 1 && hyp >= taskParam.circle.rotationRad-taskParam.circle.predSpotCircleTolerance % ensure that prediction is only possible when spot on circle
-        
+
         taskData.pred(trial) = rad2deg(taskParam.circle.rotAngle);
         taskData.RT(trial) = GetSecs() - startTimestamp;
 

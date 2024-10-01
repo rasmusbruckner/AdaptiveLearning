@@ -30,6 +30,10 @@ elseif isequal(type,'shield')
     col = taskParam.colors.purple;
     tickLength = taskParam.circle.tickLengthShield;
     tickWidth = taskParam.circle.tickWidth;
+elseif isequal(type, 'outcomeSeries')
+    col = [95 95 95];
+    tickLength = taskParam.circle.tickLengthOutc;
+    tickWidth = taskParam.circle.tickWidth;
 end
 
 % Compute location of tickmark

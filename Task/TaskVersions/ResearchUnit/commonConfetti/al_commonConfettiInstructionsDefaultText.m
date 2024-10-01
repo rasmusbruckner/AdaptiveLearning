@@ -23,6 +23,10 @@ classdef al_commonConfettiInstructionsDefaultText
         reduceShield
         secondPracticeHeader
         secondPractice
+        thirdPracticeHeader
+        thirdPractice
+        fourthPracticeHeader
+        fourthPractice
         startTaskHeader
         startTask
         noCatchHeader
@@ -210,23 +214,54 @@ classdef al_commonConfettiInstructionsDefaultText
 
             % Second practice
             if isequal(self.language, 'German')
-                self.secondPractice = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
-                    'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
-                    'der vorherigen Schüsse einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
-                    'steuern. Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
-                    'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
-                    'als auch einer eher ungenauen Konfetti-Kanone zu tun haben. Beachten Sie, dass Sie das Konfetti trotz '...
-                    'guter Vorhersagen auch häufig nicht fangen können. \n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).\n\nBeachten Sie bitte auch, dass '...
-                    'die Konfetti-Kanone in manchen Fällen sichtbar sein wird. In diesen Fällen ist die beste Strategie, zum Ziel der Kanone zu gehen.'];
+                self.secondPractice = ['Um sicherzugehen, dass Sie die Aufgabe verstanden haben, machen wir jetzt eine kurze Übung:\n\n'...
+                    'Sie werden hintereinander fünf Schüsse der Konfetti-Kanone sehen. Danach geben Sie bitte an, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
+                    'Die beste Strategie ist, die mittlere Position der Schüsse anzugeben. Diese Position ist die beste Vohersage, um in der Aufgabe am meisten Konfetti zu fangen.'];
+
             elseif isequal(self.language, 'English')
-                self.secondPractice = ['In this practice run, the confetti cannon is no longer visible. Instead of the confetti cannon, you will see a dot. '...
-                    'You can also see where the confetti is flying to.\n\nIn order to continue catching lots of confetti, you must predict where the confetti is flying to based on '...
-                    'the previous shots and move the bucket to this position. '...
-                    'If you think that the confetti cannon has changed direction, you should also move the bucket '...
-                    'there.\n\nIn the following exercise, you will try it with both a relatively accurate '...
-                    'and a rather inaccurate confetti cannon. Please note that despite '...
-                    'good predictions, you often wont be able to catch the confetti.']; % update few things if planning to use this
+                self.secondPractice = ['Add instructions please']; % update few things if planning to use this
+            else
+                error('language parameter unknown')
+            end
+
+            % Third practice header
+            if isequal(self.language, 'German')
+                self.thirdPracticeHeader = 'Dritter Übungsdurchgang';
+            elseif isequal(self.language, 'English')
+                self.thirdPracticeHeader = 'Third Practice Run';
+            else
+                error('language parameter unknown')
+            end
+
+            % Third practice
+            if isequal(self.language, 'German')
+                self.thirdPractice = ['In dieser Übung sehen Sie nur noch einen Schuss der Konfetti-Kanone. Bitte geben Sie wieder an, wo Sie die Konfetti-Kanone vermuten.\n\nWenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
+                    'dorthin bewegen.\n\nBeachten Sie, dass Sie das Konfetti trotz guter Vorhersagen auch häufig nicht fangen können.'];
+            elseif isequal(self.language, 'English')
+                self.thirdPractice = ['Add instructions please']; % update few things if planning to use this
+            else
+                error('language parameter unknown')
+            end
+
+            % Fourth practice header
+            if isequal(self.language, 'German')
+                self.fourthPracticeHeader = 'Vierter Übungsdurchgang';
+            elseif isequal(self.language, 'English')
+                self.fourthPracticeHeader = 'Fourth Practice Run';
+            else
+                error('language parameter unknown')
+            end
+
+            % Fourth practice
+            if isequal(self.language, 'German')
+                self.fourthPractice = ['Jetzt kommen wir zur letzten Übung.\n\nDiesmal müssen Sie mit dem rosafarbenen Punkt Ihr Schild platzieren und sehen dabei die Kanone nicht mehr. Außerdem werden Sie es sowohl mit einer relativ genauen '...
+                    'als auch einer eher ungenauen versteckten Konfetti-Kanone zu tun haben.\n\n'...
+                    'Bitte versuchen Sie Augenbewegungen und blinzeln '...
+                    'so gut es geht zu vermeiden.'...
+                    '\n\nBeachten Sie bitte auch, dass das Ziel der Konfetti-Kanone in manchen Fällen sichtbar sein wird. In diesen Fällen ist die beste Strategie, zum Ziel der Kanone zu gehen.'];
+
+            elseif isequal(self.language, 'English')
+                self.fourthPractice = ['Add instructions please']; % update few things if planning to use this
             else
                 error('language parameter unknown')
             end

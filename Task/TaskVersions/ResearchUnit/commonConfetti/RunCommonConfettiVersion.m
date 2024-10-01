@@ -34,7 +34,8 @@ if ~exist('config', 'var') || isempty(config)
     % Default parameters
     config.trialsExp = 2;
     config.nBlocks = 2;
-    config.practTrials = 2;
+    config.practTrialsVis = 10;
+    config.practTrialsHid = 20;
     config.passiveViewingPractTrials = 10;
     config.passiveViewing = false;
     config.baselineFixLength = 0.25;
@@ -99,7 +100,6 @@ elseif exist('cBal', 'var') && unitTest.run
     end
 end
 
-
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
 if ~unitTest.run
@@ -116,7 +116,8 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials per block
 nBlocks = config.nBlocks; % number of blocks for each 
-practTrials = config.practTrials; % number of practice trials
+practTrialsVis = config.practTrialsVis; % number of practice trials visible cannon
+practTrialsHid = config.practTrialsHid; % number of practice trials hidden cannon
 passiveViewingPractTrials = config.passiveViewingPractTrials;
 passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
 baselineFixLength = config.baselineFixLength;
@@ -169,7 +170,7 @@ elseif scanner == true
 end
 
 % Hazard rate determining a priori changepoint probability
-haz = .125;
+haz = 0.125;
 
 % Number of confetti particles
 nParticles = 40;
@@ -193,9 +194,11 @@ end
 % Catch-trial probability
 catchTrialProb = 0.1;
 
-% Number of catches during practice that is required to continue with main task
-practiceTrialCriterionNTrials = 5;
+% Number of predictions above threshold and estimation-error size leading to repetition of block
+practiceTrialCriterionNTrials = 2;
 practiceTrialCriterionEstErr = 9;
+cannonPractCriterion = 4;
+cannonPractNumOutcomes = 5;
 
 % Reward magnitude
 rewMag = 0.1;
@@ -244,7 +247,7 @@ else
 end
 
 % Check if practice trials exceeds max of 20
-if practTrials > 20
+if practTrialsVis > 20 || practTrialsHid > 20
     error('Practice trials max 20 (because pre-defined)')
 end
 
@@ -253,7 +256,8 @@ gParam = al_gparam();
 gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.nBlocks = nBlocks;
-gParam.practTrials = practTrials;
+gParam.practTrialsVis = practTrialsVis;
+gParam.practTrialsHid = practTrialsHid;
 gParam.passiveViewingPractTrials = passiveViewingPractTrials;
 gParam.passiveViewing = passiveViewing;
 gParam.runIntro = runIntro;
@@ -264,6 +268,8 @@ gParam.useCatchTrials = useCatchTrials;
 gParam.catchTrialProb = catchTrialProb;
 gParam.practiceTrialCriterionNTrials = practiceTrialCriterionNTrials;
 gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
+gParam.cannonPractCriterion = cannonPractCriterion;
+gParam.cannonPractNumOutcomes = cannonPractNumOutcomes;
 gParam.debug = debug;
 gParam.showConfettiThreshold = showConfettiThreshold;
 gParam.printTiming = printTiming;
@@ -300,9 +306,6 @@ trialflow.reward = 'standard';
 trialflow.shield = 'variableWithSD';
 trialflow.shieldType = 'constant';
 trialflow.input = 'mouse';
-
-% trialflow.colors = 'dark';
-% trialflow.colors = 'blackWhite';
 trialflow.colors = 'colorful';
 
 % ---------------------------------------------
@@ -349,10 +352,10 @@ timingParam.fixCrossShield = 0.7;
 timingParam.fixedITI = 1.0;
 timingParam.jitterFixCrossOutcome = 2;
 timingParam.jitterFixCrossShield = 0.6;
-timingParam.outcomeLength = 0.65; % 0.5;
-timingParam.jitterOutcome = 0.15; % 2;
-timingParam.shieldLength = 0.65; % 0.5;
-timingParam.jitterShield = 0.15; % 0.6;
+timingParam.outcomeLength = 0.65;
+timingParam.jitterOutcome = 0.15;
+timingParam.shieldLength = 0.65; 
+timingParam.jitterShield = 0.15;
 timingParam.jitterITI = 0.5;
 
 % This is a reference timestamp at the start of the experiment.

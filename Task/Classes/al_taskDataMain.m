@@ -5,6 +5,12 @@ classdef al_taskDataMain
     %   The class generates task data and stores participant data
 
     properties
+        
+        % Object behavior
+        saveAsStruct
+
+        % Task-related
+        % -------------
 
         trials % number of trials
         taskType % Version
@@ -141,7 +147,8 @@ classdef al_taskDataMain
 
             % Initialize variables
             % --------------------
-
+            
+            self.saveAsStruct = true;
             self.taskType = taskType ;
 
             % Participant
@@ -171,6 +178,8 @@ classdef al_taskDataMain
             self.currTrial = nan(trials, 1);
             self.block = nan(trials, 1);
             self.allShieldSize = nan(trials, 1);
+            self.actJitterFixCrossOutcome = nan(trials, 1);
+            self.actJitterFixCrossShield = nan(trials, 1);
             self.actJitterOnset = nan(trials, 1);
             self.actJitterOutcome = nan(trials, 1);
             self.actJitterShield = nan(trials, 1);
@@ -721,208 +730,214 @@ classdef al_taskDataMain
             %
             %   Background:
             %       https://www.mathworks.com/help/matlab/ref/saveobj.html
-
-            % General variables
-            s.ID = self.ID;
-            s.age = self.age;
-            s.gender = self.gender;
-            s.date = self.date;
-            s.cond = self.cond;
-            s.concentration = self.concentration;
-            s.haz = self.haz;
-            s.cBal = self.cBal;
-            s.safe = self.safe;
-            s.rew = self.rew;
-            s.currTrial = self.currTrial;
-            s.block = self.block;
-            s.allShieldSize = self.allShieldSize;
-            s.actJitterOnset = self.actJitterOnset;
-            s.cp = self.cp;
-            s.outcome = self.outcome;
-            s.distMean = self.distMean;
-            s.TAC = self.TAC;
-            s.catchTrial = self.catchTrial;
-            s.shieldType = self.shieldType;
-            s.pred = self.pred;
-            s.predErr = self.predErr;
-            s.estErr = self.estErr;
-            s.UP = self.UP;
-            s.hit = self.hit;
-            s.perf = self.perf;
-            s.accPerf = self.accPerf;
-            s.RT = self.RT;
-            s.initiationRTs = self.initiationRTs;
-
-            % Task specific
-            if isequal(self.taskType, 'dresden')
-
-                % s.rew = self.rew;
-                s.group = self.group;
-                s.diffLastOutcPred = self.diffLastOutcPred;
-                s.actRew = self.actRew;
-                s.z = self.z;
-                s.y = self.y;
-
-                s.timestampOnset = self.timestampOnset;
-                s.timestampPrediction = self.timestampPrediction;
-                s.timestampFixCross1 = self.timestampFixCross1;
-                s.timestampFixCross2 = self.timestampFixCross2;
-                s.timestampOutcome = self.timestampOutcome;
-                s.timestampShield = self.timestampShield;
-                s.timestampOffset = self.timestampOffset;
-                s.triggers = self.triggers;
-
-            elseif isequal(self.taskType, 'MagdeburgFMRI')
-
-                s.z = self.z;
-                s.y = self.y;
-
-                s.timestampOnset = self.timestampOnset;
-                s.timestampPrediction = self.timestampPrediction;
-                s.timestampFixCross2 = self.timestampFixCross2;
-                s.timestampFixCross3 = self.timestampFixCross3;
-                s.timestampOutcome = self.timestampOutcome;
-                s.timestampShield = self.timestampShield;
-                s.timestampOffset = self.timestampOffset;
-
-            elseif isequal(self.taskType, 'sleep')
-
-                s.testDay = self.testDay;
-                s.group = self.group;
-                s.pushConcentration = self.pushConcentration;
-                s.z = self.z;
-                s.y = self.y;
-                s.actRew = self.actRew;
-                s.initialTendency = self.initialTendency;
-
-                s.triggers = self.triggers;
-                s.timestampOnset = self.timestampOnset;
-                s.timestampPrediction = self.timestampPrediction;
-                s.timestampFixCross2 = self.timestampFixCross2;
-                s.timestampFixCross3 = self.timestampFixCross3;
-                s.timestampOutcome = self.timestampOutcome;
-                s.timestampShield = self.timestampShield;
-                s.timestampOffset = self.timestampOffset;
-
-            elseif isequal(self.taskType, 'Hamburg')
-
-                s.group = self.group;
-                s.nParticles = self.nParticles;
-                s.confettiStd = self.confettiStd;
-                s.dotCol = self.dotCol;
-                s.initialTendency = self.initialTendency;
-                s.timestampOnset = self.timestampOnset;
-                s.timestampBaseline = self.timestampBaseline;
-                s.timestampPrediction = self.timestampPrediction;
-                % s.actJitterOutcome = self.actJitterOutcome;
-                % s.actJitterShield = self.actJitterShield;
-
-                s.timestampFixCross1 = self.timestampFixCross1;
-                s.timestampFixCross2 = self.timestampFixCross2;
-                s.timestampFixCross3 = self.timestampFixCross3;
-                s.timestampOutcome = self.timestampOutcome;
-                s.timestampShield = self.timestampShield;
-                s.timestampOffset = self.timestampOffset;
-                s.triggers = self.triggers;
-
-                s.sacc = self.sacc;
-                s.rotationRad = self.rotationRad;
-                s.passiveViewing = self.passiveViewing;
-
-            elseif isequal(self.taskType, 'HamburgEEG')
-
-                s.group = self.group;
-                s.nParticles = self.nParticles;
-                s.confettiStd = self.confettiStd;
-                s.dotCol = self.dotCol;
-                s.initialTendency = self.initialTendency;
-                % s.nParticlesCaught = self.nParticlesCaught;
-
-                s.timestampOnset = self.timestampOnset;
-                s.timestampPrediction = self.timestampPrediction;
-                s.timestampOutcome = self.timestampOutcome;
-                s.timestampReward = self.timestampReward;
-                s.timestampFixCross1 = self.timestampFixCross1;
-                s.timestampFixCross2 = self.timestampFixCross2;
-                s.timestampFixCross3 = self.timestampFixCross3;
-                s.timestampOffset = self.timestampOffset;
             
-            elseif isequal(self.taskType, 'infant')
+            if self.saveAsStruct
 
-                % Todo carefull check what we need
-                % when everything is implemented
+                % General variables
+                s.ID = self.ID;
+                s.age = self.age;
+                s.gender = self.gender;
+                s.date = self.date;
+                s.cond = self.cond;
+                s.concentration = self.concentration;
+                s.haz = self.haz;
+                s.cBal = self.cBal;
+                s.safe = self.safe;
+                s.rew = self.rew;
+                s.currTrial = self.currTrial;
+                s.block = self.block;
+                s.allShieldSize = self.allShieldSize;
+                s.actJitterOnset = self.actJitterOnset;
+                s.cp = self.cp;
+                s.outcome = self.outcome;
+                s.distMean = self.distMean;
+                s.TAC = self.TAC;
+                s.catchTrial = self.catchTrial;
+                s.shieldType = self.shieldType;
+                s.pred = self.pred;
+                s.predErr = self.predErr;
+                s.estErr = self.estErr;
+                s.UP = self.UP;
+                s.hit = self.hit;
+                s.perf = self.perf;
+                s.accPerf = self.accPerf;
+                s.RT = self.RT;
+                s.initiationRTs = self.initiationRTs;
+    
+                % Task specific
+                if isequal(self.taskType, 'dresden')
+    
+                    % s.rew = self.rew;
+                    s.group = self.group;
+                    s.diffLastOutcPred = self.diffLastOutcPred;
+                    s.actRew = self.actRew;
+                    s.z = self.z;
+                    s.y = self.y;
+    
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampPrediction = self.timestampPrediction;
+                    s.timestampFixCross1 = self.timestampFixCross1;
+                    s.timestampFixCross2 = self.timestampFixCross2;
+                    s.timestampOutcome = self.timestampOutcome;
+                    s.timestampShield = self.timestampShield;
+                    s.timestampOffset = self.timestampOffset;
+                    s.triggers = self.triggers;
+    
+                elseif isequal(self.taskType, 'MagdeburgFMRI')
+    
+                    s.z = self.z;
+                    s.y = self.y;
+    
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampPrediction = self.timestampPrediction;
+                    s.timestampFixCross2 = self.timestampFixCross2;
+                    s.timestampFixCross3 = self.timestampFixCross3;
+                    s.timestampOutcome = self.timestampOutcome;
+                    s.timestampShield = self.timestampShield;
+                    s.timestampOffset = self.timestampOffset;
+    
+                elseif isequal(self.taskType, 'sleep')
+    
+                    s.testDay = self.testDay;
+                    s.group = self.group;
+                    s.pushConcentration = self.pushConcentration;
+                    s.z = self.z;
+                    s.y = self.y;
+                    s.actRew = self.actRew;
+                    s.initialTendency = self.initialTendency;
+    
+                    s.triggers = self.triggers;
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampPrediction = self.timestampPrediction;
+                    s.timestampFixCross2 = self.timestampFixCross2;
+                    s.timestampFixCross3 = self.timestampFixCross3;
+                    s.timestampOutcome = self.timestampOutcome;
+                    s.timestampShield = self.timestampShield;
+                    s.timestampOffset = self.timestampOffset;
+    
+                elseif isequal(self.taskType, 'Hamburg')
+    
+                    s.group = self.group;
+                    s.nParticles = self.nParticles;
+                    s.confettiStd = self.confettiStd;
+                    s.dotCol = self.dotCol;
+                    s.initialTendency = self.initialTendency;
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampBaseline = self.timestampBaseline;
+                    s.timestampPrediction = self.timestampPrediction;
+                    % s.actJitterOutcome = self.actJitterOutcome;
+                    % s.actJitterShield = self.actJitterShield;
+    
+                    s.timestampFixCross1 = self.timestampFixCross1;
+                    s.timestampFixCross2 = self.timestampFixCross2;
+                    s.timestampFixCross3 = self.timestampFixCross3;
+                    s.timestampOutcome = self.timestampOutcome;
+                    s.timestampShield = self.timestampShield;
+                    s.timestampOffset = self.timestampOffset;
+                    s.triggers = self.triggers;
+    
+                    s.sacc = self.sacc;
+                    s.rotationRad = self.rotationRad;
+                    s.passiveViewing = self.passiveViewing;
+    
+                elseif isequal(self.taskType, 'HamburgEEG')
+    
+                    s.group = self.group;
+                    s.nParticles = self.nParticles;
+                    s.confettiStd = self.confettiStd;
+                    s.dotCol = self.dotCol;
+                    s.initialTendency = self.initialTendency;
+                    % s.nParticlesCaught = self.nParticlesCaught;
+    
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampPrediction = self.timestampPrediction;
+                    s.timestampOutcome = self.timestampOutcome;
+                    s.timestampReward = self.timestampReward;
+                    s.timestampFixCross1 = self.timestampFixCross1;
+                    s.timestampFixCross2 = self.timestampFixCross2;
+                    s.timestampFixCross3 = self.timestampFixCross3;
+                    s.timestampOffset = self.timestampOffset;
                 
-                s.group = self.group;
-                s.oddball = self.oddball;
+                elseif isequal(self.taskType, 'infant')
+    
+                    % Todo carefully check what we need
+                    % when everything is implemented
+                    
+                    s.group = self.group;
+                    s.oddball = self.oddball;
+    
+                    s.timestampOnset = self.timestampOnset;
+                   
+                    s.timestampFixCross1 = self.timestampFixCross1;
+                    
+                    s.timestampOutcome = self.timestampOutcome;
+                    
+                    s.triggers = self.triggers;
+    
+                    s.rotationRad = self.rotationRad;
+    
+                elseif isequal(self.taskType, 'asymReward')
+    
+                    s.nParticles = self.nParticles;
+                    s.confettiStd = self.confettiStd;
+                    s.cpRew = self.cpRew;
+                    s.asymRewardSign = self.asymRewardSign;
+                    s.nGreenParticles = self.nGreenParticles;
+                    s.dotCol = self.dotCol;
+                    s.initialTendency = self.initialTendency;
+                    s.nParticlesCaught = self.nParticlesCaught;
+                    s.greenCaught = self.greenCaught;
+                    s.redCaught = self.redCaught;
+                    s.RPE = self.RPE;
+    
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampPrediction = self.timestampPrediction;
+                    s.timestampOutcome = self.timestampOutcome;
+                    s.timestampShield = self.timestampShield;
+                    s.timestampReward = self.timestampReward;
+                    s.timestampOffset = self.timestampOffset;
+    
+                elseif isequal(self.taskType, 'Leipzig')
+    
+                    s.group = self.group;
+    
+                else
+    
+                    %% Todo: get rid of this when everything else implemented
+                    s.testDay = self.testDay;
+                    s.group = self.group;
+                    s.hazVar = self.hazVar;
+                    s.safeVar = self.safeVar;
+                    s.nParticles = self.nParticles;
+                    s.confettiStd = self.confettiStd;
+                    s.pushConcentration = self.pushConcentration;
+                    s.startingBudget = self.startingBudget;
+                    s.driftConc = self.driftConc;
+                    s.cpVar = self.cpVar;
+                    s.TACVar = self.TACVar;
+                    s.cpRew = self.cpRew;
+                    s.asymRewardSign = self.asymRewardSign;
+                    s.nGreenParticles = self.nGreenParticles;
+                    s.dotCol = self.dotCol;
+                    s.initialTendency = self.initialTendency;
+                    s.nParticlesCaught = self.nParticlesCaught;
+                    s.greenCaught = self.greenCaught;
+                    s.redCaught = self.redCaught;
+                    s.RPE = self.RPE;
+    
+                    s.timestampOnset = self.timestampOnset;
+                    s.timestampPrediction = self.timestampPrediction;
+                    s.timestampShield = self.timestampShield;
+                    s.timestampReward = self.timestampReward;
+                    s.timestampFixCross1 = self.timestampFixCross1;
+                    s.timestampFixCross2 = self.timestampFixCross2;
+                    s.timestampFixCross3 = self.timestampFixCross3;
+                    s.timestampOffset = self.timestampOffset;
+    
+                end
 
-                s.timestampOnset = self.timestampOnset;
-               
-                s.timestampFixCross1 = self.timestampFixCross1;
-                
-                s.timestampOutcome = self.timestampOutcome;
-                
-                s.triggers = self.triggers;
-
-                s.rotationRad = self.rotationRad;
-
-            elseif isequal(self.taskType, 'asymReward')
-
-                s.nParticles = self.nParticles;
-                s.confettiStd = self.confettiStd;
-                s.cpRew = self.cpRew;
-                s.asymRewardSign = self.asymRewardSign;
-                s.nGreenParticles = self.nGreenParticles;
-                s.dotCol = self.dotCol;
-                s.initialTendency = self.initialTendency;
-                s.nParticlesCaught = self.nParticlesCaught;
-                s.greenCaught = self.greenCaught;
-                s.redCaught = self.redCaught;
-                s.RPE = self.RPE;
-
-                s.timestampOnset = self.timestampOnset;
-                s.timestampPrediction = self.timestampPrediction;
-                s.timestampOutcome = self.timestampOutcome;
-                s.timestampShield = self.timestampShield;
-                s.timestampReward = self.timestampReward;
-                s.timestampOffset = self.timestampOffset;
-
-            elseif isequal(self.taskType, 'Leipzig')
-
-                s.group = self.group;
-
-            else
-
-                %% Todo: get rid of this when everything else implemented
-                s.testDay = self.testDay;
-                s.group = self.group;
-                s.hazVar = self.hazVar;
-                s.safeVar = self.safeVar;
-                s.nParticles = self.nParticles;
-                s.confettiStd = self.confettiStd;
-                s.pushConcentration = self.pushConcentration;
-                s.startingBudget = self.startingBudget;
-                s.driftConc = self.driftConc;
-                s.cpVar = self.cpVar;
-                s.TACVar = self.TACVar;
-                s.cpRew = self.cpRew;
-                s.asymRewardSign = self.asymRewardSign;
-                s.nGreenParticles = self.nGreenParticles;
-                s.dotCol = self.dotCol;
-                s.initialTendency = self.initialTendency;
-                s.nParticlesCaught = self.nParticlesCaught;
-                s.greenCaught = self.greenCaught;
-                s.redCaught = self.redCaught;
-                s.RPE = self.RPE;
-
-                s.timestampOnset = self.timestampOnset;
-                s.timestampPrediction = self.timestampPrediction;
-                s.timestampShield = self.timestampShield;
-                s.timestampReward = self.timestampReward;
-                s.timestampFixCross1 = self.timestampFixCross1;
-                s.timestampFixCross2 = self.timestampFixCross2;
-                s.timestampFixCross3 = self.timestampFixCross3;
-                s.timestampOffset = self.timestampOffset;
-
+            else 
+                s = self;
             end
         end
     end

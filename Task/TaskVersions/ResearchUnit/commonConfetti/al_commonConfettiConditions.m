@@ -77,12 +77,6 @@ end
 
 taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.colors, taskParam.display);
 
-% % Initialize and start eye-tracker
-% if taskParam.gParam.eyeTracker
-%     [el, et_file_name] = taskParam.eyeTracker.initializeEyeLink(taskParam);
-%     taskParam = taskParam.eyeTracker.startRecording(taskParam);
-% end
-
 % ------------------------------
 % 3. Optionally baseline arousal
 % ------------------------------
