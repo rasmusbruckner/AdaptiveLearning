@@ -279,7 +279,9 @@ while 1
     file_name_suffix = sprintf('_b%i', b);
 
     % Generate outcomes using cannon-data function using average concentration
-    taskParam.gParam.blockIndices = [1, 6, 11, 16];
+    nRep = taskParam.gParam.practTrialsHid/taskParam.gParam.cannonPractNumOutcomes;
+    endPoint = taskParam.gParam.practTrialsHid;
+    taskParam.gParam.blockIndices = linspace(1, endPoint+1, nRep+1);
     taskParam.gParam.catchTrialProb = 0.0;
     taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
 

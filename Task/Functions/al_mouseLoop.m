@@ -172,12 +172,20 @@ while 1
     % Optional instructions for cannon practice
     if isequal(condition, 'cannonPract1') || isequal(condition, 'cannonPract2')
 
-        % Instruction text
-        cannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
-        if isequal(condition, 'cannonPract1')
-            addTxt = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
+        % Introduce cannon
+        if taskParam.gParam.customInstructions
+            cannonText = taskParam.instructionText.showCannonText;
+            addCannonTxt = taskParam.instructionText.addCannonText;
+
+        else
+            cannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+            addCannonTxt = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
                 'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
-            cannonText = strcat(cannonText, addTxt);
+        end
+
+        % Instruction text
+        if isequal(condition, 'cannonPract1')
+            cannonText = strcat(cannonText, addCannonTxt);
         end
         DrawFormattedText(taskParam.display.window.onScreen,cannonText, 'center', taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength, [], [], taskParam.strings.vSpacing);
 

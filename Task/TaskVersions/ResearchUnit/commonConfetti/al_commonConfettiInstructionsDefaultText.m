@@ -33,6 +33,9 @@ classdef al_commonConfettiInstructionsDefaultText
         noCatch
         accidentalCatchHeader
         accidentalCatch
+        showCannonText
+        addCannonText
+        cannonFeedbackText
         practiceBlockFailHeader
         practiceBlockFail
         firstPupilBaselineHeader
@@ -167,7 +170,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'Dennoch fangen Sie am meisten Konfetti, wenn Sie den rosafarbenen Punkt genau auf die Stelle '...
                     'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
                     'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den rosafarbenen Punkt bitte immer auf die anvisierte '...
-                    'Stelle.\n\nAchten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln.'];
+                    'Stelle.\n\nAchten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'];
             elseif isequal(self.language, 'English')
                 self.firstPractice = ['In this block, the confetti cannon is very old '...
                     'and its aim therefore pretty inaccurate. Even if you move the bucket to the exact aim of the confetti cannon, '...
@@ -235,7 +238,9 @@ classdef al_commonConfettiInstructionsDefaultText
 
             % Third practice
             if isequal(self.language, 'German')
-                self.thirdPractice = ['In dieser Übung sehen Sie nur noch einen Schuss der Konfetti-Kanone. Bitte geben Sie wieder an, wo Sie die Konfetti-Kanone vermuten.\n\nWenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
+                self.thirdPractice = ['In dieser Übung sehen Sie nur noch einen Schuss der Konfetti-Kanone. '...
+                    'Bitte geben Sie wieder an, wo Sie die Konfetti-Kanone vermuten.\n\nBitte beachten Sie, dass das Ziel der Kanone meistens gleich bleibt. Manchmal richtet sich die Kanone allerding neu aus. '...
+                    'Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
                     'dorthin bewegen.\n\nBeachten Sie, dass Sie das Konfetti trotz guter Vorhersagen auch häufig nicht fangen können.'];
             elseif isequal(self.language, 'English')
                 self.thirdPractice = ['Add instructions please']; % update few things if planning to use this
@@ -256,8 +261,7 @@ classdef al_commonConfettiInstructionsDefaultText
             if isequal(self.language, 'German')
                 self.fourthPractice = ['Jetzt kommen wir zur letzten Übung.\n\nDiesmal müssen Sie mit dem rosafarbenen Punkt Ihr Schild platzieren und sehen dabei die Kanone nicht mehr. Außerdem werden Sie es sowohl mit einer relativ genauen '...
                     'als auch einer eher ungenauen versteckten Konfetti-Kanone zu tun haben.\n\n'...
-                    'Bitte versuchen Sie Augenbewegungen und blinzeln '...
-                    'so gut es geht zu vermeiden.'...
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'...
                     '\n\nBeachten Sie bitte auch, dass das Ziel der Konfetti-Kanone in manchen Fällen sichtbar sein wird. In diesen Fällen ist die beste Strategie, zum Ziel der Kanone zu gehen.'];
 
             elseif isequal(self.language, 'English')
@@ -282,7 +286,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. Beachten Sie, dass Sie das Konfetti trotz '...
                     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen und können Ihre Leistung '...
                     'verbessern, indem Sie den Eimer genau auf das Ziel steuern.\n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).\n\nViel Erfolg!'];
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.\n\nViel Erfolg!'];
             elseif isequal(self.language, 'English')
                 self.startTask = ['You have completed the practice phase. To summarize, you catch the most confetti, '...
                     'when you move the bucket (pink dot) to the aim of the confetti cannon. Because you can usually no longer see the cannon, '...
@@ -325,6 +329,34 @@ classdef al_commonConfettiInstructionsDefaultText
                 self.accidentalCatch = 'Sie haben zu viel Konfetti gefangen. Versuchen Sie bitte, das Konfetti zu verfehlen!';
             elseif isequal(self.language, 'English')
                 self.accidentalCatch = 'You have caught too much confetti. Please try to miss the confetti!';
+            else
+                error('language parameter unknown')
+            end
+
+            % Show cannon
+            if isequal(self.language, 'German')
+                self.showCannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+            elseif isequal(self.language, 'English')
+                self.showCannonText = 'Please add instructions';
+            else
+                error('language parameter unknown')
+            end
+
+            % Additional show cannon text
+            if isequal(self.language, 'German')
+                self.addCannonText = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
+                'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+            elseif isequal(self.language, 'English')
+                self.addCannonText = 'Please add instructions';
+            else
+                error('language parameter unknown')
+            end
+
+            % Cannon feedback text
+            if isequal(self.language, 'German')
+                self.cannonFeedbackText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+            elseif isequal(self.language, 'English')
+                self.cannonFeedbackText = 'Please add instructions';
             else
                 error('language parameter unknown')
             end
@@ -383,7 +415,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
                     'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
                     'Strich zeigt die Position der letzten Konfetti-Wolke.\n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).'];
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'];
             elseif isequal(self.language, 'English')
                 self.introduceLowNoiseHeader = 'More accurate confetti cannon';
                 self.introduceLowNoise = ['In the following block, the confetti cannon will be relatively accurate.\n\n'...
@@ -405,7 +437,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
                     'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
                     'Strich zeigt die Position der letzten Konfetti-Wolke.\n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).'];
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'];
             elseif isequal(self.language, 'English')
                 self.introduceHighNoiseHeader = 'Less accurate confetti cannon';
                 self.introduceHighNoise = ['In the following block, the confetti cannon will be relatively inaccurate.\n\n'...

@@ -36,11 +36,13 @@ if ~exist('config', 'var') || isempty(config)
     config.nBlocks = 2;
     config.practTrialsVis = 10;
     config.practTrialsHid = 20;
+    config.cannonPractCriterion = 4;
+    config.cannonPractNumOutcomes = 5;
     config.passiveViewingPractTrials = 10;
     config.passiveViewing = false;
     config.baselineFixLength = 0.25;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = false;
+    config.runIntro = true;
     config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
@@ -118,6 +120,8 @@ trialsExp = config.trialsExp; % number of experimental trials per block
 nBlocks = config.nBlocks; % number of blocks for each 
 practTrialsVis = config.practTrialsVis; % number of practice trials visible cannon
 practTrialsHid = config.practTrialsHid; % number of practice trials hidden cannon
+cannonPractCriterion = config.cannonPractCriterion; % criterion cannon practice
+cannonPractNumOutcomes = config.cannonPractNumOutcomes; % number of trials cannon practice
 passiveViewingPractTrials = config.passiveViewingPractTrials;
 passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
 baselineFixLength = config.baselineFixLength;
@@ -197,8 +201,6 @@ catchTrialProb = 0.1;
 % Number of predictions above threshold and estimation-error size leading to repetition of block
 practiceTrialCriterionNTrials = 2;
 practiceTrialCriterionEstErr = 9;
-cannonPractCriterion = 4;
-cannonPractNumOutcomes = 5;
 
 % Reward magnitude
 rewMag = 0.1;
@@ -249,6 +251,11 @@ end
 % Check if practice trials exceeds max of 20
 if practTrialsVis > 20 || practTrialsHid > 20
     error('Practice trials max 20 (because pre-defined)')
+end
+
+% Check if cannon practice trials is too low
+if cannonPractNumOutcomes < 2
+    error('Cannon practice trials has to be 2 or larger')
 end
 
 % Initialize general task parameters

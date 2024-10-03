@@ -6,6 +6,7 @@
 % It is recommended that you create your own script with the local 
 % parameter settings so that you can re-use your settings.
 
+
 % Create config structure
 config = struct();
 
@@ -14,6 +15,8 @@ config.trialsExp = 20;
 config.nBlocks = 2;
 config.practTrialsVis = 10;
 config.practTrialsHid = 20; 
+config.cannonPractCriterion = 4; % criterion cannon practice
+config.cannonPractNumOutcomes = 5; % number of trials cannon practice
 config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
