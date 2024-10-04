@@ -221,7 +221,8 @@ trialflow.shot = 'animate cannonball';
 % ---------------------------------------------
 
 % Todo: Add some of the other cannon properties
-cannon = al_cannon();
+defaultParticles = false;
+cannon = al_cannon(defaultParticles);
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
 

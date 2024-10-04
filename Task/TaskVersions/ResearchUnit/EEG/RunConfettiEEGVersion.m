@@ -39,6 +39,7 @@ if ~exist('config', 'var') || isempty(config)
     config.screenSize = get(0,'MonitorPositions')*1.0;
     config.s = 40;
     config.enter = 37;
+    config.defaultParticles = true;
     config.debug = false;
     config.showConfettiThreshold = false;
     config.printTiming = true;
@@ -99,6 +100,7 @@ headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
 s = config.s; % s key
 enter = config.enter; % enter key
+defaultParticles = config.defaultParticles;
 debug = config.debug; % debug mode
 showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
 printTiming = config.printTiming; % print timing for checking
@@ -245,7 +247,7 @@ trialflow.colors = 'dark';
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+cannon = al_cannon(defaultParticles);
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
 cannon.confettiEndMean = confettiEndMean;

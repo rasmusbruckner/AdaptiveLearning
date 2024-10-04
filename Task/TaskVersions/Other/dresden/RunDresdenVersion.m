@@ -173,7 +173,7 @@ trialflow.currentTickmarks = "show";
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+cannon = al_cannon(false);
 cannon.nFrames = nFrames;
 
 % ------------------------------------------

@@ -354,7 +354,7 @@ classdef al_commonConfettiInstructionsDefaultText
 
             % Cannon feedback text
             if isequal(self.language, 'German')
-                self.cannonFeedbackText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+                self.cannonFeedbackText = '\n\nHier können Sie Ihre Angabe und die echte Konfetti-Kanone vergleichen.';
             elseif isequal(self.language, 'English')
                 self.cannonFeedbackText = 'Please add instructions';
             else

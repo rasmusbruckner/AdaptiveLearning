@@ -163,12 +163,12 @@ for i = 1:nTrials
 
         % Cannon feedback
         if taskParam.gParam.customInstructions
-            cannonText = taskParam.instructionText.cannonFeedbackText;
+           cannonText = strcat(cannonText, taskParam.instructionText.cannonFeedbackText);
+
         else
-            cannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+            cannonText = strcat(cannonText, '\n\nHier können Sie Ihre Angabe und die echte Konfetti-Kanone vergleichen.');
         end
 
-        cannonText = strcat(cannonText, '\n\nHier können Sie Ihre Angabe und die echte Konfetti-Kanone vergleichen.');
         DrawFormattedText(taskParam.display.window.onScreen,cannonText, 'center', taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength, [], [], taskParam.strings.vSpacing);
         DrawFormattedText(taskParam.display.window.onScreen, taskParam.strings.txtPressEnter, 'center', taskParam.display.screensize(4)*0.9);
         Screen('Flip', taskParam.display.window.onScreen);

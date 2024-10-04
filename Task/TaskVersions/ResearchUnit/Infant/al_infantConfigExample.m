@@ -20,6 +20,7 @@ config.screenSize = [0 0 1920 1080]*0.5; % get(0,'MonitorPositions')*1.0;
 config.screenNumber = 1;
 config.s = 40;
 config.enter = 37;
+config.defaultParticles = false;
 config.debug = false;
 config.printTiming = true;
 config.hidePtbCursor = false; % turn on when using "mouse tracking" but turn off for eye tracking

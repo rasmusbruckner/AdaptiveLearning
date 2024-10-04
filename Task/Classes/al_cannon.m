@@ -9,7 +9,8 @@ classdef al_cannon
     % -------------------------------
 
     properties
-
+        
+        defaultParticles % take default particles or not
         nParticles % number of confetti particles
         confettiStd  % standard deviation of confetti
         confettiAnimationStd % standard deviation when confetti is animated
@@ -37,10 +38,11 @@ classdef al_cannon
 
     methods
 
-        function self = al_cannon()
+        function self = al_cannon(defaultParticles)
             % This function creates an object of
             % class al_colors
-
+            
+            self.defaultParticles = defaultParticles;
             self.nParticles = 40;
             self.confettiStd = 3;
             self.confettiAnimationStd = 2;
@@ -51,8 +53,13 @@ classdef al_cannon
             
             % Confetti outcome properties
             self.xyExp = nan; % x-y-position
-            self.dotCol = nan; % color
-            self.dotSize = nan; % size
+            self.particleSize = nan;
+            self.dotSize = nan; 
+            if self.defaultParticles == false
+                self.dotCol = nan;
+            else
+                self.dotCol = load('dotColDefault.mat').dotColDefault;
+            end
 
         end
 

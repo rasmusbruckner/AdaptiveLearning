@@ -26,6 +26,7 @@ classdef al_gparam
         shieldMax % maximium angular shield size         
                 
         trials % number of trials
+        practTrials
         practTrialsVis % number of practice trials visible cannon
         practTrialsHid % number of practice trials hidden cannon
         shieldTrials % number of shield-practice trials 

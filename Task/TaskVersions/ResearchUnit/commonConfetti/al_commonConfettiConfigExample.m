@@ -11,7 +11,7 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 20;
+config.trialsExp = 5;
 config.nBlocks = 2;
 config.practTrialsVis = 10;
 config.practTrialsHid = 20; 
@@ -33,6 +33,7 @@ config.screenNumber = 1;
 config.s = 40;
 config.enter = 37;
 config.five = 15;
+config.defaultParticles = true;
 config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;
@@ -51,7 +52,7 @@ config.sendTrigger = false;
 config.sampleRate = 500; % Sampling rate for EEG
 config.port = hex2dec('E050');
 config.rotationRadPixel = 140; % 170
-config.rotationRadDeg = 2.5; % 3.16; %1.8;
+config.rotationRadDeg = 3.16; % 2.5
 config.customInstructions = true;
 config.instructionText = al_commonConfettiInstructionsDefaultText(config.language);
 config.noPtbWarnings = false;

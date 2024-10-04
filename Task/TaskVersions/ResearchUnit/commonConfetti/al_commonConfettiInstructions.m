@@ -196,7 +196,7 @@ while 1
     % If estimation error is larger than a criterion on more than five
     % trials, we repeat the instructions
     repeatBlock = sum(abs(taskData.estErr) >= taskParam.gParam.practiceTrialCriterionEstErr);
-    if sum(repeatBlock) > taskParam.gParam.practiceTrialCriterionNTrials
+    if (sum(repeatBlock) > taskParam.gParam.practiceTrialCriterionNTrials) && taskParam.unitTest.run == false
         WaitSecs(0.5)
         if taskParam.gParam.customInstructions
             header = taskParam.instructionText.practiceBlockFailHeader;
@@ -292,7 +292,7 @@ while 1
     testPassed = al_cannonPractice(taskParam, taskData, nTrials, file_name_suffix);
 
     % If estimation error was too large, we repeat the instructions
-    if sum(testPassed) < taskParam.gParam.cannonPractCriterion
+    if (sum(testPassed) < taskParam.gParam.cannonPractCriterion)  && taskParam.unitTest.run == false
         WaitSecs(0.5)
         if taskParam.gParam.customInstructions
             header = taskParam.instructionText.practiceBlockFailHeader;

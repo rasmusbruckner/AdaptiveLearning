@@ -35,7 +35,7 @@ display = al_display();
 circle = al_circle(display.windowRect);
 
 % Cannon-object instance
-cannon = al_cannon();
+cannon = al_cannon(false);
 cannon.nParticles = 40;
 cannon.confettiStd = 4;
 cannon.confettiAnimationStd = 2;
@@ -109,3 +109,29 @@ taskData = taskData.al_confettiData(taskParam);
 taskData.saveAsStruct = false;
 taskData = saveobj(taskData);  % Returns the object itself
 % save('Files/cannonPractice.mat', 'taskData');
+
+
+% Generate final cannon-hidden block
+% ----------------------------------
+
+% Task-data-object instance
+taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
+
+while 1
+
+    % Generate outcomes using cannon-data function
+    taskData = taskData.al_cannonData(taskParam, haz, concentration, taskParam.gParam.safe);
+
+    if sum(taskData.cp) == 4
+        break
+    end
+
+end
+
+% Generate outcomes using confetti-data function
+taskData = taskData.al_confettiData(taskParam);
+
+% Save the object without converting to struct
+taskData.saveAsStruct = false;
+taskData = saveobj(taskData);  % Returns the object itself
+% save('Files/hidCannonPracticeHamburg_c16.mat', 'taskData');
