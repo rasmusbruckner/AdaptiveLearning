@@ -113,6 +113,8 @@ taskData = saveobj(taskData);  % Returns the object itself
 
 % Generate final cannon-hidden block
 % ----------------------------------
+concentration = 16;
+
 
 % Task-data-object instance
 taskData = al_taskDataMain(trial, taskParam.gParam.taskType);

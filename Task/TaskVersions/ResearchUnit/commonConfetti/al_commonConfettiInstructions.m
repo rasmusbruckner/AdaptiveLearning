@@ -184,8 +184,11 @@ taskParam.unitTest.pred = zeros(20,1);
 
 % Initialize block counter
 b = 1;
+totalFail = 0;
 
+% Run task
 while 1
+
 
     % File name suffix
     file_name_suffix = sprintf('_b%i', b);
@@ -198,6 +201,13 @@ while 1
     repeatBlock = sum(abs(taskData.estErr) >= taskParam.gParam.practiceTrialCriterionEstErr);
     if (sum(repeatBlock) > taskParam.gParam.practiceTrialCriterionNTrials) && taskParam.unitTest.run == false
         WaitSecs(0.5)
+       
+        % Break out of loop, even if criterion missed, after 3 attempts
+        totalFail = totalFail + 1;
+        if totalFail == taskParam.gParam.cannonPractFailCrit
+            break
+        end
+
         if taskParam.gParam.customInstructions
             header = taskParam.instructionText.practiceBlockFailHeader;
             txt = taskParam.instructionText.practiceBlockFail;
@@ -271,6 +281,7 @@ taskParam.trialflow.exp = 'cannonPract1';
 
 % Initialize block counter
 b = 1;
+totalFail = 0;
 
 % Run task
 while 1
@@ -294,9 +305,16 @@ while 1
     % If estimation error was too large, we repeat the instructions
     if (sum(testPassed) < taskParam.gParam.cannonPractCriterion)  && taskParam.unitTest.run == false
         WaitSecs(0.5)
+
+        % Break out of loop, even if criterion missed, after 3 attempts
+        totalFail = totalFail + 1;
+        if totalFail == taskParam.gParam.cannonPractFailCrit
+            break
+        end
+
         if taskParam.gParam.customInstructions
             header = taskParam.instructionText.practiceBlockFailHeader;
-            txt = taskParam.instructionText.practiceBlockFail;
+            txt = taskParam.instructionText.cannonPracticeFail;
         else
             header = 'Bitte noch mal probieren!';
             txt = ['Sie haben die Konfetti-Kanone nicht genau genug eingeschätzt. Versuchen Sie im nächsten '...

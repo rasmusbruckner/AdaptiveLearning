@@ -43,7 +43,8 @@ classdef al_gparam
         practiceTrialCriterionEstErr % estimation-error threshold in practice determining when practice is repeated
         cannonPractCriterion % minimum number of passes to continue
         cannonPractNumOutcomes % number of outcomes before prediction
-        
+        cannonPractFailCrit % max number of repetitions
+
         rewMag % reward magnitude when "hit"
         useCatchTrials % indicates if catch trials are used
         catchTrialProb % Catch-trial proability
@@ -115,6 +116,7 @@ classdef al_gparam
             self.practiceTrialCriterionEstErr = nan; 
             self.cannonPractCriterion = nan;
             self.cannonPractNumOutcomes = nan;
+            self.cannonPractFailCrit = nan;
             self.rewMag = 0.1; 
             self.useCatchTrials = nan; 
             self.catchTrialProb = nan; 

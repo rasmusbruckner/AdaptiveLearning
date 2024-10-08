@@ -38,6 +38,7 @@ classdef al_commonConfettiInstructionsDefaultText
         cannonFeedbackText
         practiceBlockFailHeader
         practiceBlockFail
+        cannonPracticeFail
         firstPupilBaselineHeader
         firstPupilBaseline
         secondPupilBaselineHeader
@@ -377,6 +378,16 @@ classdef al_commonConfettiInstructionsDefaultText
             elseif isequal(self.language, 'English')
                 self.practiceBlockFail = ['You have often placed your bucket next to the aim of the cannon. In the next '...
                     'phase, please try to aim the bucket directly at the target. The aim is indicated by the black line.'];
+            else
+                error('language parameter unknown')
+            end
+
+            % Practice block fail
+            if isequal(self.language, 'German')
+                self.cannonPracticeFail = ['Sie haben die Konfetti-Kanone nicht genau genug eingeschätzt. Versuchen Sie im nächsten '...
+                'Durchgang bitte, den Mittelpunkt der einzelnen Schüsse auszuwählen. Bei Fragen, wenden Sie sich an die Versuchsleitung.'];
+            elseif isequal(self.language, 'English')
+                self.cannonPracticeFail = ['Please add instructions'];
             else
                 error('language parameter unknown')
             end
