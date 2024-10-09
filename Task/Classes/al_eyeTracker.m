@@ -18,6 +18,7 @@ classdef al_eyeTracker
         ppd % estimated pixels per degree
         resolutionX % x resolution (in pixels)
         saccThres % threshold value
+        el %SMI instance
             
     end
 
@@ -47,7 +48,8 @@ classdef al_eyeTracker
 
         function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
             % INITIALIZEEYELINK This function initialzes the eye-tracker
-            %
+            % !! NOW ACTUALLY INITIALIZES SMI NOT EYELINK !! name kept for
+            % easier implementation.
             %   Input
             %       taskParam: Task-parameter-object instance
             %       et_file_name_suffix: Suffix of file name
@@ -58,18 +60,39 @@ classdef al_eyeTracker
 
             self.et_file_name = sprintf('%s%s', taskParam.subject.ID, et_file_name_suffix);
             self.et_file_name = [self.et_file_name]; % todo: check if this is really necessary
-
+            
+            
+            settings = SMITE.getDefaults('HiSpeed');
+            settings.connectInfo    = {'192.168.1.1',4444,'192.168.1.2',5555};
+            settings.doAverageEyes  = false;
+            settings.cal.bgColor    = taskParam.colors.background;
+            settings.freq           = 500;
+%             settings.trackMode      = 'MONOCULAR';
+            settings.trackEye       = 'EYE_RIGHT';
+            settings.logFileName    = 'test_log.txt';
+            settings.save.allowFileTransfer = false;
+            
             % Todo test if we can also pass object instead instead of new structure
-            options.dist = self.dist;
-            options.width = self.width;
-            options.height = self.height;
-            options.window_rect = taskParam.display.windowRect;
-            options.frameDur = self.frameDur;
-            options.frameRate = self.frameRate;
-            [el, ~] = ELconfig(taskParam.display.window.onScreen, self.et_file_name, options);
+%             settings.dist = self.dist;
+%             settings.width = self.width;
+%             settings.height = self.height;
+%             settings.window_rect = taskParam.display.windowRect;
+%             settings.frameDur = self.frameDur;
+%             settings.frameRate = self.frameRate;
 
+            % initialize SMI
+            self.el         = SMITE(settings);
+            %EThndl         = EThndl.setDummyMode();
+            self.el.init();
+            self.el.calibrate(taskParam.display.window.onScreen, false);
+            
+            
+            %[el, ~] = ELconfig(taskParam.display.window.onScreen, self.et_file_name, settings);
+            
             % Calibrate the eye tracker
-            EyelinkDoTrackerSetup(el);
+            % EyelinkDoTrackerSetup(el);
+            
+            
 
         end
 
@@ -102,7 +125,9 @@ classdef al_eyeTracker
             %       sacc: Detected saccades
             %
             %   Credit: Donner lab
-
+            
+            error('this is the SMI version, no saccades implemented for now.')
+            
             % Short break
             pause(0.002)
 
@@ -139,12 +164,17 @@ classdef al_eyeTracker
             %
             %   Output
             %       taskParam: Task-parameter-object instance
-
-
-            Eyelink('StartRecording');
+                
+            
+            % Eyelink('StartRecording');
+            % WaitSecs(0.1);
+            % Eyelink('message', 'Start recording Eyelink');
+            
+            taskParam.eyeTracker.el.startRecording()
+%             taskParam.eyeTracker.el.startBuffer()
             WaitSecs(0.1);
-            Eyelink('message', 'Start recording Eyelink');
-
+            taskParam.eyeTracker.el.sendMessage('Start recording SMI');
+            
             % Reference time stamp
             taskParam.timingParam.ref = GetSecs();
         end
