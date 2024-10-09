@@ -58,7 +58,8 @@ classdef al_cannon
             if self.defaultParticles == false
                 self.dotCol = nan;
             else
-                self.dotCol = load('dotColDefault.mat').dotColDefault;
+%               self.dotCol = load('dotColDefault.mat').dotColDefault;
+                self.dotCol = getfield(load('dotColDefault.mat','dotColDefault'),'dotColDefault');
             end
 
         end
