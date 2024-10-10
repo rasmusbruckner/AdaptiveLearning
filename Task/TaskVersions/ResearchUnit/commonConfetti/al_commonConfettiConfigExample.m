@@ -43,6 +43,7 @@ config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.meg = false;
 config.scanner = false;
 config.eyeTracker = false; %true;
+config.trackerVersion = 'eyelink'; %set 'eyelink' or 'SMI'
 config.onlineSaccades = true;
 config.saccThres = 1;
 config.useDegreesVisualAngle = true;

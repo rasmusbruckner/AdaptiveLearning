@@ -1,4 +1,4 @@
-function al_saveEyelinkData(tracker_instance, et_path, et_file_name)
+function al_saveEyelinkData(et_path, et_file_name)
 %AL_SAVEEYELINKDATA This function saves the eye-tracking data
 %
 %   Input
@@ -7,16 +7,17 @@ function al_saveEyelinkData(tracker_instance, et_path, et_file_name)
 %
 %   Output
 %       None
- 
-% !! THIS IS THE EDITED SMI VERSION FOR JENA !!
- 
-fprintf('Saving SMI data to %s\n', et_path)
+
+fprintf('Saving EyeLink data to %s\n', et_path)
 eyefilename = fullfile(et_path,et_file_name);
-
-tracker_instance.stopRecording();
-tracker_instance.saveData(eyefilename);
-
-
+Eyelink('CloseFile');
+Eyelink('WaitForModeReady', 500);
+try
+    status = Eyelink('ReceiveFile', et_file_name, eyefilename);
+    disp(['File ' eyefilename ' saved to disk']);
+catch
+    warning(['File ' eyefilename ' not saved to disk']);
+end
 % Eyelink('StopRecording');
- 
+
 end

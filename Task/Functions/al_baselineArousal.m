@@ -33,9 +33,12 @@ for i = 1:size(arousalColors,1)
 
     % Presenting trial number at the bottom of the eyetracker display - optional
     if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
-%         Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, 3);
-%         Eyelink('message', 'TRIALID %d', i);
-        taskParam.eyeTracker.el.sendMessage(sprintf('TRIALID BaseAr %d', i));
+        if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+            Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, 3);
+            Eyelink('message', 'TRIALID %d', i);
+        elseif isequal(taskParam.gparam.trackerVersion, 'SMI')
+            taskParam.eyeTracker.el.sendMessage(sprintf('TRIALID BaseAr %d', i));
+        end
     end
 
     % Only send trigger on first interation
@@ -72,12 +75,18 @@ end
 % -----------------
 
 if taskParam.gParam.eyeTracker% && isequal(taskParam.trialflow.saveEtData, 'true')
-    et_path = pwd;
-    et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
-    al_saveEyelinkData(taskParam.eyeTracker.el, et_path, et_file_name)
-    taskParam.eyeTracker.el.stopRecording();
-%     al_saveEyelinkData(et_path, et_file_name)
-%     Eyelink('StopRecording');
+    if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+        et_path = pwd;
+        et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
+        al_saveEyelinkData(et_path, et_file_name)
+        Eyelink('StopRecording');
+
+    elseif isequal(taskParam.gparam.trackerVersion, 'SMI')
+        et_path = pwd;
+        et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
+        al_saveEyelinkData(et_path, et_file_name) 
+        taskParam.eyeTracker.el.stopRecording();
+    end
 end
 
 % if taskParam.gParam.eyeTracker

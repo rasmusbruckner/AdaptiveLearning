@@ -43,6 +43,7 @@ config.dataDirectory = 'C://Users//Matlab-User//Documents//AdaptiveLearning//Dat
 config.meg = false;
 config.scanner = false;
 config.eyeTracker = true; %true;
+config.trackerVersion = 'SMI'; %set 'eyelink' or 'SMI'
 config.onlineSaccades = false;
 config.saccThres = 1;
 config.useDegreesVisualAngle = true;

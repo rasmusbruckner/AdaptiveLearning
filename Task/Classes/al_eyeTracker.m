@@ -18,7 +18,7 @@ classdef al_eyeTracker
         ppd % estimated pixels per degree
         resolutionX % x resolution (in pixels)
         saccThres % threshold value
-        el %SMI instance
+        el %eyetracker instance
             
     end
 
@@ -46,10 +46,9 @@ classdef al_eyeTracker
             self.saccThres = 1;
         end
 
-        function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
+function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
             % INITIALIZEEYELINK This function initialzes the eye-tracker
-            % !! NOW ACTUALLY INITIALIZES SMI NOT EYELINK !! name kept for
-            % easier implementation.
+            %
             %   Input
             %       taskParam: Task-parameter-object instance
             %       et_file_name_suffix: Suffix of file name
@@ -57,44 +56,50 @@ classdef al_eyeTracker
             %   Output:
             %       el: Eye-link object
 
-
             self.et_file_name = sprintf('%s%s', taskParam.subject.ID, et_file_name_suffix);
             self.et_file_name = [self.et_file_name]; % todo: check if this is really necessary
-            
-            
-            settings = SMITE.getDefaults('HiSpeed');
-            settings.connectInfo    = {'192.168.1.1',4444,'192.168.1.2',5555};
-            settings.doAverageEyes  = false;
-            settings.cal.bgColor    = taskParam.colors.background;
-            settings.freq           = 500;
-%             settings.trackMode      = 'MONOCULAR';
-            settings.trackEye       = 'EYE_RIGHT';
-            settings.logFileName    = 'test_log.txt';
-            settings.save.allowFileTransfer = false;
-            
-            % Todo test if we can also pass object instead instead of new structure
-%             settings.dist = self.dist;
-%             settings.width = self.width;
-%             settings.height = self.height;
-%             settings.window_rect = taskParam.display.windowRect;
-%             settings.frameDur = self.frameDur;
-%             settings.frameRate = self.frameRate;
 
-            % initialize SMI
-            self.el         = SMITE(settings);
-            %EThndl         = EThndl.setDummyMode();
-            self.el.init();
-            self.el.calibrate(taskParam.display.window.onScreen, false);
-            
-            
-            %[el, ~] = ELconfig(taskParam.display.window.onScreen, self.et_file_name, settings);
-            
-            % Calibrate the eye tracker
-            % EyelinkDoTrackerSetup(el);
-            
-            
+            if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+                % Todo test if we can also pass object instead instead of new structure
+                options.dist = self.dist;
+                options.width = self.width;
+                options.height = self.height;
+                options.window_rect = taskParam.display.windowRect;
+                options.frameDur = self.frameDur;
+                options.frameRate = self.frameRate;
+                [el, ~] = ELconfig(taskParam.display.window.onScreen, self.et_file_name, options);
+    
+                % Calibrate the eye tracker
+                EyelinkDoTrackerSetup(el);
 
+            elseif isequal(taskParam.gparam.trackerVersion, 'SMI') && ~exists(taskParam.eyeTracker.el)  %todo see if this really checks if SMI was already initialized     
+                if ~exists(taskParam.eyeTracker.el)  %todo see if this really checks if SMI was already initialized
+                    settings = SMITE.getDefaults('HiSpeed');
+                    settings.connectInfo    = {'192.168.1.1',4444,'192.168.1.2',5555};
+                    settings.doAverageEyes  = false;
+                    settings.cal.bgColor    = taskParam.colors.background;
+                    settings.freq           = 500;
+                    % settings.trackMode      = 'MONOCULAR';
+                    settings.trackEye       = 'EYE_RIGHT';
+                    settings.logFileName    = 'test_log.txt';
+                    settings.save.allowFileTransfer = false;
+                    
+                    % initialize SMI
+                    self.el         = SMITE(settings);
+                    %EThndl         = EThndl.setDummyMode();
+                    self.el.init();
+                    self.el.calibrate(taskParam.display.window.onScreen, false);
+                elseif exists(taskParam.eyeTracker.el) && taskParam.eyeTracker.el.isInitialized == true
+                    self.el.calibrate(taskParam.display.window.onScreen, false);
+                else
+                    error('failed to initialize or calibrate SMI')
+                end
+
+            else
+                error('Please specifiy tracker version as eyelink or SMI')
+            end
         end
+
 
         function self = estimatePixelsPerDegree(self)
             % ESTIMATEPIXELSPERDEGREE This function estimates the number of
@@ -126,30 +131,34 @@ classdef al_eyeTracker
             %
             %   Credit: Donner lab
             
-            error('this is the SMI version, no saccades implemented for now.')
+            if isequal(taskParam.gparam.trackerVersion, 'eyelink')
             
-            % Short break
-            pause(0.002)
+                % Short break
+                pause(0.002)
+    
+                % Extract samples from eye-link
+                [samples, ~, ~] = Eyelink('GetQueuedData');
+                
+                % Extract relevant samples depending on tracked eye
+                if eye==0
+                    x = (samples(14,:)-zero(1))/self.ppd;
+                    y = (samples(16,:)-zero(2))/self.ppd;
+                else
+                    x = (samples(15,:)-zero(1))/self.ppd;
+                    y = (samples(17,:)-zero(2))/self.ppd;
+                end
+                
+                % Compute deviation from fixation spot and categorize saccades
+                d = (x.^2 + y.^2).^.5;
+                a = d(2:length(d));
+                if any(a>self.saccThres)
+                    sacc = 1;
+                else 
+                    sacc = 0;
+                end
 
-            % Extract samples from eye-link
-            [samples, ~, ~] = Eyelink('GetQueuedData');
-            
-            % Extract relevant samples depending on tracked eye
-            if eye==0
-                x = (samples(14,:)-zero(1))/self.ppd;
-                y = (samples(16,:)-zero(2))/self.ppd;
             else
-                x = (samples(15,:)-zero(1))/self.ppd;
-                y = (samples(17,:)-zero(2))/self.ppd;
-            end
-            
-            % Compute deviation from fixation spot and categorize saccades
-            d = (x.^2 + y.^2).^.5;
-            a = d(2:length(d));
-            if any(a>self.saccThres)
-                sacc = 1;
-            else 
-                sacc = 0;
+                error('online saccades only implemented for eyelink')
             end
         end
     end
@@ -164,19 +173,23 @@ classdef al_eyeTracker
             %
             %   Output
             %       taskParam: Task-parameter-object instance
+            if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+                Eyelink('StartRecording');
+                WaitSecs(0.1);
+                Eyelink('message', 'Start recording Eyelink');
+    
+                % Reference time stamp
+                taskParam.timingParam.ref = GetSecs();
+
+            elseif isequal(taskParam.gparam.trackerVersion, 'SMI')
+                taskParam.eyeTracker.el.startRecording()
+                WaitSecs(0.1);
+                taskParam.eyeTracker.el.sendMessage('Start recording SMI');
                 
-            
-            % Eyelink('StartRecording');
-            % WaitSecs(0.1);
-            % Eyelink('message', 'Start recording Eyelink');
-            
-            taskParam.eyeTracker.el.startRecording()
-%             taskParam.eyeTracker.el.startBuffer()
-            WaitSecs(0.1);
-            taskParam.eyeTracker.el.sendMessage('Start recording SMI');
-            
-            % Reference time stamp
-            taskParam.timingParam.ref = GetSecs();
+                % Reference time stamp
+                taskParam.timingParam.ref = GetSecs();
+            end
         end
+
     end
 end
