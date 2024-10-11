@@ -59,7 +59,7 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
             self.et_file_name = sprintf('%s%s', taskParam.subject.ID, et_file_name_suffix);
             self.et_file_name = [self.et_file_name]; % todo: check if this is really necessary
 
-            if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+            if isequal(taskParam.gParam.trackerVersion, 'eyelink')
                 % Todo test if we can also pass object instead instead of new structure
                 options.dist = self.dist;
                 options.width = self.width;
@@ -72,25 +72,25 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
                 % Calibrate the eye tracker
                 EyelinkDoTrackerSetup(el);
 
-            elseif isequal(taskParam.gparam.trackerVersion, 'SMI') && ~exists(taskParam.eyeTracker.el)  %todo see if this really checks if SMI was already initialized     
-                if ~exists(taskParam.eyeTracker.el)  %todo see if this really checks if SMI was already initialized
+            elseif isequal(taskParam.gParam.trackerVersion, 'SMI')    
+                if ~exist(taskParam.eyeTracker.el)  %todo see if this really checks if SMI was already initialized
                     settings = SMITE.getDefaults('HiSpeed');
                     settings.connectInfo    = {'192.168.1.1',4444,'192.168.1.2',5555};
                     settings.doAverageEyes  = false;
                     settings.cal.bgColor    = taskParam.colors.background;
                     settings.freq           = 500;
-                    % settings.trackMode      = 'MONOCULAR';
+                    settings.trackMode      = 'MONOCULAR';
                     settings.trackEye       = 'EYE_RIGHT';
                     settings.logFileName    = 'test_log.txt';
                     settings.save.allowFileTransfer = false;
                     
                     % initialize SMI
                     self.el         = SMITE(settings);
-                    %EThndl         = EThndl.setDummyMode();
+                    %self.el         = self.el.setDummyMode();
                     self.el.init();
-                    self.el.calibrate(taskParam.display.window.onScreen, false);
-                elseif exists(taskParam.eyeTracker.el) && taskParam.eyeTracker.el.isInitialized == true
-                    self.el.calibrate(taskParam.display.window.onScreen, false);
+                    self.el.calibrate(taskParam.display.window.onScreen); % was calibrate(taskParam.display.window.onScreen, false)
+                elseif exist(taskParam.eyeTracker.el) && taskParam.eyeTracker.el.isInitialized == true
+                    self.el.calibrate(taskParam.display.window.onScreen);
                 else
                     error('failed to initialize or calibrate SMI')
                 end
@@ -131,7 +131,7 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
             %
             %   Credit: Donner lab
             
-            if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+            if isequal(taskParam.gParam.trackerVersion, 'eyelink')
             
                 % Short break
                 pause(0.002)
@@ -173,7 +173,7 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
             %
             %   Output
             %       taskParam: Task-parameter-object instance
-            if isequal(taskParam.gparam.trackerVersion, 'eyelink')
+            if isequal(taskParam.gParam.trackerVersion, 'eyelink')
                 Eyelink('StartRecording');
                 WaitSecs(0.1);
                 Eyelink('message', 'Start recording Eyelink');
@@ -181,7 +181,7 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
                 % Reference time stamp
                 taskParam.timingParam.ref = GetSecs();
 
-            elseif isequal(taskParam.gparam.trackerVersion, 'SMI')
+            elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
                 taskParam.eyeTracker.el.startRecording()
                 WaitSecs(0.1);
                 taskParam.eyeTracker.el.sendMessage('Start recording SMI');

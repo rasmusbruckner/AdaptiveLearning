@@ -65,6 +65,7 @@ classdef al_gparam
         scanner % indicates if experiment takes place in scanner        
         meg % indicates if experiment takes place with MEG
         eyeTracker % indicates if experiment takes place with eyeTracker
+        trackerVersion % selects whether we want eyelink or SMI version
         onlineSaccades % indicates if we track saccades during task
         uke % indicates uke fMRI scanner
         joy % potentially temporary joystick variable
@@ -134,6 +135,7 @@ classdef al_gparam
             self.scanner = false;
             self.meg = false;
             self.eyeTracker = false;
+            self.trackerVersion = 'eyelink';
             self.uke = false;
             self.joy = nan;
             self.useResponseThreshold = false;
