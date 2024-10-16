@@ -97,7 +97,7 @@ for i = 1:trial
     % Timestamp for measuring jitter duration for validation purposes
     jitTest = GetSecs();
 
-    if isequal(taskParam.trialflow.exp, 'exp') || isequal(taskParam.trialflow.exp, 'practHid')
+    if isequal(taskParam.trialflow.exp, 'exp') || isequal(taskParam.trialflow.exp, 'practHid') || isequal(taskParam.trialflow.exp, 'passive')
 
         % Take jitter into account and get timestamps for initiation RT
         taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;

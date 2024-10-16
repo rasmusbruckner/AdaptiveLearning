@@ -535,7 +535,7 @@ classdef al_taskDataMain
 
                 sample = circ_vmrnd(deg2rad(currMean - 180), currConcentration, 1);
 
-                % Normal cumulative distiribution function
+                % Normal cumulative distribution function
             elseif isequal(type, 'normcdf')
 
                 % Concentration expressed as variance (approximation)
