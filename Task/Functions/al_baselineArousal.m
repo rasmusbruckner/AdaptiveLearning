@@ -84,7 +84,7 @@ if taskParam.gParam.eyeTracker% && isequal(taskParam.trialflow.saveEtData, 'true
     elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
         et_path = pwd;
         et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
-        al_saveSMIData(et_path, et_file_name) 
+        al_saveSMIData(taskParam.eyeTracker.el, et_path, et_file_name) 
         taskParam.eyeTracker.el.stopRecording();
     end
 end

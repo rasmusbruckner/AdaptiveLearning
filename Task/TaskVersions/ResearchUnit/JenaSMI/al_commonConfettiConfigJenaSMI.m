@@ -6,15 +6,15 @@
 % It is recommended that you create your own script with the local 
 % parameter settings so that you can re-use your settings.
 
-
+%PsychDebugWindowConfiguration(0,0.5);
 % Create config structure
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 100; %default for experiment is 200 for each noise condition
-config.nBlocks = 2; %blocks per noise condition, i.e. 4 blocks
-config.practTrialsVis = 10;
-config.practTrialsHid = 20; 
+config.trialsExp = 38; %default for experiment is 100 for 4 blocks (400), trying 38 trials for 8 blocks (304)
+config.nBlocks = 4; %blocks per noise condition, default is 2
+config.practTrialsVis = 10; %10
+config.practTrialsHid = 20; %20
 config.cannonPractCriterion = 4; % criterion cannon practice
 config.cannonPractNumOutcomes = 5; % number of trials cannon practice
 config.cannonPractFailCrit = 3;
@@ -22,7 +22,7 @@ config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
-config.runIntro = true; % false;
+config.runIntro = true; % true
 config.baselineArousal = true; % true;
 config.language = 'German'; % 'English';
 config.sentenceLength = 80;
@@ -39,7 +39,7 @@ config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;
 config.hidePtbCursor = true;
-config.dataDirectory = 'C://Users//te65luf//Documents//AdaptiveLearning//DataDirectory'; %'C://Users//Matlab-User//Documents//AdaptiveLearning//DataDirectory'
+config.dataDirectory = 'C://Users//Matlab-User//Documents//AdaptiveLearning//DataDirectory'; %'C://Users//Matlab-User//Documents//AdaptiveLearning//DataDirectory'
 config.meg = false;
 config.scanner = false;
 config.eyeTracker = true; %true;

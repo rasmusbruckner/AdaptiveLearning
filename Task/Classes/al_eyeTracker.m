@@ -73,38 +73,33 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
                 EyelinkDoTrackerSetup(el);
 
             elseif isequal(taskParam.gParam.trackerVersion, 'SMI')    
-                if ~exist(taskParam.eyeTracker.el) 
-                    settings = SMITE.getDefaults('HiSpeed');
-                    settings.connectInfo    = {'192.168.1.1',4444,'192.168.1.2',5555};
-                    settings.doAverageEyes  = false;
-                    settings.cal.bgColor    = taskParam.colors.background;
-                    settings.freq           = 500;
-                    %settings.trackMode      = 'MONOCULAR';
-                    settings.trackEye       = 'EYE_RIGHT';
-                    settings.logFileName    = 'test_log.txt';
-                    settings.save.allowFileTransfer = false;
-                    
-                    % initialize SMI
-                    self.el         = SMITE(settings);
-                    %self.el         = self.el.setDummyMode();
-                    self.el.init();
-                    self.el.calibrate(taskParam.display.window.onScreen); % was calibrate(taskParam.display.window.onScreen, false)
-                elseif exist(taskParam.eyeTracker.el) && taskParam.eyeTracker.el.isInitialized == true
-                    tires = 0;
-                    while tries < 7 
-                        try
-                            self.el.calibrate(taskParam.display.window.onScreen);
-                            break
-                        catch
-                            WaitSecs(5);
-                            tries = tries + 1;
-                        end
-                    end
-                else
-                    error('failed to initialize or calibrate SMI')
-                end
+                settings = SMITE.getDefaults('HiSpeed');
+                settings.connectInfo    = {'192.168.1.1',4444,'192.168.1.2',5555};
+                settings.doAverageEyes  = false;
+                settings.cal.bgColor    = taskParam.colors.background;
+                settings.freq           = 500;
+                %settings.trackMode      = 'MONOCULAR';
+                settings.trackEye       = 'EYE_RIGHT';
+                settings.logFileName    = 'test_log.txt';
+                settings.save.allowFileTransfer = false;
 
+                % initialize SMI
+                self.el         = SMITE(settings);
+                %self.el         = self.el.setDummyMode();
+                %try a few times in case connection breaks
+                tries = 0;
+                while tries < 7 
+                    try
+                        self.el.init();
+                        self.el.calibrate(taskParam.display.window.onScreen, false); % was calibrate(taskParam.display.window.onScreen, false)
+                        break
+                    catch
+                        WaitSecs(5);
+                        tries = tries + 1;
+                    end
+                end
             else
+                
                 error('Please specifiy tracker version as eyelink or SMI')
             end
         end
