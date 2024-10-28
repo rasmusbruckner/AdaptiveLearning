@@ -88,14 +88,20 @@ function self = initializeEyeLink(self, taskParam, et_file_name_suffix)
                 %self.el         = self.el.setDummyMode();
                 %try a few times in case connection breaks
                 tries = 0;
-                while tries < 7 
+                while tries <= 6 
                     try
                         self.el.init();
+                        tries
                         self.el.calibrate(taskParam.display.window.onScreen, false); % was calibrate(taskParam.display.window.onScreen, false)
                         break
-                    catch
-                        WaitSecs(5);
+                    catch ME
+                        WaitSecs(7);
                         tries = tries + 1;
+                        if tries <= 6
+                            continue
+                        else
+                            rethrow(ME);
+                        end
                     end
                 end
             else
