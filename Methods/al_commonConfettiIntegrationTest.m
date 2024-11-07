@@ -20,6 +20,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.practTrialsHid = 20; 
             config.cannonPractCriterion = 0; %4; % criterion cannon practice
             config.cannonPractNumOutcomes = 5; % number of trials cannon practice
+            config.cannonPractFailCrit = 3;
             config.passiveViewingPractTrials = 10;
             config.passiveViewing = false; % test with true and false
             config.baselineFixLength = 0.25; 

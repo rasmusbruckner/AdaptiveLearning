@@ -15,7 +15,7 @@ function [dataMonetary, dataSocial] = RunConfettiEEGVersion(config, runUnitTest,
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       06/24
+%       11/24
 
 % todo: tailored integration tests
 
@@ -51,12 +51,9 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
-    config.rotationRadDeg = 2.5; %3.16;
+    config.rotationRadDeg = 3.16;
     config.noPtbWarnings = false;
     config.predSpotCircleTolerance = 2;
-
-    % config.customInstructions = true;
-    % config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end
 
 % Check if unit test is requested
@@ -109,18 +106,11 @@ dataDirectory = config.dataDirectory;
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
 distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
-% screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
-%rotationRad = config.rotationRad; % rotation radius
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
 rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
 noPtbWarnings = config.noPtbWarnings;
 predSpotCircleTolerance = config.predSpotCircleTolerance;
-%
-
-
-% customInstructions = config.customInstructions;
-% instructionText = config.instructionText;
 
 % More general paramters
 % ----------------------
@@ -153,9 +143,6 @@ catchTrialProb = 0.1;
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
-% Tickmark width
-% tickWidth = 2;
-
 % Reward magnitude
 rewMag = 0.2;
 
@@ -163,8 +150,7 @@ rewMag = 0.2;
 sampleRate = 500; 
 
 % Confetti cannon image rectangle determining the size of the cannon
-imageRect = [0 00 60 200];
-socialFeedbackRect =  [0 0 1250 1250]/4;%[0 0 2048 2048]/4; %[0 0 562 762]/4;
+socialFeedbackRect =  [0 0 1250 1250]/4; % [0 0 2048 2048]/4; %[0 0 562 762]/4;
 
 % Confetti end point
 confettiEndMean = 0; % 50; % 150% this is added to the circle radius
@@ -186,7 +172,6 @@ tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
 confettiStdDeg = 0.1;
 imageRectDeg = [0 0 1.1 3.7];
-
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -290,9 +275,8 @@ timingParam.jitterFixCrossShield = 0.0;
 timingParam.outcomeLength = 0.5;
 timingParam.rewardLength = 1.0;
 timingParam.jitterOutcome = 0.0;  %0.15;
-timingParam.jitterShield = 0.0; % 0.15; % we use this one for the reward phase 
-% for consistency with common task
-timingParam.jitterITI = 0.2;  
+timingParam.jitterShield = 0.0; % 0.15; 
+timingParam.jitterITI = 0.2; % for consistency with common task
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -388,9 +372,9 @@ end
 
 % Set screensize
 display.screensize = screensize;
-% display.imageRect = imageRect;
 display.socialFeedbackRect = socialFeedbackRect;
-%code young adults 1, adolescents 2 for loading of textures
+
+% Code young adults = 1, adolescents = 2 for loading of textures
 if subject.age >= 25
     display.socialsample = 1;
 elseif subject.age <= 17
@@ -429,10 +413,6 @@ ListenChar(2);
 
 circle = al_circle(display.windowRect);
 circle.predSpotCircleTolerance = predSpotCircleTolerance;
-
-% circle.rotationRad = rotationRad;
-% circle.tickWidth = tickWidth;
-% circle = circle.computeCircleProps();
 
 % Determine rotation radius, depending on unit (deg. vis. angle vs. pixels)
 % also adjust other parameters accordingly
@@ -535,7 +515,7 @@ totWin = dataMonetary.accPerf(end);
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank f�r Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
+txt = sprintf('Vielen Dank für Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
 

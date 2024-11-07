@@ -20,7 +20,7 @@ classdef al_display
         window % psychtoolbox window
         zero % center of the screen
         backgroundCoords % background coordinates
-        socialsample
+        socialsample % type of pictures (none, adolescents, youngera adults)
 
         % Textures
         cannonTxt
@@ -99,16 +99,13 @@ classdef al_display
             %   Input
             %       gParam: General task parameters
 
-            % Get screen properties
-            % set(0,'units','pixels')
-
             % screensize = screensize(taskParam.gParam.screenNumber, :);
             self.screensizePart = self.screensize(3:4);
             self.zero = self.screensizePart / 2;
 
             % Open psychtoolbox window
             if gParam.debug == true
-                [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, self.screensize);%[1920 0 1920+1920 1080] % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
+                [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, [1920 0 1920+1920 1080]);%[1920 0 1920+1920 1080] % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
             else
                 [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, self.screensize); % []% self.screensize% [] %  1    1    2560    1440  1    1    2560 1440 1707.6    9602560x1440   66 66 66
             end
@@ -134,7 +131,7 @@ classdef al_display
             self.pillImageRect = CenterRect(self.pillImageRect, self.windowRect);
             self.syringeImageRect = CenterRect(self.syringeImageRect, self.windowRect);
             self.centeredSocialFeedbackRect = CenterRect(self.socialFeedbackRect, self.windowRect);
-            %% todo: check if we can rename to socialFeedbackRect
+            % todo: check if we can rename to socialFeedbackRect
 
         end
 
@@ -167,41 +164,43 @@ classdef al_display
             else
                 [cannonPic, ~, alpha]  = imread('confetti_cannon.png');
             end
-            [backgroundPic, ~, backgroundPicAlpha] = imread('Greybanner Coliseum - Day - Large - 44x32.jpg');
+            [backgroundPic, ~, ~] = imread('Greybanner Coliseum - Day - Large - 44x32.jpg');
 
-            %% Todo: make optional when combining with other versions
             % Load social-fedback images
+            % --------------------------
 
-            % Textures social task
-            %% Consider to put this in child class because it is
-            % not shared across projects -- will be done when new images
-            % are there
+            % Parent directory
             parentDirectory = fileparts(cd);
-            OrDir = pwd; %save current directory, so we can go back later
-            if self.socialsample == 1    
-                ImDir = [parentDirectory '/Files/socialFeedback/YA']; %name directories for correct stimuli for different conditions
+            
+            % Optionally load social stimuli
+            if ~self.socialsample == 0
+                
+                % Decide whether to get younger adults or adolescents
+                if self.socialsample == 1
+                    ImDir = [parentDirectory '/Files/socialFeedback/YA'];
+                elseif self.socialsample == 2
+                    ImDir = [parentDirectory '/Files/socialFeedback/Ado'];
+                end
+                
+                % Get number of respective images
                 self.nHas = length(dir([ImDir '/HAS/*.JPG']));
                 self.nDis = length(dir([ImDir '/DIS/*.JPG']));
-            elseif self.socialsample == 2
-                ImDir = [parentDirectory '/Files/socialFeedback/Ado'];
-                self.nHas = length(dir([ImDir '/HAS/*.JPG']));
-                self.nDis = length(dir([ImDir '/DIS/*.JPG']));
+
+                % Load stimuli as textures into structure
+                imagesDis = cell(self.nDis, 1);
+                for n = 1:self.nDis
+                    imagesDis{n} = imread(sprintf('DIS/dis_%d.JPG',n));
+                    self.socialDisTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesDis{n});
+                end
+
+                imagesHas = cell(self.nDis, 1);
+                for n = 1:self.nHas
+                    imagesHas{n} = imread(sprintf('HAS/has_%d.JPG',n));
+                    self.socialHasTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesHas{n});
+                end
             end
             
-            %load stimuli as Textures into struct
-            cd(ImDir)
-            for n=1:self.nDis           
-                imagesDis{n} = imread(sprintf('DIS/dis_%d.JPG',n));
-                self.socialDisTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesDis{n});
-            end
-
-            for n=1:self.nHas
-                imagesHas{n} = imread(sprintf('HAS/has_%d.JPG',n));
-                self.socialHasTxts{n} = Screen('MakeTexture', self.window.onScreen, imagesHas{n});
-            end
-            cd(OrDir)
-            
-
+            % Continue with optional background image
             backgroundPicSize = size(backgroundPic);
             ySize = self.window.screenY;
             scaleFactor = ySize/backgroundPicSize(1);
@@ -223,7 +222,7 @@ classdef al_display
                 cannonPic(:,:,4) = alpha(:,:);
             end
 
-            % todo: add description
+            % Set the current alpha-blending mode and the color buffer
             Screen('BlendFunction', self.window.onScreen, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             % Create textures
