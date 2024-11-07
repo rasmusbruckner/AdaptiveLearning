@@ -18,7 +18,7 @@ config.sentenceLength = 100;
 config.textSize = 35;
 config.vSpacing = 1;
 config.headerSize = 50;
-config.screenSize = get(0,'MonitorPositions')*1.0;
+config.screenSize = get(0,'MonitorPositions')*1;
 config.s = 40;
 config.enter = 37;
 config.defaultParticles = true;
@@ -35,9 +35,6 @@ config.rotationRadPixel = 140;
 config.rotationRadDeg = 2.5;
 config.noPtbWarnings = false;
 config.predSpotCircleTolerance = 2;
-
-% config.customInstructions = true;
-% config.instructionText = al_commonConfettiInstructionsDefaultText_updated(config.language);
 
 % Run task with config input
 RunConfettiEEGVersion(config);
