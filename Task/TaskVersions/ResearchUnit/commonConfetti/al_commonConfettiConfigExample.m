@@ -12,7 +12,7 @@ config = struct();
 
 % Add desired parameters
 config.trialsExp = 5;
-config.nBlocks = 2;
+config.nBlocks = 4;
 config.practTrialsVis = 10;
 config.practTrialsHid = 20; 
 config.cannonPractCriterion = 4; % criterion cannon practice
@@ -22,7 +22,7 @@ config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
-config.runIntro = true; % false;
+config.runIntro = false; % false;
 config.baselineArousal = false; % true;
 config.language = 'German'; % 'English';
 config.sentenceLength = 100;

@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTest, cBal)
+function allTaskData = RunCommonConfettiVersion(config, unitTest, cBal)
 %RUNCOMMONCONFETTIVERSION This function runs the common confetti version
 %  of the cannon task
 %
@@ -8,15 +8,14 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %       cBal: Current cBal (only allowed when running unit test)
 %
 %   Output
-%       dataLowNoise: Task-data object low-noise condition
-%       dataHighNoise: Task-data object high-noise condition
+%       allTaskData: Structure with all task-data-object instances
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/24
+%       11/24
 
 % Todo: write integration test for fMRI version.
 % First ensure version is good to go and then keep in mind that output
@@ -33,7 +32,7 @@ if ~exist('config', 'var') || isempty(config)
 
     % Default parameters
     config.trialsExp = 2;
-    config.nBlocks = 2;
+    config.nBlocks = 4;
     config.practTrialsVis = 10;
     config.practTrialsHid = 20;
     config.cannonPractCriterion = 4;
@@ -648,7 +647,7 @@ Screen('Flip', taskParam.display.window.onScreen);
 if scanner == false
 
     % When experiment does not take place in scanner
-    [dataLowNoise, dataHighNoise, totWin] = al_commonConfettiConditions(taskParam);
+    [allTaskData, totWin] = al_commonConfettiConditions(taskParam);
 
 elseif scanner == true
 

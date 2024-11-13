@@ -1,9 +1,8 @@
-function al_blockBreak(taskParam, half, currBlock)
+function al_blockBreak(taskParam, currBlock)
 %AL_BLOCKBREAK This function implements breaks between blocks
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       half: Block half
 %       currBlock: Current block number
 %
 %   Output
@@ -11,16 +10,10 @@ function al_blockBreak(taskParam, half, currBlock)
 
 % Present text indicating the break
 if taskParam.gParam.customInstructions
-    taskParam.instructionText = taskParam.instructionText.giveBlockFeedback(taskParam.gParam.nBlocks, half, currBlock);
+    taskParam.instructionText = taskParam.instructionText.giveBlockFeedback(taskParam.gParam.nBlocks, currBlock);
     txt = taskParam.instructionText.dynamicBlockTxt;
 else
-    if half == 1
-        txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, taskParam.gParam.nBlocks*2);
-    elseif half == 2
-        txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock+taskParam.gParam.nBlocks, taskParam.gParam.nBlocks*2);
-    else
-        error('half parameter undefined')
-    end
+    txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, taskParam.gParam.nBlocks);
 end
 
 % Display above text

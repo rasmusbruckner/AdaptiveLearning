@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise, totWin] = al_commonConfettiConditions(taskParam)
+function [allTaskData, totWin] = al_commonConfettiConditions(taskParam)
 %AL_COMMONCONFETTICONDITIONS This function runs the change-point condition of the cannon
 %task tailored to the common task shared across projects
 %
@@ -6,8 +6,7 @@ function [dataLowNoise, dataHighNoise, totWin] = al_commonConfettiConditions(tas
 %       taskParam: Task-parameter-object instance
 %
 %   Output
-%       dataLowNoise: Task-data object low-noise condition
-%       dataHighNoise: Task-data object high-noise condition
+%       allTaskData: Structure with all task-data-object instances
 %       totWin: Total number of points
 
 % Screen background
@@ -105,26 +104,8 @@ end
 % 4. Main task
 % ------------
 
-totWin = 0;
-
-% Implement conditions
-if cBal == 1
-
-    % Low noise first...
-    [totWin, dataLowNoise] = blockLoop(taskParam, totWin, 1, 1, passiveViewingCondition);
-
-    % ... high noise second
-    [totWin, dataHighNoise] = blockLoop(taskParam, totWin, 2, 2, passiveViewingCondition);
-
-elseif cBal == 2
-
-    % High noise first...
-    [totWin, dataHighNoise] = blockLoop(taskParam, totWin, 2, 1, passiveViewingCondition);
-
-    % ... low noise second
-    [totWin, dataLowNoise] = blockLoop(taskParam, totWin, 1, 2, passiveViewingCondition);
-
-end
+% Run all task blocks
+[totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition);
 
 % ------------------------------
 % 5. Optionally baseline arousal
@@ -139,7 +120,7 @@ if taskParam.gParam.baselineArousal
     else
         header = 'Zweite Pupillenmessung';
         txt = ['Sie werden jetzt noch mal für drei Minuten verschiedene Farben auf dem Bildschirm sehen. '...
-            'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.']; 
+            'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.'];
     end
 
     feedback = false; % indicate that this is the instruction mode
@@ -152,24 +133,27 @@ end
 end
 
 
-function [totWin, allTaskData] = blockLoop(taskParam, totWin, noiseCondition, half, passiveViewingCondition)
+function [totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition)
 %BLOCKLOOP This function loops over task blocks for a given noise condition
 %
 %   Input
 %       taskParam: Task-parameter-object instance
-%       totWin: Total number of hits
-%       noiseCondition: Current condition (1: low noise; 2: high noise)
-%       half: First vs. second half of the task
+%       cBal: Counterbalancing condition
 %       passiveViewing: Indicates if we are in passive-viewing condition
 %
 %   Output
+%       allTaskData: Structure with all task-data-object instances
 %       totWin: Total number of hits
 %
+
 
 % Extract some variables from task-parameters object
 trial = taskParam.gParam.trials;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
+
+% Total number of hits across blocks
+totWin = 0;
 
 % Create data structure combining all blocks for integration test
 allTaskData = struct();
@@ -177,10 +161,23 @@ allTaskData = struct();
 % Loop over blocks
 for b = 1:taskParam.gParam.nBlocks
 
+    % Select noise condition
+    % ----------------------
+    % 1) odd & cbal 1 = low
+    % 2) even & cbal 2 = low
+    % 3) odd & cbal 2 = high
+    % 4) even & cbal 1 = high
+
+    if (mod(b,2) == 1 && cBal == 1) || (mod(b,2) == 0 && cBal == 2)
+        noiseCondition = 1;
+    elseif (mod(b,2) == 1 && cBal == 2) || (mod(b,2) == 0 && cBal == 1)
+        noiseCondition = 2;
+    end
+
     % Task data
     if ~taskParam.unitTest.run
 
-        % TaskData-object instance
+        % Task-data-object instance
         taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
 
         % Generate outcomes using cannon-data function
@@ -190,23 +187,8 @@ for b = 1:taskParam.gParam.nBlocks
         taskData = taskData.al_confettiData(taskParam);
 
         % Update block number
-        if half == 1
-            taskData.block(:) = b;
-            if passiveViewingCondition == false
-                file_name_suffix = sprintf('_b%i', b);
-            else
-                file_name_suffix = sprintf('_p%i', b);
-            end
-        elseif half == 2
-            taskData.block(:) = b + taskParam.gParam.nBlocks;
-            if passiveViewingCondition == false
-                file_name_suffix = sprintf('_b%i', b + taskParam.gParam.nBlocks);
-            else
-                file_name_suffix = sprintf('_p%i', b + taskParam.gParam.nBlocks);
-            end
-        else 
-            error('half parameter undefined')
-        end
+        taskData.block(:) = b;
+        file_name_suffix = sprintf('_b%i', b);
 
     else
         if noiseCondition == 1
@@ -214,7 +196,7 @@ for b = 1:taskParam.gParam.nBlocks
         elseif noiseCondition == 2
             taskData = taskParam.unitTest.taskDataIntegrationTest_HamburgHighNoise;
         end
-        
+
         % Since we don't save the data, just use empty string
         file_name_suffix = '';
 
@@ -223,8 +205,10 @@ for b = 1:taskParam.gParam.nBlocks
     % Indicate condition
     if noiseCondition == 1
         al_indicateNoise(taskParam, 'lowNoise', true, passiveViewingCondition)
+        fieldName = sprintf('lowNoiseBlock%d', b);
     elseif noiseCondition == 2
         al_indicateNoise(taskParam, 'highNoise', true, passiveViewingCondition)
+        fieldName = sprintf('highNoiseBlock%d', b);
     end
 
     % Run task
@@ -233,9 +217,6 @@ for b = 1:taskParam.gParam.nBlocks
     % Transform to structure for integration test
     data = saveobj(data);
 
-    % Create a dynamic field name
-    fieldName = sprintf('conditionBlock%d', b);
-
     % Add the substructure to the master structure
     allTaskData.(fieldName) = data;
 
@@ -243,8 +224,9 @@ for b = 1:taskParam.gParam.nBlocks
     totWin = totWin + sum(data.hit);
 
     % Short break before next block
-    if (half == 1) || (half == 2 && b < taskParam.gParam.nBlocks)
-        al_blockBreak(taskParam, half, b)
+    if b < taskParam.gParam.nBlocks
+        al_blockBreak(taskParam, b)
     end
+
 end
 end
