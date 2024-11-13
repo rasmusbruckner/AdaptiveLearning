@@ -11,8 +11,8 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 38; %default for experiment is 100 for 4 blocks (400), trying 38 trials for 8 blocks (304)
-config.nBlocks = 4; %blocks per noise condition, default is 2
+config.trialsExp = 47; %47; %default for experiment is 100 for 4 blocks (400), trying 38 trials for 8 blocks (304)
+config.nBlocks = 3; %blocks per noise condition, default is 2
 config.practTrialsVis = 10; %10
 config.practTrialsHid = 20; %20
 config.cannonPractCriterion = 4; % criterion cannon practice
