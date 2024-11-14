@@ -76,41 +76,57 @@ if cBal == 1
     % 1) Monetary
     % -----------
 
-    taskParam.trialflow.reward = "monetary";
-
-    % Run task
-    al_indicateSocial(taskParam)
-    dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial);
+    if taskParam.subject.startsWithBlock == 1
+        taskParam.trialflow.reward = "monetary";
+    
+        % Run task
+        al_indicateSocial(taskParam)
+        dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial);
+    else
+        dataMonetary.accPerf = 0;
+    end
 
     % 2) Social
     % ---------
 
-    taskParam.trialflow.reward = "social";
-
-    % Run task
-    al_indicateSocial(taskParam)
-    dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial);
+    if taskParam.subject.startsWithBlock == 1 || taskParam.subject.startsWithBlock == 2
+        taskParam.trialflow.reward = "social";
+    
+        % Run task
+        al_indicateSocial(taskParam)
+        dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial);
+    else
+        dataSocial.accPerf = 0;
+    end
 
 elseif cBal == 2
 
     % 1) Social
     % ---------
 
-    taskParam.trialflow.reward = "social";
+    if taskParam.subject.startsWithBlock == 1
+        taskParam.trialflow.reward = "social";
 
-    % Run task
-    al_indicateSocial(taskParam)
-    dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial);
+        % Run task
+        al_indicateSocial(taskParam)
+        dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial);
+    
+    else 
+        dataSocial.accPerf = 0;
+    end
 
     % 2) Monetary
     % -----------
 
-    taskParam.trialflow.reward = "monetary";
-
-    % Run task
-    al_indicateSocial(taskParam)
-    dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial);
-
+    if taskParam.subject.startsWithBlock == 1 || taskParam.subject.startsWithBlock == 2
+        taskParam.trialflow.reward = "monetary";
+    
+        % Run task
+        al_indicateSocial(taskParam)
+        dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial);
+    else
+        dataMonetary.accPerf = 0;
+    end
 else
 
     error('cBal value undefined')

@@ -291,6 +291,7 @@ gParam.joy = joy;
 gParam.screenNumber = screenNumber;
 gParam.customInstructions = customInstructions;
 gParam.language = language;
+gParam.commitHash = al_getGitCommitHash();
 
 % Save directory
 cd(gParam.dataDirectory);

@@ -78,6 +78,8 @@ classdef al_gparam
         duckMovementFrequency % duck movement frequency
         duckMovementRange % duck movement range
 
+        commitHash % tracking version on GitHub
+
     end
     
     % Methods of the gparam object

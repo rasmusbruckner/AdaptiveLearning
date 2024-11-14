@@ -66,6 +66,9 @@ end
 % Indicate if passive viewing or not to determine what to save later on
 taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
 
+% Store commit hash
+taskData.commitHash = taskParam.gParam.commitHash;
+
 if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
     eyeused = Eyelink('EyeAvailable');
 end

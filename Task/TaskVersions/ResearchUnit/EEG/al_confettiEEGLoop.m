@@ -28,8 +28,12 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 % Reset reference time stamp
 taskParam.timingParam.ref = GetSecs();
 
+% Store commit hash
+taskData.commitHash = taskParam.gParam.commitHash;
+
 % Cycle over trials
 % -----------------
+
 for i = 1:trial
 
     % 1. Trial phase: Trial onset

@@ -170,7 +170,7 @@ tickLengthPredDeg = 0.9;
 tickLengthOutcDeg = 0.7; 
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.1;
+confettiStdDeg = 0.08;
 imageRectDeg = [0 0 1.1 3.7];
 
 % ---------------------------------------------------
@@ -208,6 +208,7 @@ gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.sendTrigger = sendTrigger;
 gParam.dataDirectory = dataDirectory;
+gParam.commitHash = al_getGitCommitHash();
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -307,6 +308,7 @@ age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
+startsWithBlocks = '1'; % first block
 if ~runUnitTest
     cBal = '1'; % 1/2/3/4
 end
@@ -321,17 +323,18 @@ if gParam.askSubjInfo == false || runUnitTest
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
     subject.date = date;
+    subject.startsWithBlock = startsWithBlocks;
 
     % If user input requested
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'startWithBlock'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, gender, group, cBal};
+    defaultanswer = {ID, age, gender, group, cBal, startsWithBlocks};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -344,6 +347,7 @@ else
     subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
+    subject.startsWithBlock = str2double(subjInfo{6});
     subject.date = date;
 
     % Test user input
@@ -351,7 +355,8 @@ else
     subject.checkID(checkString, 5);
     subject.checkGender();
     subject.checkGroup();
-    subject.checkCBal(),
+    subject.checkCBal();
+    subject.checkStartsWithBlock(gParam.nBlocks);
 end
 
 % Add starting bugdet

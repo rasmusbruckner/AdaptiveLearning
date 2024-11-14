@@ -93,6 +93,9 @@ classdef al_taskDataMain
         passiveViewingCondition
         passiveViewing
         
+        % Commit hash
+        commitHash
+        
         % EEG and pupillometry
         % --------------------
         
@@ -839,6 +842,8 @@ classdef al_taskDataMain
                     s.sacc = self.sacc;
                     s.rotationRad = self.rotationRad;
                     s.passiveViewing = self.passiveViewing;
+                    s.commitHash = self.commitHash; % todo: every version should finally have
+                    % this
     
                 elseif isequal(self.taskType, 'HamburgEEG')
     
@@ -858,6 +863,10 @@ classdef al_taskDataMain
                     s.timestampFixCross3 = self.timestampFixCross3;
                     s.timestampOffset = self.timestampOffset;
                 
+                    % Commit hash
+                    % todo: every version should finally have this
+                    s.commitHash = self.commitHash;
+
                 elseif isequal(self.taskType, 'infant')
     
                     % Todo carefully check what we need
