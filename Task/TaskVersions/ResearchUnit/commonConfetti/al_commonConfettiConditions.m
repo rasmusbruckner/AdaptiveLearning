@@ -159,7 +159,7 @@ totWin = 0;
 allTaskData = struct();
 
 % Loop over blocks
-for b = 1:taskParam.gParam.nBlocks
+for b = taskParam.subject.startsWithBlock:taskParam.gParam.nBlocks
 
     % Select noise condition
     % ----------------------

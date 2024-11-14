@@ -221,13 +221,6 @@ uke = false;
 % ID for UKE joystick
 joy = nan;
 
-% % Sampling rate for EEG
-% sampleRate = 500;
-% 
-% if sendTrigger
-%     [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
-% end
-
 % Degrees visual angle
 % -------------------
 
@@ -238,7 +231,7 @@ tickLengthPredDeg = 0.9;
 tickLengthOutcDeg = 0.7; 
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.08; %0.1;
+confettiStdDeg = 0.08;
 imageRectDeg = [0 0 1.1 3.7];
 
 % ---------------------------------------------------
@@ -400,6 +393,7 @@ ID = '99999'; % 5 digits
 age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
+startsWithBlocks = '1'; % first block
 if ~unitTest.run
     cBal = '1'; % 1 or 2
 end
@@ -413,6 +407,7 @@ if gParam.askSubjInfo == false || unitTest.run
     subject.gender = gender;
     subject.group = str2double(group);
     subject.date = date;
+    subject.startsWithBlock = startsWithBlocks;
 
     if scanner == false
         subject.cBal = str2double(cBal);
@@ -423,12 +418,12 @@ else
 
     if scanner == false
         % Variables that we want to put in the dialogue box
-        prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
+        prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'startWithBlock'};
         name = 'SubjInfo';
         numlines = 1;
 
         % Add defaults from above
-        defaultanswer = {ID, age, gender, group, cBal};
+        defaultanswer = {ID, age, gender, group, cBal, startsWithBlocks};
 
         % Put everything together
         subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -441,6 +436,7 @@ else
         subject.gender = subjInfo{3};
         subject.group = str2double(subjInfo{4});
         subject.cBal = str2double(subjInfo{5});
+        subject.startsWithBlock = str2double(subjInfo{6});
         subject.date = date;
 
         % Test user input
@@ -453,6 +449,7 @@ else
         subject.checkGender();
         subject.checkGroup();
         subject.checkCBal(2);
+        subject.checkStartsWithBlock(gParam.nBlocks);
 
     elseif scanner == true
 
@@ -484,6 +481,7 @@ else
         subject.checkID(checkString, 5);
         subject.checkGender();
         subject.checkGroup();
+        % Todo: add check for startsWithBlock (run) for scanner
     end
 end
 
