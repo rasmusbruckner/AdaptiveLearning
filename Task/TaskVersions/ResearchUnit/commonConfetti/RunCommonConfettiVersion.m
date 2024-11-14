@@ -34,7 +34,7 @@ if ~exist('config', 'var') || isempty(config)
     config.trialsExp = 2;
     config.nBlocks = 4;
     config.practTrialsVis = 10;
-    config.practTrialsHid = 20;
+    config.practTrialsHid = 10;
     config.cannonPractCriterion = 4;
     config.cannonPractNumOutcomes = 5;
     config.cannonPractFailCrit = 3;
