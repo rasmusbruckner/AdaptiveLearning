@@ -6,6 +6,7 @@
 % It is recommended that you create your own script with the local 
 % parameter settings so that you can re-use your settings.
 
+
 % Create config structure
 config = struct();
 
@@ -28,11 +29,11 @@ config.printTiming = true;
 config.hidePtbCursor = true;
 config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.useDegreesVisualAngle = true;
-config.distance2screen = 700; % defined in mm (for degrees visual angle) and eT
+config.distance2screen = 350; % defined in mm (for degrees visual angle) and eT
 config.screenWidthInMM = 309.40; % for degrees visual angle and ET
 config.sendTrigger = false;
 config.rotationRadPixel = 140;
-config.rotationRadDeg = 2.5;
+config.rotationRadDeg = 3.16;
 config.noPtbWarnings = false;
 config.predSpotCircleTolerance = 2;
 

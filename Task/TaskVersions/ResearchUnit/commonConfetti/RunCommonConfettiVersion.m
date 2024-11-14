@@ -442,11 +442,14 @@ else
 
         % Test user input
         if passiveViewing == false
-            checkString = dir(sprintf('*exp*%s*', num2str(subject.ID)));
+            for i = subject.startsWithBlock:gParam.nBlocks
+                checkString = dir(sprintf('*exp*%s_b%i*', num2str(subject.ID), i));
+                subject.checkID(checkString, 5);
+            end
         elseif passiveViewing == true
             checkString = dir(sprintf('*passive*%s*', num2str(subject.ID)));
+            subject.checkID(checkString, 5);
         end
-        subject.checkID(checkString, 5);
         subject.checkGender();
         subject.checkGroup();
         subject.checkCBal(2);

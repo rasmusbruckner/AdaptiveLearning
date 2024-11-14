@@ -23,7 +23,7 @@ KbName('UnifyKeyNames')
 
 % Check if config structure is provided
 if ~exist('config', 'var') || isempty(config)
-    
+
     % Create structure
     config = struct();
 
@@ -92,7 +92,7 @@ blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
 sentenceLength = config.sentenceLength; % sentence length instructions
 textSize = config.textSize; % textsize
-vSpacing = config.vSpacing; % space between text lines    
+vSpacing = config.vSpacing; % space between text lines
 headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
 s = config.s; % s key
@@ -121,7 +121,7 @@ concentration = 12;
 % Hazard rate determining a priori changepoint probability
 haz = 0.2; %.125;
 
-% Number of confetti particles 
+% Number of confetti particles
 nParticles = 40;
 
 % Confetti standard deviations
@@ -147,7 +147,7 @@ practiceTrialCriterionEstErr = 9;
 rewMag = 0.2;
 
 % Sampling rate for EEG
-sampleRate = 500; 
+sampleRate = 500;
 
 % Confetti cannon image rectangle determining the size of the cannon
 socialFeedbackRect =  [0 0 1250 1250]/4; % [0 0 2048 2048]/4; %[0 0 562 762]/4;
@@ -165,9 +165,9 @@ end
 
 predSpotDiamDeg = 0.45;
 fixSpotDiamDeg = 0.45;
-circleWidthDeg = 0.2; 
+circleWidthDeg = 0.2;
 tickLengthPredDeg = 0.9;
-tickLengthOutcDeg = 0.7; 
+tickLengthOutcDeg = 0.7;
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
 confettiStdDeg = 0.08;
@@ -252,12 +252,12 @@ colors = al_colors(nParticles);
 % Create object instance with key parameters
 % ------------------------------------------
 
- % Check the keyboard device, which is necessary on some Macs
+% Check the keyboard device, which is necessary on some Macs
 keys = al_keys();
 if ~exist('kbDev')
-  keys = al_kbdev(keys);
+    keys = al_kbdev(keys);
 else
-  keys.kbDev = kbDev;
+    keys.kbDev = kbDev;
 end
 keys.s = s;
 keys.enter = enter;
@@ -268,16 +268,16 @@ keys.enter = enter;
 
 % Ensure this is properly documented in al_confettiEEGLoop
 timingParam = al_timing();
-timingParam.fixCrossOutcome = 1;
-timingParam.fixCrossShield = 1;
+timingParam.fixCrossOutcome = 0.9;
+timingParam.fixCrossShield = 0.9;
 timingParam.fixedITI = 0.9;
-timingParam.jitterFixCrossOutcome = 0.0;
-timingParam.jitterFixCrossShield = 0.0;
-timingParam.outcomeLength = 0.5;
+timingParam.jitterFixCrossOutcome = 0.15;
+timingParam.jitterFixCrossShield = 0.15;
+timingParam.outcomeLength = 0.65;
 timingParam.rewardLength = 1.0;
-timingParam.jitterOutcome = 0.0;  %0.15;
-timingParam.jitterShield = 0.0; % 0.15; 
-timingParam.jitterITI = 0.2; % for consistency with common task
+timingParam.jitterOutcome = 0.15;
+timingParam.jitterShield = 0.15;
+timingParam.jitterITI = 0.2;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -351,8 +351,10 @@ else
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*EEG*%s*', num2str(subject.ID)));
-    subject.checkID(checkString, 5);
+    for i = subject.startsWithBlock:2
+        checkString = dir(sprintf('*EEG*%s_b%i*', num2str(subject.ID), i));
+        subject.checkID(checkString, 5);
+    end
     subject.checkGender();
     subject.checkGroup();
     subject.checkCBal();
@@ -442,7 +444,7 @@ circle = circle.computeCircleProps();
 % Adjust size according to degrees visual angle for cannon parameters
 if display.useDegreesVisualAngle
     cannon.particleSize = display.deg2pix(particleSizeDeg);
-    cannon.confettiStd = display.deg2pix(confettiStdDeg);   
+    cannon.confettiStd = display.deg2pix(confettiStdDeg);
     cannon = cannon.al_staticConfettiCloud(trialflow.colors, display);
 else
     cannon = cannon.al_staticConfettiCloud(trialflow.colors);
@@ -492,7 +494,7 @@ taskParam.triggers = triggers;
 % background values are slightly different. But for research unit it is
 % more important to use the same values for comparability. We therefore use
 % fixed values based on a common screen. But it is recommended to check if these values strongly
-% differ from your set-up. Therefore, we print out a warning. 
+% differ from your set-up. Therefore, we print out a warning.
 
 colors = colors.computeBackgroundColor(taskParam);
 expectedVal = [137 137 137];

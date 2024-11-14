@@ -78,10 +78,11 @@ if cBal == 1
 
     if taskParam.subject.startsWithBlock == 1
         taskParam.trialflow.reward = "monetary";
-    
+        file_name_suffix = '_b1';
+
         % Run task
         al_indicateSocial(taskParam)
-        dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial);
+        dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial, file_name_suffix);
     else
         dataMonetary.accPerf = 0;
     end
@@ -91,10 +92,11 @@ if cBal == 1
 
     if taskParam.subject.startsWithBlock == 1 || taskParam.subject.startsWithBlock == 2
         taskParam.trialflow.reward = "social";
-    
+        file_name_suffix = '_b2';
+
         % Run task
         al_indicateSocial(taskParam)
-        dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial);
+        dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial, file_name_suffix);
     else
         dataSocial.accPerf = 0;
     end
@@ -106,10 +108,11 @@ elseif cBal == 2
 
     if taskParam.subject.startsWithBlock == 1
         taskParam.trialflow.reward = "social";
+        file_name_suffix = '_b1';
 
         % Run task
         al_indicateSocial(taskParam)
-        dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial);
+        dataSocial = al_confettiEEGLoop(taskParam, 'main', taskDataSocial, trial, file_name_suffix);
     
     else 
         dataSocial.accPerf = 0;
@@ -120,10 +123,11 @@ elseif cBal == 2
 
     if taskParam.subject.startsWithBlock == 1 || taskParam.subject.startsWithBlock == 2
         taskParam.trialflow.reward = "monetary";
-    
+        file_name_suffix = '_b2';
+
         % Run task
         al_indicateSocial(taskParam)
-        dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial);
+        dataMonetary = al_confettiEEGLoop(taskParam, 'main', taskDataMonetary, trial, file_name_suffix);
     else
         dataMonetary.accPerf = 0;
     end
