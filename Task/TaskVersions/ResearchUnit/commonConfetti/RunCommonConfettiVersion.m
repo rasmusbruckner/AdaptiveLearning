@@ -49,7 +49,8 @@ if ~exist('config', 'var') || isempty(config)
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
-    config.screenSize = get(0,'MonitorPositions')*0.5;
+    config.screenSize = get(0,'MonitorPositions')*1;
+    config.globalScreenBorder = 0;
     config.screenNumber = 1;
     config.s = 40;
     config.five = 15;
@@ -136,6 +137,7 @@ textSize = config.textSize; % textsize
 vSpacing = config.vSpacing; % space between text lines
 headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
+globalScreenBorder = config.globalScreenBorder;
 screenNumber = config.screenNumber; % screen number
 s = config.s; % s key
 enter = config.enter; % enter key
@@ -408,7 +410,7 @@ if gParam.askSubjInfo == false || unitTest.run
     subject.gender = gender;
     subject.group = str2double(group);
     subject.date = date;
-    subject.startsWithBlock = startsWithBlocks;
+    subject.startsWithBlock = str2double(startsWithBlocks);
 
     if scanner == false
         subject.cBal = str2double(cBal);
@@ -504,6 +506,7 @@ end
 
 % Set screensize
 display.screensize = screensize;
+display.globalScreenBorder = globalScreenBorder;
 display.distance2screen = distance2screen;
 display.screenWidthInMM = screenWidthInMM;
 display.useDegreesVisualAngle = useDegreesVisualAngle;

@@ -34,6 +34,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.headerSize = 50;
             config.vSpacing = 1;
             config.screenSize = get(0,'MonitorPositions')*1;
+            config.globalScreenBorder = 0;
             config.screenNumber = 1;
             config.s = 40;
             config.five = 15;

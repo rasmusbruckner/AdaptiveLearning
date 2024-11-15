@@ -15,6 +15,7 @@ classdef al_display
         % General
         screensize % screen size
         screensizePart % witdh and height of screen
+        globalScreenBorder % for Linux: virtual border sparating global screen
         distance2screen % participant distance to screen in mm
         screenWidthInMM % for degrees visual angle
         window % psychtoolbox window
@@ -89,6 +90,7 @@ classdef al_display
             self.pillImageRect = [0 0 30 30];
             self.syringeImageRect = [0 0 50 50];
             self.useDegreesVisualAngle = false;
+            self.globalScreenBorder = 0;
 
         end
 
@@ -105,9 +107,13 @@ classdef al_display
 
             % Open psychtoolbox window
             if gParam.debug == true
-                [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, [1920 0 1920+1920 1080]);%[1920 0 1920+1920 1080] % 0 0 600 400 %2100 0 3700 1440% 0 0 600 400%420 250 1020 650 [0 0 1920 1080]  labptop mit bildschirm fu[1920 0 1920+1920 1080]
+                [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, [1920 0 1920+1920 1080]);
             else
-                [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, self.screensize); % []% self.screensize% [] %  1    1    2560    1440  1    1    2560 1440 1707.6    9602560x1440   66 66 66
+                windowScreensize = self.screensize;
+                windowScreensize(1) = windowScreensize(1) + self.globalScreenBorder;
+                windowScreensize(3) = windowScreensize(3) + self.globalScreenBorder;
+
+                [self.window.onScreen, self.windowRect] = Screen('OpenWindow', gParam.screenNumber-1, self.backgroundCol, windowScreensize); 
             end
 
             [self.window.screenX, self.window.screenY] = Screen('WindowSize', self.window.onScreen);
