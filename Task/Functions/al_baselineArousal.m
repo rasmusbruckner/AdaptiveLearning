@@ -12,7 +12,8 @@ function al_baselineArousal(taskParam, file_name_suffix)
 %   Output
 %       None
 
-% Initialize and start eye-tracker
+
+% Initialize and start eye tracker
 if taskParam.gParam.eyeTracker
     taskParam.eyeTracker = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
@@ -21,7 +22,10 @@ end
 % Define color and random color order (black and white)
 arousalColors = [taskParam.colors.black; taskParam.colors.white];
 arousalColorsNames = {'black', 'white'};
-colorOrder = randperm(size(arousalColors,1));
+
+% Final version: fixed order black, white, gray
+% colorOrder = randperm(size(arousalColors,1));
+colorOrder = [1,2];
 
 % Add gray so that it appears last
 arousalColorsNames{3} = 'gray';
@@ -70,16 +74,9 @@ end
 % Save Eyelink data
 % -----------------
 
-if taskParam.gParam.eyeTracker% && isequal(taskParam.trialflow.saveEtData, 'true')
+if taskParam.gParam.eyeTracker
     et_path = pwd;
     et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
     al_saveEyelinkData(et_path, et_file_name)
     Eyelink('StopRecording');
 end
-
-% if taskParam.gParam.eyeTracker
-%     et_path = pwd;
-%     et_file_name=[et_file_name, '.edf'];
-%     al_saveEyelinkData(et_path, et_file_name)
-%     Eyelink('StopRecording');
-% end
