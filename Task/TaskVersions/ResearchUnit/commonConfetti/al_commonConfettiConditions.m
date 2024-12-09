@@ -80,7 +80,7 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 % 3. Optionally baseline arousal
 % ------------------------------
 
-if taskParam.gParam.baselineArousal
+if taskParam.gParam.baselineArousal && taskParam.subject.startsWithBlock == 1
 
     % Display pupil info
     if taskParam.gParam.customInstructions

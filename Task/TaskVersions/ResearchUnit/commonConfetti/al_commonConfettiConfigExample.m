@@ -11,7 +11,7 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 5;
+config.trialsExp = 2; %5;
 config.nBlocks = 4;
 config.practTrialsVis = 10;
 config.practTrialsHid = 20; 
@@ -23,14 +23,14 @@ config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
 config.runIntro = false; % false;
-config.baselineArousal = false; % true;
+config.baselineArousal = true; %false; % true;
 config.language = 'German'; % 'English';
 config.sentenceLength = 100;
 config.textSize = 35;
 config.vSpacing = 1;
 config.headerSize = 50;
-config.screenSize = [0 0 1920 1080]*1; % get(0,'MonitorPositions')*1.0;
-config.globalScreenBorder = 1920; % default is 0
+config.screenSize = [0 0 1920 1080]*0.5; % get(0,'MonitorPositions')*1.0;
+config.globalScreenBorder = 0; %1920; % default is 0
 config.screenNumber = 1;
 config.s = 40;
 config.enter = 37;
