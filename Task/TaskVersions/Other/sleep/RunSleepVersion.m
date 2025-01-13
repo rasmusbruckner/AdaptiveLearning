@@ -188,7 +188,8 @@ trialflow.input = "keyboard";
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+defaultParticles = false;
+cannon = al_cannon(defaultParticles);
 
 % ---------------------------------------------
 % Create object instance with color parameters

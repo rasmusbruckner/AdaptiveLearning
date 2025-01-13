@@ -16,24 +16,28 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % Default parameters
             config.trialsExp = 20;
             config.nBlocks = 1;
-            config.practTrials = 5;
+            config.practTrialsVis = 10;
+            config.practTrialsHid = 20; 
+            config.cannonPractCriterion = 0; %4; % criterion cannon practice
+            config.cannonPractNumOutcomes = 5; % number of trials cannon practice
             config.passiveViewingPractTrials = 10;
             config.passiveViewing = false; % test with true and false
             config.baselineFixLength = 0.25; 
             config.blockIndices = [1 51 101 151];
             config.runIntro = true;
-            config.baselineArousal = true;
+            config.baselineArousal = false; % true;
             config.language = 'German';
             config.sentenceLength = 100;
             config.vSpacing = 1;
             config.textSize = 35;
             config.headerSize = 50;
             config.vSpacing = 1;
-            config.screenSize = get(0,'MonitorPositions')*0.5;
+            config.screenSize = get(0,'MonitorPositions')*1;
             config.screenNumber = 1;
             config.s = 40;
             config.five = 15;
             config.enter = 37;
+            config.defaultParticles = true;
             config.debug = false;
             config.showConfettiThreshold = false;
             config.printTiming = true;
@@ -49,6 +53,9 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.screenWidthInMM = 309.40;
             config.screenHeightInMM = 210;
             config.sendTrigger = false;
+            config.sampleRate = 500; % Sampling rate for EEG
+            config.session = nan;
+            config.port = hex2dec('E050');
             config.rotationRadPixel = 140;
             config.rotationRadDeg = 2.5; % todo: note that this is preliminary
             config.screenNumber = 1;
@@ -313,7 +320,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             testCase.verifyEqual(dataHighNoise_cBal2.nParticles, expectedNParticles)
 
             % Confetti standard deviation
-            expectedConfettiStd = repmat(3.7907, 20, 1);
+            expectedConfettiStd = repmat(6.0652, 20, 1); % 3.7907
             testCase.verifyEqual(dataLowNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
             testCase.verifyEqual(dataHighNoise_cBal1.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)
             testCase.verifyEqual(dataLowNoise_cBal2.confettiStd, expectedConfettiStd, "AbsTol", 1.e-4)

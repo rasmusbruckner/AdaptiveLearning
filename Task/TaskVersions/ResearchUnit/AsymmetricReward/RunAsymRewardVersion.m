@@ -208,7 +208,8 @@ trialflow.colors = 'colorful';
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+defaultParticles = false;
+cannon = al_cannon(defaultParticles);
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
 cannon = cannon.al_staticConfettiCloud(trialflow.colors);

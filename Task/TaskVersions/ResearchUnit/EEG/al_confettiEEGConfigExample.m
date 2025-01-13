@@ -21,6 +21,7 @@ config.headerSize = 50;
 config.screenSize = get(0,'MonitorPositions')*1.0;
 config.s = 40;
 config.enter = 37;
+config.defaultParticles = true;
 config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;

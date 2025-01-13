@@ -26,7 +26,9 @@ classdef al_gparam
         shieldMax % maximium angular shield size         
                 
         trials % number of trials
-        practTrials % number of practice trials
+        practTrials
+        practTrialsVis % number of practice trials visible cannon
+        practTrialsHid % number of practice trials hidden cannon
         shieldTrials % number of shield-practice trials 
         controlTrials  % number of trials of the control versions (Dresden)
         passiveViewingPractTrials % practice passive viewing
@@ -39,6 +41,9 @@ classdef al_gparam
 
         practiceTrialCriterionNTrials % number of trials above estimation-error threshold determining when practice is repeated
         practiceTrialCriterionEstErr % estimation-error threshold in practice determining when practice is repeated
+        cannonPractCriterion % minimum number of passes to continue
+        cannonPractNumOutcomes % number of outcomes before prediction
+        cannonPractFailCrit % max number of repetitions
 
         rewMag % reward magnitude when "hit"
         useCatchTrials % indicates if catch trials are used
@@ -60,6 +65,7 @@ classdef al_gparam
         scanner % indicates if experiment takes place in scanner        
         meg % indicates if experiment takes place with MEG
         eyeTracker % indicates if experiment takes place with eyeTracker
+        trackerVersion % selects whether we want eyelink or SMI version
         onlineSaccades % indicates if we track saccades during task
         uke % indicates uke fMRI scanner
         joy % potentially temporary joystick variable
@@ -98,7 +104,8 @@ classdef al_gparam
             self.shieldMin = 10;
             self.shieldMax = 150;
             self.trials = nan; 
-            self.practTrials = nan; 
+            self.practTrialsVis = nan; 
+            self.practTrialsHid = nan; 
             self.shieldTrials = nan; 
             self.controlTrials = nan;
             self.passiveViewingPractTrials = 10;
@@ -108,6 +115,9 @@ classdef al_gparam
             self.screenNumber = 1;
             self.practiceTrialCriterionNTrials = nan; 
             self.practiceTrialCriterionEstErr = nan; 
+            self.cannonPractCriterion = nan;
+            self.cannonPractNumOutcomes = nan;
+            self.cannonPractFailCrit = nan;
             self.rewMag = 0.1; 
             self.useCatchTrials = nan; 
             self.catchTrialProb = nan; 
@@ -125,6 +135,7 @@ classdef al_gparam
             self.scanner = false;
             self.meg = false;
             self.eyeTracker = false;
+            self.trackerVersion = 'eyelink';
             self.uke = false;
             self.joy = nan;
             self.useResponseThreshold = false;

@@ -70,7 +70,7 @@ classdef al_circle
             
             self.windowRect = windowRect;
             self.shieldWidth = 30; 
-            self.shieldFixedSizeFactor = 2; 
+            self.shieldFixedSizeFactor = 1.8; 
             self.outcCentSpotRect = nan;
             self.fixSpotCentRect = nan;
             self.fixSpotBaselineCentRect = nan;

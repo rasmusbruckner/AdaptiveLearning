@@ -12,7 +12,6 @@ function triggerID = al_sendTrigger(taskParam, taskData, condition, trial, Teven
 %       triggerID: Current trigger
 
 
-%% todo: change to from trigger to triggerID to avoid conflict with MEG triggering
 % todo: store catch trial info in trigger
 % todo: condition is part of taskParam. use this instead
 
@@ -265,7 +264,11 @@ end
 
 % Send the pupil trigger
 if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
-    Eyelink('message', num2str(triggerID));
+    if isequal(taskParam.gParam.trackerVersion, 'eyelink')
+        Eyelink('message', num2str(triggerID));
+    elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
+        taskParam.eyeTracker.el.sendMessage(num2str(triggerID));
+    end
 end
 
 % Send the EEG trigger

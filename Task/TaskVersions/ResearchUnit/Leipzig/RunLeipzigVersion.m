@@ -107,7 +107,7 @@ textSize = 35;
 headerSize = 50;
 
 % Screen size
-screensize = [1 1 1920 1080];
+screensize = [0 0 1920 1080]*1;
 
 % Number of catches during practice that is required to continue with main task
 practiceTrialCriterionNTrials = 5;
@@ -198,7 +198,8 @@ trialflow.input = "mouse";
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+defaultParticles = false;
+cannon = al_cannon(defaultParticles);
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
 

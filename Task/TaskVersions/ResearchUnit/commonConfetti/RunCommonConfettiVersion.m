@@ -34,12 +34,16 @@ if ~exist('config', 'var') || isempty(config)
     % Default parameters
     config.trialsExp = 2;
     config.nBlocks = 2;
-    config.practTrials = 2;
+    config.practTrialsVis = 10;
+    config.practTrialsHid = 20;
+    config.cannonPractCriterion = 4;
+    config.cannonPractNumOutcomes = 5;
+    config.cannonPractFailCrit = 3;
     config.passiveViewingPractTrials = 10;
     config.passiveViewing = false;
     config.baselineFixLength = 0.25;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = false;
+    config.runIntro = true;
     config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
@@ -51,6 +55,7 @@ if ~exist('config', 'var') || isempty(config)
     config.s = 40;
     config.five = 15;
     config.enter = 37;
+    config.defaultParticles = false;
     config.debug = false;
     config.showConfettiThreshold = false;
     config.printTiming = true;
@@ -59,6 +64,7 @@ if ~exist('config', 'var') || isempty(config)
     config.meg = false;
     config.scanner = false;
     config.eyeTracker = false;
+    config.trackerVersion = 'eyelink';
     config.onlineSaccades = true;
     config.saccThres = 0.7;
     config.useDegreesVisualAngle = true;
@@ -66,12 +72,20 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.screenHeightInMM = 210;
     config.sendTrigger = false;
+    config.sampleRate = 500;
+    config.port = hex2dec('E050');
     config.rotationRadPixel = 140;
     config.rotationRadDeg = 2.5;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
     config.predSpotCircleTolerance = 2;
+    
+    if config.sendTrigger
+        [config.session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+    else 
+        config.session = nan;
+    end
 end
 
 
@@ -91,7 +105,6 @@ elseif exist('cBal', 'var') && unitTest.run
     end
 end
 
-
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
 if ~unitTest.run
@@ -108,7 +121,11 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials per block
 nBlocks = config.nBlocks; % number of blocks for each 
-practTrials = config.practTrials; % number of practice trials
+practTrialsVis = config.practTrialsVis; % number of practice trials visible cannon
+practTrialsHid = config.practTrialsHid; % number of practice trials hidden cannon
+cannonPractCriterion = config.cannonPractCriterion; % criterion cannon practice
+cannonPractNumOutcomes = config.cannonPractNumOutcomes; % number of trials cannon practice
+cannonPractFailCrit = config.cannonPractFailCrit;
 passiveViewingPractTrials = config.passiveViewingPractTrials;
 passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
 baselineFixLength = config.baselineFixLength;
@@ -125,12 +142,14 @@ screenNumber = config.screenNumber; % screen number
 s = config.s; % s key
 enter = config.enter; % enter key
 five = config.five; % number 5 for triggering at UKE
+defaultParticles = config.defaultParticles;
 debug = config.debug; % debug mode
 showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
 printTiming = config.printTiming; % print timing for checking
 hidePtbCursor = config.hidePtbCursor; % hide cursor
 dataDirectory = config.dataDirectory;
 eyeTracker = config.eyeTracker; % doing eye-tracking?
+trackerVersion = config.trackerVersion; % select whether eyelink or SMI
 onlineSaccades = config.onlineSaccades; % online saccades tracking?
 saccThresh = config.saccThres;
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
@@ -138,6 +157,9 @@ distance2screen = config.distance2screen; % defined in mm (for degrees visual an
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
 screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
+sampleRate = config.sampleRate; % EEG sampling rate
+session = config.session; % EEG session
+port = config.port; % EEG port
 meg = config.meg; % running task in MEG?
 scanner = config.scanner; % turn scanner on/off
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
@@ -158,7 +180,7 @@ elseif scanner == true
 end
 
 % Hazard rate determining a priori changepoint probability
-haz = .125;
+haz = 0.125;
 
 % Number of confetti particles
 nParticles = 40;
@@ -182,8 +204,8 @@ end
 % Catch-trial probability
 catchTrialProb = 0.1;
 
-% Number of catches during practice that is required to continue with main task
-practiceTrialCriterionNTrials = 5;
+% Number of predictions above threshold and estimation-error size leading to repetition of block
+practiceTrialCriterionNTrials = 2;
 practiceTrialCriterionEstErr = 9;
 
 % Reward magnitude
@@ -202,12 +224,12 @@ uke = false;
 % ID for UKE joystick
 joy = nan;
 
-% Sampling rate for EEG
-sampleRate = 500;
-
-if sendTrigger
-    [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
-end
+% % Sampling rate for EEG
+% sampleRate = 500;
+% 
+% if sendTrigger
+%     [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+% end
 
 % Degrees visual angle
 % -------------------
@@ -219,7 +241,7 @@ tickLengthPredDeg = 0.9;
 tickLengthOutcDeg = 0.7; 
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.1;
+confettiStdDeg = 0.08; %0.1;
 imageRectDeg = [0 0 1.1 3.7];
 
 % ---------------------------------------------------
@@ -233,8 +255,13 @@ else
 end
 
 % Check if practice trials exceeds max of 20
-if practTrials > 20
+if practTrialsVis > 20 || practTrialsHid > 20
     error('Practice trials max 20 (because pre-defined)')
+end
+
+% Check if cannon practice trials is too low
+if cannonPractNumOutcomes < 2
+    error('Cannon practice trials has to be 2 or larger')
 end
 
 % Initialize general task parameters
@@ -242,7 +269,8 @@ gParam = al_gparam();
 gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.nBlocks = nBlocks;
-gParam.practTrials = practTrials;
+gParam.practTrialsVis = practTrialsVis;
+gParam.practTrialsHid = practTrialsHid;
 gParam.passiveViewingPractTrials = passiveViewingPractTrials;
 gParam.passiveViewing = passiveViewing;
 gParam.runIntro = runIntro;
@@ -253,6 +281,9 @@ gParam.useCatchTrials = useCatchTrials;
 gParam.catchTrialProb = catchTrialProb;
 gParam.practiceTrialCriterionNTrials = practiceTrialCriterionNTrials;
 gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
+gParam.cannonPractCriterion = cannonPractCriterion;
+gParam.cannonPractNumOutcomes = cannonPractNumOutcomes;
+gParam.cannonPractFailCrit = cannonPractFailCrit;
 gParam.debug = debug;
 gParam.showConfettiThreshold = showConfettiThreshold;
 gParam.printTiming = printTiming;
@@ -262,6 +293,7 @@ gParam.rewMag = rewMag;
 gParam.dataDirectory = dataDirectory;
 gParam.meg = meg;
 gParam.eyeTracker = eyeTracker;
+gParam.trackerVersion = trackerVersion;
 gParam.onlineSaccades = onlineSaccades;
 gParam.sendTrigger = sendTrigger;
 gParam.scanner = scanner;
@@ -289,16 +321,13 @@ trialflow.reward = 'standard';
 trialflow.shield = 'variableWithSD';
 trialflow.shieldType = 'constant';
 trialflow.input = 'mouse';
-
-% trialflow.colors = 'dark';
-% trialflow.colors = 'blackWhite';
 trialflow.colors = 'colorful';
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+cannon = al_cannon(defaultParticles);
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
 cannon.confettiAnimationStd = confettiAnimationStd;
@@ -338,10 +367,10 @@ timingParam.fixCrossShield = 0.7;
 timingParam.fixedITI = 1.0;
 timingParam.jitterFixCrossOutcome = 2;
 timingParam.jitterFixCrossShield = 0.6;
-timingParam.outcomeLength = 0.65; % 0.5;
-timingParam.jitterOutcome = 0.15; % 2;
-timingParam.shieldLength = 0.65; % 0.5;
-timingParam.jitterShield = 0.15; % 0.6;
+timingParam.outcomeLength = 0.65;
+timingParam.jitterOutcome = 0.15;
+timingParam.shieldLength = 0.65; 
+timingParam.jitterShield = 0.15;
 timingParam.jitterITI = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
@@ -529,7 +558,7 @@ if display.useDegreesVisualAngle
     circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);
     circle = circle.getShieldOffset();
     %fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg,2), round(circle.rotationRad, 2));
-    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',rotationRadDeg, circle.rotationRad);
+    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n', rotationRadDeg, circle.rotationRad);
 elseif display.useDegreesVisualAngle == false
     circle.rotationRad = rotationRadPixel;
 else
@@ -555,6 +584,7 @@ triggers = al_triggers();
 if sendTrigger
     triggers.sampleRate = sampleRate;
     triggers.session = session;
+    triggers.port = port;
 end
 
 % ---------------------------------------------------

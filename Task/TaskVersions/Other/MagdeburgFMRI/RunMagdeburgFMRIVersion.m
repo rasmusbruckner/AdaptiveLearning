@@ -63,7 +63,7 @@ concentration = [16, 8];
 haz = .125;
 
 % Choose if task instructions should be shown
-runIntro = false;
+runIntro = true; %false;
 
 % Choose if dialogue box should be shown
 askSubjInfo = true;
@@ -204,7 +204,7 @@ trialflow.currentTickmarks = 'show';
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+cannon = al_cannon(false);
 cannon.nFrames = nFrames;
 
 % ---------------------------------------------
@@ -395,6 +395,7 @@ taskParam.timingParam = timingParam;
 taskParam.display = display;
 taskParam.subject = subject;
 taskParam.unitTest = unitTest;
+taskParam.gParam.customInstructions = false;
 
 % --------------
 % Run intro/task
