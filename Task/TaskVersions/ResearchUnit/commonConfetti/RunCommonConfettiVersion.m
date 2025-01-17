@@ -1,4 +1,4 @@
-function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTest, cBal)
+function allTaskData = RunCommonConfettiVersion(config, unitTest, cBal)
 %RUNCOMMONCONFETTIVERSION This function runs the common confetti version
 %  of the cannon task
 %
@@ -8,15 +8,14 @@ function [dataLowNoise, dataHighNoise] = RunCommonConfettiVersion(config, unitTe
 %       cBal: Current cBal (only allowed when running unit test)
 %
 %   Output
-%       dataLowNoise: Task-data object low-noise condition
-%       dataHighNoise: Task-data object high-noise condition
+%       allTaskData: Structure with all task-data-object instances
 %
 %   Testing
 %       To run the integration test, run "al_HamburgIntegrationTest"
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       09/24
+%       11/24
 
 % Todo: write integration test for fMRI version.
 % First ensure version is good to go and then keep in mind that output
@@ -33,24 +32,30 @@ if ~exist('config', 'var') || isempty(config)
 
     % Default parameters
     config.trialsExp = 2;
-    config.nBlocks = 2;
-    config.practTrials = 2;
+    config.nBlocks = 4;
+    config.practTrialsVis = 10;
+    config.practTrialsHid = 10;
+    config.cannonPractCriterion = 4;
+    config.cannonPractNumOutcomes = 5;
+    config.cannonPractFailCrit = 3;
     config.passiveViewingPractTrials = 10;
     config.passiveViewing = false;
     config.baselineFixLength = 0.25;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = false;
+    config.runIntro = true;
     config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
-    config.screenSize = get(0,'MonitorPositions')*0.5;
+    config.screenSize = get(0,'MonitorPositions')*1;
+    config.globalScreenBorder = 0;
     config.screenNumber = 1;
     config.s = 40;
     config.five = 15;
     config.enter = 37;
+    config.defaultParticles = false;
     config.debug = false;
     config.showConfettiThreshold = false;
     config.printTiming = true;
@@ -66,12 +71,20 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.screenHeightInMM = 210;
     config.sendTrigger = false;
+    config.sampleRate = 500;
+    config.port = hex2dec('E050');
     config.rotationRadPixel = 140;
     config.rotationRadDeg = 2.5;
     config.customInstructions = true;
     config.instructionText = al_commonConfettiInstructionsDefaultText();
     config.noPtbWarnings = false;
     config.predSpotCircleTolerance = 2;
+    
+    if config.sendTrigger
+        [config.session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+    else 
+        config.session = nan;
+    end
 end
 
 
@@ -91,7 +104,6 @@ elseif exist('cBal', 'var') && unitTest.run
     end
 end
 
-
 % Reset random number generator to ensure different outcome sequences
 % when we don't run a unit test
 if ~unitTest.run
@@ -108,7 +120,11 @@ end
 % -----------------
 trialsExp = config.trialsExp; % number of experimental trials per block
 nBlocks = config.nBlocks; % number of blocks for each 
-practTrials = config.practTrials; % number of practice trials
+practTrialsVis = config.practTrialsVis; % number of practice trials visible cannon
+practTrialsHid = config.practTrialsHid; % number of practice trials hidden cannon
+cannonPractCriterion = config.cannonPractCriterion; % criterion cannon practice
+cannonPractNumOutcomes = config.cannonPractNumOutcomes; % number of trials cannon practice
+cannonPractFailCrit = config.cannonPractFailCrit;
 passiveViewingPractTrials = config.passiveViewingPractTrials;
 passiveViewing = config.passiveViewing; % Passive viewing for pupillometry validation
 baselineFixLength = config.baselineFixLength;
@@ -121,10 +137,12 @@ textSize = config.textSize; % textsize
 vSpacing = config.vSpacing; % space between text lines
 headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
+globalScreenBorder = config.globalScreenBorder;
 screenNumber = config.screenNumber; % screen number
 s = config.s; % s key
 enter = config.enter; % enter key
 five = config.five; % number 5 for triggering at UKE
+defaultParticles = config.defaultParticles;
 debug = config.debug; % debug mode
 showConfettiThreshold = config.showConfettiThreshold; % confetti threshold for validation (don't use in experiment)
 printTiming = config.printTiming; % print timing for checking
@@ -138,6 +156,9 @@ distance2screen = config.distance2screen; % defined in mm (for degrees visual an
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
 screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
+sampleRate = config.sampleRate; % EEG sampling rate
+session = config.session; % EEG session
+port = config.port; % EEG port
 meg = config.meg; % running task in MEG?
 scanner = config.scanner; % turn scanner on/off
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
@@ -158,7 +179,7 @@ elseif scanner == true
 end
 
 % Hazard rate determining a priori changepoint probability
-haz = .125;
+haz = 0.125;
 
 % Number of confetti particles
 nParticles = 40;
@@ -182,8 +203,8 @@ end
 % Catch-trial probability
 catchTrialProb = 0.1;
 
-% Number of catches during practice that is required to continue with main task
-practiceTrialCriterionNTrials = 5;
+% Number of predictions above threshold and estimation-error size leading to repetition of block
+practiceTrialCriterionNTrials = 2;
 practiceTrialCriterionEstErr = 9;
 
 % Reward magnitude
@@ -202,13 +223,6 @@ uke = false;
 % ID for UKE joystick
 joy = nan;
 
-% Sampling rate for EEG
-sampleRate = 500;
-
-if sendTrigger
-    [session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
-end
-
 % Degrees visual angle
 % -------------------
 
@@ -219,7 +233,7 @@ tickLengthPredDeg = 0.9;
 tickLengthOutcDeg = 0.7; 
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.1;
+confettiStdDeg = 0.08;
 imageRectDeg = [0 0 1.1 3.7];
 
 % ---------------------------------------------------
@@ -233,8 +247,13 @@ else
 end
 
 % Check if practice trials exceeds max of 20
-if practTrials > 20
+if practTrialsVis > 20 || practTrialsHid > 20
     error('Practice trials max 20 (because pre-defined)')
+end
+
+% Check if cannon practice trials is too low
+if cannonPractNumOutcomes < 2
+    error('Cannon practice trials has to be 2 or larger')
 end
 
 % Initialize general task parameters
@@ -242,7 +261,8 @@ gParam = al_gparam();
 gParam.taskType = 'Hamburg';
 gParam.trials = trials;
 gParam.nBlocks = nBlocks;
-gParam.practTrials = practTrials;
+gParam.practTrialsVis = practTrialsVis;
+gParam.practTrialsHid = practTrialsHid;
 gParam.passiveViewingPractTrials = passiveViewingPractTrials;
 gParam.passiveViewing = passiveViewing;
 gParam.runIntro = runIntro;
@@ -253,6 +273,9 @@ gParam.useCatchTrials = useCatchTrials;
 gParam.catchTrialProb = catchTrialProb;
 gParam.practiceTrialCriterionNTrials = practiceTrialCriterionNTrials;
 gParam.practiceTrialCriterionEstErr = practiceTrialCriterionEstErr;
+gParam.cannonPractCriterion = cannonPractCriterion;
+gParam.cannonPractNumOutcomes = cannonPractNumOutcomes;
+gParam.cannonPractFailCrit = cannonPractFailCrit;
 gParam.debug = debug;
 gParam.showConfettiThreshold = showConfettiThreshold;
 gParam.printTiming = printTiming;
@@ -270,6 +293,7 @@ gParam.joy = joy;
 gParam.screenNumber = screenNumber;
 gParam.customInstructions = customInstructions;
 gParam.language = language;
+gParam.commitHash = al_getGitCommitHash();
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -289,16 +313,13 @@ trialflow.reward = 'standard';
 trialflow.shield = 'variableWithSD';
 trialflow.shieldType = 'constant';
 trialflow.input = 'mouse';
-
-% trialflow.colors = 'dark';
-% trialflow.colors = 'blackWhite';
 trialflow.colors = 'colorful';
 
 % ---------------------------------------------
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+cannon = al_cannon(defaultParticles);
 cannon.nParticles = nParticles;
 cannon.confettiStd = confettiStd;
 cannon.confettiAnimationStd = confettiAnimationStd;
@@ -336,12 +357,12 @@ timingParam.cannonBallAnimation = 0.9;
 timingParam.fixCrossOutcome = 2;
 timingParam.fixCrossShield = 0.7;
 timingParam.fixedITI = 1.0;
-timingParam.jitterFixCrossOutcome = 2;
+timingParam.jitterFixCrossOutcome = 1; % 2; 09.12.24: P7 wants faster jitters
 timingParam.jitterFixCrossShield = 0.6;
-timingParam.outcomeLength = 0.65; % 0.5;
-timingParam.jitterOutcome = 0.15; % 2;
-timingParam.shieldLength = 0.65; % 0.5;
-timingParam.jitterShield = 0.15; % 0.6;
+timingParam.outcomeLength = 0.65;
+timingParam.jitterOutcome = 0.15;
+timingParam.shieldLength = 0.65; 
+timingParam.jitterShield = 0.15;
 timingParam.jitterITI = 0.5;
 
 % This is a reference timestamp at the start of the experiment.
@@ -375,6 +396,7 @@ ID = '99999'; % 5 digits
 age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
+startsWithBlocks = '1'; % first block
 if ~unitTest.run
     cBal = '1'; % 1 or 2
 end
@@ -388,6 +410,7 @@ if gParam.askSubjInfo == false || unitTest.run
     subject.gender = gender;
     subject.group = str2double(group);
     subject.date = date;
+    subject.startsWithBlock = str2double(startsWithBlocks);
 
     if scanner == false
         subject.cBal = str2double(cBal);
@@ -398,12 +421,12 @@ else
 
     if scanner == false
         % Variables that we want to put in the dialogue box
-        prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
+        prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'startWithBlock'};
         name = 'SubjInfo';
         numlines = 1;
 
         % Add defaults from above
-        defaultanswer = {ID, age, gender, group, cBal};
+        defaultanswer = {ID, age, gender, group, cBal, startsWithBlocks};
 
         % Put everything together
         subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -416,18 +439,23 @@ else
         subject.gender = subjInfo{3};
         subject.group = str2double(subjInfo{4});
         subject.cBal = str2double(subjInfo{5});
+        subject.startsWithBlock = str2double(subjInfo{6});
         subject.date = date;
 
         % Test user input
         if passiveViewing == false
-            checkString = dir(sprintf('*exp*%s*', num2str(subject.ID)));
+            for i = subject.startsWithBlock:gParam.nBlocks
+                checkString = dir(sprintf('*exp*%s_b%i*', num2str(subject.ID), i));
+                subject.checkID(checkString, 5);
+            end
         elseif passiveViewing == true
             checkString = dir(sprintf('*passive*%s*', num2str(subject.ID)));
+            subject.checkID(checkString, 5);
         end
-        subject.checkID(checkString, 5);
         subject.checkGender();
         subject.checkGroup();
         subject.checkCBal(2);
+        subject.checkStartsWithBlock(gParam.nBlocks);
 
     elseif scanner == true
 
@@ -459,6 +487,7 @@ else
         subject.checkID(checkString, 5);
         subject.checkGender();
         subject.checkGroup();
+        % Todo: add check for startsWithBlock (run) for scanner
     end
 end
 
@@ -477,6 +506,7 @@ end
 
 % Set screensize
 display.screensize = screensize;
+display.globalScreenBorder = globalScreenBorder;
 display.distance2screen = distance2screen;
 display.screenWidthInMM = screenWidthInMM;
 display.useDegreesVisualAngle = useDegreesVisualAngle;
@@ -529,7 +559,7 @@ if display.useDegreesVisualAngle
     circle.tickLengthShield = display.deg2pix(tickLengthShieldDeg);
     circle = circle.getShieldOffset();
     %fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',round(rotationRadDeg,2), round(circle.rotationRad, 2));
-    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n',rotationRadDeg, circle.rotationRad);
+    fprintf('\nYou have chosen to use degrees of visual angle.\n\nRotation radius in degrees visual angle: %.2f\n\nIn pixels: %.2f. Other stimuli adjusted accordingly!\n\n', rotationRadDeg, circle.rotationRad);
 elseif display.useDegreesVisualAngle == false
     circle.rotationRad = rotationRadPixel;
 else
@@ -555,6 +585,7 @@ triggers = al_triggers();
 if sendTrigger
     triggers.sampleRate = sampleRate;
     triggers.session = session;
+    triggers.port = port;
 end
 
 % ---------------------------------------------------
@@ -621,7 +652,7 @@ Screen('Flip', taskParam.display.window.onScreen);
 if scanner == false
 
     % When experiment does not take place in scanner
-    [dataLowNoise, dataHighNoise, totWin] = al_commonConfettiConditions(taskParam);
+    [allTaskData, totWin] = al_commonConfettiConditions(taskParam);
 
 elseif scanner == true
 

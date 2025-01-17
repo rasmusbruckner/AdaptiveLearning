@@ -92,7 +92,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             trialflow.reward = 'standard'; % standard condition
 
             % Cannon-object instance
-            cannon = al_cannon();
+            cannon = al_cannon(false);
             cannon.nParticles = 40;
 
             % TaskParam object that harbors all relevant object instances
@@ -147,7 +147,7 @@ classdef al_testTaskDataMain < matlab.mock.TestCase
             trialflow.reward = 'asymmetric'; % asymmetric rewards
 
             % Cannon-object instance
-            cannon = al_cannon();
+            cannon = al_cannon(false);
             cannon.nParticles = 40;
 
             % TaskParam object that harbors all relevant object instances

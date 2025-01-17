@@ -23,14 +23,22 @@ classdef al_commonConfettiInstructionsDefaultText
         reduceShield
         secondPracticeHeader
         secondPractice
+        thirdPracticeHeader
+        thirdPractice
+        fourthPracticeHeader
+        fourthPractice
         startTaskHeader
         startTask
         noCatchHeader
         noCatch
         accidentalCatchHeader
         accidentalCatch
+        showCannonText
+        addCannonText
+        cannonFeedbackText
         practiceBlockFailHeader
         practiceBlockFail
+        cannonPracticeFail
         firstPupilBaselineHeader
         firstPupilBaseline
         secondPupilBaselineHeader
@@ -163,7 +171,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'Dennoch fangen Sie am meisten Konfetti, wenn Sie den rosafarbenen Punkt genau auf die Stelle '...
                     'steuern, auf die die Konfetti-Kanone zielt.\n\nIn dieser Übung sollen Sie mit der Ungenauigkeit '...
                     'der Konfetti-Kanone erst mal vertraut werden. Steuern Sie den rosafarbenen Punkt bitte immer auf die anvisierte '...
-                    'Stelle.\n\nAchten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln.'];
+                    'Stelle.\n\nAchten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'];
             elseif isequal(self.language, 'English')
                 self.firstPractice = ['In this block, the confetti cannon is very old '...
                     'and its aim therefore pretty inaccurate. Even if you move the bucket to the exact aim of the confetti cannon, '...
@@ -210,23 +218,55 @@ classdef al_commonConfettiInstructionsDefaultText
 
             % Second practice
             if isequal(self.language, 'German')
-                self.secondPractice = ['In diesem Übungsdurchgang ist die Konfetti-Kanone nicht mehr sichtbar. Anstelle der Konfetti-Kanone sehen Sie dann einen Punkt. '...
-                    'Außerdem sehen Sie, wo das Konfetti hinfliegt.\n\nUm weiterhin viel Konfetti zu fangen, müssen Sie aufgrund '...
-                    'der vorherigen Schüsse einschätzen, auf welche Stelle die Konfetti-Kanone aktuell zielt und den Eimer auf diese Position '...
-                    'steuern. Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
-                    'dorthin bewegen.\n\nIn der folgenden Übung werden Sie es sowohl mit einer relativ genauen '...
-                    'als auch einer eher ungenauen Konfetti-Kanone zu tun haben. Beachten Sie, dass Sie das Konfetti trotz '...
-                    'guter Vorhersagen auch häufig nicht fangen können. \n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).\n\nBeachten Sie bitte auch, dass '...
-                    'die Konfetti-Kanone in manchen Fällen sichtbar sein wird. In diesen Fällen ist die beste Strategie, zum Ziel der Kanone zu gehen.'];
+                self.secondPractice = ['Um sicherzugehen, dass Sie die Aufgabe verstanden haben, machen wir jetzt eine kurze Übung:\n\n'...
+                    'Sie werden hintereinander fünf Schüsse der Konfetti-Kanone sehen. Danach geben Sie bitte an, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
+                    'Die beste Strategie ist, die mittlere Position der Schüsse anzugeben. Diese Position ist die beste Vohersage, um in der Aufgabe am meisten Konfetti zu fangen.'];
+
             elseif isequal(self.language, 'English')
-                self.secondPractice = ['In this practice run, the confetti cannon is no longer visible. Instead of the confetti cannon, you will see a dot. '...
-                    'You can also see where the confetti is flying to.\n\nIn order to continue catching lots of confetti, you must predict where the confetti is flying to based on '...
-                    'the previous shots and move the bucket to this position. '...
-                    'If you think that the confetti cannon has changed direction, you should also move the bucket '...
-                    'there.\n\nIn the following exercise, you will try it with both a relatively accurate '...
-                    'and a rather inaccurate confetti cannon. Please note that despite '...
-                    'good predictions, you often wont be able to catch the confetti.']; % update few things if planning to use this
+                self.secondPractice = ['Add instructions please']; % update few things if planning to use this
+            else
+                error('language parameter unknown')
+            end
+
+            % Third practice header
+            if isequal(self.language, 'German')
+                self.thirdPracticeHeader = 'Dritter Übungsdurchgang';
+            elseif isequal(self.language, 'English')
+                self.thirdPracticeHeader = 'Third Practice Run';
+            else
+                error('language parameter unknown')
+            end
+
+            % Third practice
+            if isequal(self.language, 'German')
+                self.thirdPractice = ['In dieser Übung sehen Sie nur noch einen Schuss der Konfetti-Kanone. '...
+                    'Bitte geben Sie wieder an, wo Sie die Konfetti-Kanone vermuten.\n\nBitte beachten Sie, dass das Ziel der Kanone meistens gleich bleibt. Manchmal richtet sich die Kanone allerding neu aus. '...
+                    'Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
+                    'dorthin bewegen.\n\nBeachten Sie, dass Sie das Konfetti trotz guter Vorhersagen auch häufig nicht fangen können.'];
+            elseif isequal(self.language, 'English')
+                self.thirdPractice = ['Add instructions please']; % update few things if planning to use this
+            else
+                error('language parameter unknown')
+            end
+
+            % Fourth practice header
+            if isequal(self.language, 'German')
+                self.fourthPracticeHeader = 'Vierter Übungsdurchgang';
+            elseif isequal(self.language, 'English')
+                self.fourthPracticeHeader = 'Fourth Practice Run';
+            else
+                error('language parameter unknown')
+            end
+
+            % Fourth practice
+            if isequal(self.language, 'German')
+                self.fourthPractice = ['Jetzt kommen wir zur letzten Übung.\n\nDiesmal müssen Sie mit dem rosafarbenen Punkt Ihr Schild platzieren und sehen dabei die Kanone nicht mehr. Außerdem werden Sie es sowohl mit einer relativ genauen '...
+                    'als auch einer eher ungenauen versteckten Konfetti-Kanone zu tun haben.\n\n'...
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'...
+                    '\n\nBeachten Sie bitte auch, dass das Ziel der Konfetti-Kanone in manchen Fällen sichtbar sein wird. In diesen Fällen ist die beste Strategie, zum Ziel der Kanone zu gehen.'];
+
+            elseif isequal(self.language, 'English')
+                self.fourthPractice = ['Add instructions please']; % update few things if planning to use this
             else
                 error('language parameter unknown')
             end
@@ -247,7 +287,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'sehen können, müssen Sie diese Stelle aufgrund der Position der letzten Konfettiwolken einschätzen. Beachten Sie, dass Sie das Konfetti trotz '...
                     'guter Vorhersagen auch häufig nicht fangen können. \n\nIn wenigen Fällen werden Sie die Konfetti-Kanone zu sehen bekommen und können Ihre Leistung '...
                     'verbessern, indem Sie den Eimer genau auf das Ziel steuern.\n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).\n\nViel Erfolg!'];
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.\n\nViel Erfolg!'];
             elseif isequal(self.language, 'English')
                 self.startTask = ['You have completed the practice phase. To summarize, you catch the most confetti, '...
                     'when you move the bucket (pink dot) to the aim of the confetti cannon. Because you can usually no longer see the cannon, '...
@@ -294,6 +334,34 @@ classdef al_commonConfettiInstructionsDefaultText
                 error('language parameter unknown')
             end
 
+            % Show cannon
+            if isequal(self.language, 'German')
+                self.showCannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+            elseif isequal(self.language, 'English')
+                self.showCannonText = 'Please add instructions';
+            else
+                error('language parameter unknown')
+            end
+
+            % Additional show cannon text
+            if isequal(self.language, 'German')
+                self.addCannonText = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
+                    'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+            elseif isequal(self.language, 'English')
+                self.addCannonText = 'Please add instructions';
+            else
+                error('language parameter unknown')
+            end
+
+            % Cannon feedback text
+            if isequal(self.language, 'German')
+                self.cannonFeedbackText = '\n\nHier können Sie Ihre Angabe und die echte Konfetti-Kanone vergleichen.';
+            elseif isequal(self.language, 'English')
+                self.cannonFeedbackText = 'Please add instructions';
+            else
+                error('language parameter unknown')
+            end
+
             % Practice block fail header
             if isequal(self.language, 'German')
                 self.practiceBlockFailHeader = 'Bitte noch mal probieren!';
@@ -310,6 +378,16 @@ classdef al_commonConfettiInstructionsDefaultText
             elseif isequal(self.language, 'English')
                 self.practiceBlockFail = ['You have often placed your bucket next to the aim of the cannon. In the next '...
                     'phase, please try to aim the bucket directly at the target. The aim is indicated by the black line.'];
+            else
+                error('language parameter unknown')
+            end
+
+            % Practice block fail
+            if isequal(self.language, 'German')
+                self.cannonPracticeFail = ['Sie haben die Konfetti-Kanone nicht genau genug eingeschätzt. Versuchen Sie im nächsten '...
+                    'Durchgang bitte, den Mittelpunkt der einzelnen Schüsse auszuwählen. Bei Fragen, wenden Sie sich an die Versuchsleitung.'];
+            elseif isequal(self.language, 'English')
+                self.cannonPracticeFail = ['Please add instructions'];
             else
                 error('language parameter unknown')
             end
@@ -348,7 +426,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
                     'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
                     'Strich zeigt die Position der letzten Konfetti-Wolke.\n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).'];
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'];
             elseif isequal(self.language, 'English')
                 self.introduceLowNoiseHeader = 'More accurate confetti cannon';
                 self.introduceLowNoise = ['In the following block, the confetti cannon will be relatively accurate.\n\n'...
@@ -370,7 +448,7 @@ classdef al_commonConfettiInstructionsDefaultText
                     'den Eimer genau dorthin zu stellen, wo Sie das Ziel der Konfetti-Kanone vermuten.\n\n'...
                     'Zur Erinnerung: Der rosafarbene Strich zeigt Ihre letzte Vorhersage. Der schwarze '...
                     'Strich zeigt die Position der letzten Konfetti-Wolke.\n\n'...
-                    'Achten Sie bitte darauf, Ihren Blick immer auf den schwarzen Punkt in der Mitte zu fixieren und Blinzeln zu vermeiden. Am Ende jedes Versuchs dürfen Sie blinzeln (angezeigt durch weißen Punkt).'];
+                    'Achten Sie bitte auf Augenbewegungen und Blinzeln wie von der Versuchsleitung erklärt.'];
             elseif isequal(self.language, 'English')
                 self.introduceHighNoiseHeader = 'Less accurate confetti cannon';
                 self.introduceHighNoise = ['In the following block, the confetti cannon will be relatively inaccurate.\n\n'...
@@ -428,26 +506,20 @@ classdef al_commonConfettiInstructionsDefaultText
         end
 
 
-        function self = giveBlockFeedback(self, nBlocks, half, currBlock)
+        function self = giveBlockFeedback(self, nBlocks, currBlock)
             %GIVEBLOCKFEEDBACK This function displays how many blocks have
             %been completed so far
             %
             %   Input
             %       self: Instructions-text-object instance
             %       nBlocks: Number of blocks
-            %       half: Number of points
             %       currBlock: Indicates if we are in passive-viewing condition
             %   Output
             %       self: Instructions-text-object instance
 
 
-            if half == 1
-                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks*2);
-            elseif half == 2
-                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock+nBlocks, nBlocks*2);
-            else
-                error('half parameter undefined')
-            end
+            self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks);
+
         end
 
     end

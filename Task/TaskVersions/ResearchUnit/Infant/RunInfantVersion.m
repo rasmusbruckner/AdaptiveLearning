@@ -36,6 +36,7 @@ if ~exist('config', 'var') || isempty(config)
     config.screenNumber = 1;
     config.s = 40;
     config.enter = 37;
+    config.defaultParticles = false;
     config.debug = false;
     config.printTiming = true;
     config.hidePtbCursor = true;
@@ -93,6 +94,7 @@ screensize = config.screenSize; % screen size
 screenNumber = config.screenNumber; % screen number
 s = config.s; % s key
 enter = config.enter; % enter key
+defaultParticles = config.defaultParticles;
 debug = config.debug; % debug mode
 printTiming = config.printTiming; % print timing for checking
 hidePtbCursor = config.hidePtbCursor; % hide cursor
@@ -180,7 +182,7 @@ trialflow.cannonType = 'duck';
 % Create object instance with cannon parameters
 % ---------------------------------------------
 
-cannon = al_cannon();
+cannon = al_cannon(defaultParticles);
 
 % ---------------------------------------------
 % Create object instance with color parameters

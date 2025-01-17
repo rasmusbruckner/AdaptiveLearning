@@ -66,6 +66,9 @@ end
 % Indicate if passive viewing or not to determine what to save later on
 taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
 
+% Store commit hash
+taskData.commitHash = taskParam.gParam.commitHash;
+
 if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
     eyeused = Eyelink('EyeAvailable');
 end
@@ -97,16 +100,25 @@ for i = 1:trial
     % Timestamp for measuring jitter duration for validation purposes
     jitTest = GetSecs();
 
-    % Take jitter into account and get timestamps for initiation RT
-    taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
-    
-    % taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
-    taskData.actJitterFixCrossOutcome(i) = rand * taskParam.timingParam.jitterFixCrossOutcome;
-    taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+    if isequal(taskParam.trialflow.exp, 'exp') || isequal(taskParam.trialflow.exp, 'practHid') || isequal(taskParam.trialflow.exp, 'passive')
 
-    % taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
-    taskData.actJitterFixCrossShield(i) = rand * taskParam.timingParam.jitterFixCrossShield;
-    taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
+        % Take jitter into account and get timestamps for initiation RT
+        taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
+        taskData.actJitterFixCrossOutcome(i) = rand * taskParam.timingParam.jitterFixCrossOutcome;
+        taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
+        taskData.actJitterFixCrossShield(i) = rand * taskParam.timingParam.jitterFixCrossShield;
+        taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
+
+    else 
+        
+         % Take jitter into account and get timestamps for initiation RT
+        taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITIPract;
+        taskData.actJitterFixCrossOutcome(i) = rand * taskParam.timingParam.jitterFixCrossOutcomePract;
+        taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcomePract;
+        taskData.actJitterFixCrossShield(i) = rand * taskParam.timingParam.jitterFixCrossShieldPract;
+        taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShieldPract;
+
+    end
 
     % Onset jitter
     % ------------
@@ -120,12 +132,9 @@ for i = 1:trial
 
     % Baseline period
     % ---------------
-    % This is the new baseline period
-    % Todo: check if timing is good
-    
-    fixationPhase(taskParam)
+    al_fixationPhase(taskParam)
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    
+
     % Timestamp prediction
     taskData.timestampBaseline(i) = GetSecs() - taskParam.timingParam.ref;
     timestamp = GetSecs() + 0.001;
@@ -231,7 +240,7 @@ for i = 1:trial
     % --------------
     if isequal(taskParam.trialflow.shot, 'static')
 
-        fixationPhase(taskParam)
+        al_fixationPhase(taskParam)
         timestamp = timestamp + 0.001;
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
@@ -300,8 +309,14 @@ for i = 1:trial
 
         % Tell PTB that everything has been drawn and flip screen
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        % timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterOutcome(i);
-        timestamp = timestamp + taskParam.timingParam.fixCrossOutcome + taskData.actJitterFixCrossOutcome(i);
+        
+        % Presentation duration depends on trial flow
+        if isequal(taskParam.trialflow.exp, 'exp') || isequal(taskParam.trialflow.exp, 'practHid')
+            fixCrossOutcome = taskParam.timingParam.fixCrossOutcome;
+        else
+            fixCrossOutcome = taskParam.timingParam.fixCrossOutcomePract;
+        end
+        timestamp = timestamp + fixCrossOutcome + taskData.actJitterFixCrossOutcome(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
         % Send outcome trigger
@@ -319,7 +334,7 @@ for i = 1:trial
     if isequal(taskParam.trialflow.shot, 'static')
 
         % Tell PTB that everything has been drawn and flip screen
-        fixationPhase(taskParam)
+        al_fixationPhase(taskParam)
         Screen('DrawingFinished', taskParam.display.window.onScreen);
         % timestamp = timestamp + taskParam.timingParam.outcomeLength;
         timestamp = timestamp + taskParam.timingParam.outcomeLength + taskData.actJitterOutcome(i);
@@ -349,9 +364,7 @@ for i = 1:trial
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
-    %timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterShield(i);
     timestamp = timestamp + taskParam.timingParam.fixCrossShield + taskData.actJitterFixCrossShield(i);
-
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
     % Send shield trigger
@@ -364,7 +377,7 @@ for i = 1:trial
     end
 
     if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
-        taskData.sacc(i) = taskParam.eyeTracker.checkSaccade(eyeused, taskParam.display.zero); 
+        taskData.sacc(i) = taskParam.eyeTracker.checkSaccade(eyeused, taskParam.display.zero);
     end
 
     % Fixation cross (static version)
@@ -372,9 +385,8 @@ for i = 1:trial
     if isequal(taskParam.trialflow.shot, 'static')
 
         % Tell PTB that everything has been drawn and flip screen
-        fixationPhase(taskParam, [222,222,222])
+        al_fixationPhase(taskParam, [222,222,222])
         Screen('DrawingFinished', taskParam.display.window.onScreen);
-        % timestamp = timestamp + taskParam.timingParam.shieldLength;
         timestamp = timestamp + taskParam.timingParam.shieldLength + taskData.actJitterShield(i);
         Screen('Flip', taskParam.display.window.onScreen, timestamp);
 
@@ -420,7 +432,7 @@ if ~taskParam.unitTest.run
 
     % Save Eyelink data
     % -----------------
-    
+
     if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.saveEtData, 'true')
         et_path = pwd;
         et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
@@ -482,30 +494,4 @@ if ~taskParam.unitTest.run
     KbReleaseWait();
 
 end
-end
-
-function fixationPhase(taskParam, color)
-%FIXATIONPHASE This function implements the fixation phase
-%
-%   Input
-%       taskParam: task-parameter-objects instance
-%       color: optional color of fixation dot
-%
-%   Output
-%       None
-
-% Check if reduced shield is requested
-if ~exist('color', 'var') || isempty(color)
-    color = taskParam.colors.fixDot;
-end
-
-Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
-al_drawFixPoint(taskParam, color)
-
-% Draw circle and confetti cloud
-al_drawCircle(taskParam)
-
-% Tell PTB that everything has been drawn and flip screen
-Screen('DrawingFinished', taskParam.display.window.onScreen);
-
 end

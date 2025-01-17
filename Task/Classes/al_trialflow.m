@@ -73,6 +73,7 @@ classdef al_trialflow
         currentTickmarks
             % show: standard tick makrs
             % workingMemory: 5 last outcomes
+            % cannonPractice: current + last 4 outcomes
             % hide: no tick marks
         
         % If more entertaining background is displayed
