@@ -264,7 +264,11 @@ end
 
 % Send the pupil trigger
 if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp') || taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'passive')
-    Eyelink('message', num2str(triggerID));
+    if isequal(taskParam.gParam.trackerVersion, 'eyelink')
+        Eyelink('message', num2str(triggerID));
+    elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
+        taskParam.eyeTracker.el.sendMessage(num2str(triggerID));
+    end
 end
 
 % Send the EEG trigger
