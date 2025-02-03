@@ -66,6 +66,9 @@ end
 % Indicate if passive viewing or not to determine what to save later on
 taskData.passiveViewingCondition = taskParam.gParam.passiveViewing;
 
+% Store commit hash
+taskData.commitHash = taskParam.gParam.commitHash;
+
 if taskParam.gParam.eyeTracker && taskParam.gParam.onlineSaccades
     eyeused = Eyelink('EyeAvailable');
 end
@@ -101,7 +104,7 @@ for i = 1:trial
     % Timestamp for measuring jitter duration for validation purposes
     jitTest = GetSecs();
 
-    if isequal(taskParam.trialflow.exp, 'exp') || isequal(taskParam.trialflow.exp, 'practHid')
+    if isequal(taskParam.trialflow.exp, 'exp') || isequal(taskParam.trialflow.exp, 'practHid') || isequal(taskParam.trialflow.exp, 'passive')
 
         % Take jitter into account and get timestamps for initiation RT
         taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;

@@ -12,7 +12,8 @@ function al_baselineArousal(taskParam, file_name_suffix)
 %   Output
 %       None
 
-% Initialize and start eye-tracker
+
+% Initialize and start eye tracker
 if taskParam.gParam.eyeTracker
     taskParam.eyeTracker = taskParam.eyeTracker.initializeEyeLink(taskParam, file_name_suffix);
     taskParam = taskParam.eyeTracker.startRecording(taskParam);
@@ -21,7 +22,10 @@ end
 % Define color and random color order (black and white)
 arousalColors = [taskParam.colors.black; taskParam.colors.white];
 arousalColorsNames = {'black', 'white'};
-colorOrder = randperm(size(arousalColors,1));
+
+% Final version: fixed order black, white, gray
+% colorOrder = randperm(size(arousalColors,1));
+colorOrder = [1,2];
 
 % Add gray so that it appears last
 arousalColorsNames{3} = 'gray';
@@ -33,12 +37,8 @@ for i = 1:size(arousalColors,1)
 
     % Presenting trial number at the bottom of the eyetracker display - optional
     if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp')
-        if isequal(taskParam.gParam.trackerVersion, 'eyelink')
-            Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, 3);
-            Eyelink('message', 'TRIALID %d', i);
-        elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
-            taskParam.eyeTracker.el.sendMessage(sprintf('TRIALID BaseAr %d', i));
-        end
+        Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, 3);
+        Eyelink('message', 'TRIALID %d', i);
     end
 
     % Only send trigger on first interation
@@ -74,24 +74,9 @@ end
 % Save Eyelink data
 % -----------------
 
-if taskParam.gParam.eyeTracker% && isequal(taskParam.trialflow.saveEtData, 'true')
-    if isequal(taskParam.gParam.trackerVersion, 'eyelink')
-        et_path = pwd;
-        et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
-        al_saveEyelinkData(et_path, et_file_name)
-        Eyelink('StopRecording');
-
-    elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
-        et_path = pwd;
-        et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
-        al_saveSMIData(taskParam.eyeTracker.el, et_path, et_file_name) 
-        taskParam.eyeTracker.el.stopRecording();
-    end
+if taskParam.gParam.eyeTracker
+    et_path = pwd;
+    et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
+    al_saveEyelinkData(et_path, et_file_name)
+    Eyelink('StopRecording');
 end
-
-% if taskParam.gParam.eyeTracker
-%     et_path = pwd;
-%     et_file_name=[et_file_name, '.edf'];
-%     al_saveEyelinkData(et_path, et_file_name)
-%     Eyelink('StopRecording');
-% end

@@ -1,4 +1,4 @@
-function taskData = al_confettiEEGLoop(taskParam, condition, taskData, trial)
+function taskData = al_confettiEEGLoop(taskParam, condition, taskData, trial, file_name_suffix)
 %AL_CONFETTIEEGLOOP This function runs the cannon-task trials for the confetti-cannon EEG version
 %
 %   Input
@@ -6,17 +6,20 @@ function taskData = al_confettiEEGLoop(taskParam, condition, taskData, trial)
 %       condtion: Condition type
 %       taskData: Task-data-object instance
 %       trial: Number of trials
+%       file_name_suffix: Suffix of saved files
 %
 %   Output
 %       taskData: Task-data-object instance
 
 
-% Todo:
-% Ensure timing output in console is up to date
+% Check if file name suffix is provided
+if ~exist('file_name_suffix', 'var') || isempty(file_name_suffix)
+    file_name_suffix = '';
+end
 
 % Save name
 concentration = unique(taskData.concentration);
-taskData.savename = sprintf('confetti_EEG_%s_%s_g%d_conc%d_%s', taskParam.trialflow.exp, taskParam.trialflow.reward, taskParam.subject.group, concentration, taskParam.subject.ID);
+taskData.savename = sprintf('confetti_EEG_%s_%s_g%d_conc%d_%s%s', taskParam.trialflow.exp, taskParam.trialflow.reward, taskParam.subject.group, concentration, taskParam.subject.ID, file_name_suffix);
 
 % Wait until keys released
 KbReleaseWait();
@@ -28,8 +31,12 @@ Screen('TextFont', taskParam.display.window.onScreen, 'Arial');
 % Reset reference time stamp
 taskParam.timingParam.ref = GetSecs();
 
+% Store commit hash
+taskData.commitHash = taskParam.gParam.commitHash;
+
 % Cycle over trials
 % -----------------
+
 for i = 1:trial
 
     % 1. Trial phase: Trial onset
@@ -59,12 +66,8 @@ for i = 1:trial
 
     % Take jitter into account and get timestamps for initiation RT
     taskData.actJitterOnset(i) = rand * taskParam.timingParam.jitterITI;
-    
-    % taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
     taskData.actJitterFixCrossOutcome(i) = rand * taskParam.timingParam.jitterFixCrossOutcome;
     taskData.actJitterOutcome(i) = rand * taskParam.timingParam.jitterOutcome;
-
-    % taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
     taskData.actJitterFixCrossShield(i) = rand * taskParam.timingParam.jitterFixCrossShield;
     taskData.actJitterShield(i) = rand * taskParam.timingParam.jitterShield;
 
@@ -167,7 +170,7 @@ for i = 1:trial
     % Draw circle and confetti outcome
     al_drawCircle(taskParam)
     al_tickMark(taskParam, taskData.pred(i), 'pred');
-    al_confettiOutcome(taskParam, taskData, i)
+    al_confettiOutcome(taskParam, taskData, i);
 
     % Tell PTB that everything has been drawn and flip screen
     Screen('DrawingFinished', taskParam.display.window.onScreen);
@@ -207,7 +210,7 @@ for i = 1:trial
     taskData.timestampFixCross2(i) = GetSecs() - taskParam.timingParam.ref;
 
     if taskParam.gParam.printTiming
-        fprintf('Shield duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
+        fprintf('Outcome duration: %.5f\n', taskData.timestampFixCross2(i) - taskData.timestampOutcome(i))
     end
 
     % 6. Trial phase: Reward

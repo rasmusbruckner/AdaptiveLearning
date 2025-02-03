@@ -15,11 +15,12 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
 
             % Default parameters
             config.trialsExp = 20;
-            config.nBlocks = 1;
+            config.nBlocks = 2;
             config.practTrialsVis = 10;
             config.practTrialsHid = 20; 
             config.cannonPractCriterion = 0; %4; % criterion cannon practice
             config.cannonPractNumOutcomes = 5; % number of trials cannon practice
+            config.cannonPractFailCrit = 3;
             config.passiveViewingPractTrials = 10;
             config.passiveViewing = false; % test with true and false
             config.baselineFixLength = 0.25; 
@@ -33,6 +34,7 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             config.headerSize = 50;
             config.vSpacing = 1;
             config.screenSize = get(0,'MonitorPositions')*1;
+            config.globalScreenBorder = 0;
             config.screenNumber = 1;
             config.s = 40;
             config.five = 15;
@@ -72,14 +74,14 @@ classdef al_commonConfettiIntegrationTest < matlab.unittest.TestCase
             % high noise: 40, 50, 77, 40, 70, 319, 263, 286, 261, 290, 271, 159, 108, 136, 153, 121, 128, 128, 101, 124
 
             cBal = '1';
-            [dataLowNoise_cBal1, dataHighNoise_cBal1] = RunCommonConfettiVersion(config, unitTest, cBal);
-            dataLowNoise_cBal1 = dataLowNoise_cBal1.conditionBlock1;
-            dataHighNoise_cBal1 = dataHighNoise_cBal1.conditionBlock1;
+            allTaskDataCBal1 = RunCommonConfettiVersion(config, unitTest, cBal);
+            dataLowNoise_cBal1 = allTaskDataCBal1.lowNoiseBlock1;
+            dataHighNoise_cBal1 = allTaskDataCBal1.highNoiseBlock2;
 
             cBal = '2';
-            [dataLowNoise_cBal2, dataHighNoise_cBal2] = RunCommonConfettiVersion(config, unitTest, cBal);
-            dataLowNoise_cBal2 = dataLowNoise_cBal2.conditionBlock1;
-            dataHighNoise_cBal2 = dataHighNoise_cBal2.conditionBlock1;
+            allTaskDataCBal2 = RunCommonConfettiVersion(config, unitTest, cBal);
+            dataHighNoise_cBal2 = allTaskDataCBal2.highNoiseBlock1;
+            dataLowNoise_cBal2 = allTaskDataCBal2.lowNoiseBlock2;
 
             % Test output
             % -----------

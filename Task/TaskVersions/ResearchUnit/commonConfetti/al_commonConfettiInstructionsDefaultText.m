@@ -346,7 +346,7 @@ classdef al_commonConfettiInstructionsDefaultText
             % Additional show cannon text
             if isequal(self.language, 'German')
                 self.addCannonText = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
-                'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+                    'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
             elseif isequal(self.language, 'English')
                 self.addCannonText = 'Please add instructions';
             else
@@ -385,7 +385,7 @@ classdef al_commonConfettiInstructionsDefaultText
             % Practice block fail
             if isequal(self.language, 'German')
                 self.cannonPracticeFail = ['Sie haben die Konfetti-Kanone nicht genau genug eingeschätzt. Versuchen Sie im nächsten '...
-                'Durchgang bitte, den Mittelpunkt der einzelnen Schüsse auszuwählen. Bei Fragen, wenden Sie sich an die Versuchsleitung.'];
+                    'Durchgang bitte, den Mittelpunkt der einzelnen Schüsse auszuwählen. Bei Fragen, wenden Sie sich an die Versuchsleitung.'];
             elseif isequal(self.language, 'English')
                 self.cannonPracticeFail = ['Please add instructions'];
             else
@@ -506,26 +506,20 @@ classdef al_commonConfettiInstructionsDefaultText
         end
 
 
-        function self = giveBlockFeedback(self, nBlocks, half, currBlock)
+        function self = giveBlockFeedback(self, nBlocks, currBlock)
             %GIVEBLOCKFEEDBACK This function displays how many blocks have
             %been completed so far
             %
             %   Input
             %       self: Instructions-text-object instance
             %       nBlocks: Number of blocks
-            %       half: Number of points
             %       currBlock: Indicates if we are in passive-viewing condition
             %   Output
             %       self: Instructions-text-object instance
 
 
-            if half == 1
-                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks*2);
-            elseif half == 2
-                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock+nBlocks, nBlocks*2);
-            else
-                error('half parameter undefined')
-            end
+            self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks);
+
         end
 
     end

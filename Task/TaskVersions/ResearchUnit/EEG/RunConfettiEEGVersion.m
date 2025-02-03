@@ -15,7 +15,7 @@ function [dataMonetary, dataSocial] = RunConfettiEEGVersion(config, runUnitTest,
 %       To run the unit tests, run "al_unittets" in "DataScripts"
 %
 %   Last updated
-%       06/24
+%       11/24
 
 % todo: tailored integration tests
 
@@ -23,7 +23,7 @@ KbName('UnifyKeyNames')
 
 % Check if config structure is provided
 if ~exist('config', 'var') || isempty(config)
-    
+
     % Create structure
     config = struct();
 
@@ -51,12 +51,9 @@ if ~exist('config', 'var') || isempty(config)
     config.screenWidthInMM = 309.40;
     config.sendTrigger = false;
     config.rotationRadPixel = 140;
-    config.rotationRadDeg = 2.5; %3.16;
+    config.rotationRadDeg = 3.16;
     config.noPtbWarnings = false;
     config.predSpotCircleTolerance = 2;
-
-    % config.customInstructions = true;
-    % config.instructionText = al_commonConfettiInstructionsDefaultText_updated();
 end
 
 % Check if unit test is requested
@@ -95,7 +92,7 @@ blockIndices = config.blockIndices; % breaks
 runIntro = config.runIntro; % task instructions
 sentenceLength = config.sentenceLength; % sentence length instructions
 textSize = config.textSize; % textsize
-vSpacing = config.vSpacing; % space between text lines    
+vSpacing = config.vSpacing; % space between text lines
 headerSize = config.headerSize; % header size
 screensize = config.screenSize; % screen size
 s = config.s; % s key
@@ -109,16 +106,11 @@ dataDirectory = config.dataDirectory;
 useDegreesVisualAngle = config.useDegreesVisualAngle; % Define stimuli in degrees of visual angle
 distance2screen = config.distance2screen; % defined in mm (for degrees visual angle)
 screenWidthInMM = config.screenWidthInMM; % defined in mm (for degrees visual angle)
-% screenHeightInMM = config.screenHeightInMM; % defined in mm (for ET)
 sendTrigger = config.sendTrigger; % EEG
-%rotationRad = config.rotationRad; % rotation radius
 rotationRadPixel = config.rotationRadPixel; % rotation radius in pixels
 rotationRadDeg = config.rotationRadDeg; % rotation radius in degrees visual angle
 noPtbWarnings = config.noPtbWarnings;
 predSpotCircleTolerance = config.predSpotCircleTolerance;
-
-% customInstructions = config.customInstructions;
-% instructionText = config.instructionText;
 
 % More general paramters
 % ----------------------
@@ -129,7 +121,7 @@ concentration = 12;
 % Hazard rate determining a priori changepoint probability
 haz = 0.2; %.125;
 
-% Number of confetti particles 
+% Number of confetti particles
 nParticles = 40;
 
 % Confetti standard deviations
@@ -151,18 +143,14 @@ catchTrialProb = 0.1;
 practiceTrialCriterionNTrials = 5;
 practiceTrialCriterionEstErr = 9;
 
-% Tickmark width
-% tickWidth = 2;
-
 % Reward magnitude
 rewMag = 0.2;
 
 % Sampling rate for EEG
-sampleRate = 500; 
+sampleRate = 500;
 
 % Confetti cannon image rectangle determining the size of the cannon
-imageRect = [0 00 60 200];
-socialFeedbackRect = [0 0 562 762]/4;
+socialFeedbackRect =  [0 0 1250 1250]/4; % [0 0 2048 2048]/4; %[0 0 562 762]/4;
 
 % Confetti end point
 confettiEndMean = 0; % 50; % 150% this is added to the circle radius
@@ -177,14 +165,13 @@ end
 
 predSpotDiamDeg = 0.45;
 fixSpotDiamDeg = 0.45;
-circleWidthDeg = 0.2; 
+circleWidthDeg = 0.2;
 tickLengthPredDeg = 0.9;
-tickLengthOutcDeg = 0.7; 
+tickLengthOutcDeg = 0.7;
 tickLengthShieldDeg = 1.1;
 particleSizeDeg = 0.1;
-confettiStdDeg = 0.1;
+confettiStdDeg = 0.08;
 imageRectDeg = [0 0 1.1 3.7];
-
 
 % ---------------------------------------------------
 % Create object instance with general task parameters
@@ -221,6 +208,7 @@ gParam.haz = haz;
 gParam.rewMag = rewMag;
 gParam.sendTrigger = sendTrigger;
 gParam.dataDirectory = dataDirectory;
+gParam.commitHash = al_getGitCommitHash();
 
 % Save directory
 cd(gParam.dataDirectory);
@@ -264,12 +252,12 @@ colors = al_colors(nParticles);
 % Create object instance with key parameters
 % ------------------------------------------
 
- % Check the keyboard device, which is necessary on some Macs
+% Check the keyboard device, which is necessary on some Macs
 keys = al_keys();
 if ~exist('kbDev')
-  keys = al_kbdev(keys);
+    keys = al_kbdev(keys);
 else
-  keys.kbDev = kbDev;
+    keys.kbDev = kbDev;
 end
 keys.s = s;
 keys.enter = enter;
@@ -280,17 +268,16 @@ keys.enter = enter;
 
 % Ensure this is properly documented in al_confettiEEGLoop
 timingParam = al_timing();
-timingParam.fixCrossOutcome = 1;
-timingParam.fixCrossShield = 1;
+timingParam.fixCrossOutcome = 0.9;
+timingParam.fixCrossShield = 0.9;
 timingParam.fixedITI = 0.9;
-timingParam.jitterFixCrossOutcome = 0.0;
-timingParam.jitterFixCrossShield = 0.0;
-timingParam.outcomeLength = 0.5;
+timingParam.jitterFixCrossOutcome = 0.15;
+timingParam.jitterFixCrossShield = 0.15;
+timingParam.outcomeLength = 0.65;
 timingParam.rewardLength = 1.0;
-timingParam.jitterOutcome = 0.0;  %0.15;
-timingParam.jitterShield = 0.0; % 0.15; % we use this one for the reward phase 
-% for consistency with common task
-timingParam.jitterITI = 0.2;  
+timingParam.jitterOutcome = 0.15;
+timingParam.jitterShield = 0.15;
+timingParam.jitterITI = 0.2;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -321,6 +308,7 @@ age = '99';
 gender = 'f';  % m/f/d
 group = '1'; % 1=experimental/2=control
 cBal = '1'; % 1/2/3/4
+startsWithBlocks = '1'; % first block
 if ~runUnitTest
     cBal = '1'; % 1/2/3/4
 end
@@ -335,17 +323,18 @@ if gParam.askSubjInfo == false || runUnitTest
     subject.group = str2double(group);
     subject.cBal = str2double(cBal);
     subject.date = date;
+    subject.startsWithBlock = startsWithBlocks;
 
     % If user input requested
 else
 
     % Variables that we want to put in the dialogue box
-    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:'};
+    prompt = {'ID:', 'Age:', 'Gender:', 'Group:', 'cBal:', 'startWithBlock'};
     name = 'SubjInfo';
     numlines = 1;
 
     % Add defaults from above
-    defaultanswer = {ID, age, gender, group, cBal};
+    defaultanswer = {ID, age, gender, group, cBal, startsWithBlocks};
 
     % Add information that is not specified by user (i.e., date)
     subjInfo = inputdlg(prompt, name, numlines, defaultanswer);
@@ -358,14 +347,18 @@ else
     subject.gender = subjInfo{3};
     subject.group = str2double(subjInfo{4});
     subject.cBal = str2double(subjInfo{5});
+    subject.startsWithBlock = str2double(subjInfo{6});
     subject.date = date;
 
     % Test user input
-    checkString = dir(sprintf('*EEG*%s*', num2str(subject.ID)));
-    subject.checkID(checkString, 5);
+    for i = subject.startsWithBlock:2
+        checkString = dir(sprintf('*EEG*%s_b%i*', num2str(subject.ID), i));
+        subject.checkID(checkString, 5);
+    end
     subject.checkGender();
     subject.checkGroup();
-    subject.checkCBal(),
+    subject.checkCBal();
+    subject.checkStartsWithBlock(gParam.nBlocks);
 end
 
 % Add starting bugdet
@@ -386,8 +379,16 @@ end
 
 % Set screensize
 display.screensize = screensize;
-% display.imageRect = imageRect;
 display.socialFeedbackRect = socialFeedbackRect;
+
+% Code young adults = 1, adolescents = 2 for loading of textures
+if subject.age >= 25
+    display.socialsample = 1;
+elseif subject.age <= 17
+    display.socialsample = 2;
+else
+    error('wrong age for sample')
+end
 display.distance2screen = distance2screen;
 display.screenWidthInMM = screenWidthInMM;
 display.useDegreesVisualAngle = useDegreesVisualAngle;
@@ -420,10 +421,6 @@ ListenChar(2);
 circle = al_circle(display.windowRect);
 circle.predSpotCircleTolerance = predSpotCircleTolerance;
 
-% circle.rotationRad = rotationRad;
-% circle.tickWidth = tickWidth;
-% circle = circle.computeCircleProps();
-
 % Determine rotation radius, depending on unit (deg. vis. angle vs. pixels)
 % also adjust other parameters accordingly
 if display.useDegreesVisualAngle
@@ -447,7 +444,7 @@ circle = circle.computeCircleProps();
 % Adjust size according to degrees visual angle for cannon parameters
 if display.useDegreesVisualAngle
     cannon.particleSize = display.deg2pix(particleSizeDeg);
-    cannon.confettiStd = display.deg2pix(confettiStdDeg);   
+    cannon.confettiStd = display.deg2pix(confettiStdDeg);
     cannon = cannon.al_staticConfettiCloud(trialflow.colors, display);
 else
     cannon = cannon.al_staticConfettiCloud(trialflow.colors);
@@ -497,7 +494,7 @@ taskParam.triggers = triggers;
 % background values are slightly different. But for research unit it is
 % more important to use the same values for comparability. We therefore use
 % fixed values based on a common screen. But it is recommended to check if these values strongly
-% differ from your set-up. Therefore, we print out a warning. 
+% differ from your set-up. Therefore, we print out a warning.
 
 colors = colors.computeBackgroundColor(taskParam);
 expectedVal = [137 137 137];
@@ -525,7 +522,7 @@ totWin = dataMonetary.accPerf(end);
 % -----------
 
 header = 'Ende des Versuchs!';
-txt = sprintf('Vielen Dank für Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
+txt = sprintf('Vielen Dank fÃ¼r Deine Teilnahme!\n\n\nDu hast insgesamt %.2f Euro gewonnen!', totWin);
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
 
