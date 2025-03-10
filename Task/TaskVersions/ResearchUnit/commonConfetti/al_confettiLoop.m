@@ -80,8 +80,12 @@ for i = 1:trial
 
     % Presenting trial number at the bottom of the eyetracker display - optional
     if taskParam.gParam.eyeTracker
-        Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, trial);
-        Eyelink('message', 'TRIALID %d', i);
+        if isequal(taskParam.gParam.trackerVersion, 'eyelink')
+            Eyelink('command', 'record_status_message "TRIAL %d/%d"', i, trial);
+            Eyelink('message', 'TRIALID %d', i);
+        elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
+            taskParam.eyeTracker.el.sendMessage(sprintf('TRIALID %d', i));
+        end
     end
 
     % Save constant variables on each trial
@@ -435,9 +439,19 @@ if ~taskParam.unitTest.run
 
     if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.saveEtData, 'true')
         et_path = pwd;
-        et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
-        al_saveEyelinkData(et_path, et_file_name)
-        Eyelink('StopRecording');
+
+        if isequal(taskParam.gParam.trackerVersion, 'eyelink')
+            et_file_name=[taskParam.eyeTracker.et_file_name, '.edf'];
+            al_saveEyelinkData(et_path, et_file_name)
+            Eyelink('StopRecording');
+
+        elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
+            et_file_name=[taskParam.eyeTracker.et_file_name];
+            al_saveSMIData(taskParam.eyeTracker.el, et_path, et_file_name)
+            taskParam.eyeTracker.el.stopRecording();
+            
+        end
+        
     end
 
     % Save behavioral data

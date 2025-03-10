@@ -107,10 +107,19 @@ classdef al_keys
                     et_path = pwd;
                     et_file_name = [et_file_name, '.edf'];
 
-                    al_saveEyelinkData(et_path, et_file_name)
-                    Eyelink('StopRecording');
+                    if isequal(taskParam.gParam.trackerVersion, 'eyelink')
 
+                        al_saveEyelinkData(et_path, et_file_name)
+                        Eyelink('StopRecording');
+
+                    elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
+        
+                        al_saveSMIData(taskParam.eyeTracker.el, et_path, et_file_name) 
+                        taskParam.eyeTracker.el.stopRecording();
+                    end
+                    
                 end
+                
                 
                 % Behavioral
                 if isequal(taskParam.trialflow.saveData, 'true') && exist('taskData', 'var') == true
