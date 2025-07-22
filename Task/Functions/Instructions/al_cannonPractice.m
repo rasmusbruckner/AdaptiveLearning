@@ -1,4 +1,4 @@
-function testPassed = al_cannonPractice(taskParam, taskData, nTrials, file_name_suffix)
+function testPassed = al_cannonPractice(taskParam, taskData, nTrials, file_name_suffix, withSlider)
 % AL_CANNONPRACTICE This function implements the practice session in which
 % participants control the cannon to indicate their belief about the aim
 %
@@ -7,6 +7,7 @@ function testPassed = al_cannonPractice(taskParam, taskData, nTrials, file_name_
 %       taskData: Task-data-object instance
 %       nTrials: Number of trials
 %       file_name_suffix: File ending for different blocks
+%       withSlider: Optional slider for subjective rating (default = false)
 %
 %   Output
 %       testPassed: Whether test was passed or not
@@ -15,6 +16,11 @@ function testPassed = al_cannonPractice(taskParam, taskData, nTrials, file_name_
 % Check if file name suffix is provided
 if ~exist('file_name_suffix', 'var') || isempty(file_name_suffix)
     file_name_suffix = '';
+end
+
+% Check if slider option is provided
+if ~exist('withSlider', 'var') || isempty(withSlider)
+    withSlider = false;
 end
 
 % Save name
@@ -190,6 +196,16 @@ for i = 1:nTrials
                 WaitSecs(1);
                 break
             end
+        end
+
+        % Optional slider rating
+        % ----------------------
+        if withSlider
+            KbReleaseWait;
+            questionTxt = 'How likely was the most recent confetti location?';
+            scaleTxt = 'Likelihood rating:';
+            al_stressSlider(taskParam, questionTxt, scaleTxt);
+            KbReleaseWait;
         end
     end
 end
