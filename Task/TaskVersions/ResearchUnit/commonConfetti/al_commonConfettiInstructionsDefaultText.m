@@ -36,6 +36,8 @@ classdef al_commonConfettiInstructionsDefaultText
         showCannonText
         addCannonText
         cannonFeedbackText
+        cannonCorrectFeedbackText
+        cannonErrorFeedbackText
         practiceBlockFailHeader
         practiceBlockFail
         cannonPracticeFail
@@ -202,7 +204,11 @@ classdef al_commonConfettiInstructionsDefaultText
                     'so gut es geht zu vermeiden.\n\n'...
                     'Jetzt folgt zunächst eine kurze Demonstration, wie der Eimer mit Strichen im Vergleich zum Eimer der vorherigen Übung aussieht.'];
             elseif isequal(self.language, 'English')
-                self.reduceShield = 'Please update if you plan to use this.';
+                self.reduceShield = ['From now on, you will only see the bucket represented by two lines. You will also see the task in fewer colors. ' ...
+                    'This is necessary so that we can measure your pupil size accurately. Therefore, please take special care to '...
+                    'fix your gaze on the point in the center of the circle. Please try to avoid eye movements and blinking '...
+                    'as much as possible.\n\n'...
+                    'Now, here is a quick demonstration of how the bucket with lines looks compared to the bucket from the previous practice session.'];
             else
                 error('language parameter unknown')
             end
@@ -223,7 +229,9 @@ classdef al_commonConfettiInstructionsDefaultText
                     'Die beste Strategie ist, die mittlere Position der Schüsse anzugeben. Diese Position ist die beste Vohersage, um in der Aufgabe am meisten Konfetti zu fangen.'];
 
             elseif isequal(self.language, 'English')
-                self.secondPractice = ['Add instructions please']; % update few things if planning to use this
+                self.secondPractice = ['To make sure you understand the task, let us have a quick practice session:\n\n'...
+                    'You will see five shots from the confetti cannon in succession. Afterwards, please indicate where you think the confetti cannon is aimed.\n\n'...
+                    'The best strategy is to indicate the middle position of the shots. This position is the best prediction for catching the most confetti in the task.']; % update few things if planning to use this
             else
                 error('language parameter unknown')
             end
@@ -244,7 +252,10 @@ classdef al_commonConfettiInstructionsDefaultText
                     'Wenn Sie denken, dass die Konfetti-Kanone ihre Richtung geändert hat, sollten Sie auch den Eimer '...
                     'dorthin bewegen.\n\nBeachten Sie, dass Sie das Konfetti trotz guter Vorhersagen auch häufig nicht fangen können.'];
             elseif isequal(self.language, 'English')
-                self.thirdPractice = ['Add instructions please']; % update few things if planning to use this
+                self.thirdPractice = ['In this exercise, you will only see one shot from the confetti cannon. '...
+                    'Please indicate again where you think the confetti cannon is located.\n\nPlease note that the cannon aim usually remains the same. However, sometimes the cannon realigns itself. '...
+                    'If you think the confetti cannon has changed direction, you should also move the bucket '...
+                    'there.\n\nPlease note that even with good predictions, you will often not be able to catch the confetti.'];
             else
                 error('language parameter unknown')
             end
@@ -266,7 +277,10 @@ classdef al_commonConfettiInstructionsDefaultText
                     '\n\nBeachten Sie bitte auch, dass das Ziel der Konfetti-Kanone in manchen Fällen sichtbar sein wird. In diesen Fällen ist die beste Strategie, zum Ziel der Kanone zu gehen.'];
 
             elseif isequal(self.language, 'English')
-                self.fourthPractice = ['Add instructions please']; % update few things if planning to use this
+                self.fourthPractice = ['Now we come to the last practice session.\n\nThis time, you have to place your shield using the pink dot and you will no longer be able to see the cannon. In addition, you will be dealing with both a relatively accurate '...
+                    'and a rather inaccurate hidden confetti cannon.\n\n'...
+                    'Please pay attention to eye movements and blinking as explained by the experimenter.'...
+                    '\n\nPlease also note that in some cases the target of the confetti cannon will be visible. In these cases, the best strategy is to go to the target of the cannon.'];
             else
                 error('language parameter unknown')
             end
@@ -338,7 +352,7 @@ classdef al_commonConfettiInstructionsDefaultText
             if isequal(self.language, 'German')
                 self.showCannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
             elseif isequal(self.language, 'English')
-                self.showCannonText = 'Please add instructions';
+                self.showCannonText = 'Please indicate where you think the cannon is located.';
             else
                 error('language parameter unknown')
             end
@@ -348,7 +362,27 @@ classdef al_commonConfettiInstructionsDefaultText
                 self.addCannonText = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
                     'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
             elseif isequal(self.language, 'English')
-                self.addCannonText = 'Please add instructions';
+                self.addCannonText =  ['\n\nThe gray lines show the last confetti clouds.\n'...
+                    'Use the mouse to indicate where you think the cannon is.'];
+            else
+                error('language parameter unknown')
+            end
+
+
+            % Cannon correct feedback text
+            if isequal(self.language, 'German')
+                self.cannonCorrectFeedbackText = 'Super! Konfetti-Kanone sehr gut eingeschätzt!';
+            elseif isequal(self.language, 'English')
+                self.cannonCorrectFeedbackText = 'Great! Confetti cannon very well estimated!';
+            else
+                error('language parameter unknown')
+            end
+
+            % Cannon error feedback text
+            if isequal(self.language, 'German')
+                self.cannonErrorFeedbackText = 'Leider daneben!';
+            elseif isequal(self.language, 'English')
+                self.cannonErrorFeedbackText = 'Unfortunately, you missed!';
             else
                 error('language parameter unknown')
             end
@@ -357,7 +391,7 @@ classdef al_commonConfettiInstructionsDefaultText
             if isequal(self.language, 'German')
                 self.cannonFeedbackText = '\n\nHier können Sie Ihre Angabe und die echte Konfetti-Kanone vergleichen.';
             elseif isequal(self.language, 'English')
-                self.cannonFeedbackText = 'Please add instructions';
+                self.cannonFeedbackText = '\n\nHere you can compare your estimate with the real confetti cannon.';
             else
                 error('language parameter unknown')
             end
@@ -387,7 +421,8 @@ classdef al_commonConfettiInstructionsDefaultText
                 self.cannonPracticeFail = ['Sie haben die Konfetti-Kanone nicht genau genug eingeschätzt. Versuchen Sie im nächsten '...
                     'Durchgang bitte, den Mittelpunkt der einzelnen Schüsse auszuwählen. Bei Fragen, wenden Sie sich an die Versuchsleitung.'];
             elseif isequal(self.language, 'English')
-                self.cannonPracticeFail = ['Please add instructions'];
+                self.cannonPracticeFail = ['You did not estimate the confetti cannon accurately enough. In the next round, please try to select the center point of each shot. If you have any questions, please contact the experimenter.'...
+                    'The experiment is now over. Please return to the starting point.'];
             else
                 error('language parameter unknown')
             end
@@ -399,7 +434,8 @@ classdef al_commonConfettiInstructionsDefaultText
                     'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.'];
             elseif isequal(self.language, 'English')
                 self.firstPupilBaselineHeader = 'First Pupil Assessment';
-                self.firstPupilBaseline = ['Include correct instructions here'];
+                self.firstPupilBaseline =  ['You will now see different colors on the screen for three minutes. '...
+                    'Please keep your eyes fixed on the small dot in the center of the screen during this time.'];
             else
                 error('language parameter unknown')
             end
@@ -411,7 +447,8 @@ classdef al_commonConfettiInstructionsDefaultText
                     'Bitte fixieren Sie Ihren Blick währenddessen auf den kleinen Punkt in der Mitte des Bildschirms.'];
             elseif isequal(self.language, 'English')
                 self.secondPupilBaselineHeader = 'Second Pupil Assessment';
-                self.secondPupilBaseline = ['Include correct instructions here'];
+                self.secondPupilBaseline = ['You will now see different colors on the screen for another three minutes. '...
+                    'Please keep your eyes fixed on the small dot in the center of the screen while doing so.'];
             else
                 error('language parameter unknown')
             end
@@ -517,9 +554,13 @@ classdef al_commonConfettiInstructionsDefaultText
             %   Output
             %       self: Instructions-text-object instance
 
-
-            self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks);
-
+            if isequal(self.language, 'German')
+                self.dynamicBlockTxt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, nBlocks);
+            elseif isequal(self.language, 'English')
+                self.dynamicBlockTxt = sprintf('Short break!\n\nYou have already completed %i of a total of %i blocks.', currBlock, nBlocks);
+            else
+                error('language parameter unknown')
+            end
         end
 
     end

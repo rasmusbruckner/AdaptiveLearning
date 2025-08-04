@@ -168,7 +168,9 @@ while 1
         taskData.triggers(trial,2) = al_sendTrigger(taskParam, taskData, condition, trial, 'responseOnset');
 
     end
-
+    
+    % Todo: update this so that we can optionally not show cannon
+    % maybe switch to trialflow and get rid of condition
     % Optional instructions for cannon practice
     if isequal(condition, 'cannonPract1') || isequal(condition, 'cannonPract2')
 
@@ -195,6 +197,8 @@ while 1
             al_drawCannon(taskParam, degree, alpha, [100 100 100])
             al_aim(taskParam, degree)
         end
+        % todo: when not showing cannon (using trialflow) show pink dot
+        % instead
     end
 
     % Optionally, present tick marks

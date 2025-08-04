@@ -11,10 +11,10 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 2; %5;
+config.trialsExp = 20; %5;
 config.nBlocks = 4;
 config.practTrialsVis = 5;
-config.practTrialsHid = 5; %20; 
+config.practTrialsHid = 20; %20; 
 config.cannonPractCriterion = 1; %4; % criterion cannon practice
 config.cannonPractNumOutcomes = 5; % number of trials cannon practice
 config.cannonPractFailCrit = 3;
@@ -22,7 +22,7 @@ config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
-config.runIntro = true; % false;
+config.runIntro = true; %true; % false;
 config.language = 'German'; % 'English';
 config.sentenceLength = 100;
 config.textSize = 35;

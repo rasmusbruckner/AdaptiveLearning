@@ -161,16 +161,23 @@ for i = 1:nTrials
         % Compute estimation error and give feedback
         taskData.estErr(i) = al_diff(sampleMean, taskData.pred(i));
         if abs(taskData.estErr(i)) >= taskParam.gParam.practiceTrialCriterionEstErr
-            cannonText = 'Leider daneben!';
+            if taskParam.gParam.customInstructions
+               cannonText = taskParam.instructionText.cannonErrorFeedbackText;
+            else
+               cannonText = 'Leider daneben!';
+            end
         elseif abs(taskData.estErr(i)) < taskParam.gParam.practiceTrialCriterionEstErr
-            cannonText = 'Super! Konfetti-Kanone sehr gut eingeschätzt!';
+            if taskParam.gParam.customInstructions
+                cannonText = taskParam.instructionText.cannonCorrectFeedbackText;
+            else
+                cannonText = 'Super! Konfetti-Kanone sehr gut eingeschätzt!';
+            end
             testPassed = testPassed + 1;
         end
 
         % Cannon feedback
         if taskParam.gParam.customInstructions
            cannonText = strcat(cannonText, taskParam.instructionText.cannonFeedbackText);
-
         else
             cannonText = strcat(cannonText, '\n\nHier können Sie Ihre Angabe und die echte Konfetti-Kanone vergleichen.');
         end

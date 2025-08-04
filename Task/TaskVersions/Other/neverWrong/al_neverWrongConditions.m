@@ -47,7 +47,43 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 % ------------
 
 % Run all task blocks
-[totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition);
+%[totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition);
+
+
+% Extract some variables from task-parameters object
+trial = taskParam.gParam.trials;
+concentration = taskParam.gParam.concentration;
+haz = taskParam.gParam.haz;
+nTrials = 20;
+
+% Total number of hits across blocks
+totWin = 0;
+
+% Create data structure combining all blocks for integration test
+allTaskData = struct();
+
+% File name suffix
+b = 1;
+file_name_suffix = sprintf('_b%i', b);
+
+% Generate outcomes using cannon-data function using average concentration
+nRep = taskParam.gParam.practTrialsHid/taskParam.gParam.cannonPractNumOutcomes;
+endPoint = taskParam.gParam.practTrialsHid;
+taskParam.gParam.blockIndices = linspace(1, endPoint+1, nRep+1);
+taskParam.gParam.catchTrialProb = 0.0;
+
+% Task-data-object instance
+taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
+taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gParam.safe);
+
+% Generate outcomes using confetti-data function
+taskData = taskData.al_confettiData(taskParam);
+
+% Run cannon practice
+withSlider = true;
+al_cannonPractice(taskParam, taskData, trial, file_name_suffix, withSlider);
+
+
 
 end
 
