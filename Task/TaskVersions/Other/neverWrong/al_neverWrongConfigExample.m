@@ -11,41 +11,43 @@
 config = struct();
 
 % Add desired parameters
-config.trialsExp = 20; %5;
-config.nBlocks = 4;
-config.practTrialsVis = 5;
+config.cannonPractNumOutcomes = 3; % 3 % this is the number of outcomes shown before the prediction
+config.nBlocks = 3; % number of repetitions (in that sense number of prediction trials)
+config.trialsExp = config.nBlocks * config.cannonPractNumOutcomes + config.nBlocks;
+
+% Todo: check what's not relevant for neverWrongVersion
+config.practTrialsVis = 5; % 5
 config.practTrialsHid = 20; %20; 
 config.cannonPractCriterion = 1; %4; % criterion cannon practice
-config.cannonPractNumOutcomes = 5; % number of trials cannon practice
 config.cannonPractFailCrit = 3;
 config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
-config.runIntro = true; %true; % false;
-config.language = 'German'; % 'English';
+config.runIntro = false; %true; % false;
+config.language = 'English'; % 'English';
 config.sentenceLength = 100;
 config.textSize = 35;
 config.vSpacing = 1;
 config.headerSize = 50;
-config.screenSize = [0 0 1920 1080] %* 0.5; % get(0,'MonitorPositions')*1.0;
-config.globalScreenBorder = 0; %1920; %0; %1920; % default is 0
+config.screenSize = [0 0 1920 1080] * 1; %* 0.5; % get(0,'MonitorPositions')*1.0;
+config.globalScreenBorder = 0; %1920; % default is 0
 config.screenNumber = 1;
 config.s = 40;
 config.enter = 37;
 config.five = 15;
 config.defaultParticles = true;
-config.debug = false; %false;
+config.debug = false;
 config.showConfettiThreshold = false;
 config.printTiming = true;
 config.hidePtbCursor = true;
 config.dataDirectory = '~/Dropbox/AdaptiveLearning/DataDirectory';
 config.meg = false;
-config.eyeTracker = false; %true;
+config.eyeTracker = false;
 config.onlineSaccades = false;
 config.saccThres = 1;
 config.useDegreesVisualAngle = true;
-config.distance2screen = 350; %700; % defined in mm (for degrees visual angle) and eT
+config.distance2screen = 500;%350; %700; % defined in mm (for degrees visual angle) and eT
 config.screenWidthInMM = 309.40; % for degrees visual angle and ET
 config.screenHeightInMM = 190; %210; % for ET
 config.sendTrigger = false;

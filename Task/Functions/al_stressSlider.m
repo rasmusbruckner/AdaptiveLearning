@@ -14,12 +14,9 @@ function response = al_stressSlider(taskParam, questionTxt, scaleTxt)
 %   Output
 %       response: Participant choice
 
-% Todo: we have to figure out what button subject should press to continue
-% (currently Enter)
-
 
 % We will use a range of text sizes
-smallTextSize = taskParam.strings.headerSize;
+smallTextSize = taskParam.strings.textSize;
 
 % Our scale will span a proportion of the screens x dimension
 scaleLengthPix = taskParam.display.screensize(4) / 1.5;
@@ -81,7 +78,7 @@ Screen('Flip', taskParam.display.window.onScreen);
 response = nan;
 
 % Loop the animation until a key is pressed
-while ~KbCheck(-1)
+while 1
 
     % Display typical background
     al_lineAndBack(taskParam)
@@ -124,7 +121,7 @@ while ~KbCheck(-1)
     Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 
     % Draw the title for the slider
-    Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.headerSize);
+    Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
     DrawFormattedText(taskParam.display.window.onScreen, questionTxt, 'center', taskParam.display.screensize(4)*0.1, [255 255 255]);
     Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
 
@@ -155,5 +152,16 @@ while ~KbCheck(-1)
 
     % Flip to the screen
     Screen('Flip', taskParam.display.window.onScreen);
+
+    % Check for response of participant to continue to next screen
+    [ ~, ~, keyCode] = KbCheck( taskParam.keys.kbDev );
+    if keyCode(taskParam.keys.enter) && isnan(response) == false
+        break
+    elseif keyCode(taskParam.keys.esc)
+        ListenChar();
+        ShowCursor;
+        Screen('CloseAll');
+        error('User pressed Escape to finish task')
+    end
 
 end

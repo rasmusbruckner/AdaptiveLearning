@@ -135,7 +135,7 @@ for i = 1:trial
     al_fixationPhase(taskParam)
     Screen('DrawingFinished', taskParam.display.window.onScreen);
 
-    % Timestamp prediction
+    % Timestamp baseline
     taskData.timestampBaseline(i) = GetSecs() - taskParam.timingParam.ref;
     timestamp = GetSecs() + 0.001;
     Screen('Flip', taskParam.display.window.onScreen, timestamp);
@@ -144,7 +144,7 @@ for i = 1:trial
     % Display timing info in console
     if taskParam.gParam.printTiming
         baselineTiming = GetSecs() - taskParam.timingParam.ref;
-        fprintf('Baseline duration: %.5f\n', baselineTiming - taskData.timestampBaseline(i) )
+        fprintf('Baseline duration: %.5f\n', baselineTiming - taskData.timestampBaseline(i))
     end
 
     % Send trial-onset trigger
@@ -271,7 +271,7 @@ for i = 1:trial
         % Display timing info in console
         if taskParam.gParam.printTiming
             fixCrossTiming = GetSecs() - taskParam.timingParam.ref;
-            fprintf('Fixation-cross duration: %.5f\n', fixCrossTiming -  shotTiming)
+            fprintf('Fixation-cross duration: %.5f\n', fixCrossTiming - shotTiming)
         end
 
         % Fixation cross: ITI

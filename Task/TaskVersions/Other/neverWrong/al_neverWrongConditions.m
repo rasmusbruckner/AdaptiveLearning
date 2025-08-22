@@ -47,14 +47,12 @@ taskParam.cannon = taskParam.cannon.al_staticConfettiCloud(taskParam.trialflow.c
 % ------------
 
 % Run all task blocks
-%[totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition);
-
+% [totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition);
 
 % Extract some variables from task-parameters object
 trial = taskParam.gParam.trials;
 concentration = taskParam.gParam.concentration;
 haz = taskParam.gParam.haz;
-nTrials = 20;
 
 % Total number of hits across blocks
 totWin = 0;
@@ -66,11 +64,11 @@ allTaskData = struct();
 b = 1;
 file_name_suffix = sprintf('_b%i', b);
 
-% Generate outcomes using cannon-data function using average concentration
-nRep = taskParam.gParam.practTrialsHid/taskParam.gParam.cannonPractNumOutcomes;
-endPoint = taskParam.gParam.practTrialsHid;
-taskParam.gParam.blockIndices = linspace(1, endPoint+1, nRep+1);
-taskParam.gParam.catchTrialProb = 0.0;
+% Determine block structure
+nRep = taskParam.gParam.nBlocks;
+step = taskParam.gParam.cannonPractNumOutcomes+1;
+endPoint = (nRep) * (taskParam.gParam.cannonPractNumOutcomes+1); 
+taskParam.gParam.blockIndices = 1:step:endPoint;
 
 % Task-data-object instance
 taskData = al_taskDataMain(trial, taskParam.gParam.taskType);
@@ -80,14 +78,32 @@ taskData = taskData.al_cannonData(taskParam, haz, concentration(1), taskParam.gP
 taskData = taskData.al_confettiData(taskParam);
 
 % Run cannon practice
+% This has to be extended to more general function
 withSlider = true;
-al_cannonPractice(taskParam, taskData, trial, file_name_suffix, withSlider);
+withFeedback = false;
 
+% neverWrong1: similar to cannonPractice1 with cannon shown
+taskParam.trialflow.exp = "neverWrong1";
+al_indicateNeverWrongCond(taskParam)
 
+% todo: maybe additional subject info that cannon shown
+al_sequentialCannonCondition(taskParam, taskData, trial, file_name_suffix, withSlider, withFeedback);
+
+% neverWrong2: no cannon but predicting next outcome as well
+taskParam.trialflow.exp = "neverWrong2";
+al_indicateNeverWrongCond(taskParam)
+al_sequentialCannonCondition(taskParam, taskData, trial, file_name_suffix, withSlider, withFeedback);
+
+% neverWrong3: no cannon and going to last outcome (looks like neverWrong2, just different text)
+taskParam.trialflow.exp = "neverWrong3";
+al_indicateNeverWrongCond(taskParam)
+al_sequentialCannonCondition(taskParam, taskData, trial, file_name_suffix, withSlider, withFeedback);
+
+% todo: once this is good, we'll put it in blockLoop for counterbalancing
 
 end
 
-
+% todo: this has to be updated for the 3 conditions
 function [totWin, allTaskData] = blockLoop(taskParam, cBal, passiveViewingCondition)
 %BLOCKLOOP This function loops over task blocks for a given noise condition
 %

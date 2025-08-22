@@ -26,7 +26,7 @@ if ~exist('config', 'var') || isempty(config)
     config = struct();
 
     % Default parameters
-    config.trialsExp = 2;
+    config.trialsExp = 5;
     config.nBlocks = 4;
     config.practTrialsVis = 10;
     config.practTrialsHid = 10;
@@ -37,14 +37,14 @@ if ~exist('config', 'var') || isempty(config)
     config.passiveViewing = false;
     config.baselineFixLength = 0.25;
     config.blockIndices = [1 51 101 151];
-    config.runIntro = true;
+    config.runIntro = false;
     config.baselineArousal = false;
     config.language = 'German';
     config.sentenceLength = 100;
     config.textSize = 35;
     config.headerSize = 50;
     config.vSpacing = 1;
-    config.screenSize = get(0,'MonitorPositions')*1;
+    config.screenSize = get(0,'MonitorPositions');
     config.globalScreenBorder = 0;
     config.screenNumber = 1;
     config.s = 40;
@@ -165,10 +165,10 @@ predSpotCircleTolerance = config.predSpotCircleTolerance;
 % ----------------------
 
 % Risk parameter: Precision of confetti shot
-concentration = [16, 8];
+concentration = 12;
 
-% Hazard rate determining a priori changepoint probability
-haz = 0.125;
+% Hazard rate determining a priori change-point probability
+haz = 0.0;
 
 % Number of confetti particles
 nParticles = 40;
@@ -190,7 +190,7 @@ elseif passiveViewing
 end
 
 % Catch-trial probability
-catchTrialProb = 0.1;
+catchTrialProb = 0.0;
 
 % Number of predictions above threshold and estimation-error size leading to repetition of block
 practiceTrialCriterionNTrials = 2;
@@ -338,19 +338,21 @@ keys.five = five;
 % Create object instance with timing parameters
 % ---------------------------------------------
 
+% todo get rid of vars we don't need for neverWrong
 timingParam = al_timing();
 timingParam.baselineFixLength = baselineFixLength;
 timingParam.cannonBallAnimation = 0.9;
 timingParam.fixCrossOutcome = 2;
 timingParam.fixCrossShield = 0.7;
 timingParam.fixedITI = 1.0;
-timingParam.jitterFixCrossOutcome = 1; % 2; 09.12.24: P7 wants faster jitters
+timingParam.jitterFixCrossOutcome = 1;
 timingParam.jitterFixCrossShield = 0.6;
 timingParam.outcomeLength = 0.65;
 timingParam.jitterOutcome = 0.15;
 timingParam.shieldLength = 0.65;
 timingParam.jitterShield = 0.15;
 timingParam.jitterITI = 0.5;
+timingParam.neverWrongOutcome = 1.5;
 
 % This is a reference timestamp at the start of the experiment.
 % This is not equal to the first trial or so. So be carful when using
@@ -429,15 +431,11 @@ else
     subject.date = date;
 
     % Test user input
-    if passiveViewing == false
-        for i = subject.startsWithBlock:gParam.nBlocks
-            checkString = dir(sprintf('*exp*%s_b%i*', num2str(subject.ID), i));
-            subject.checkID(checkString, 5);
-        end
-    elseif passiveViewing == true
-        checkString = dir(sprintf('*passive*%s*', num2str(subject.ID)));
+    for i = subject.startsWithBlock:gParam.nBlocks
+        checkString = dir(sprintf('*neverWrong*%s_b%i*', num2str(subject.ID), i));
         subject.checkID(checkString, 5);
     end
+
     subject.checkGender();
     subject.checkGroup();
     subject.checkCBal(2);
@@ -602,30 +600,26 @@ Screen('Flip', taskParam.display.window.onScreen);
 % Run task
 % --------
 
-% When experiment does not take place in scanner
 [allTaskData, totWin] = al_neverWrongConditions(taskParam);
 
 % -----------
 % End of task
 % -----------
 
-if taskParam.gParam.customInstructions && passiveViewing == false
+if taskParam.gParam.customInstructions
     taskParam.instructionText = taskParam.instructionText.giveFeedback(totWin, 'task');
     header = taskParam.instructionText.dynamicFeedbackHeader;
     txt = taskParam.instructionText.dynamicFeedbackTxt;
 elseif taskParam.gParam.customInstructions == false && passiveViewing == false
     if isequal(language, 'German')
         header = 'Ende des Versuchs!';
-        txt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', totWin);
+        txt = 'Vielen Dank für Ihre Teilnahme';
     elseif isequal(language, 'English')
         header = 'End of the Experiment!';
-        txt = sprintf('Thank you for taking part!\n\n\nYou have won a total of %i points!', totWin);
+        txt = 'Thank you for taking part!';
     else
         error('language parameter unknown')
     end
-elseif passiveViewing
-    header = 'Ende des Versuchs!';
-    txt = 'Vielen Dank für Ihre Teilnahme!';
 end
 feedback = true; % indicate that this is the instruction mode
 al_bigScreen(taskParam, header, txt, feedback, true);
@@ -635,10 +629,6 @@ ShowCursor;
 Screen('CloseAll');
 
 % Inform user about timing
-%fprintf('Total time: %.1f minutes\n', char((GetSecs - timingParam.ref)/60));
-experimentLength = GetSecs() - timingParam.ref;
-t = seconds(experimentLength);
-t.Format = 'hh:mm:ss.SSS';
-fprintf('Total time: %s', evalc('disp(t)'))
+fprintf('Total time: %.1f minutes\n', char((GetSecs - timingParam.ref)/60));
 
 end

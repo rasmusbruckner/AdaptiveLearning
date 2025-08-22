@@ -123,11 +123,12 @@ while 1
         end
 
     else
+
         % Optionally, show confetti cloud
-        if isequal(taskParam.trialflow.confetti, 'show confetti cloud')
+        if (isequal(taskParam.trialflow.confetti, 'show confetti cloud') && ~(isequal(condition, 'cannonPract2'))) || (isequal(condition, 'neverWrong2') == true || isequal(condition, 'neverWrong3') == true)
             Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
             al_drawFixPoint(taskParam)
-        elseif isequal(condition, 'cannonPract1') == false ||  isequal(condition, 'cannonPract2') == false
+        elseif isequal(condition, 'cannonPract1') == true || isequal(condition, 'cannonPract2') == true || isequal(condition, 'neverWrong1') == true
             % Otherwise just fixation cross
             al_drawFixPoint(taskParam)
         end
@@ -153,52 +154,57 @@ while 1
         hyp = nan;
     end
 
-
-
     % Store initial tendency and initiation RT:
     % Only entering the condition when no initial tendency has been
     % recorded (first movement) or unit testing
     if (hyp >= taskParam.circle.tendencyThreshold && isnan(taskData.initialTendency(trial))) || taskParam.unitTest.run
 
         % Initial degrees and initiation RT
-        taskData.initialTendency(trial) = degree; %deg2rad(degree);
+        taskData.initialTendency(trial) = degree;
         taskData.initiationRTs(trial,:) = GetSecs() - startTimestamp;
 
         % Movement-onset trigger
         taskData.triggers(trial,2) = al_sendTrigger(taskParam, taskData, condition, trial, 'responseOnset');
 
     end
-    
-    % Todo: update this so that we can optionally not show cannon
-    % maybe switch to trialflow and get rid of condition
+
     % Optional instructions for cannon practice
-    if isequal(condition, 'cannonPract1') || isequal(condition, 'cannonPract2')
+    if isequal(taskParam.trialflow.exp, 'cannonPract1') || isequal(taskParam.trialflow.exp, 'cannonPract2') || isequal(taskParam.trialflow.exp, 'neverWrong1') || isequal(taskParam.trialflow.exp, 'neverWrong2') || isequal(taskParam.trialflow.exp, 'neverWrong3')
 
         % Introduce cannon
         if taskParam.gParam.customInstructions
-            cannonText = taskParam.instructionText.showCannonText;
-            addCannonTxt = taskParam.instructionText.addCannonText;
 
+            if isequal(taskParam.trialflow.exp, 'cannonPract1')
+                cannonText = taskParam.instructionText.showCannonTextExtended;
+            elseif isequal(taskParam.trialflow.exp, 'cannonPract2')
+                cannonText = taskParam.instructionText.showCannonText;
+            elseif isequal(taskParam.trialflow.exp, 'neverWrong1') || isequal(taskParam.trialflow.exp, 'neverWrong2')
+                cannonText = taskParam.instructionText.showCannonTextPred;
+            elseif isequal(taskParam.trialflow.exp, 'neverWrong3')
+                cannonText = taskParam.instructionText.showCannonTextLast;
+            end
         else
-            cannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
-            addCannonTxt = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
-                'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+            if isequal(taskParam.trialflow.exp, 'cannonPract1')
+                cannonText = ['Bitte geben Sie an, wo Sie die Kanone vermuten.\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
+                    'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+            elseif isequal(taskParam.trialflow.exp, 'cannonPract2')
+                cannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+            elseif isequal(taskParam.trialflow.exp, 'neverWrong1') || isequal(taskParam.trialflow.exp, 'neverWrong2')
+                cannonText = 'Please predict the NEXT confetti shot.';
+            elseif isequal(taskParam.trialflow.exp, 'neverWrong3')
+                cannonText = 'Please go to the LAST confetti shot.';
+            end
         end
 
-        % Instruction text
-        if isequal(condition, 'cannonPract1')
-            cannonText = strcat(cannonText, addCannonTxt);
-        end
+        Screen('TextSize', taskParam.display.window.onScreen, taskParam.strings.textSize);
         DrawFormattedText(taskParam.display.window.onScreen,cannonText, 'center', taskParam.display.screensize(4)*0.05, [255 255 255], taskParam.strings.sentenceLength, [], [], taskParam.strings.vSpacing);
 
         % Show subject's cannon estimate
-        if isnan(taskData.initialTendency(trial)) == false
+        if isnan(taskData.initialTendency(trial)) == false & (isequal(taskParam.trialflow.exp, 'cannonPract1') || isequal(taskParam.trialflow.exp, 'cannonPract2') || isequal(taskParam.trialflow.exp, 'neverWrong1'))
             alpha = 0.4;
             al_drawCannon(taskParam, degree, alpha, [100 100 100])
             al_aim(taskParam, degree)
         end
-        % todo: when not showing cannon (using trialflow) show pink dot
-        % instead
     end
 
     % Optionally, present tick marks
@@ -208,7 +214,13 @@ while 1
     elseif isequal(taskParam.trialflow.currentTickmarks, 'workingMemory') && trial > 1 && (taskData.block(trial) == taskData.block(trial-1))
         al_showTickMarkSeries(taskData, taskParam, trial)
     elseif isequal(taskParam.trialflow.currentTickmarks, 'cannonPractice')
-        al_showTickMarkSeries(taskData, taskParam, trial)
+
+        if isequal(condition, 'neverWrong1') == true || isequal(condition, 'neverWrong2') == true || isequal(condition, 'neverWrong3') == true
+            al_showTickMarkSeries(taskData, taskParam, trial-1)
+        else
+            al_showTickMarkSeries(taskData, taskParam, trial)
+        end
+
         al_tickMark(taskParam, taskData.pred(trial-1), 'pred');
     end
 

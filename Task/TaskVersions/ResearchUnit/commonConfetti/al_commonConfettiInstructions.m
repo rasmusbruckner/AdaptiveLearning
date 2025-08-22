@@ -300,7 +300,7 @@ while 1
     taskData = taskData.al_confettiData(taskParam);
 
     % Run cannon practice
-    testPassed = al_cannonPractice(taskParam, taskData, nTrials, file_name_suffix);
+    testPassed = al_sequentialCannonCondition(taskParam, taskData, nTrials, file_name_suffix);
 
     % If estimation error was too large, we repeat the instructions
     if (sum(testPassed) < taskParam.gParam.cannonPractCriterion)  && taskParam.unitTest.run == false

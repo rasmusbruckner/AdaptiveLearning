@@ -37,6 +37,7 @@ classdef al_timing
         movingDuck
         staticOutcome
         movingOutcome
+        neverWrongOutcome % main outcome for neverWrong version
         
     end
     
@@ -72,6 +73,7 @@ classdef al_timing
             self.baselineFixLength = 0.25;
             self.passiveViewingAnimationMean = 0.8;
             self.passiveViewingAnimationSD = 0.2;
+            self.neverWrongOutcome = 1.5;
             
             % Infant
             self.staticDuck = 1.0;

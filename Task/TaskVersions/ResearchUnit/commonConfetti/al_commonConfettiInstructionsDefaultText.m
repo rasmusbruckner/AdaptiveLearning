@@ -33,8 +33,10 @@ classdef al_commonConfettiInstructionsDefaultText
         noCatch
         accidentalCatchHeader
         accidentalCatch
+        showCannonTextExtended
         showCannonText
-        addCannonText
+        showCannonTextPred
+        showCannonTextLast
         cannonFeedbackText
         cannonCorrectFeedbackText
         cannonErrorFeedbackText
@@ -350,24 +352,20 @@ classdef al_commonConfettiInstructionsDefaultText
 
             % Show cannon
             if isequal(self.language, 'German')
-                self.showCannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
-            elseif isequal(self.language, 'English')
-                self.showCannonText = 'Please indicate where you think the cannon is located.';
-            else
-                error('language parameter unknown')
-            end
-
-            % Additional show cannon text
-            if isequal(self.language, 'German')
-                self.addCannonText = ['\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
+                self.showCannonTextExtended = ['Bitte geben Sie an, wo Sie die Kanone vermuten.\n\nDie grauen Striche zeigen die letzten Konfetti-Wolken.\n'...
                     'Mit der Maus können Sie angeben, wo Sie die Kanone vermuten.'];
+                self.showCannonText = 'Bitte geben Sie an, wo Sie die Kanone vermuten.';
+                self.showCannonTextPred = 'Bitte sagen Sie den NÄCHSTEN Konfetti-Schuss vorher.';
+                self.showCannonTextLast = 'Bitte gehen Sie zum LETZTEN Konfetti-Schuss.';
             elseif isequal(self.language, 'English')
-                self.addCannonText =  ['\n\nThe gray lines show the last confetti clouds.\n'...
+                self.showCannonTextExtended = ['Please indicate where you think the cannon is located.\n\nThe gray lines show the last confetti clouds.\n'...
                     'Use the mouse to indicate where you think the cannon is.'];
+                self.showCannonText = 'Please indicate where you think the cannon is located.';
+                self.showCannonTextPred = 'Please predict the NEXT confetti shot.';
+                self.showCannonTextLast = 'Please go to the LAST confetti shot';
             else
                 error('language parameter unknown')
             end
-
 
             % Cannon correct feedback text
             if isequal(self.language, 'German')
@@ -530,10 +528,10 @@ classdef al_commonConfettiInstructionsDefaultText
             elseif isequal(type, 'task')
                 if isequal(self.language, 'German')
                     self.dynamicFeedbackHeader = 'Ende des Versuchs!';
-                    self.dynamicFeedbackTxt = sprintf('Vielen Dank für Ihre Teilnahme!\n\n\nSie haben insgesamt %i Punkte gewonnen!', currPoints);
+                    self.dynamicFeedbackTxt = 'Vielen Dank für Ihre Teilnahme!';
                 elseif isequal(self.language, 'English')
                     self.dynamicFeedbackHeader = 'End of the Experiment!';
-                    self.dynamicFeedbackTxt = sprintf('Thank you for taking part!\n\n\nYou have won a total of %i points!', currPoints);
+                    self.dynamicFeedbackTxt = 'Thank you for taking part!';
                 else
                     error('language parameter unknown')
                 end
