@@ -158,11 +158,16 @@ for i = 1:trial
     % ---------------------------
 
     % Reset mouse to screen center
-    SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen)
+    if taskParam.trialflow.input == "mouse"
+        SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen)
+    end
 
     % Participant indicates prediction
-    if taskParam.gParam.passiveViewing == false
+    if taskParam.gParam.passiveViewing == false && taskParam.trialflow.input == "mouse"
         [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, i, initRT_Timestamp);
+    elseif taskParam.gParam.passiveViewing == false && taskParam.trialflow.input == "keyboard"
+        disableResponseThreshold = true;
+        [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, i, initRT_Timestamp, [], [], disableResponseThreshold);
     else
         taskData = al_passiveViewingSpot(taskParam, taskData, i, initRT_Timestamp);
     end

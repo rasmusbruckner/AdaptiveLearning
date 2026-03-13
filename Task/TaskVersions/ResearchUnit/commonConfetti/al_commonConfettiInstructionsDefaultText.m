@@ -310,7 +310,8 @@ classdef al_commonConfettiInstructionsDefaultText
                     'you will have to estimate the aim based on the last confetti bursts. Please note that despite '...
                     'good predictions, you often wont be able to catch it. \n\nIn a few cases, you will see the confetti cannon and can improve your performance '...
                     'by moving the bucket to its aim.\n\n'...
-                    'Please avoid eye movements and blinking during a trial. If the dot in the middle is light grey at the end of a trial, you may blink.\n\nGood luck!'];            else
+                    'Please avoid eye movements and blinking during a trial. If the dot in the middle is light grey at the end of a trial, you may blink.\n\nGood luck!']; 
+            else
                 error('language parameter unknown')
             end
 

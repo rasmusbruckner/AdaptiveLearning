@@ -1,5 +1,5 @@
 function varargout = al_introduceSpot(taskParam, taskData, trial, txt)
-%AL_INTRODUCESPOT This function introduces the orange spot to participants
+%AL_INTRODUCESPOT This function introduces the prediction spot to participants
 %
 %   Input
 %       taskParam: Task-parameter-object instance
@@ -34,7 +34,7 @@ WaitSecs(0.5);
 % Reference value to compute initiation RT
 initRT_Timestamp = GetSecs();
 
-if strcmp(taskParam.trialflow.input, 'keyboard')
+if ~(taskParam.trialflow.cannonType == "confetti") && ~(taskParam.gParam.taskType == "Leipzig")  
 
     % Show cannon and instructions
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
@@ -63,15 +63,19 @@ if strcmp(taskParam.trialflow.input, 'keyboard')
     varargout{1} = taskData;
     varargout{2} = taskParam;
 
-elseif strcmp(taskParam.trialflow.input, 'mouse') && strcmp(taskParam.trialflow.cannonType, 'confetti')
+elseif taskParam.trialflow.cannonType == "confetti"
 
     % Reset mouse to screen center
     SetMouse(taskParam.display.screensize(3)/2, taskParam.display.screensize(4)/2, taskParam.display.window.onScreen) % 720, 450,
 
     % Participant indicates prediction
-    condition = 'main';
-    [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt);
-
+    if taskParam.trialflow.input == "mouse"
+        condition = 'main';
+        [taskData, taskParam] = al_mouseLoop(taskParam, taskData, condition, trial, initRT_Timestamp, txt);
+    elseif taskParam.trialflow.input == "keyboard"
+        [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
+    end
+    
     % Prediction error
     taskData.predErr(trial) = al_diff(taskData.outcome(trial), taskData.pred(trial));
     

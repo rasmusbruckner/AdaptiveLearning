@@ -97,10 +97,15 @@ while 1
     al_predictionSpot(taskParam)
 
     % If requested, show cannon and cannon aim, otherwise fixation cross
-    if (taskData.catchTrial(trial) == 1) || isequal(taskParam.trialflow.cannon, 'show cannon')
+    if matches(taskParam.gParam.taskType, {'sleep', 'Hamburg', 'dresden', 'MagdeburgFMRI'}) && (taskData.catchTrial(trial) == 1 || taskParam.trialflow.cannon == "show cannon")  % taskParam.gParam.taskType == "Hamburg" && 
         al_drawCannon(taskParam, taskData.distMean(trial))
         al_aim(taskParam, taskData.distMean(trial))
+    elseif taskParam.trialflow.cannonType == "confetti" && isequal(taskParam.trialflow.confetti, 'show confetti cloud')
+        % Optionally, show confetti cloud    
+        Screen('DrawDots', taskParam.display.window.onScreen, taskParam.cannon.xyMatrixRing, taskParam.cannon.sCloud, taskParam.cannon.colvectCloud, [taskParam.display.window.centerX, taskParam.display.window.centerY], 1);
+        al_drawFixPoint(taskParam)
     else
+        % Or just cross
         al_drawCross(taskParam)
     end
 

@@ -13,10 +13,10 @@ config = struct();
 % Add desired parameters
 config.trialsExp = 2; %5;
 config.nBlocks = 4;
-config.practTrialsVis = 10;
-config.practTrialsHid = 20; 
-config.cannonPractCriterion = 4; % criterion cannon practice
-config.cannonPractNumOutcomes = 5; % number of trials cannon practice
+config.practTrialsVis = 5; % ;10;
+config.practTrialsHid = 5; %20; 
+config.cannonPractCriterion = 1; %4; % criterion cannon practice
+config.cannonPractNumOutcomes = 5;% 5; % number of trials cannon practice
 config.cannonPractFailCrit = 3;
 config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;

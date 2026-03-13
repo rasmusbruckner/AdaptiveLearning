@@ -14,11 +14,11 @@ function [taskData, taskParam] = al_introduceConfetti(taskParam, taskData, trial
 % Set time stamp
 initRT_Timestamp = 0;
 
-if strcmp(taskParam.gParam.taskType, 'Sleep')
+if taskParam.gParam.taskType == "Sleep" || taskParam.trialflow.input == "keyboard"
 
     [taskData, taskParam] = al_keyboardLoop(taskParam, taskData, trial, initRT_Timestamp, txt);
 
-elseif strcmp(taskParam.gParam.taskType, 'Hamburg') || strcmp(taskParam.gParam.taskType, 'asymReward') || strcmp(taskParam.gParam.taskType, 'Leipzig') || strcmp(taskParam.gParam.taskType, 'HamburgEEG') 
+elseif taskParam.gParam.taskType == "Hamburg" || taskParam.gParam.taskType == "asymReward" || taskParam.gParam.taskType == "Leipzig" || taskParam.gParam.taskType == "HamburgEEG" 
     
     % Participant indicates prediction
     condition = 'main';

@@ -143,7 +143,7 @@ for b = 1:taskParam.gParam.nBlocks
 
     % Short break before next block
     if b < taskParam.gParam.nBlocks
-        al_blockBreak(taskParam, half, b)
+        al_blockBreak(taskParam, b)
     end
 end
 end

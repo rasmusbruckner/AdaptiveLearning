@@ -332,7 +332,6 @@ classdef al_taskDataMain
             self.safe = repmat(safe, self.trials, 1);
             self.safeVar = repmat(taskParam.gParam.safeVar, self.trials, 1);
 
-            %% Todo test this properly
             % Generate shield types
             if isequal(taskParam.trialflow.shieldType, 'constant')
 

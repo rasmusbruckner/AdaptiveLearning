@@ -13,7 +13,11 @@ if taskParam.gParam.customInstructions
     taskParam.instructionText = taskParam.instructionText.giveBlockFeedback(taskParam.gParam.nBlocks, currBlock);
     txt = taskParam.instructionText.dynamicBlockTxt;
 else
-    txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, taskParam.gParam.nBlocks);
+    if taskParam.gParam.language == "German"
+        txt = sprintf('Kurze Pause!\n\nSie haben bereits %i von insgesamt %i Durchgängen geschafft.', currBlock, taskParam.gParam.nBlocks);
+    elseif taskParam.gParam.language == "English"
+        txt = sprintf('Quick break!\n\nYou have completed %i out of %i blocks already.', currBlock, taskParam.gParam.nBlocks);
+    end
 end
 
 % Display above text
