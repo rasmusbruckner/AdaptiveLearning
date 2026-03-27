@@ -264,22 +264,37 @@ end
 
 % Send the pupil trigger
 if taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'exp') || taskParam.gParam.eyeTracker && isequal(taskParam.trialflow.exp, 'passive')
-    Eyelink('message', num2str(triggerID));
+    if isequal(taskParam.gParam.trackerVersion, 'eyelink')
+        Eyelink('message', num2str(triggerID));
+    elseif isequal(taskParam.gParam.trackerVersion, 'SMI')
+        taskParam.eyeTracker.el.sendMessage(num2str(triggerID));
+    end
 end
 
 % Send the EEG trigger
 if taskParam.gParam.sendTrigger == true
-    %     outp(taskParam.triggers.port, trigger); This is the Dresden version
-    %     WaitSecs(1/taskParam.triggers.sampleRate);
-    %     outp(taskParam.triggers.port,0) % Set port to 0.
-
-    % io64(ioObject,taskParam.triggers.port, trigger)
+    % outp(taskParam.triggers.port, triggerID); %This is the Dresden version
+    % WaitSecs(1/taskParam.triggers.sampleRate);
+    % outp(taskParam.triggers.port,0) % Set port to 0.
+    % 
+    % io64(ioObject,taskParam.triggers.port, triggerID)
 
     % This is Hamburg
-    duration = 0.001;
-    IOPort( 'Write', taskParam.triggers.session, uint8(triggerID), 0);
-    WaitSecs(duration);
-    IOPort( 'Write', taskParam.triggers.session, uint8(0), 0);
+    % duration = 0.001;
+    % IOPort( 'Write', taskParam.triggers.session, uint8(triggerID), 0);
+    % WaitSecs(duration);
+    % IOPort( 'Write', taskParam.triggers.session, uint8(0), 0);
+    io64(taskParam.triggers.session, taskParam.triggers.port, 0);
+
+    triggerID = uint8(triggerID);
+    io64(taskParam.triggers.session, taskParam.triggers.port, triggerID);
+            
+    % 2. Wait for pulse duration (blocking wait is usually fine for <5ms)
+    % For ultra-precision, you can use getting timestamps, but WaitSecs is standard.
+    WaitSecs(0.001);
+    
+    % 3. Reset to 0 (End of Pulse)
+    io64(taskParam.triggers.session, taskParam.triggers.port, 0);
 end
 
 % Send the MEG trigger

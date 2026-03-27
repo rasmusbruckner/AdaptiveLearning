@@ -1,4 +1,4 @@
-% Common Confetti Version Configuration Example
+ % Common Confetti Version Configuration Example
 %
 % Example of how to add local parameter settings as config input to the
 % function that runs the task.
@@ -22,14 +22,17 @@ config.passiveViewing = false;
 config.passiveViewingPractTrials = 10;
 config.baselineFixLength = 0.25;
 config.blockIndices = [1 999 999 999]; % we don't have breaks within each block
-config.runIntro = true; % false;
-config.baselineArousal = true; % true;
+
+config.runIntro = false; % false;
+config.baselineArousal = false; % true;
+
 config.language = 'German'; % 'English';
-config.sentenceLength = 80;
+config.sentenceLength = 70;
 config.textSize = 32;
 config.vSpacing = 1;
 config.headerSize = 50;
-config.screenSize = [0 0 1680 1050]*1; % get(0,'MonitorPositions')*1.0;
+config.screenSize = [0 0 1280 1024]*1; % get(0,'MonitorPositions')*1.0;
+config.globalScreenBorder = 0; %1920; % default is 0
 config.screenNumber = 1;
 config.s = 83;
 config.enter = 13;
@@ -42,16 +45,22 @@ config.hidePtbCursor = true;
 config.dataDirectory = 'C://Users//Matlab-User//Documents//AdaptiveLearning//DataDirectory';
 config.meg = false;
 config.scanner = false;
-config.eyeTracker = true; %true;
+config.eyeTracker = false; %true;
 config.onlineSaccades = false;
 config.saccThres = 1;
 config.useDegreesVisualAngle = true;
 config.distance2screen = 740; %700; % defined in mm (for degrees visual angle) and eT
-config.screenWidthInMM = 580; % for degrees visual angle and ET
-config.screenHeightInMM = 295; %210; % for ET
+config.screenWidthInMM = 386; % for degrees visual angle and ET
+config.screenHeightInMM = 290; %210; % for ET
+
+% #todo für mat 2025 wieder rausnehmen!
+% config.trackerVersion = 'SMI';
+
 config.sendTrigger = true;
-config.sampleRate = 500; % Sampling rate for EEG
-config.port = hex2dec('E050');
+config.sampleRate = 512; % Sampling rate for EEG
+%config.port = hex2dec('E050');
+config.port = hex2dec('378');
+
 config.rotationRadPixel = 140; % 170
 config.rotationRadDeg = 3.16; % 2.5
 config.customInstructions = true;
@@ -60,7 +69,21 @@ config.noPtbWarnings = false;
 config.predSpotCircleTolerance = 2;
 
 if config.sendTrigger
-    [config.session, ~] = IOPort( 'OpenSerialPort', 'COM3' );
+    %[config.session, ~] = IOPort( 'OpenSerialPort', 'COM1' );
+    ioObj = io64; 
+    status = io64(ioObj);    
+    config.session = ioObj;
+        
+        % Initialize the driver (status 0 = success)
+        
+        
+        if status ~= 0
+            error(['io64 driver i' ...
+                'nstallation failed. Do you have inpoutx64.dll?']);
+        end
+        
+        % Reset port to 0 at start to ensure lines are low
+        io64(ioObj, config.port, 0);
 else
     config.session = nan;
 end
